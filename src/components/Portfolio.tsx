@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function Portfolio() {
   return (
-    <section className="py-24 bg-[#F5F4F0]">
+    <section className="py-24 bg-[#FAFAF9]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -15,13 +15,13 @@ export default function Portfolio() {
           className="text-center mb-16"
         >
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#1C3A5E] mb-4"
+            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Our work
           </h2>
           <p
-            className="text-lg text-[#1A1A1A]/60 max-w-xl mx-auto"
+            className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Case studies coming soon. We&apos;re currently heads-down with new clients.
@@ -33,10 +33,10 @@ export default function Portfolio() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="rounded-2xl bg-[#1C3A5E] p-12 text-center"
+          className="rounded-2xl bg-[#18181B] p-12 text-center"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#C8A96E] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Now Accepting New Clients
@@ -57,7 +57,7 @@ export default function Portfolio() {
           </p>
           <a
             href="#contact"
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-[#1C3A5E] bg-[#C8A96E] hover:bg-[#b8985e] transition-colors"
+            className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Start a conversation <ArrowRight size={16} />

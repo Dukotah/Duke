@@ -22,7 +22,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-24 bg-[#F5F4F0]">
+    <section id="how-it-works" className="py-24 bg-[#FAFAF9]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -32,13 +32,13 @@ export default function HowItWorks() {
           className="text-center mb-16"
         >
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#1C3A5E] mb-4"
+            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             How it works
           </h2>
           <p
-            className="text-lg text-[#1A1A1A]/60 max-w-xl mx-auto"
+            className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Simple, transparent, and built around your schedule.
@@ -47,7 +47,7 @@ export default function HowItWorks() {
 
         <div className="grid md:grid-cols-3 gap-8 relative">
           {/* Connector line on desktop */}
-          <div className="hidden md:block absolute top-12 left-1/6 right-1/6 h-px bg-[#1C3A5E]/15" />
+          <div className="hidden md:block absolute top-12 left-1/6 right-1/6 h-px bg-[#18181B]/15" />
 
           {steps.map((s, i) => (
             <motion.div
@@ -60,23 +60,23 @@ export default function HowItWorks() {
             >
               <div
                 className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 relative z-10"
-                style={{ backgroundColor: "#1C3A5E" }}
+                style={{ backgroundColor: "#18181B" }}
               >
                 <span
                   className="text-2xl font-bold"
-                  style={{ color: "#C8A96E", fontFamily: "var(--font-heading)" }}
+                  style={{ color: "#F97316", fontFamily: "var(--font-heading)" }}
                 >
                   {s.number}
                 </span>
               </div>
               <h3
-                className="text-xl font-bold text-[#1C3A5E] mb-3"
+                className="text-xl font-bold text-[#18181B] mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {s.title}
               </h3>
               <p
-                className="text-[#1A1A1A]/60 leading-relaxed text-sm max-w-xs mx-auto"
+                className="text-[#3F3F46]/60 leading-relaxed text-sm max-w-xs mx-auto"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {s.body}

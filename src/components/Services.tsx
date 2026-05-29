@@ -61,13 +61,13 @@ export default function Services() {
           className="text-center mb-16"
         >
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#1C3A5E] mb-4"
+            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What we do
           </h2>
           <p
-            className="text-lg text-[#1A1A1A]/60 max-w-xl mx-auto"
+            className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
             From your first website to a hardened security posture — we grow with you.
@@ -84,21 +84,21 @@ export default function Services() {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className={`rounded-xl p-8 flex flex-col ${
                 t.featured
-                  ? "bg-[#1C3A5E] text-white shadow-xl"
-                  : "bg-[#F5F4F0] border border-[#1C3A5E]/5"
+                  ? "bg-[#18181B] text-white shadow-xl"
+                  : "bg-[#FAFAF9] border border-[#18181B]/5"
               }`}
             >
               <div
                 className={`w-12 h-12 rounded-lg flex items-center justify-center mb-5 ${
-                  t.featured ? "bg-white/10" : "bg-[#1C3A5E]/8"
+                  t.featured ? "bg-white/10" : "bg-[#18181B]/8"
                 }`}
               >
-                <t.icon size={22} color={t.featured ? "#C8A96E" : "#1C3A5E"} />
+                <t.icon size={22} color={t.featured ? "#F97316" : "#18181B"} />
               </div>
 
               <p
                 className={`text-xs font-semibold uppercase tracking-widest mb-2 ${
-                  t.featured ? "text-[#C8A96E]" : "text-[#1C3A5E]/50"
+                  t.featured ? "text-[#F97316]" : "text-[#18181B]/50"
                 }`}
                 style={{ fontFamily: "var(--font-heading)" }}
               >
@@ -107,7 +107,7 @@ export default function Services() {
 
               <h3
                 className={`text-xl font-bold mb-4 ${
-                  t.featured ? "text-white" : "text-[#1C3A5E]"
+                  t.featured ? "text-white" : "text-[#18181B]"
                 }`}
                 style={{ fontFamily: "var(--font-heading)" }}
               >
@@ -119,13 +119,13 @@ export default function Services() {
                   <li
                     key={item}
                     className={`flex items-start gap-2 text-sm ${
-                      t.featured ? "text-white/80" : "text-[#1A1A1A]/60"
+                      t.featured ? "text-white/80" : "text-[#3F3F46]/60"
                     }`}
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     <span
                       className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                        t.featured ? "bg-[#C8A96E]" : "bg-[#2D6A4F]"
+                        t.featured ? "bg-[#F97316]" : "bg-[#18181B]"
                       }`}
                     />
                     {item}
@@ -137,8 +137,8 @@ export default function Services() {
                 href="#contact"
                 className={`inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold transition-colors ${
                   t.featured
-                    ? "bg-[#C8A96E] text-[#1C3A5E] hover:bg-[#b8985e]"
-                    : "bg-[#1C3A5E] text-white hover:bg-[#152d4a]"
+                    ? "bg-[#F97316] text-[#18181B] hover:bg-[#ea6c0a]"
+                    : "bg-[#18181B] text-white hover:bg-[#0d0d0f]"
                 }`}
                 style={{ fontFamily: "var(--font-heading)" }}
               >

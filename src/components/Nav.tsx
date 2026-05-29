@@ -23,7 +23,7 @@ export default function Nav() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-[#F5F4F0]/95 backdrop-blur border-b border-[#1C3A5E]/10 shadow-sm" : "bg-transparent"
+        scrolled ? "bg-[#FAFAF9]/95 backdrop-blur border-b border-[#18181B]/10 shadow-sm" : "bg-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -31,10 +31,10 @@ export default function Nav() {
         <a href="#" className="flex items-center gap-2 group">
           <span
             className="text-xl font-bold tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#1C3A5E" }}
+            style={{ fontFamily: "var(--font-heading)", color: "#18181B" }}
           >
             Copper Bay
-            <span style={{ color: "#C8A96E" }}>Tech</span>
+            <span style={{ color: "#F97316" }}>Tech</span>
           </span>
         </a>
 
@@ -44,7 +44,7 @@ export default function Nav() {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-[#1A1A1A]/70 hover:text-[#1C3A5E] transition-colors"
+              className="text-sm font-medium text-[#3F3F46]/70 hover:text-[#18181B] transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {l.label}
@@ -56,16 +56,16 @@ export default function Nav() {
         <a
           href="#contact"
           className="hidden md:inline-flex items-center px-5 py-2 rounded-md text-sm font-semibold text-white transition-colors"
-          style={{ backgroundColor: "#2D6A4F", fontFamily: "var(--font-heading)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#235540")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2D6A4F")}
+          style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#111113")}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#18181B")}
         >
           Free Consultation
         </a>
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2 text-[#1C3A5E]"
+          className="md:hidden p-2 text-[#18181B]"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -75,13 +75,13 @@ export default function Nav() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-[#F5F4F0] border-t border-[#1C3A5E]/10 px-6 py-4 flex flex-col gap-4">
+        <div className="md:hidden bg-[#FAFAF9] border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="text-sm font-medium text-[#1A1A1A]/80 hover:text-[#1C3A5E]"
+              className="text-sm font-medium text-[#3F3F46]/80 hover:text-[#18181B]"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {l.label}
@@ -91,7 +91,7 @@ export default function Nav() {
             href="#contact"
             onClick={() => setOpen(false)}
             className="inline-flex items-center justify-center px-5 py-2 rounded-md text-sm font-semibold text-white"
-            style={{ backgroundColor: "#2D6A4F", fontFamily: "var(--font-heading)" }}
+            style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
           >
             Free Consultation
           </a>

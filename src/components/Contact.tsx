@@ -44,9 +44,9 @@ export default function Contact() {
   };
 
   const inputClass =
-    "w-full px-4 py-3 rounded-md border border-[#1C3A5E]/15 bg-white text-[#1A1A1A] text-sm focus:outline-none focus:ring-2 focus:ring-[#1C3A5E]/30 transition placeholder-[#1A1A1A]/30";
+    "w-full px-4 py-3 rounded-md border border-[#18181B]/15 bg-white text-[#3F3F46] text-sm focus:outline-none focus:ring-2 focus:ring-[#18181B]/30 transition placeholder-[#3F3F46]/30";
 
-  const labelClass = "block text-xs font-semibold uppercase tracking-widest text-[#1C3A5E]/60 mb-1.5";
+  const labelClass = "block text-xs font-semibold uppercase tracking-widest text-[#18181B]/60 mb-1.5";
 
   return (
     <section id="contact" className="py-24 bg-white">
@@ -60,19 +60,19 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
           >
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#C8A96E] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Get in touch
             </p>
             <h2
-              className="text-4xl font-bold text-[#1C3A5E] mb-6 leading-tight"
+              className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Let&apos;s talk about what&apos;s holding your business back.
             </h2>
             <p
-              className="text-[#1A1A1A]/60 leading-relaxed mb-10"
+              className="text-[#3F3F46]/60 leading-relaxed mb-10"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Tell us what you&apos;re working with. We&apos;ll give you an honest assessment
@@ -83,20 +83,20 @@ export default function Contact() {
               <div className="flex items-center gap-4">
                 <div
                   className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "rgba(28,58,94,0.08)" }}
+                  style={{ backgroundColor: "rgba(24,24,27,0.07)" }}
                 >
-                  <Phone size={16} color="#1C3A5E" />
+                  <Phone size={16} color="#18181B" />
                 </div>
                 <div>
                   <p
-                    className="text-xs text-[#1A1A1A]/40 uppercase tracking-widest"
+                    className="text-xs text-[#3F3F46]/40 uppercase tracking-widest"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Phone / Text
                   </p>
                   <a
                     href="tel:+17075550100"
-                    className="text-sm font-medium text-[#1C3A5E] hover:underline"
+                    className="text-sm font-medium text-[#18181B] hover:underline"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     (707) 555-0100
@@ -107,20 +107,20 @@ export default function Contact() {
               <div className="flex items-center gap-4">
                 <div
                   className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "rgba(28,58,94,0.08)" }}
+                  style={{ backgroundColor: "rgba(24,24,27,0.07)" }}
                 >
-                  <Mail size={16} color="#1C3A5E" />
+                  <Mail size={16} color="#18181B" />
                 </div>
                 <div>
                   <p
-                    className="text-xs text-[#1A1A1A]/40 uppercase tracking-widest"
+                    className="text-xs text-[#3F3F46]/40 uppercase tracking-widest"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Email
                   </p>
                   <a
                     href="mailto:duke@copperbaytech.com"
-                    className="text-sm font-medium text-[#1C3A5E] hover:underline"
+                    className="text-sm font-medium text-[#18181B] hover:underline"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     duke@copperbaytech.com
@@ -131,19 +131,19 @@ export default function Contact() {
               <div className="flex items-center gap-4">
                 <div
                   className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "rgba(28,58,94,0.08)" }}
+                  style={{ backgroundColor: "rgba(24,24,27,0.07)" }}
                 >
-                  <Clock size={16} color="#1C3A5E" />
+                  <Clock size={16} color="#18181B" />
                 </div>
                 <div>
                   <p
-                    className="text-xs text-[#1A1A1A]/40 uppercase tracking-widest"
+                    className="text-xs text-[#3F3F46]/40 uppercase tracking-widest"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Response Time
                   </p>
                   <p
-                    className="text-sm font-medium text-[#1C3A5E]"
+                    className="text-sm font-medium text-[#18181B]"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Within one business day
@@ -161,7 +161,7 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
           >
             {status === "success" ? (
-              <div className="h-full flex items-center justify-center rounded-2xl bg-[#F5F4F0] p-12 text-center">
+              <div className="h-full flex items-center justify-center rounded-2xl bg-[#FAFAF9] p-12 text-center">
                 <div>
                   <div
                     className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -170,13 +170,13 @@ export default function Contact() {
                     <span className="text-2xl">✓</span>
                   </div>
                   <h3
-                    className="text-xl font-bold text-[#1C3A5E] mb-2"
+                    className="text-xl font-bold text-[#18181B] mb-2"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Message received
                   </h3>
                   <p
-                    className="text-[#1A1A1A]/60 text-sm"
+                    className="text-[#3F3F46]/60 text-sm"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     We&apos;ll be in touch within one business day.
@@ -292,15 +292,15 @@ export default function Contact() {
                   disabled={status === "loading"}
                   className="w-full py-3.5 rounded-md text-sm font-semibold text-white transition-colors disabled:opacity-60"
                   style={{
-                    backgroundColor: "#2D6A4F",
+                    backgroundColor: "#18181B",
                     fontFamily: "var(--font-heading)",
                   }}
                   onMouseEnter={(e) => {
                     if (status !== "loading")
-                      e.currentTarget.style.backgroundColor = "#235540";
+                      e.currentTarget.style.backgroundColor = "#111113";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#2D6A4F";
+                    e.currentTarget.style.backgroundColor = "#18181B";
                   }}
                 >
                   {status === "loading" ? "Sending..." : "Send Message"}

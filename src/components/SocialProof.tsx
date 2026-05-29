@@ -11,7 +11,7 @@ export default function SocialProof() {
   ];
 
   return (
-    <section className="bg-[#1C3A5E] py-5">
+    <section className="bg-[#18181B] py-5">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
           <span

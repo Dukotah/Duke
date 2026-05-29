@@ -37,7 +37,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#1C3A5E] text-white">
+    <footer className="bg-[#18181B] text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
@@ -50,7 +50,7 @@ export default function Footer() {
               className="text-2xl font-bold mb-3"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Copper Bay<span style={{ color: "#C8A96E" }}>Tech</span>
+              Copper Bay<span style={{ color: "#F97316" }}>Tech</span>
             </p>
             <p
               className="text-white/50 text-sm leading-relaxed"
@@ -64,7 +64,7 @@ export default function Footer() {
           {/* Nav */}
           <div>
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#C8A96E] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Navigation
@@ -87,7 +87,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#C8A96E] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Contact

@@ -21,13 +21,13 @@ export default function About() {
             transition={{ duration: 0.6 }}
           >
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#C8A96E] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               About Copper Bay Tech
             </p>
             <h2
-              className="text-4xl font-bold text-[#1C3A5E] mb-6 leading-tight"
+              className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Local expertise.
@@ -35,7 +35,7 @@ export default function About() {
               Enterprise-grade standards.
             </h2>
             <p
-              className="text-[#1A1A1A]/60 leading-relaxed mb-6"
+              className="text-[#3F3F46]/60 leading-relaxed mb-6"
               style={{ fontFamily: "var(--font-body)" }}
             >
               I&apos;m Duke, a Sonoma County-based developer and IT consultant with a
@@ -45,7 +45,7 @@ export default function About() {
               without the overhead or the runaround.
             </p>
             <p
-              className="text-[#1A1A1A]/60 leading-relaxed mb-8"
+              className="text-[#3F3F46]/60 leading-relaxed mb-8"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Most of my clients come to me after being burned by a template agency or
@@ -59,12 +59,12 @@ export default function About() {
                 <li key={h.text} className="flex items-start gap-3">
                   <div
                     className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ backgroundColor: "rgba(28,58,94,0.08)" }}
+                    style={{ backgroundColor: "rgba(24,24,27,0.07)" }}
                   >
-                    <h.icon size={16} color="#1C3A5E" />
+                    <h.icon size={16} color="#18181B" />
                   </div>
                   <span
-                    className="text-sm text-[#1A1A1A]/70 leading-relaxed"
+                    className="text-sm text-[#3F3F46]/70 leading-relaxed"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     {h.text}
@@ -79,10 +79,10 @@ export default function About() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl overflow-hidden bg-[#1C3A5E] p-10 text-white"
+            className="rounded-2xl overflow-hidden bg-[#18181B] p-10 text-white"
           >
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#C8A96E] mb-6"
+              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Service Area
@@ -108,7 +108,7 @@ export default function About() {
                 "Cloverdale",
               ].map((city) => (
                 <div key={city} className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C8A96E] flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0" />
                   <span
                     className="text-sm text-white/70"
                     style={{ fontFamily: "var(--font-heading)" }}

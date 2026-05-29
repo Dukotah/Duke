@@ -23,7 +23,7 @@ const problems = [
 
 export default function Problem() {
   return (
-    <section className="py-24 bg-[#F5F4F0]">
+    <section className="py-24 bg-[#FAFAF9]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -33,14 +33,14 @@ export default function Problem() {
           className="text-center mb-16"
         >
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#1C3A5E] mb-4"
+            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Most local businesses are one IT problem
             <br className="hidden md:block" /> away from a bad week.
           </h2>
           <p
-            className="text-lg text-[#1A1A1A]/60 max-w-2xl mx-auto"
+            className="text-lg text-[#3F3F46]/60 max-w-2xl mx-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
             These aren&apos;t rare edge cases. They&apos;re the default state for businesses
@@ -56,22 +56,22 @@ export default function Problem() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-white rounded-xl p-8 shadow-sm border border-[#1C3A5E]/5"
+              className="bg-white rounded-xl p-8 shadow-sm border border-[#18181B]/5"
             >
               <div
                 className="w-12 h-12 rounded-lg flex items-center justify-center mb-5"
-                style={{ backgroundColor: "rgba(28,58,94,0.08)" }}
+                style={{ backgroundColor: "rgba(24,24,27,0.07)" }}
               >
-                <p.icon size={22} color="#1C3A5E" />
+                <p.icon size={22} color="#18181B" />
               </div>
               <h3
-                className="text-lg font-semibold text-[#1C3A5E] mb-3"
+                className="text-lg font-semibold text-[#18181B] mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {p.title}
               </h3>
               <p
-                className="text-[#1A1A1A]/60 leading-relaxed text-sm"
+                className="text-[#3F3F46]/60 leading-relaxed text-sm"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {p.body}
@@ -85,7 +85,7 @@ export default function Problem() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-center mt-12 text-[#1A1A1A]/50 text-sm"
+          className="text-center mt-12 text-[#3F3F46]/50 text-sm"
           style={{ fontFamily: "var(--font-body)" }}
         >
           We fix that — without the enterprise price tag.
