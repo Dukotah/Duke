@@ -21,6 +21,38 @@ type Post = {
 
 const posts: Post[] = [
   {
+    slug: "how-to-speed-up-your-business-website",
+    tag: "Web Development",
+    title: "How to Speed Up Your Business Website (Without a Developer)",
+    excerpt: "Five things you can do today without touching code — and three signs it's time to call in a developer.",
+    readTime: "5 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "why-your-business-needs-mfa",
+    tag: "Cybersecurity",
+    title: "Why Every Small Business Needs Multi-Factor Authentication (And How to Set It Up)",
+    excerpt: "95% of account takeovers rely on stolen passwords alone. MFA stops them. Here's what it is, why it matters, and how to turn it on in under 10 minutes.",
+    readTime: "4 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "small-business-website-cost-guide",
+    tag: "Web Development",
+    title: "How Much Does a Business Website Cost in 2026? A Plain-English Guide",
+    excerpt: "DIY builders, freelancers, agencies, custom dev — the honest price ranges, what drives costs up, and what you should expect to pay in Sonoma County.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "what-is-a-managed-service-provider",
+    tag: "IT Support",
+    title: "What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One?",
+    excerpt: "MSP, break-fix, in-house IT — what's the difference, when does each make sense, and what should a small business in Sonoma County actually expect to pay?",
+    readTime: "5 min read",
+    date: "June 2026",
+  },
+  {
     slug: "google-business-profile-setup-sonoma-county",
     tag: "Local SEO",
     title: "How to Set Up and Optimize Your Google Business Profile in Sonoma County",
