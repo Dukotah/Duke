@@ -14,8 +14,23 @@ export default function Footer() {
       "@type": "PostalAddress",
       addressLocality: "Petaluma",
       addressRegion: "CA",
+      postalCode: "94952",
       addressCountry: "US",
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 38.2324,
+      longitude: -122.6367,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
+    ],
+    priceRange: "$$",
     areaServed: [
       "Petaluma",
       "Santa Rosa",
