@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
@@ -64,7 +65,34 @@ interface MobileData {
   tapTargetsOk: boolean;
 }
 
-type CheckState<T> = { status: "idle" } | { status: "loading" } | { status: "done"; data: T } | { status: "error"; message: string };
+interface ComplianceIssue {
+  id: string;
+  category: string;
+  label: string;
+  severity: string;
+  detail: string;
+}
+
+interface ComplianceData {
+  adaScore: number;
+  hipaaScore: number;
+  issues: ComplianceIssue[];
+}
+
+type CheckState<T> =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "done"; data: T }
+  | { status: "error"; message: string };
+
+type AllChecks = {
+  speed: CheckState<SpeedData>;
+  ssl: CheckState<SSLData>;
+  seo: CheckState<SEOData>;
+  links: CheckState<LinksData>;
+  mobile: CheckState<MobileData>;
+  compliance: CheckState<ComplianceData>;
+};
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -81,6 +109,33 @@ function metricDotColor(score: number | null) {
   return "#EF4444";
 }
 
+function letterGrade(score: number) {
+  if (score >= 90) return "A";
+  if (score >= 80) return "B";
+  if (score >= 65) return "C";
+  if (score >= 50) return "D";
+  return "F";
+}
+
+function normalizeUrl(url: string) {
+  let u = url.trim();
+  if (!u.startsWith("http://") && !u.startsWith("https://")) u = "https://" + u;
+  return u;
+}
+
+async function runCheck<T>(endpoint: string, url: string): Promise<T> {
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url }),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || `${endpoint} failed`);
+  return json as T;
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
 function ScoreCircle({ score, label, size = 110 }: { score: number; label: string; size?: number }) {
   const r = size * 0.42;
   const circ = 2 * Math.PI * r;
@@ -89,33 +144,40 @@ function ScoreCircle({ score, label, size = 110 }: { score: number; label: strin
   return (
     <div className="flex flex-col items-center gap-1">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#27272A" strokeWidth={size*0.08} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#27272A" strokeWidth={size * 0.08} />
         <circle
-          cx={size/2} cy={size/2} r={r}
+          cx={size / 2} cy={size / 2} r={r}
           fill="none" stroke={color}
-          strokeWidth={size*0.08}
+          strokeWidth={size * 0.08}
           strokeDasharray={circ}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          transform={`rotate(-90 ${size/2} ${size/2})`}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
-        <text x={size/2} y={size/2} textAnchor="middle" dominantBaseline="central"
-          fill={color} fontSize={size*0.22} fontWeight="bold">{score}</text>
+        <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central"
+          fill={color} fontSize={size * 0.22} fontWeight="bold">{score}</text>
       </svg>
       <span className="text-xs text-zinc-400 text-center leading-tight">{label}</span>
     </div>
   );
 }
 
-function SectionCard({ title, icon, status, children }: {
+function CollapsibleCard({
+  title, icon, status, defaultOpen = true, children,
+}: {
   title: string;
   icon: string;
   status: "idle" | "loading" | "done" | "error";
+  defaultOpen?: boolean;
   children?: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-zinc-800">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 px-5 py-4 border-b border-zinc-800 text-left hover:bg-zinc-800/40 transition-colors"
+      >
         <span className="text-xl">{icon}</span>
         <h3 className="text-white font-bold text-sm flex-1">{title}</h3>
         {status === "loading" && (
@@ -123,8 +185,9 @@ function SectionCard({ title, icon, status, children }: {
         )}
         {status === "done" && <span className="text-green-400 text-xs font-semibold">Done</span>}
         {status === "error" && <span className="text-red-400 text-xs font-semibold">Failed</span>}
-      </div>
-      {children && <div className="p-5">{children}</div>}
+        <span className="text-zinc-500 text-xs ml-2">{open ? "▲" : "▼"}</span>
+      </button>
+      {open && children && <div className="p-5">{children}</div>}
     </div>
   );
 }
@@ -139,11 +202,11 @@ function LoadingRows() {
   );
 }
 
-// ── Result sections ───────────────────────────────────────────────────────────
+// ── Detail Cards ──────────────────────────────────────────────────────────────
 
-function SpeedResults({ state }: { state: CheckState<SpeedData> }) {
+function SpeedCard({ state }: { state: CheckState<SpeedData> }) {
   return (
-    <SectionCard title="Speed & Performance" icon="⚡" status={state.status}>
+    <CollapsibleCard title="Speed & Performance" icon="⚡" status={state.status}>
       {state.status === "loading" && <LoadingRows />}
       {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
       {state.status === "done" && (() => {
@@ -161,7 +224,7 @@ function SpeedResults({ state }: { state: CheckState<SpeedData> }) {
               </div>
             </div>
             <div className="grid grid-cols-3 gap-2">
-              {(["fcp","lcp","tbt","cls","si","tti"] as const).map(k => {
+              {(["fcp", "lcp", "tbt", "cls", "si", "tti"] as const).map(k => {
                 const m = d.metrics[k];
                 return (
                   <div key={k} className="bg-[#18181B] rounded-lg p-3">
@@ -189,13 +252,13 @@ function SpeedResults({ state }: { state: CheckState<SpeedData> }) {
           </div>
         );
       })()}
-    </SectionCard>
+    </CollapsibleCard>
   );
 }
 
-function SSLResults({ state }: { state: CheckState<SSLData> }) {
+function SSLCard({ state }: { state: CheckState<SSLData> }) {
   return (
-    <SectionCard title="SSL Certificate" icon="🔒" status={state.status}>
+    <CollapsibleCard title="SSL Certificate" icon="🔒" status={state.status}>
       {state.status === "loading" && <LoadingRows />}
       {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
       {state.status === "done" && (() => {
@@ -241,17 +304,16 @@ function SSLResults({ state }: { state: CheckState<SSLData> }) {
           </div>
         );
       })()}
-    </SectionCard>
+    </CollapsibleCard>
   );
 }
 
-function SEOResults({ state }: { state: CheckState<SEOData> }) {
+function SEOCard({ state }: { state: CheckState<SEOData> }) {
   const sevIcon = (s: SEOIssue["severity"]) => s === "pass" ? "✓" : s === "warning" ? "⚠" : "✗";
   const sevColor = (s: SEOIssue["severity"]) => s === "pass" ? "text-green-400" : s === "warning" ? "text-orange-400" : "text-red-400";
   const sevBg = (s: SEOIssue["severity"]) => s === "pass" ? "bg-green-500/10" : s === "warning" ? "bg-orange-500/10" : "bg-red-500/10";
-
   return (
-    <SectionCard title="SEO Health" icon="🔍" status={state.status}>
+    <CollapsibleCard title="SEO Health" icon="🔍" status={state.status}>
       {state.status === "loading" && <LoadingRows />}
       {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
       {state.status === "done" && (() => {
@@ -285,13 +347,13 @@ function SEOResults({ state }: { state: CheckState<SEOData> }) {
           </div>
         );
       })()}
-    </SectionCard>
+    </CollapsibleCard>
   );
 }
 
-function LinksResults({ state }: { state: CheckState<LinksData> }) {
+function LinksCard({ state }: { state: CheckState<LinksData> }) {
   return (
-    <SectionCard title="Broken Links" icon="🔗" status={state.status}>
+    <CollapsibleCard title="Broken Links" icon="🔗" status={state.status}>
       {state.status === "loading" && (
         <div className="space-y-2 py-2">
           <div className="h-3 bg-zinc-800 rounded animate-pulse w-4/5" />
@@ -350,13 +412,13 @@ function LinksResults({ state }: { state: CheckState<LinksData> }) {
           </div>
         );
       })()}
-    </SectionCard>
+    </CollapsibleCard>
   );
 }
 
-function MobileResults({ state }: { state: CheckState<MobileData> }) {
+function MobileCard({ state }: { state: CheckState<MobileData> }) {
   return (
-    <SectionCard title="Mobile & Accessibility" icon="📱" status={state.status}>
+    <CollapsibleCard title="Mobile & Accessibility" icon="📱" status={state.status}>
       {state.status === "loading" && (
         <div className="space-y-2 py-2">
           <div className="h-3 bg-zinc-800 rounded animate-pulse w-4/5" />
@@ -399,70 +461,116 @@ function MobileResults({ state }: { state: CheckState<MobileData> }) {
           </div>
         );
       })()}
-    </SectionCard>
+    </CollapsibleCard>
   );
+}
+
+function ComplianceCard({ state }: { state: CheckState<ComplianceData> }) {
+  const sevColor = (s: string) => s === "pass" ? "text-green-400" : s === "warning" ? "text-orange-400" : "text-red-400";
+  const sevBg = (s: string) => s === "pass" ? "bg-green-500/10" : s === "warning" ? "bg-orange-500/10" : "bg-red-500/10";
+  const sevIcon = (s: string) => s === "pass" ? "✓" : s === "warning" ? "⚠" : "✗";
+  return (
+    <CollapsibleCard title="ADA / HIPAA Compliance" icon="♿" status={state.status}>
+      {state.status === "loading" && <LoadingRows />}
+      {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
+      {state.status === "done" && (() => {
+        const d = state.data;
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col items-center bg-[#18181B] rounded-xl p-4">
+                <ScoreCircle score={d.adaScore} label="ADA / WCAG" size={90} />
+              </div>
+              <div className="flex flex-col items-center bg-[#18181B] rounded-xl p-4">
+                <ScoreCircle score={d.hipaaScore} label="HIPAA" size={90} />
+              </div>
+            </div>
+            {d.issues.length > 0 && (
+              <div className="space-y-0 rounded-xl overflow-hidden border border-zinc-800">
+                {d.issues.map((issue, i) => (
+                  <div key={i} className={`flex items-start gap-3 px-4 py-3 ${i < d.issues.length - 1 ? "border-b border-zinc-800" : ""} bg-[#18181B]`}>
+                    <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${sevBg(issue.severity)} ${sevColor(issue.severity)}`}>
+                      {sevIcon(issue.severity)}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-white text-xs font-semibold">{issue.label}</p>
+                        <span className="text-zinc-600 text-[10px] uppercase">{issue.category}</span>
+                      </div>
+                      <p className="text-zinc-500 text-xs break-words">{issue.detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+    </CollapsibleCard>
+  );
+}
+
+// ── Score computation helpers ─────────────────────────────────────────────────
+
+function getSpeedScore(state: CheckState<SpeedData>): number | null {
+  return state.status === "done" ? state.data.score : null;
+}
+function getSSLScore(state: CheckState<SSLData>): number | null {
+  if (state.status !== "done") return null;
+  return state.data.valid && !state.data.error ? 100 : 0;
+}
+function getSEOScore(state: CheckState<SEOData>): number | null {
+  return state.status === "done" ? state.data.score : null;
+}
+function getLinksScore(state: CheckState<LinksData>): number | null {
+  if (state.status !== "done") return null;
+  return Math.max(0, 100 - state.data.broken.length * 15);
+}
+function getMobileScore(state: CheckState<MobileData>): number | null {
+  return state.status === "done" ? state.data.mobileScore : null;
+}
+function getComplianceScore(state: CheckState<ComplianceData>): number | null {
+  if (state.status !== "done") return null;
+  return Math.round((state.data.adaScore + state.data.hipaaScore) / 2);
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
-type AllChecks = {
-  speed: CheckState<SpeedData>;
-  ssl: CheckState<SSLData>;
-  seo: CheckState<SEOData>;
-  links: CheckState<LinksData>;
-  mobile: CheckState<MobileData>;
-};
-
-const idle: AllChecks = {
+const idleChecks: AllChecks = {
   speed: { status: "idle" },
-  ssl:   { status: "idle" },
-  seo:   { status: "idle" },
+  ssl: { status: "idle" },
+  seo: { status: "idle" },
   links: { status: "idle" },
-  mobile:{ status: "idle" },
+  mobile: { status: "idle" },
+  compliance: { status: "idle" },
 };
 
-function normalizeUrl(url: string) {
-  let u = url.trim();
-  if (!u.startsWith("http://") && !u.startsWith("https://")) u = "https://" + u;
-  return u;
-}
-
-async function runCheck<T>(endpoint: string, url: string): Promise<T> {
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url }),
-  });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || `${endpoint} failed`);
-  return json as T;
-}
-
-export default function ToolsPage() {
+export default function ReportPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [inputUrl, setInputUrl] = useState("");
-  const [checks, setChecks] = useState<AllChecks>(idle);
+  const [checks, setChecks] = useState<AllChecks>(idleChecks);
   const [running, setRunning] = useState(false);
-  const [auditedUrl, setAuditedUrl] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const urlParam = searchParams.get("url") ?? "";
 
   function setCheck<K extends keyof AllChecks>(key: K, state: AllChecks[K]) {
     setChecks(prev => ({ ...prev, [key]: state }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!inputUrl.trim() || running) return;
-    const url = normalizeUrl(inputUrl);
-    setAuditedUrl(url);
+  const runAll = useCallback(async (rawUrl: string) => {
+    const url = normalizeUrl(rawUrl);
     setRunning(true);
     setChecks({
       speed: { status: "loading" },
-      ssl:   { status: "loading" },
-      seo:   { status: "loading" },
+      ssl: { status: "loading" },
+      seo: { status: "loading" },
       links: { status: "loading" },
-      mobile:{ status: "loading" },
+      mobile: { status: "loading" },
+      compliance: { status: "loading" },
     });
 
-    // Fire all checks in parallel — each updates independently as it resolves
     const run = async <K extends keyof AllChecks, T>(
       key: K,
       endpoint: string,
@@ -477,159 +585,196 @@ export default function ToolsPage() {
     };
 
     await Promise.all([
-      run<"speed", SpeedData>("speed", "/api/audit",  d => ({ status: "done", data: d })),
-      run<"ssl",   SSLData  >("ssl",   "/api/ssl",    d => ({ status: "done", data: d })),
-      run<"seo",   SEOData  >("seo",   "/api/seo",    d => ({ status: "done", data: d })),
-      run<"links", LinksData>("links", "/api/links",  d => ({ status: "done", data: d })),
-      run<"mobile",MobileData>("mobile","/api/mobile",d => ({ status: "done", data: d })),
+      run<"speed", SpeedData>("speed", "/api/audit", d => ({ status: "done", data: d })),
+      run<"ssl", SSLData>("ssl", "/api/ssl", d => ({ status: "done", data: d })),
+      run<"seo", SEOData>("seo", "/api/seo", d => ({ status: "done", data: d })),
+      run<"links", LinksData>("links", "/api/links", d => ({ status: "done", data: d })),
+      run<"mobile", MobileData>("mobile", "/api/mobile", d => ({ status: "done", data: d })),
+      run<"compliance", ComplianceData>("compliance", "/api/compliance", d => ({ status: "done", data: d })),
     ]);
 
     setRunning(false);
+  }, []);
+
+  // Fire when url param is present
+  useEffect(() => {
+    if (urlParam) {
+      runAll(urlParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlParam]);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!inputUrl.trim()) return;
+    router.push(`/report?url=${encodeURIComponent(inputUrl.trim())}`);
   }
 
-  const hasResults = Object.values(checks).some(c => c.status !== "idle");
+  function handleShare() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
+  // Compute scores
+  const speedScore = getSpeedScore(checks.speed);
+  const sslScore = getSSLScore(checks.ssl);
+  const seoScore = getSEOScore(checks.seo);
+  const linksScore = getLinksScore(checks.links);
+  const mobileScore = getMobileScore(checks.mobile);
+  const complianceScore = getComplianceScore(checks.compliance);
+
+  const allScores = [speedScore, sslScore, seoScore, linksScore, mobileScore, complianceScore].filter((s): s is number => s !== null);
+  const overallScore = allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : null;
+
+  const hasResults = Object.values(checks).some(c => c.status !== "idle");
+  const displayUrl = urlParam || "";
+
+  // ── No URL param: show input form ──────────────────────────────────────────
+  if (!urlParam) {
+    return (
+      <div className="min-h-screen bg-[#18181B] text-white">
+        <Nav />
+        <section className="pt-32 pb-16 px-6 text-center">
+          <div className="max-w-2xl mx-auto">
+            <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
+              Shareable Report
+            </span>
+            <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
+              Website{" "}
+              <span className="text-orange-400">Report Dashboard</span>
+            </h1>
+            <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
+              Get a full audit — speed, SSL, SEO, broken links, mobile, and ADA/HIPAA compliance — in one shareable link.
+            </p>
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+              <input
+                type="text"
+                value={inputUrl}
+                onChange={e => setInputUrl(e.target.value)}
+                placeholder="yourwebsite.com"
+                className="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm"
+              />
+              <button
+                type="submit"
+                disabled={!inputUrl.trim()}
+                className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-7 py-3.5 rounded-full transition-colors text-sm whitespace-nowrap"
+              >
+                Generate Report
+              </button>
+            </form>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  // ── Report view ────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
       <Nav />
 
-      {/* Hero */}
-      <section className="pt-32 pb-12 px-6 text-center">
-        <div className="max-w-2xl mx-auto">
-          <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
-            Free Tool
-          </span>
-          <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
-            Full Website{" "}
-            <span className="text-orange-400">Health Check</span>
-          </h1>
-          <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
-            Enter your URL and get a complete audit — speed, SSL, SEO, broken links, and mobile
-            readiness — all at once. Free, no signup.
+      {/* Sticky header bar */}
+      <div className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur border-b border-zinc-800 px-4 py-3">
+        <div className="max-w-4xl mx-auto flex items-center gap-3">
+          <span className="text-orange-400 font-black text-sm whitespace-nowrap">Copper Bay Tech</span>
+          <span className="text-zinc-700 hidden sm:block">|</span>
+          <p className="text-zinc-400 text-xs flex-1 truncate hidden sm:block">{displayUrl}</p>
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition-colors whitespace-nowrap ml-auto"
+          >
+            {copied ? "✓ Copied!" : "Share"}
+          </button>
+        </div>
+      </div>
+
+      {/* Hero summary */}
+      <section className="pt-10 pb-6 px-6">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-zinc-500 text-xs text-center mb-2 break-all">
+            Report for: <span className="text-zinc-300">{displayUrl}</span>
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
-            <input
-              type="text"
-              value={inputUrl}
-              onChange={e => setInputUrl(e.target.value)}
-              placeholder="yourwebsite.com"
-              disabled={running}
-              className="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm"
-            />
-            <button
-              type="submit"
-              disabled={running || !inputUrl.trim()}
-              className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-7 py-3.5 rounded-full transition-colors text-sm whitespace-nowrap"
-            >
-              {running ? "Analyzing…" : "Run Full Audit"}
-            </button>
-          </form>
+          {/* Score circles */}
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 justify-items-center mt-6 mb-8">
+            <ScoreCircle score={speedScore ?? 0} label="Speed" size={100} />
+            <ScoreCircle score={sslScore ?? 0} label="SSL" size={100} />
+            <ScoreCircle score={seoScore ?? 0} label="SEO" size={100} />
+            <ScoreCircle score={linksScore ?? 0} label="Links" size={100} />
+            <ScoreCircle score={mobileScore ?? 0} label="Mobile" size={100} />
+            <ScoreCircle score={complianceScore ?? 0} label="ADA/HIPAA" size={100} />
+          </div>
 
-          {running && (
-            <p className="text-zinc-500 text-xs mt-4">
-              Running 5 checks in parallel — results appear as each one completes
-            </p>
+          {/* Overall grade */}
+          {overallScore !== null && (
+            <div className="flex flex-col items-center gap-1 mb-2">
+              <div className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-2xl px-8 py-5">
+                <div className="text-center">
+                  <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Overall Grade</p>
+                  <p className="font-black leading-none" style={{ fontSize: "4rem", color: scoreColor(overallScore) }}>
+                    {letterGrade(overallScore)}
+                  </p>
+                </div>
+                <div className="w-px h-16 bg-zinc-800" />
+                <div className="text-center">
+                  <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Average Score</p>
+                  <p className="text-3xl font-black" style={{ color: scoreColor(overallScore) }}>{overallScore}</p>
+                  <p className="text-zinc-600 text-[10px]">out of 100</p>
+                </div>
+              </div>
+              {running && (
+                <p className="text-zinc-600 text-xs mt-2">Checks still running — scores will update…</p>
+              )}
+            </div>
           )}
         </div>
       </section>
 
-      {/* Results */}
+      {/* Detail cards */}
       {hasResults && (
-        <section className="px-6 pb-16">
-          <div className="max-w-3xl mx-auto">
-            {auditedUrl && (
-              <p className="text-zinc-500 text-xs text-center mb-6 break-all">
-                Auditing: <span className="text-zinc-300">{auditedUrl}</span>
-              </p>
-            )}
-            <div className="space-y-4">
-              <SpeedResults  state={checks.speed}  />
-              <SSLResults    state={checks.ssl}    />
-              <SEOResults    state={checks.seo}    />
-              <LinksResults  state={checks.links}  />
-              <MobileResults state={checks.mobile} />
-            </div>
+        <section className="px-6 pb-12">
+          <div className="max-w-4xl mx-auto space-y-4">
+            <SpeedCard state={checks.speed} />
+            <SSLCard state={checks.ssl} />
+            <SEOCard state={checks.seo} />
+            <LinksCard state={checks.links} />
+            <MobileCard state={checks.mobile} />
+            <ComplianceCard state={checks.compliance} />
 
-            {!running && auditedUrl && (
-              <div className="text-center mt-8 mb-2">
-                <a
-                  href={`/report?url=${encodeURIComponent(auditedUrl)}`}
-                  className="inline-flex items-center gap-1.5 text-orange-400 hover:text-orange-300 text-sm font-semibold transition-colors"
+            {/* Shareable report link CTA */}
+            {!running && (
+              <div className="text-center py-4">
+                <button
+                  onClick={handleShare}
+                  className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 text-sm font-semibold transition-colors"
                 >
-                  View shareable report →
-                </a>
+                  <span>{copied ? "✓ Link copied to clipboard!" : "Copy shareable report link →"}</span>
+                </button>
               </div>
             )}
 
+            {/* Fix CTA */}
             {!running && (
-              <div className="mt-4 rounded-2xl p-6 text-center" style={{ border: "1px solid #F97316", background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
+              <div className="mt-6 rounded-2xl p-6 text-center" style={{ border: "1px solid #F97316", background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
                 <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">Free Consultation</p>
-                <h4 className="text-white text-xl font-black mb-2">Want us to fix this?</h4>
+                <h4 className="text-white text-xl font-black mb-2">Want us to fix these issues?</h4>
                 <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
-                  Copper Bay Tech can resolve most issues in under a week. Get a free 30-minute call.
+                  Copper Bay Tech can resolve most issues in under a week. Book a free 30-minute call.
                 </p>
                 <a
                   href="/#contact"
                   className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
                 >
-                  Get a Free Review
+                  Book a Free Call
                 </a>
               </div>
             )}
           </div>
         </section>
       )}
-
-      {/* What you get — only when idle */}
-      {!hasResults && (
-        <section className="px-6 pb-24">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-center text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-6">
-              What Gets Checked
-            </h2>
-            <div className="grid sm:grid-cols-5 gap-3">
-              {[
-                { icon: "⚡", label: "Speed", desc: "PageSpeed score & Core Web Vitals" },
-                { icon: "🔒", label: "SSL", desc: "Certificate validity & expiry" },
-                { icon: "🔍", label: "SEO", desc: "Title, meta, H1s, OG tags" },
-                { icon: "🔗", label: "Links", desc: "404s and redirect chains" },
-                { icon: "📱", label: "Mobile", desc: "Responsiveness & accessibility" },
-              ].map(item => (
-                <div key={item.label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-                  <div className="text-2xl mb-2">{item.icon}</div>
-                  <p className="text-white font-bold text-xs mb-1">{item.label}</p>
-                  <p className="text-zinc-500 text-[11px]">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Other Tools */}
-      <section className="px-6 pb-16">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-center text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-6">
-            More Free Tools
-          </h2>
-          <a
-            href="/tools/compliance"
-            className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 hover:border-orange-500/40 rounded-2xl p-5 transition-colors group"
-          >
-            <span className="text-3xl">♿</span>
-            <div className="flex-1 min-w-0">
-              <p className="text-white font-bold text-sm group-hover:text-orange-400 transition-colors">
-                ADA &amp; HIPAA Compliance Checker
-              </p>
-              <p className="text-zinc-500 text-xs mt-0.5">
-                Scan for accessibility issues (WCAG) and HIPAA privacy indicators
-              </p>
-            </div>
-            <span className="text-orange-500 text-lg">→</span>
-          </a>
-        </div>
-      </section>
 
       <Footer />
     </div>
