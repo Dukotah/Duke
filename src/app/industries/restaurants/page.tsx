@@ -1,6 +1,37 @@
 import type { Metadata } from "next";
 import IndustryPage from "@/components/IndustryPage";
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Can you integrate with our existing POS system?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes — we work with most major POS systems including Toast, Square, Clover, and Lightspeed. We'll assess your current setup and integrate where possible.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "We already have a website. Can you just improve it?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Absolutely. We'll review your current site and tell you honestly whether it needs a rebuild or just targeted improvements. You'll have a clear recommendation within 24 hours.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do you work on-site or remotely?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Both. Network and hardware work is done on-site. Web development, software configuration, and many IT issues can be handled remotely.",
+      },
+    },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "IT Support & Websites for Sonoma County Restaurants | Copper Bay Tech",
   description:
@@ -12,7 +43,12 @@ export const metadata: Metadata = {
 
 export default function RestaurantsPage() {
   return (
-    <IndustryPage
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <IndustryPage
       industry="Restaurants & Food Service"
       tagline="Tech that keeps your front-of-house running."
       description="From POS crashes during dinner rush to guest Wi-Fi that can't handle a full house, restaurant tech problems cost you money every time they happen. We work with Sonoma County restaurants to keep the technology invisible — so you can focus on the food."
@@ -59,5 +95,6 @@ export default function RestaurantsPage() {
         },
       ]}
     />
+    </>
   );
 }

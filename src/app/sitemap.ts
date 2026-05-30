@@ -83,6 +83,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    { url: `${base}/industries`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/case-studies`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/cotati`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/guerneville`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/bodega-bay`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/glen-ellen`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/privacy`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
     {
       url: `${base}/blog/google-business-profile-setup-sonoma-county`,

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight, ShieldAlert } from "lucide-react";
+import BlogEmailCapture from "@/components/BlogEmailCapture";
 
 export const metadata: Metadata = {
   title: "Ransomware Protection for Small Business: What Actually Works | Copper Bay Tech",
@@ -171,6 +172,8 @@ export default function Article() {
                 If ransomware hit your business tomorrow and encrypted everything — how long would it take to recover, and what would it cost? If you don't have a clear answer, that's the gap to close.
               </p>
             </div>
+
+            <BlogEmailCapture />
 
             <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>

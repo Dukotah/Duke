@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import BlogEmailCapture from "@/components/BlogEmailCapture";
 
 export const metadata: Metadata = {
   title: "5 Signs Your Website Is Costing You Customers | Copper Bay Tech",
@@ -115,6 +116,8 @@ export default function Article() {
                 Run Free Website Audit <ArrowRight size={14} />
               </Link>
             </div>
+            <BlogEmailCapture />
+
             <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import BlogEmailCapture from "@/components/BlogEmailCapture";
 
 export const metadata: Metadata = {
   title: "How Much Does IT Support Cost for a Small Business? | Copper Bay Tech",
@@ -153,6 +154,8 @@ export default function Article() {
                 Most small businesses in Sonoma County can get solid IT support for $250–$750/month. Anything more than that should come with clear justification. Anything less and you should ask what's not included.
               </p>
             </div>
+
+            <BlogEmailCapture />
 
             <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>

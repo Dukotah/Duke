@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import BlogEmailCapture from "@/components/BlogEmailCapture";
 
 export const metadata: Metadata = {
   title: "How to Set Up and Optimize Your Google Business Profile in Sonoma County | Copper Bay Tech",
@@ -188,6 +189,8 @@ export default function Article() {
                 Get a free local SEO review <ArrowRight size={14} />
               </Link>
             </div>
+
+            <BlogEmailCapture />
 
             <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>

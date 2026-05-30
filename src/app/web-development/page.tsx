@@ -70,6 +70,41 @@ export default function WebDevelopmentPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "How long does it take to build a website?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Most small business websites are live in 2–3 weeks. Complex projects with custom functionality may take 4–6 weeks. We set a timeline before we start and stick to it.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Do you use WordPress or website builders?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "No. Every website we build is custom-coded — no WordPress, no Squarespace, no drag-and-drop builders. This means faster load times, better security, and full control over your site.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "What happens if I need changes after launch?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Small updates are quick and affordable. Larger changes are scoped and priced upfront. Many clients add a monthly retainer for ongoing updates and support.",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
         {/* Hero */}
         <section className="pt-32 pb-20 bg-[#18181B]">
           <div className="max-w-4xl mx-auto px-6">

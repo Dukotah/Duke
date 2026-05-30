@@ -70,6 +70,41 @@ export default function ITSupportPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Do I need to sign a long-term contract?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "No. All retainer plans are month-to-month with 30 days notice to cancel. No lock-in, no penalties.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "What's the difference between break-fix and a retainer?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Break-fix means you call when something goes wrong and pay hourly. A retainer means we're proactively monitoring and maintaining your systems — and we're motivated to prevent problems, not just fix them.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How quickly do you respond when something breaks?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Retainer clients get same-day response during business hours for urgent issues. We give you a direct line — not a ticket queue.",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
         {/* Hero */}
         <section className="pt-32 pb-20 bg-[#18181B]">
           <div className="max-w-4xl mx-auto px-6">

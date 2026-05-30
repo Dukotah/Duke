@@ -1,6 +1,37 @@
 import type { Metadata } from "next";
 import IndustryPage from "@/components/IndustryPage";
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How do you handle HIPAA compliance for websites?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We audit your current site for HIPAA gaps, implement encrypted contact and intake forms, ensure your hosting provider signs a BAA, and update your privacy policy. We document everything.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do you work with specific EHR systems?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We support most major EHR platforms including Athenahealth, DrChrono, Jane, and SimplePractice. We can help with setup, access controls, and staff training.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What does a HIPAA compliance audit actually cost?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "For a small practice, typically $800–$1,500. That includes a full gap assessment, written report, and 30-minute results walkthrough. Remediation is scoped separately.",
+      },
+    },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "HIPAA-Compliant IT & Websites for Sonoma County Medical Practices | Copper Bay Tech",
   description:
@@ -12,7 +43,12 @@ export const metadata: Metadata = {
 
 export default function HealthcarePage() {
   return (
-    <IndustryPage
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <IndustryPage
       industry="Medical & Dental Practices"
       tagline="HIPAA-compliant technology for patient-facing businesses."
       description="Medical and dental practices handle sensitive patient data every day — and the technology supporting that data has to meet a higher standard. We help Sonoma County practices build secure, compliant IT infrastructure without the enterprise price tag."
@@ -59,5 +95,6 @@ export default function HealthcarePage() {
         },
       ]}
     />
+    </>
   );
 }

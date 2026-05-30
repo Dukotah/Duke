@@ -58,6 +58,41 @@ export default function CybersecurityPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "How long does a security audit take?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Most audits are completed in 3–5 business days. You get a plain-English report with prioritized action items and a 30-minute walkthrough call.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Do I need a security audit if I'm a small business?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes — small businesses are the #1 ransomware target precisely because they're assumed to have weak security. An audit typically costs $600–$1,200 and can prevent a $200,000+ incident.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "What happens after the audit?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "You get a clear list of what to fix, in priority order, with estimated costs. We can implement the fixes for you or hand you the report to act on yourself — your choice.",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
         {/* Hero */}
         <section className="pt-32 pb-20 bg-[#18181B]">
           <div className="max-w-4xl mx-auto px-6">

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import BlogEmailCapture from "@/components/BlogEmailCapture";
 
 export const metadata: Metadata = {
   title: "How to Choose an IT Company in Sonoma County | Copper Bay Tech",
@@ -126,6 +127,8 @@ export default function Article() {
                 </p>
               </div>
             </div>
+
+            <BlogEmailCapture />
 
             <div className="mt-12 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <Link
