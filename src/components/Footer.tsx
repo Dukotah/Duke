@@ -85,7 +85,7 @@ export default function Footer() {
               Navigation
             </p>
             <ul className="space-y-2">
-              {["#services", "#how-it-works", "#about", "#contact"].map((href) => (
+              {["#services", "#how-it-works", "#about", "#faq", "#contact"].map((href) => (
                 <li key={href}>
                   <a
                     href={href}
@@ -96,6 +96,15 @@ export default function Footer() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a
+                  href="/pricing"
+                  className="text-sm text-white/50 hover:text-white transition-colors"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Pricing
+                </a>
+              </li>
             </ul>
           </div>
 
