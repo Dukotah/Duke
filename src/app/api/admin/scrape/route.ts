@@ -1,42 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 
-interface YelpBusiness {
-  id: string;
+interface PlacesResult {
   name: string;
-  phone: string;
-  location: { display_address: string[] };
-  url: string;
-}
-
-interface YelpDetailsResponse {
+  formatted_address?: string;
+  formatted_phone_number?: string;
   website?: string;
+  place_id: string;
 }
 
-async function fetchYelpBusinesses(term: string, location: string, apiKey: string) {
-  const params = new URLSearchParams({ term, location, limit: "20", sort_by: "rating" });
-  const res = await fetch(`https://api.yelp.com/v3/businesses/search?${params}`, {
-    headers: { Authorization: `Bearer ${apiKey}` },
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Yelp search error ${res.status}: ${err}`);
-  }
+async function searchPlaces(query: string, apiKey: string): Promise<PlacesResult[]> {
+  const params = new URLSearchParams({ query, key: apiKey });
+  const res = await fetch(
+    `https://maps.googleapis.com/maps/api/place/textsearch/json?${params}`
+  );
+  if (!res.ok) throw new Error(`Places API error: ${res.status}`);
   const data = await res.json();
-  return (data.businesses ?? []) as YelpBusiness[];
+
+  if (data.status === "REQUEST_DENIED") throw new Error(data.error_message ?? "API key invalid or Places API not enabled");
+  if (data.status === "ZERO_RESULTS") return [];
+  if (data.status !== "OK" && data.status !== "ZERO_RESULTS") throw new Error(`Places API: ${data.status}`);
+
+  return data.results ?? [];
 }
 
-async function fetchWebsite(businessId: string, apiKey: string): Promise<string | null> {
-  try {
-    const res = await fetch(`https://api.yelp.com/v3/businesses/${businessId}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-    if (!res.ok) return null;
-    const data: YelpDetailsResponse = await res.json();
-    return data.website ?? null;
-  } catch {
-    return null;
-  }
+async function getPlaceDetails(placeId: string, apiKey: string): Promise<{ website?: string; phone?: string }> {
+  const params = new URLSearchParams({
+    place_id: placeId,
+    fields: "website,formatted_phone_number",
+    key: apiKey,
+  });
+  const res = await fetch(
+    `https://maps.googleapis.com/maps/api/place/details/json?${params}`
+  );
+  if (!res.ok) return {};
+  const data = await res.json();
+  return {
+    website: data.result?.website ?? null,
+    phone: data.result?.formatted_phone_number ?? null,
+  };
 }
 
 function parseManualCSV(csv: string, city: string, category: string) {
@@ -47,7 +49,14 @@ function parseManualCSV(csv: string, city: string, category: string) {
     .slice(0, 50)
     .map((line) => {
       const [business_name, website, phone, address] = line.split(",").map((s) => s.trim());
-      return { business_name: business_name ?? "Unknown", website: website || null, phone: phone || null, address: address || null, city, category };
+      return {
+        business_name: business_name ?? "Unknown",
+        website: website || null,
+        phone: phone || null,
+        address: address || null,
+        city,
+        category,
+      };
     });
 }
 
@@ -70,32 +79,36 @@ export async function POST(req: NextRequest) {
     if (manual_csv) {
       businesses = parseManualCSV(manual_csv, city, category);
     } else {
-      const apiKey = process.env.YELP_API_KEY;
+      const apiKey = process.env.GOOGLE_PLACES_API_KEY;
       if (!apiKey) {
         return NextResponse.json({
-          error: "YELP_API_KEY not set. Add it to your .env.local file — see /admin/outreach for instructions.",
+          error: "GOOGLE_PLACES_API_KEY not set. Add it to .env.local — see setup instructions on the dashboard.",
         }, { status: 400 });
       }
 
-      const results = await fetchYelpBusinesses(category, `${city}, CA`, apiKey);
+      const query = `${category} in ${city}, CA`;
+      const places = await searchPlaces(query, apiKey);
 
-      // Fetch websites in parallel (Yelp search doesn't include website URL)
-      const withWebsites = await Promise.all(
-        results.map(async (b) => ({
-          business_name: b.name,
-          phone: b.phone || null,
-          address: b.location.display_address.join(", ") || null,
-          city,
-          category,
-          website: await fetchWebsite(b.id, apiKey),
-        }))
+      // Fetch details (website + phone) in parallel, max 20
+      const detailed = await Promise.all(
+        places.slice(0, 20).map(async (p) => {
+          const details = await getPlaceDetails(p.place_id, apiKey);
+          return {
+            business_name: p.name,
+            website: details.website ?? null,
+            phone: details.phone ?? null,
+            address: p.formatted_address ?? null,
+            city,
+            category,
+          };
+        })
       );
 
-      businesses = withWebsites;
+      businesses = detailed;
     }
 
     if (businesses.length === 0) {
-      return NextResponse.json({ error: "No businesses found." }, { status: 404 });
+      return NextResponse.json({ error: "No businesses found for that search." }, { status: 404 });
     }
 
     let added = 0;

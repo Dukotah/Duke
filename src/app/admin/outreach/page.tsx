@@ -261,11 +261,15 @@ export default function OutreachDashboard() {
               {scraping ? <><RefreshCw size={14} className="animate-spin" /> Searching…</> : <><Search size={14} /> Search Yelp</>}
             </button>
             <p className="text-xs text-zinc-600 text-center mb-3">
-              Requires <span className="text-zinc-400 font-mono">YELP_API_KEY</span> in .env.local —{" "}
-              <a href="https://www.yelp.com/developers/v3/manage_app" target="_blank" rel="noreferrer" className="text-orange-400 hover:underline">
-                get a free key ↗
-              </a>
+              Requires <span className="text-zinc-400 font-mono">GOOGLE_PLACES_API_KEY</span> in .env.local
             </p>
+            <div className="bg-zinc-800/60 rounded-lg p-3 mb-3 text-xs text-zinc-400 space-y-1">
+              <p className="font-semibold text-zinc-300">Setup (free — $200/mo credit):</p>
+              <p>1. Go to <span className="text-orange-400">console.cloud.google.com</span></p>
+              <p>2. Enable <span className="font-mono text-zinc-300">Places API</span></p>
+              <p>3. Create an API key → add to <span className="font-mono text-zinc-300">.env.local</span></p>
+              <p className="text-zinc-500">~6,000 free searches/month</p>
+            </div>
 
             {/* Manual import toggle */}
             <button
