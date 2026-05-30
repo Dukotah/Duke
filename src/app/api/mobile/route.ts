@@ -30,23 +30,41 @@ export async function POST(req: NextRequest) {
     });
     categories.forEach((c) => params.append("category", c));
 
-    const response = await fetch(`${apiBase}?${params}`, {
-      next: { revalidate: 0 },
-    });
+    // Retry once on transient Lighthouse errors (NO_FCP, etc.)
+    let cats: Record<string, { score?: number }> | null = null;
+    let audits: Record<string, { score?: number }> | null = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const response = await fetch(`${apiBase}?${params}`, { next: { revalidate: 0 } });
 
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      const rawMessage: string = err?.error?.message || "";
-      const isQuota = rawMessage.toLowerCase().includes("quota") || response.status === 429;
-      const message = isQuota
-        ? "Daily audit limit reached — please try again tomorrow."
-        : rawMessage || "PageSpeed API error";
-      return NextResponse.json({ error: message }, { status: isQuota ? 429 : 502 });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        const rawMessage: string = err?.error?.message || "";
+        const isQuota = rawMessage.toLowerCase().includes("quota") || response.status === 429;
+        const message = isQuota
+          ? "Daily audit limit reached — please try again tomorrow."
+          : rawMessage || "PageSpeed API error";
+        return NextResponse.json({ error: message }, { status: isQuota ? 429 : 502 });
+      }
+
+      const json = await response.json();
+      const runtimeError: string = json.lighthouseResult?.runtimeError?.code ?? "";
+
+      if (runtimeError && attempt === 0) {
+        await new Promise(r => setTimeout(r, 3000));
+        continue;
+      }
+
+      if (runtimeError) {
+        return NextResponse.json(
+          { error: "Lighthouse couldn't load this page — it may block automated testing, require a login, or be temporarily unavailable." },
+          { status: 502 }
+        );
+      }
+
+      cats = json.lighthouseResult?.categories ?? null;
+      audits = json.lighthouseResult?.audits ?? null;
+      break;
     }
-
-    const data = await response.json();
-    const cats = data.lighthouseResult?.categories;
-    const audits = data.lighthouseResult?.audits;
 
     if (!cats || !audits) {
       return NextResponse.json({ error: "No data returned for this URL" }, { status: 502 });
