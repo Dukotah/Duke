@@ -256,10 +256,16 @@ export default function OutreachDashboard() {
             <button
               onClick={() => handleScrape(false)}
               disabled={scraping}
-              className="w-full bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 mb-3"
+              className="w-full bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 mb-2"
             >
               {scraping ? <><RefreshCw size={14} className="animate-spin" /> Searching…</> : <><Search size={14} /> Search Yelp</>}
             </button>
+            <p className="text-xs text-zinc-600 text-center mb-3">
+              Requires <span className="text-zinc-400 font-mono">YELP_API_KEY</span> in .env.local —{" "}
+              <a href="https://www.yelp.com/developers/v3/manage_app" target="_blank" rel="noreferrer" className="text-orange-400 hover:underline">
+                get a free key ↗
+              </a>
+            </p>
 
             {/* Manual import toggle */}
             <button
