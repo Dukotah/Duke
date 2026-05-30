@@ -8,7 +8,7 @@ export default function Footer() {
     description:
       "IT consulting, web development, and cybersecurity for Sonoma County businesses.",
     url: "https://copperbaytech.com",
-    telephone: "+17075550100",
+    telephone: "+17072396725",
     email: "duke@copperbaytech.com",
     address: {
       "@type": "PostalAddress",
@@ -95,11 +95,11 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="tel:+17075550100"
+                  href="tel:+17072396725"
                   className="text-sm text-white/50 hover:text-white transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
-                  (707) 555-0100
+                  (707) 239-6725
                 </a>
               </li>
               <li>

@@ -95,11 +95,11 @@ export default function Contact() {
                     Phone / Text
                   </p>
                   <a
-                    href="tel:+17075550100"
+                    href="tel:+17072396725"
                     className="text-sm font-medium text-[#18181B] hover:underline"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
-                    (707) 555-0100
+                    (707) 239-6725
                   </a>
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function Contact() {
                     <input
                       {...register("phone")}
                       type="tel"
-                      placeholder="(707) 555-0000"
+                      placeholder="(707) 239-6725"
                       className={inputClass}
                       style={{ fontFamily: "var(--font-body)" }}
                     />
@@ -292,8 +292,8 @@ export default function Contact() {
                         duke@copperbaytech.com
                       </a>{" "}
                       or call{" "}
-                      <a href="tel:+17075550100" className="underline font-medium">
-                        (707) 555-0100
+                      <a href="tel:+17072396725" className="underline font-medium">
+                        (707) 239-6725
                       </a>
                     </p>
                   </div>
