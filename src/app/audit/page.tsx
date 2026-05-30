@@ -87,7 +87,7 @@ function AuditPageInner() {
       await fetch("/api/audit-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), url }),
+        body: JSON.stringify({ email: email.trim(), url, auditData: pendingData }),
       });
     } catch {
       // fire-and-forget — don't block the user on email capture errors
