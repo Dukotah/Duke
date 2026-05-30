@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateAuditUrl } from "@/lib/validate-url";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, { limit: 10, windowMs: 60_000 });
+  if (!rl.ok) {
+    return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
+  }
+
   try {
     const { url } = await req.json();
 

@@ -87,9 +87,14 @@ export default function Footer() {
           <p className="text-xs text-white/30" style={{ fontFamily: "var(--font-body)" }}>
             &copy; {year} Copper Bay Tech. All rights reserved.
           </p>
-          <Link href="/privacy" className="text-xs text-white/30 hover:text-white/60 transition-colors" style={{ fontFamily: "var(--font-body)" }}>
-            Privacy Policy
-          </Link>
+          <div className="flex gap-4">
+            <Link href="/privacy" className="text-xs text-white/30 hover:text-white/60 transition-colors" style={{ fontFamily: "var(--font-body)" }}>
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="text-xs text-white/30 hover:text-white/60 transition-colors" style={{ fontFamily: "var(--font-body)" }}>
+              Terms of Service
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -5,8 +5,10 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Phone, Mail, Clock, Calendar, MessageSquare } from "lucide-react";
 
-// Replace with your actual Calendly link
-const CALENDLY_URL = "https://calendly.com/copperbaytech/30min";
+// Set NEXT_PUBLIC_CALENDLY_URL in your .env.local (or Vercel env vars)
+// Example: NEXT_PUBLIC_CALENDLY_URL=https://calendly.com/duke-copperbaytech/30min
+const CALENDLY_URL =
+  process.env.NEXT_PUBLIC_CALENDLY_URL ?? "https://calendly.com/copperbaytech/30min";
 
 type FormData = {
   name: string;

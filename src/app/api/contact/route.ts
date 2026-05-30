@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { escapeHtml, truncate } from "@/lib/escape-html";
+import { rateLimit } from "@/lib/rate-limit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MAX_MESSAGE_LEN = 10_000;
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, { limit: 20, windowMs: 60_000 });
+  if (!rl.ok) {
+    return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
+  }
+
   try {
     const body = await req.json();
     const { name, business, email, phone, service, message } = body;

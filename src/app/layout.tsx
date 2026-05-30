@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     "Custom websites, IT support, and cybersecurity for Sonoma County businesses. Serving Petaluma, Santa Rosa, Sebastopol, Rohnert Park, Sonoma, and the greater North Bay.",
   keywords:
     "IT consulting Sonoma County, web development Sonoma County, cybersecurity Petaluma, small business IT support North Bay",
+  metadataBase: new URL("https://copperbaytech.com"),
   openGraph: {
     title: "Copper Bay Tech | Sonoma County IT & Web Development",
     description:
@@ -28,6 +29,14 @@ export const metadata: Metadata = {
     siteName: "Copper Bay Tech",
     locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Copper Bay Tech | Sonoma County IT & Web Development",
+    description: "Custom websites, IT support, and cybersecurity for Sonoma County businesses.",
+  },
+  alternates: {
+    canonical: "https://copperbaytech.com",
   },
 };
 
