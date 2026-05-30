@@ -21,20 +21,28 @@ export default function Footer() {
     serviceType: ["Web Development","IT Consulting","Cybersecurity","Network Setup","Process Automation"],
   };
 
-  const navLinks = [
-    { label: "Services", href: "/#services" },
-    { label: "How It Works", href: "/#how-it-works" },
-    { label: "About", href: "/#about" },
+  const serviceLinks = [
+    { label: "Web Development", href: "/web-development" },
+    { label: "IT Support", href: "/it-support" },
+    { label: "Cybersecurity", href: "/cybersecurity" },
     { label: "Resources", href: "/blog" },
-    { label: "FAQ", href: "/#faq" },
-    { label: "Contact", href: "/#contact" },
+  ];
+
+  const cityLinks = [
+    { label: "Petaluma", href: "/petaluma" },
+    { label: "Santa Rosa", href: "/santa-rosa" },
+    { label: "Sebastopol", href: "/sebastopol" },
+    { label: "Rohnert Park", href: "/rohnert-park" },
+    { label: "Sonoma", href: "/sonoma" },
+    { label: "Healdsburg", href: "/healdsburg" },
+    { label: "Windsor", href: "/windsor" },
   ];
 
   return (
     <footer className="bg-[#18181B] text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-3 gap-12 mb-12">
+        <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div>
             <p className="text-2xl font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
               Copper Bay<span style={{ color: "#F97316" }}>Tech</span>
@@ -46,10 +54,25 @@ export default function Footer() {
 
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Navigation
+              Services
             </p>
             <ul className="space-y-2">
-              {navLinks.map((l) => (
+              {serviceLinks.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="text-sm text-white/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              Cities We Serve
+            </p>
+            <ul className="space-y-2">
+              {cityLinks.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="text-sm text-white/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                     {l.label}

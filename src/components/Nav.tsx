@@ -1,11 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
-const links = [
-  { label: "Services", href: "/#services" },
+const serviceLinks = [
+  { label: "Web Development", href: "/web-development" },
+  { label: "IT Support", href: "/it-support" },
+  { label: "Cybersecurity", href: "/cybersecurity" },
+];
+
+const otherLinks = [
   { label: "How It Works", href: "/#how-it-works" },
   { label: "About", href: "/#about" },
   { label: "Resources", href: "/blog" },
@@ -15,11 +20,24 @@ const links = [
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setServicesOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -42,7 +60,38 @@ export default function Nav() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {links.map((l) => (
+          {/* Services dropdown */}
+          <div
+            ref={dropdownRef}
+            className="relative"
+            onMouseEnter={() => setServicesOpen(true)}
+            onMouseLeave={() => setServicesOpen(false)}
+          >
+            <button
+              className={`flex items-center gap-1 text-sm font-medium transition-colors ${scrolled ? "text-[#3F3F46]/70 hover:text-[#18181B]" : "text-white/80 hover:text-white"}`}
+              style={{ fontFamily: "var(--font-heading)" }}
+              onClick={() => setServicesOpen(!servicesOpen)}
+            >
+              Services <ChevronDown size={14} className={`transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
+            </button>
+            {servicesOpen && (
+              <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-[#18181B]/10 py-2 z-50">
+                {serviceLinks.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="block px-4 py-2.5 text-sm text-[#3F3F46]/70 hover:text-[#18181B] hover:bg-[#FAFAF9] transition-colors"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                    onClick={() => setServicesOpen(false)}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {otherLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -78,7 +127,33 @@ export default function Nav() {
       {/* Mobile Menu */}
       {open && (
         <div className="md:hidden bg-[#FAFAF9] border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
-          {links.map((l) => (
+          {/* Services expandable */}
+          <div>
+            <button
+              className="flex items-center gap-1 text-sm font-medium text-[#3F3F46]/80 hover:text-[#18181B] w-full text-left"
+              style={{ fontFamily: "var(--font-heading)" }}
+              onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+            >
+              Services <ChevronDown size={14} className={`ml-auto transition-transform ${mobileServicesOpen ? "rotate-180" : ""}`} />
+            </button>
+            {mobileServicesOpen && (
+              <div className="mt-2 ml-4 flex flex-col gap-3">
+                {serviceLinks.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className="text-sm font-medium text-[#3F3F46]/70 hover:text-[#18181B]"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {otherLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
