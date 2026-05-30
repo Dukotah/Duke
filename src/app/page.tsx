@@ -4,11 +4,15 @@ import SocialProof from "@/components/SocialProof";
 import Problem from "@/components/Problem";
 import Services from "@/components/Services";
 import HowItWorks from "@/components/HowItWorks";
-import Portfolio from "@/components/Portfolio";
+import ITQuiz from "@/components/ITQuiz";
+import CaseStudies from "@/components/CaseStudies";
+import PricingEstimator from "@/components/PricingEstimator";
 import ToolsTeaser from "@/components/ToolsTeaser";
+import FAQ from "@/components/FAQ";
 import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import ChatWidget from "@/components/ChatWidget";
 
 export default function Home() {
   return (
@@ -20,12 +24,16 @@ export default function Home() {
         <Problem />
         <Services />
         <HowItWorks />
-        <Portfolio />
+        <ITQuiz />
+        <CaseStudies />
+        <PricingEstimator />
         <ToolsTeaser />
+        <FAQ />
         <About />
         <Contact />
       </main>
       <Footer />
+      <ChatWidget />
     </>
   );
 }
