@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Search,
   RefreshCw,
@@ -13,6 +13,7 @@ import {
   Globe,
   Mail,
   Trash2,
+  Upload,
 } from "lucide-react";
 import { Lead, LeadStatus } from "@/lib/db";
 
@@ -57,11 +58,36 @@ export default function OutreachDashboard() {
   const [stats, setStats] = useState<Record<string, number>>({});
   const [showManual, setShowManual] = useState(false);
   const [manualCsv, setManualCsv] = useState("");
+  const [dragging, setDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const showToast = (msg: string, type: "ok" | "err" = "ok") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
   };
+
+  function readFile(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      // Strip header row if present
+      const lines = text.split("\n").filter(Boolean);
+      const firstCols = lines[0]?.toLowerCase() ?? "";
+      const data = firstCols.includes("business_name") || firstCols.includes("name")
+        ? lines.slice(1).join("\n")
+        : lines.join("\n");
+      setManualCsv(data);
+      setShowManual(true);
+    };
+    reader.readAsText(file);
+  }
+
+  function handleFileDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) readFile(file);
+  }
 
   const loadLeads = useCallback(async () => {
     const url =
@@ -271,18 +297,36 @@ export default function OutreachDashboard() {
               <p className="text-zinc-500">~6,000 free searches/month</p>
             </div>
 
-            {/* Manual import toggle */}
+            {/* CSV import */}
+            <div
+              onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={handleFileDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${dragging ? "border-orange-500 bg-orange-500/5" : "border-zinc-700 hover:border-zinc-500"}`}
+            >
+              <Upload size={16} className="mx-auto mb-1 text-zinc-500" />
+              <p className="text-xs text-zinc-500">Drop CSV from local scraper, or click to browse</p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv,.txt"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) readFile(f); }}
+              />
+            </div>
+
             <button
               onClick={() => setShowManual(!showManual)}
               className="w-full text-xs text-zinc-500 hover:text-zinc-300 transition-colors text-center"
             >
-              {showManual ? "Hide" : "Or paste a list manually ↓"}
+              {showManual ? "Hide text input ↑" : "Or paste CSV text manually ↓"}
             </button>
+
             {showManual && (
-              <div className="mt-3 space-y-2">
+              <div className="space-y-2">
                 <p className="text-xs text-zinc-500">
-                  One business per line: <span className="text-zinc-400 font-mono">Business Name, website.com, phone, address</span><br />
-                  Website and other fields are optional.
+                  Format: <span className="text-zinc-400 font-mono">Business Name, website.com, phone, address</span>
                 </p>
                 <textarea
                   value={manualCsv}
@@ -291,14 +335,17 @@ export default function OutreachDashboard() {
                   rows={5}
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-orange-500 resize-none"
                 />
-                <button
-                  onClick={() => handleScrape(true)}
-                  disabled={scraping || !manualCsv.trim()}
-                  className="w-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-40 text-white text-sm font-semibold py-2 rounded-lg transition-colors"
-                >
-                  Import list
-                </button>
               </div>
+            )}
+
+            {manualCsv.trim() && (
+              <button
+                onClick={() => handleScrape(true)}
+                disabled={scraping}
+                className="w-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-40 text-white text-sm font-semibold py-2 rounded-lg transition-colors"
+              >
+                Import {manualCsv.trim().split("\n").filter(Boolean).length} businesses
+              </button>
             )}
           </div>
 
