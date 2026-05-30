@@ -35,8 +35,12 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
-      const message = err?.error?.message || "PageSpeed API error";
-      return NextResponse.json({ error: message }, { status: 502 });
+      const rawMessage: string = err?.error?.message || "";
+      const isQuota = rawMessage.toLowerCase().includes("quota") || response.status === 429;
+      const message = isQuota
+        ? "Daily audit limit reached — please try again tomorrow, or contact us directly and we'll run the audit for you."
+        : rawMessage || "PageSpeed API error";
+      return NextResponse.json({ error: message }, { status: isQuota ? 429 : 502 });
     }
 
     const data = await response.json();
