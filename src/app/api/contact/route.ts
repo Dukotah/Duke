@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
                   from: "Copper Bay Tech <noreply@copperbaytech.com>",
-        to: ["duke@copperbaytech.com"],
+        to: ["contact@copperbaytech.com"],
         reply_to: email,
         subject: `New inquiry from ${name} — ${business}`,
         html: `
