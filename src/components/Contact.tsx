@@ -282,9 +282,21 @@ export default function Contact() {
                 </div>
 
                 {status === "error" && (
-                  <p className="text-red-500 text-sm">
-                    Something went wrong. Please email us directly at duke@copperbaytech.com
-                  </p>
+                  <div className="rounded-md bg-red-50 border border-red-200 p-4">
+                    <p className="text-red-700 text-sm font-medium mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+                      Message couldn&apos;t be sent
+                    </p>
+                    <p className="text-red-600 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+                      Please email us directly at{" "}
+                      <a href="mailto:duke@copperbaytech.com" className="underline font-medium">
+                        duke@copperbaytech.com
+                      </a>{" "}
+                      or call{" "}
+                      <a href="tel:+17075550100" className="underline font-medium">
+                        (707) 555-0100
+                      </a>
+                    </p>
+                  </div>
                 )}
 
                 <button
