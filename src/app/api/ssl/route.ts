@@ -31,7 +31,7 @@ function checkSSL(hostname: string): Promise<SSLResult> {
           valid: socket.authorized || true,
           daysUntilExpiry,
           expiresAt: expiresAt.toISOString(),
-          issuer: cert.issuer?.O ?? "Unknown",
+          issuer: (Array.isArray(cert.issuer?.O) ? cert.issuer.O[0] : cert.issuer?.O) ?? "Unknown",
           hostname,
         });
       }
