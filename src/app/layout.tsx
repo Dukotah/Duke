@@ -15,17 +15,17 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "Copper Bay Tech | IT Consulting & Web Development | Sonoma County",
+  title: "CopperBayTech | IT Consulting & Web Development | Sonoma County",
   description:
     "Custom websites, IT support, and cybersecurity for Sonoma County businesses. Serving Petaluma, Santa Rosa, Sebastopol, Rohnert Park, Sonoma, and the greater North Bay.",
   keywords:
     "IT consulting Sonoma County, web development Sonoma County, cybersecurity Petaluma, small business IT support North Bay",
   openGraph: {
-    title: "Copper Bay Tech | Sonoma County IT & Web Development",
+    title: "CopperBayTech | Sonoma County IT & Web Development",
     description:
       "Custom-built technology for Sonoma County businesses. Websites, IT support, and cybersecurity.",
     url: "https://copperbaytech.com",
-    siteName: "Copper Bay Tech",
+    siteName: "CopperBayTech",
     locale: "en_US",
     type: "website",
   },

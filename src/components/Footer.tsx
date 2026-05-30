@@ -4,7 +4,7 @@ export default function Footer() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
+    name: "CopperBayTech",
     description:
       "IT consulting, web development, and cybersecurity for Sonoma County businesses.",
     url: "https://copperbaytech.com",
@@ -50,7 +50,7 @@ export default function Footer() {
               className="text-2xl font-bold mb-3"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Copper Bay<span style={{ color: "#F97316" }}>Tech</span>
+              Copperbay<span style={{ color: "#F97316" }}>tech</span>
             </p>
             <p
               className="text-white/50 text-sm leading-relaxed"
@@ -128,7 +128,7 @@ export default function Footer() {
             className="text-xs text-white/30"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            © {year} Copper Bay Tech. All rights reserved.
+            © {year} CopperBayTech. All rights reserved.
           </p>
           <a
             href="/privacy"

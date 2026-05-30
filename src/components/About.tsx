@@ -24,7 +24,7 @@ export default function About() {
               className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              About Copper Bay Tech
+              About CopperBayTech
             </p>
             <h2
               className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"
@@ -40,7 +40,7 @@ export default function About() {
             >
               I&apos;m Duke, a Sonoma County-based developer and IT consultant with a
               rigorous background in cybersecurity principles and custom application
-              development. I started Copper Bay Tech because local businesses deserve
+              development. I started CopperBayTech because local businesses deserve
               the same quality of technology that larger companies take for granted —
               without the overhead or the runaround.
             </p>

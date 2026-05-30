@@ -33,8 +33,7 @@ export default function Nav() {
             className="text-xl font-bold tracking-tight"
             style={{ fontFamily: "var(--font-heading)", color: scrolled ? "#18181B" : "#ffffff" }}
           >
-            Copper Bay
-            <span style={{ color: "#F97316" }}>Tech</span>
+            Copperbay<span style={{ color: "#F97316" }}>tech</span>
           </span>
         </a>
 

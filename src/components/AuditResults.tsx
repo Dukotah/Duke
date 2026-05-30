@@ -185,7 +185,7 @@ export default function AuditResults({ data }: { data: AuditData }) {
           Want us to fix this?
         </h4>
         <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
-          Copper Bay Tech can resolve most performance issues in under a week. Get a
+          CopperBayTech can resolve most performance issues in under a week. Get a
           free 30-minute call to see exactly what we&apos;d do.
         </p>
         <a
