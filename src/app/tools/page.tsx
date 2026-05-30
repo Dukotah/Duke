@@ -64,6 +64,54 @@ interface MobileData {
   tapTargetsOk: boolean;
 }
 
+interface HeaderCheck {
+  name: string;
+  present: boolean;
+  value: string;
+  recommendation: string;
+  severity: "critical" | "warning" | "info";
+}
+
+interface HeadersData {
+  score: number;
+  passed: number;
+  total: number;
+  critical: number;
+  checks: HeaderCheck[];
+  url: string;
+}
+
+interface DNSCheck {
+  label: string;
+  status: "pass" | "warn" | "fail";
+  detail: string;
+}
+
+interface DNSData {
+  score: number;
+  passed: number;
+  failed: number;
+  total: number;
+  checks: DNSCheck[];
+  hostname: string;
+}
+
+interface SchemaCheck {
+  label: string;
+  status: "pass" | "warn" | "fail";
+  detail: string;
+}
+
+interface SchemaData {
+  score: number;
+  passed: number;
+  total: number;
+  checks: SchemaCheck[];
+  schemaTypes: string[];
+  schemaCount: number;
+  url: string;
+}
+
 type CheckState<T> = { status: "idle" } | { status: "loading" } | { status: "done"; data: T } | { status: "error"; message: string };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -79,6 +127,16 @@ function metricDotColor(score: number | null) {
   if (score >= 0.9) return "#22C55E";
   if (score >= 0.5) return "#F97316";
   return "#EF4444";
+}
+
+function statusColor(s: "pass" | "warn" | "fail") {
+  return s === "pass" ? "text-green-400" : s === "warn" ? "text-orange-400" : "text-red-400";
+}
+function statusBg(s: "pass" | "warn" | "fail") {
+  return s === "pass" ? "bg-green-500/10" : s === "warn" ? "bg-orange-500/10" : "bg-red-500/10";
+}
+function statusIcon(s: "pass" | "warn" | "fail") {
+  return s === "pass" ? "✓" : s === "warn" ? "⚠" : "✗";
 }
 
 function ScoreCircle({ score, label, size = 110 }: { score: number; label: string; size?: number }) {
@@ -134,6 +192,24 @@ function LoadingRows() {
     <div className="space-y-2 py-2">
       {[...Array(3)].map((_, i) => (
         <div key={i} className="h-3 bg-zinc-800 rounded animate-pulse" style={{ width: `${70 + i * 10}%` }} />
+      ))}
+    </div>
+  );
+}
+
+function CheckList({ checks }: { checks: Array<{ label: string; status: "pass" | "warn" | "fail"; detail: string }> }) {
+  return (
+    <div className="space-y-0 rounded-xl overflow-hidden border border-zinc-800">
+      {checks.map((c, i) => (
+        <div key={i} className={`flex items-start gap-3 px-4 py-3 bg-[#18181B] ${i < checks.length - 1 ? "border-b border-zinc-800" : ""}`}>
+          <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${statusBg(c.status)} ${statusColor(c.status)}`}>
+            {statusIcon(c.status)}
+          </span>
+          <div className="min-w-0">
+            <p className="text-white text-xs font-semibold">{c.label}</p>
+            <p className="text-zinc-500 text-xs mt-0.5 break-words">{c.detail}</p>
+          </div>
+        </div>
       ))}
     </div>
   );
@@ -403,22 +479,122 @@ function MobileResults({ state }: { state: CheckState<MobileData> }) {
   );
 }
 
+function HeadersResults({ state }: { state: CheckState<HeadersData> }) {
+  return (
+    <SectionCard title="Security Headers" icon="🛡️" status={state.status}>
+      {state.status === "loading" && <LoadingRows />}
+      {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
+      {state.status === "done" && (() => {
+        const d = state.data;
+        const sevSt = (sev: HeaderCheck["severity"], present: boolean): "pass" | "warn" | "fail" =>
+          present ? "pass" : sev === "critical" ? "fail" : sev === "warning" ? "warn" : "warn";
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <span className="text-5xl font-black" style={{ color: scoreColor(d.score) }}>{d.score}</span>
+              <div className="space-y-0.5">
+                <p className="text-white font-semibold text-sm">
+                  {d.score >= 90 ? "Well Secured" : d.score >= 50 ? "Needs Attention" : "Security Gaps"}
+                </p>
+                <p className="text-zinc-500 text-xs">{d.passed}/{d.total} headers present</p>
+                {d.critical > 0 && <p className="text-red-400 text-xs font-semibold">{d.critical} critical issue{d.critical > 1 ? "s" : ""}</p>}
+              </div>
+            </div>
+            <CheckList checks={d.checks.map(c => ({
+              label: c.name,
+              status: sevSt(c.severity, c.present),
+              detail: c.present ? c.value : c.recommendation,
+            }))} />
+          </div>
+        );
+      })()}
+    </SectionCard>
+  );
+}
+
+function DNSResults({ state }: { state: CheckState<DNSData> }) {
+  return (
+    <SectionCard title="DNS & Email Health" icon="📧" status={state.status}>
+      {state.status === "loading" && (
+        <div className="space-y-2 py-2">
+          <div className="h-3 bg-zinc-800 rounded animate-pulse w-4/5" />
+          <p className="text-zinc-500 text-xs">Querying DNS records…</p>
+        </div>
+      )}
+      {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
+      {state.status === "done" && (() => {
+        const d = state.data;
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <span className="text-5xl font-black" style={{ color: scoreColor(d.score) }}>{d.score}</span>
+              <div className="space-y-0.5">
+                <p className="text-white font-semibold text-sm">
+                  {d.score >= 90 ? "Email Healthy" : d.score >= 50 ? "Some Issues" : "Email at Risk"}
+                </p>
+                <p className="text-zinc-500 text-xs">{d.passed}/{d.total} checks passed</p>
+                {d.failed > 0 && <p className="text-red-400 text-xs font-semibold">{d.failed} failed</p>}
+              </div>
+            </div>
+            <CheckList checks={d.checks} />
+          </div>
+        );
+      })()}
+    </SectionCard>
+  );
+}
+
+function SchemaResults({ state }: { state: CheckState<SchemaData> }) {
+  return (
+    <SectionCard title="Schema / Local SEO" icon="🗺️" status={state.status}>
+      {state.status === "loading" && <LoadingRows />}
+      {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
+      {state.status === "done" && (() => {
+        const d = state.data;
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <span className="text-5xl font-black" style={{ color: scoreColor(d.score) }}>{d.score}</span>
+              <div className="space-y-0.5">
+                <p className="text-white font-semibold text-sm">
+                  {d.score >= 90 ? "Schema Complete" : d.score >= 50 ? "Partially Marked Up" : "Missing Schema"}
+                </p>
+                <p className="text-zinc-500 text-xs">{d.schemaCount} schema block{d.schemaCount !== 1 ? "s" : ""} found</p>
+                {d.schemaTypes.length > 0 && (
+                  <p className="text-zinc-600 text-xs truncate max-w-[200px]">{d.schemaTypes.join(", ")}</p>
+                )}
+              </div>
+            </div>
+            <CheckList checks={d.checks} />
+          </div>
+        );
+      })()}
+    </SectionCard>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 type AllChecks = {
-  speed: CheckState<SpeedData>;
-  ssl: CheckState<SSLData>;
-  seo: CheckState<SEOData>;
-  links: CheckState<LinksData>;
-  mobile: CheckState<MobileData>;
+  speed:   CheckState<SpeedData>;
+  ssl:     CheckState<SSLData>;
+  seo:     CheckState<SEOData>;
+  links:   CheckState<LinksData>;
+  mobile:  CheckState<MobileData>;
+  headers: CheckState<HeadersData>;
+  dns:     CheckState<DNSData>;
+  schema:  CheckState<SchemaData>;
 };
 
 const idle: AllChecks = {
-  speed: { status: "idle" },
-  ssl:   { status: "idle" },
-  seo:   { status: "idle" },
-  links: { status: "idle" },
-  mobile:{ status: "idle" },
+  speed:   { status: "idle" },
+  ssl:     { status: "idle" },
+  seo:     { status: "idle" },
+  links:   { status: "idle" },
+  mobile:  { status: "idle" },
+  headers: { status: "idle" },
+  dns:     { status: "idle" },
+  schema:  { status: "idle" },
 };
 
 function normalizeUrl(url: string) {
@@ -473,14 +649,16 @@ export default function ToolsPage() {
     setAuditedUrl(url);
     setRunning(true);
     setChecks({
-      speed: { status: "loading" },
-      ssl:   { status: "loading" },
-      seo:   { status: "loading" },
-      links: { status: "loading" },
-      mobile:{ status: "loading" },
+      speed:   { status: "loading" },
+      ssl:     { status: "loading" },
+      seo:     { status: "loading" },
+      links:   { status: "loading" },
+      mobile:  { status: "loading" },
+      headers: { status: "loading" },
+      dns:     { status: "loading" },
+      schema:  { status: "loading" },
     });
 
-    // Fire all checks in parallel — each updates independently as it resolves
     const run = async <K extends keyof AllChecks, T>(
       key: K,
       endpoint: string,
@@ -495,11 +673,14 @@ export default function ToolsPage() {
     };
 
     await Promise.all([
-      run<"speed", SpeedData>("speed", "/api/audit",  d => ({ status: "done", data: d })),
-      run<"ssl",   SSLData  >("ssl",   "/api/ssl",    d => ({ status: "done", data: d })),
-      run<"seo",   SEOData  >("seo",   "/api/seo",    d => ({ status: "done", data: d })),
-      run<"links", LinksData>("links", "/api/links",  d => ({ status: "done", data: d })),
-      run<"mobile",MobileData>("mobile","/api/mobile",d => ({ status: "done", data: d })),
+      run<"speed",   SpeedData  >("speed",   "/api/audit",   d => ({ status: "done", data: d })),
+      run<"ssl",     SSLData    >("ssl",     "/api/ssl",     d => ({ status: "done", data: d })),
+      run<"seo",     SEOData    >("seo",     "/api/seo",     d => ({ status: "done", data: d })),
+      run<"links",   LinksData  >("links",   "/api/links",   d => ({ status: "done", data: d })),
+      run<"mobile",  MobileData >("mobile",  "/api/mobile",  d => ({ status: "done", data: d })),
+      run<"headers", HeadersData>("headers", "/api/headers", d => ({ status: "done", data: d })),
+      run<"dns",     DNSData    >("dns",     "/api/dns",     d => ({ status: "done", data: d })),
+      run<"schema",  SchemaData >("schema",  "/api/schema",  d => ({ status: "done", data: d })),
     ]);
 
     setRunning(false);
@@ -522,8 +703,8 @@ export default function ToolsPage() {
             <span className="text-orange-400">Health Check</span>
           </h1>
           <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
-            Enter your URL and get a complete audit — speed, SSL, SEO, broken links, and mobile
-            readiness — all at once. Free, no signup.
+            Enter your URL and get a complete audit — speed, SSL, SEO, security headers, DNS health,
+            schema markup, broken links, and mobile readiness — all at once. Free, no signup.
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
@@ -546,7 +727,7 @@ export default function ToolsPage() {
 
           {running && (
             <p className="text-zinc-500 text-xs mt-4">
-              Running 5 checks in parallel — results appear as each one completes
+              Running 8 checks in parallel — results appear as each one completes
             </p>
           )}
         </div>
@@ -562,11 +743,14 @@ export default function ToolsPage() {
               </p>
             )}
             <div className="space-y-4">
-              <SpeedResults  state={checks.speed}  />
-              <SSLResults    state={checks.ssl}    />
-              <SEOResults    state={checks.seo}    />
-              <LinksResults  state={checks.links}  />
-              <MobileResults state={checks.mobile} />
+              <SpeedResults   state={checks.speed}   />
+              <SSLResults     state={checks.ssl}     />
+              <HeadersResults state={checks.headers} />
+              <SEOResults     state={checks.seo}     />
+              <SchemaResults  state={checks.schema}  />
+              <DNSResults     state={checks.dns}     />
+              <LinksResults   state={checks.links}   />
+              <MobileResults  state={checks.mobile}  />
             </div>
 
             {!running && (
@@ -628,11 +812,14 @@ export default function ToolsPage() {
             <h2 className="text-center text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-6">
               What Gets Checked
             </h2>
-            <div className="grid sm:grid-cols-5 gap-3">
+            <div className="grid sm:grid-cols-4 gap-3">
               {[
                 { icon: "⚡", label: "Speed", desc: "PageSpeed score & Core Web Vitals" },
                 { icon: "🔒", label: "SSL", desc: "Certificate validity & expiry" },
+                { icon: "🛡️", label: "Security Headers", desc: "HSTS, CSP, X-Frame-Options & more" },
                 { icon: "🔍", label: "SEO", desc: "Title, meta, H1s, OG tags" },
+                { icon: "🗺️", label: "Schema / Local SEO", desc: "JSON-LD & LocalBusiness markup" },
+                { icon: "📧", label: "DNS & Email", desc: "SPF, DMARC, DKIM, MX records" },
                 { icon: "🔗", label: "Links", desc: "404s and redirect chains" },
                 { icon: "📱", label: "Mobile", desc: "Responsiveness & accessibility" },
               ].map(item => (
