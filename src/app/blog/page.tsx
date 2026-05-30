@@ -21,13 +21,49 @@ type Post = {
 
 const posts: Post[] = [
   {
+    slug: "how-much-should-a-small-business-website-cost",
+    tag: "Web Development",
+    title: "How Much Should a Small Business Website Cost? (Honest Answer)",
+    excerpt:
+      "Website pricing ranges wildly — from $500 DIY to $50,000 agency builds. Here's what actually drives cost and what Sonoma County small businesses should realistically expect to pay.",
+    readTime: "5 min read",
+    date: "May 2026",
+  },
+  {
+    slug: "what-is-ransomware-and-how-do-you-stop-it",
+    tag: "Cybersecurity",
+    title: "What Is Ransomware and How Do Small Businesses Actually Stop It?",
+    excerpt:
+      "Ransomware attacks on small businesses have tripled. This is exactly what it is, how it gets in, and the concrete steps you can take this week to protect your business.",
+    readTime: "7 min read",
+    date: "May 2026",
+  },
+  {
+    slug: "why-your-google-business-profile-matters",
+    tag: "Local SEO",
+    title: "Why Your Google Business Profile Is the Most Important Page You Don't Own",
+    excerpt:
+      "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search — and what to fix today.",
+    readTime: "5 min read",
+    date: "April 2026",
+  },
+  {
+    slug: "cloud-vs-local-server-small-business",
+    tag: "IT Support",
+    title: "Cloud vs. Local Server: What's Actually Right for Your Small Business?",
+    excerpt:
+      "Should your small business move to the cloud or keep a local server? Here's a direct comparison for businesses with 3–30 employees — including when local still makes sense.",
+    readTime: "6 min read",
+    date: "April 2026",
+  },
+  {
     slug: "how-to-choose-an-it-company-sonoma-county",
     tag: "IT Support",
     title: "How to Choose an IT Company in Sonoma County (Without Getting Burned)",
     excerpt:
       "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
     readTime: "5 min read",
-    date: "May 2026",
+    date: "March 2026",
   },
   {
     slug: "is-my-small-business-website-hipaa-compliant",
@@ -36,7 +72,7 @@ const posts: Post[] = [
     excerpt:
       "If your business handles any patient or health information — even just appointment scheduling — HIPAA applies to your website. Here's what that actually means.",
     readTime: "6 min read",
-    date: "April 2026",
+    date: "February 2026",
   },
   {
     slug: "5-signs-your-business-website-is-costing-you-customers",
@@ -45,7 +81,7 @@ const posts: Post[] = [
     excerpt:
       "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here's how to diagnose them in under 10 minutes — no technical knowledge required.",
     readTime: "4 min read",
-    date: "March 2026",
+    date: "January 2026",
   },
 ];
 
