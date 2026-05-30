@@ -465,6 +465,8 @@ function ADAResults({ state }: { state: CheckState<ADAData> }) {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
+interface EmailReportState { status: "idle" | "loading" | "done" | "error" }
+
 type AllChecks = {
   speed: CheckState<SpeedData>;
   ssl: CheckState<SSLData>;
@@ -505,6 +507,8 @@ export default function ToolsPage() {
   const [checks, setChecks] = useState<AllChecks>(idle);
   const [running, setRunning] = useState(false);
   const [auditedUrl, setAuditedUrl] = useState("");
+  const [reportEmail, setReportEmail] = useState("");
+  const [reportState, setReportState] = useState<EmailReportState>({ status: "idle" });
 
   function setCheck<K extends keyof AllChecks>(key: K, state: AllChecks[K]) {
     setChecks(prev => ({ ...prev, [key]: state }));
@@ -550,6 +554,62 @@ export default function ToolsPage() {
 
     setRunning(false);
   }
+
+  const sendReport = async () => {
+    if (!reportEmail.trim() || !reportEmail.includes("@")) return;
+    setReportState({ status: "loading" });
+
+    const lines: string[] = [`Website Audit Report for: ${auditedUrl}`, ""];
+
+    if (checks.speed.status === "done") {
+      const d = checks.speed.data;
+      lines.push(`⚡ Speed: ${d.score}/100`);
+      lines.push(`  FCP: ${d.metrics.fcp.value}, LCP: ${d.metrics.lcp.value}, CLS: ${d.metrics.cls.value}`);
+    }
+    if (checks.ssl.status === "done") {
+      const d = checks.ssl.data;
+      lines.push(`🔒 SSL: ${d.valid ? "Valid" : "Invalid"} — expires in ${d.daysUntilExpiry} days`);
+    }
+    if (checks.seo.status === "done") {
+      const d = checks.seo.data;
+      const errors = d.issues.filter(i => i.severity === "error").length;
+      const warnings = d.issues.filter(i => i.severity === "warning").length;
+      lines.push(`🔍 SEO: ${d.score}/100 — ${errors} errors, ${warnings} warnings`);
+    }
+    if (checks.links.status === "done") {
+      const d = checks.links.data;
+      lines.push(`🔗 Links: ${d.total} total, ${d.broken.length} broken, ${d.redirects.length} redirects`);
+    }
+    if (checks.mobile.status === "done") {
+      const d = checks.mobile.data;
+      lines.push(`📱 Mobile: ${d.mobileScore}/100  Accessibility: ${d.accessibilityScore}/100`);
+    }
+    if (checks.ada.status === "done") {
+      const d = checks.ada.data;
+      const errors = d.issues.filter(i => i.severity === "error").length;
+      lines.push(`♿ ADA/WCAG: ${d.score}/100 — ${errors} issue${errors !== 1 ? "s" : ""} found`);
+    }
+
+    lines.push("", "Full details: visit copperbaytech.com/tools to re-run anytime.");
+    lines.push("Want us to fix these issues? Reply to this email or call (707) 239-6725.");
+
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Audit Report Request",
+          business: auditedUrl,
+          email: reportEmail,
+          service: "other",
+          message: lines.join("\n"),
+        }),
+      });
+      setReportState({ status: "done" });
+    } catch {
+      setReportState({ status: "error" });
+    }
+  };
 
   const hasResults = Object.values(checks).some(c => c.status !== "idle");
 
@@ -616,8 +676,45 @@ export default function ToolsPage() {
               <ADAResults    state={checks.ada}    />
             </div>
 
+            {/* Email report capture */}
             {!running && (
-              <div className="mt-10 rounded-2xl p-6 text-center" style={{ border: "1px solid #F97316", background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
+              <div className="mt-6 bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-xl">📧</span>
+                  <div>
+                    <p className="text-white font-bold text-sm">Email me this report</p>
+                    <p className="text-zinc-500 text-xs">Get a copy of these results sent to your inbox</p>
+                  </div>
+                </div>
+                {reportState.status === "done" ? (
+                  <p className="text-green-400 text-sm font-semibold">✓ Report sent — check your inbox</p>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      value={reportEmail}
+                      onChange={e => setReportEmail(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && sendReport()}
+                      placeholder="your@email.com"
+                      className="flex-1 bg-zinc-800 border border-zinc-700 rounded-full px-4 py-2.5 text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                    />
+                    <button
+                      onClick={sendReport}
+                      disabled={reportState.status === "loading" || !reportEmail.trim()}
+                      className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-5 py-2.5 rounded-full transition-colors text-sm whitespace-nowrap"
+                    >
+                      {reportState.status === "loading" ? "Sending…" : "Send Report"}
+                    </button>
+                  </div>
+                )}
+                {reportState.status === "error" && (
+                  <p className="text-red-400 text-xs mt-2">Couldn&apos;t send — try again or email duke@copperbaytech.com</p>
+                )}
+              </div>
+            )}
+
+            {!running && (
+              <div className="mt-4 rounded-2xl p-6 text-center" style={{ border: "1px solid #F97316", background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
                 <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">Free Consultation</p>
                 <h4 className="text-white text-xl font-black mb-2">Want us to fix this?</h4>
                 <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">

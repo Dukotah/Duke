@@ -23,19 +23,42 @@ const BOT_INTROS: Message[] = [
   },
 ];
 
+// Proactive triggers: [delay in ms, message]
+const PROACTIVE_TRIGGERS: [number, string][] = [
+  [25000, "👋 Have a question about pricing or services? I usually reply within a few minutes."],
+  [55000, "Still here? Happy to answer anything — no sales pitch, just straight talk."],
+];
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(BOT_INTROS);
   const [input, setInput] = useState("");
-  const [sent, setSent] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"chat" | "collect" | "done">("chat");
+  const [proactiveBubble, setProactiveBubble] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const hasOpenedRef = useRef(false);
 
   useEffect(() => {
-    if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (open) {
+      hasOpenedRef.current = true;
+      setProactiveBubble(null);
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, open]);
+
+  // Proactive trigger timers
+  useEffect(() => {
+    const timers = PROACTIVE_TRIGGERS.map(([delay, msg]) =>
+      setTimeout(() => {
+        if (!hasOpenedRef.current) {
+          setProactiveBubble(msg);
+        }
+      }, delay)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   const sendMessage = (text: string) => {
     if (!text.trim()) return;
@@ -44,7 +67,6 @@ export default function ChatWidget() {
     setMessages(newMessages);
     setInput("");
 
-    // After user sends first message, ask for contact info
     setTimeout(() => {
       if (newMessages.filter((m) => m.from === "user").length === 1) {
         setMessages((prev) => [
@@ -83,13 +105,55 @@ export default function ChatWidget() {
       },
     ]);
     setStep("done");
-    setSent(true);
+  };
+
+  const handleOpenFromBubble = () => {
+    setProactiveBubble(null);
+    setOpen(true);
   };
 
   const unreadCount = !open && messages.length > BOT_INTROS.length ? 1 : 0;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+      {/* Proactive bubble */}
+      <AnimatePresence>
+        {proactiveBubble && !open && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="max-w-xs bg-white rounded-2xl rounded-br-sm shadow-xl border border-[#18181B]/10 p-4"
+          >
+            <div className="flex items-start gap-2.5">
+              <div className="w-7 h-7 rounded-full bg-[#F97316] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-white text-xs font-bold" style={{ fontFamily: "var(--font-heading)" }}>D</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[#3F3F46] text-sm leading-snug mb-2" style={{ fontFamily: "var(--font-body)" }}>
+                  {proactiveBubble}
+                </p>
+                <button
+                  onClick={handleOpenFromBubble}
+                  className="text-xs font-semibold text-[#F97316] hover:text-[#ea6c0a] transition-colors"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Reply →
+                </button>
+              </div>
+              <button
+                onClick={() => setProactiveBubble(null)}
+                className="text-[#18181B]/30 hover:text-[#18181B]/60 transition-colors flex-shrink-0"
+                aria-label="Dismiss"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {open && (
           <motion.div
@@ -126,10 +190,7 @@ export default function ChatWidget() {
             {/* Messages */}
             <div className="h-64 overflow-y-auto p-4 space-y-3 bg-[#FAFAF9]">
               {messages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}
-                >
+                <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                       msg.from === "user"
@@ -247,9 +308,9 @@ export default function ChatWidget() {
             </motion.span>
           )}
         </AnimatePresence>
-        {unreadCount > 0 && (
+        {(unreadCount > 0 || proactiveBubble) && !open && (
           <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold">
-            {unreadCount}
+            1
           </span>
         )}
       </motion.button>

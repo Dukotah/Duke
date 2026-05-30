@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, AlertTriangle, CheckCircle, ShieldAlert } from "lucide-react";
+import { ArrowRight, AlertTriangle, CheckCircle, ShieldAlert, Mail } from "lucide-react";
 
 const questions = [
   {
@@ -67,6 +67,7 @@ type Result = {
   color: string;
   icon: typeof AlertTriangle;
   cta: string;
+  recommendations: string[];
 };
 
 function getResult(score: number): Result {
@@ -77,6 +78,13 @@ function getResult(score: number): Result {
       color: "#DC2626",
       icon: AlertTriangle,
       cta: "Get a Security Assessment",
+      recommendations: [
+        "Implement a centralized password manager immediately",
+        "Schedule a firewall and network security review",
+        "Set up automated offsite backups with tested restore procedures",
+        "Create a formal employee offboarding checklist",
+        "Enable automatic software and OS updates",
+      ],
     };
   } else if (score >= 6) {
     return {
@@ -85,6 +93,12 @@ function getResult(score: number): Result {
       color: "#F97316",
       icon: ShieldAlert,
       cta: "Talk to Us — No Obligation",
+      recommendations: [
+        "Audit password practices and enforce a manager company-wide",
+        "Review router/firewall settings and update firmware",
+        "Test your backup restore process — don't assume it works",
+        "Tighten your employee offboarding process",
+      ],
     };
   } else {
     return {
@@ -93,15 +107,26 @@ function getResult(score: number): Result {
       color: "#16A34A",
       icon: CheckCircle,
       cta: "See How We Can Help Further",
+      recommendations: [
+        "Consider a periodic third-party security audit to stay ahead",
+        "Review your website performance and lead generation metrics",
+        "Explore automation opportunities to reduce manual overhead",
+        "Document your current IT setup for continuity planning",
+      ],
     };
   }
 }
+
+type QuizStep = "quiz" | "capture" | "revealed";
 
 export default function ITQuiz() {
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
-  const [done, setDone] = useState(false);
+  const [step, setStep] = useState<QuizStep>("quiz");
+  const [captureEmail, setCaptureEmail] = useState("");
+  const [capturing, setCapturing] = useState(false);
+  const [captureError, setCaptureError] = useState(false);
 
   const totalScore = answers.reduce((a, b) => a + b, 0);
   const result = getResult(totalScore);
@@ -113,7 +138,7 @@ export default function ITQuiz() {
     setAnswers(newAnswers);
     setSelected(null);
     if (current + 1 >= questions.length) {
-      setDone(true);
+      setStep("capture");
     } else {
       setCurrent(current + 1);
     }
@@ -123,7 +148,37 @@ export default function ITQuiz() {
     setCurrent(0);
     setAnswers([]);
     setSelected(null);
-    setDone(false);
+    setStep("quiz");
+    setCaptureEmail("");
+    setCaptureError(false);
+  };
+
+  const handleCapture = async () => {
+    if (!captureEmail.trim() || !captureEmail.includes("@")) {
+      setCaptureError(true);
+      return;
+    }
+    setCapturing(true);
+    setCaptureError(false);
+    const answerSummary = questions.map((q, i) => {
+      const chosen = q.options.find(o => o.risk === answers[i]);
+      return `• ${q.q}\n  → ${chosen?.label ?? "N/A"}`;
+    }).join("\n\n");
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "IT Quiz Lead",
+          business: "Unknown",
+          email: captureEmail,
+          service: "cybersecurity",
+          message: `IT Self-Assessment Result: ${result.label} (score ${totalScore}/18)\n\nAnswers:\n${answerSummary}`,
+        }),
+      });
+    } catch (_) {}
+    setCapturing(false);
+    setStep("revealed");
   };
 
   const progress = ((current) / questions.length) * 100;
@@ -138,30 +193,21 @@ export default function ITQuiz() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
             Free Self-Assessment
           </p>
-          <h2
-            className="text-4xl font-bold text-white mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
+          <h2 className="text-4xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
             How exposed is your business?
           </h2>
-          <p
-            className="text-white/60 text-lg"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
+          <p className="text-white/60 text-lg" style={{ fontFamily: "var(--font-body)" }}>
             6 questions. 2 minutes. Find out where you actually stand.
           </p>
         </motion.div>
 
         <div className="bg-[#1F1F23] rounded-2xl border border-white/10 overflow-hidden">
-          {!done ? (
+          {/* ── Quiz questions ── */}
+          {step === "quiz" && (
             <>
-              {/* Progress bar */}
               <div className="h-1 bg-white/10">
                 <motion.div
                   className="h-full bg-[#F97316]"
@@ -170,17 +216,12 @@ export default function ITQuiz() {
                   transition={{ duration: 0.3 }}
                 />
               </div>
-
               <div className="p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <span
-                    className="text-xs font-semibold uppercase tracking-widest text-white/40"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
+                  <span className="text-xs font-semibold uppercase tracking-widest text-white/40" style={{ fontFamily: "var(--font-heading)" }}>
                     Question {current + 1} of {questions.length}
                   </span>
                 </div>
-
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={current}
@@ -189,13 +230,9 @@ export default function ITQuiz() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <h3
-                      className="text-xl font-bold text-white mb-6"
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
+                    <h3 className="text-xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-heading)" }}>
                       {questions[current].q}
                     </h3>
-
                     <div className="space-y-3">
                       {questions[current].options.map((opt, i) => (
                         <button
@@ -214,7 +251,6 @@ export default function ITQuiz() {
                     </div>
                   </motion.div>
                 </AnimatePresence>
-
                 <div className="mt-8 flex justify-end">
                   <button
                     onClick={handleNext}
@@ -228,7 +264,10 @@ export default function ITQuiz() {
                 </div>
               </div>
             </>
-          ) : (
+          )}
+
+          {/* ── Email capture gate ── */}
+          {step === "capture" && (
             <motion.div
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -241,24 +280,96 @@ export default function ITQuiz() {
               >
                 <ResultIcon size={28} color={result.color} />
               </div>
-              <p
-                className="text-xs font-semibold uppercase tracking-widest mb-2"
-                style={{ color: result.color, fontFamily: "var(--font-heading)" }}
-              >
-                Your Result
+              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: result.color, fontFamily: "var(--font-heading)" }}>
+                Assessment Complete
               </p>
-              <h3
-                className="text-3xl font-bold text-white mb-4"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {result.label}
+              <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                Your result is ready
               </h3>
-              <p
-                className="text-white/60 text-sm leading-relaxed mb-8 max-w-md mx-auto"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                {result.description}
+              <p className="text-white/50 text-sm mb-8 max-w-sm mx-auto" style={{ fontFamily: "var(--font-body)" }}>
+                Enter your email and we&apos;ll show your full risk report — plus a personalized action plan sent to your inbox.
               </p>
+
+              <div className="max-w-sm mx-auto space-y-3">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                    <input
+                      type="email"
+                      value={captureEmail}
+                      onChange={e => { setCaptureEmail(e.target.value); setCaptureError(false); }}
+                      onKeyDown={e => e.key === "Enter" && handleCapture()}
+                      placeholder="your@email.com"
+                      className={`w-full pl-9 pr-4 py-3 rounded-xl bg-white/8 border text-white text-sm placeholder-white/30 focus:outline-none focus:border-[#F97316] transition-colors ${captureError ? "border-red-500" : "border-white/15"}`}
+                      style={{ fontFamily: "var(--font-body)" }}
+                    />
+                  </div>
+                  <button
+                    onClick={handleCapture}
+                    disabled={capturing}
+                    className="px-5 py-3 rounded-xl bg-[#F97316] hover:bg-[#ea6c0a] text-white text-sm font-semibold transition-colors disabled:opacity-50 whitespace-nowrap"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {capturing ? "Sending…" : "Get Report"}
+                  </button>
+                </div>
+                {captureError && (
+                  <p className="text-red-400 text-xs">Please enter a valid email address.</p>
+                )}
+                <button
+                  onClick={() => setStep("revealed")}
+                  className="text-white/30 text-xs hover:text-white/50 transition-colors"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  Skip — just show my result
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── Full result ── */}
+          {step === "revealed" && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+              className="p-8"
+            >
+              <div className="text-center mb-8">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ backgroundColor: result.color + "22" }}
+                >
+                  <ResultIcon size={28} color={result.color} />
+                </div>
+                <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: result.color, fontFamily: "var(--font-heading)" }}>
+                  Your Result
+                </p>
+                <h3 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+                  {result.label}
+                </h3>
+                <p className="text-white/60 text-sm leading-relaxed max-w-md mx-auto" style={{ fontFamily: "var(--font-body)" }}>
+                  {result.description}
+                </p>
+              </div>
+
+              {/* Recommendations */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-5 mb-6">
+                <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+                  Recommended Next Steps
+                </p>
+                <ul className="space-y-2">
+                  {result.recommendations.map((rec, i) => (
+                    <li key={i} className="flex items-start gap-2.5">
+                      <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px] font-bold" style={{ backgroundColor: result.color + "22", color: result.color }}>
+                        {i + 1}
+                      </span>
+                      <span className="text-white/70 text-sm" style={{ fontFamily: "var(--font-body)" }}>{rec}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a
                   href="#contact"
