@@ -596,6 +596,30 @@ export default function ToolsPage() {
         </section>
       )}
 
+      {/* Other Tools */}
+      <section className="px-6 pb-16">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-center text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-6">
+            More Free Tools
+          </h2>
+          <a
+            href="/tools/compliance"
+            className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 hover:border-orange-500/40 rounded-2xl p-5 transition-colors group"
+          >
+            <span className="text-3xl">♿</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-bold text-sm group-hover:text-orange-400 transition-colors">
+                ADA &amp; HIPAA Compliance Checker
+              </p>
+              <p className="text-zinc-500 text-xs mt-0.5">
+                Scan for accessibility issues (WCAG) and HIPAA privacy indicators
+              </p>
+            </div>
+            <span className="text-orange-500 text-lg">→</span>
+          </a>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

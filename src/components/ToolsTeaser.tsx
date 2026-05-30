@@ -17,7 +17,7 @@ export default function ToolsTeaser() {
         </p>
 
         <div className="flex flex-wrap justify-center gap-3 mb-10 text-xs text-zinc-500">
-          {["⚡ Speed", "🔒 SSL", "🔍 SEO", "🔗 Broken Links", "📱 Mobile"].map(item => (
+          {["⚡ Speed", "🔒 SSL", "🔍 SEO", "🔗 Broken Links", "📱 Mobile", "♿ ADA / HIPAA"].map(item => (
             <span key={item} className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-full">
               {item}
             </span>
