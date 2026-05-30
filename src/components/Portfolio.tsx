@@ -11,27 +11,6 @@ export default function Portfolio() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2
-            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Our work
-          </h2>
-          <p
-            className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
-            Case studies coming soon. We&apos;re currently heads-down with new clients.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="rounded-2xl bg-[#18181B] p-12 text-center"
         >
