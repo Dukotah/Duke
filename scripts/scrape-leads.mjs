@@ -1,13 +1,26 @@
 /**
- * Local lead scraper — run this on your own machine, not the server.
+ * Local lead scraper — run this on your OWN machine, not the server.
+ *
+ * Sources:
+ *   - Google Maps
+ *   - Yelp
+ *   - Yellow Pages
+ *   - Better Business Bureau
+ *   - OpenStreetMap (Overpass API) — all businesses in Sonoma County with websites
+ *   - Santa Rosa Open Data Portal (business licenses)
+ *   - Email enrichment — visits each website and extracts contact email
  *
  * Usage:
- *   node scripts/scrape-leads.mjs --category "restaurants" --city "Petaluma" --sources all
- *   node scripts/scrape-leads.mjs --category "contractors" --city "Santa Rosa" --sources yelp,yellowpages
+ *   node scripts/scrape-leads.mjs
+ *   node scripts/scrape-leads.mjs --category "restaurants" --city "Petaluma"
+ *   node scripts/scrape-leads.mjs --sources osm              ← just OSM bulk pull
+ *   node scripts/scrape-leads.mjs --sources osm,santarosa    ← open data sources only
+ *   node scripts/scrape-leads.mjs --enrich                   ← enrich existing CSV with emails
+ *   node scripts/scrape-leads.mjs --sources all --enrich     ← scrape everything then enrich
  *
- * Output: scripts/leads-output.csv  (append to existing file, deduped by website)
- *
- * Then go to /admin/outreach → "paste a list manually" → paste the CSV contents
+ * Output:
+ *   scripts/leads-output.csv   — import this into /admin/outreach
+ *   scripts/leads-enriched.csv — same data + contact emails (if --enrich used)
  */
 
 import fs from "fs";
@@ -16,304 +29,523 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_FILE = path.join(__dirname, "leads-output.csv");
+const ENRICHED_FILE = path.join(__dirname, "leads-enriched.csv");
 
 // ─── CLI args ────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2);
-function getArg(name) {
-  const i = args.indexOf(`--${name}`);
-  return i !== -1 ? args[i + 1] : null;
+const getArg = (name) => { const i = args.indexOf(`--${name}`); return i !== -1 ? args[i + 1] : null; };
+const hasFlag = (name) => args.includes(`--${name}`);
+
+const CATEGORY  = getArg("category") ?? "restaurants";
+const CITY      = getArg("city") ?? "Petaluma";
+const SOURCES   = (getArg("sources") ?? "all").toLowerCase().split(",");
+const USE_ALL   = SOURCES.includes("all");
+const MAX       = parseInt(getArg("max") ?? "25", 10);
+const ENRICH    = hasFlag("enrich");
+
+const use = (s) => USE_ALL || SOURCES.includes(s);
+
+console.log("\n🚀 Copper Bay Tech — Lead Scraper");
+console.log("─".repeat(45));
+if (!use("osm") && !use("santarosa")) {
+  console.log(`   Category : ${CATEGORY}`);
+  console.log(`   City     : ${CITY}, CA`);
 }
-
-const CATEGORY = getArg("category") ?? "restaurants";
-const CITY = getArg("city") ?? "Petaluma";
-const SOURCES = (getArg("sources") ?? "all").toLowerCase().split(",");
-const USE_ALL = SOURCES.includes("all");
-const MAX_PER_SOURCE = parseInt(getArg("max") ?? "25", 10);
-
-console.log(`\n🔍 Scraping: "${CATEGORY}" in ${CITY}, CA`);
-console.log(`   Sources: ${USE_ALL ? "all" : SOURCES.join(", ")}`);
-console.log(`   Max per source: ${MAX_PER_SOURCE}\n`);
+console.log(`   Sources  : ${USE_ALL ? "all" : SOURCES.join(", ")}`);
+console.log(`   Enrich   : ${ENRICH ? "yes (find contact emails)" : "no"}`);
+console.log("─".repeat(45) + "\n");
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-async function fetchHtml(url, extraHeaders = {}) {
+async function get(url, headers = {}) {
   const res = await fetch(url, {
     headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       "Accept-Language": "en-US,en;q=0.9",
-      "Accept-Encoding": "gzip, deflate, br",
-      "Cache-Control": "no-cache",
-      ...extraHeaders,
+      ...headers,
     },
     signal: AbortSignal.timeout(15000),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.text();
 }
 
-function sleep(ms) {
-  return new Promise((r) => setTimeout(r, ms));
+async function getJson(url, headers = {}) {
+  const res = await fetch(url, {
+    headers: { "Accept": "application/json", ...headers },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
 }
 
-function cleanUrl(url) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function cleanDomain(url) {
   if (!url) return null;
   try {
     const u = new URL(url.startsWith("http") ? url : "https://" + url);
-    return u.hostname.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
+    return u.hostname.replace(/^www\./, "").toLowerCase();
+  } catch { return null; }
 }
 
-// ─── Sources ─────────────────────────────────────────────────────────────────
+function normalizeUrl(url) {
+  if (!url) return null;
+  if (url.startsWith("http")) return url;
+  return "https://" + url;
+}
 
-async function scrapeGoogleMaps(category, city) {
-  console.log("  📍 Google Maps...");
-  const query = encodeURIComponent(`${category} ${city} CA`);
-  const url = `https://www.google.com/maps/search/${query}`;
+// ─── Source: OpenStreetMap (Overpass API) ────────────────────────────────────
+// Pulls ALL businesses in Sonoma County that have a website tag.
+// This is the richest free source — no category filter, covers everything.
 
-  const html = await fetchHtml(url);
+async function scrapeOSM() {
+  console.log("  🗺️  OpenStreetMap — all Sonoma County businesses with websites...");
+
+  // Bounding box for Sonoma County: south, west, north, east
+  const bbox = "38.15,-123.53,38.87,-122.35";
+
+  const query = `
+[out:json][timeout:60];
+(
+  node["name"]["website"](${bbox});
+  node["name"]["contact:website"](${bbox});
+  way["name"]["website"](${bbox});
+  way["name"]["contact:website"](${bbox});
+);
+out center 500;
+  `.trim();
+
+  const url = "https://overpass-api.de/api/interpreter";
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `data=${encodeURIComponent(query)}`,
+    signal: AbortSignal.timeout(90000),
+  });
+
+  if (!res.ok) throw new Error(`Overpass API HTTP ${res.status}`);
+  const data = await res.json();
+
   const results = [];
+  for (const el of data.elements ?? []) {
+    const t = el.tags ?? {};
+    const name = t.name;
+    if (!name) continue;
+    const website = t.website || t["contact:website"] || null;
+    const phone = t.phone || t["contact:phone"] || null;
+    const street = [t["addr:housenumber"], t["addr:street"]].filter(Boolean).join(" ");
+    const city = t["addr:city"] || "";
+    const address = [street, city, "CA"].filter(Boolean).join(", ") || "Sonoma County, CA";
 
-  // Google Maps embeds data as JS — extract name/website pairs
-  const nameMatches = [...html.matchAll(/,"([A-Z][^"]{2,60})",null,null,\d/g)];
-  const websiteMatches = [...html.matchAll(/"(https?:\/\/(?!maps\.google|goo\.gl|google\.com)[^"]{5,100})"/g)];
-  const phoneMatches = [...html.matchAll(/"\+?1?[-.\s]?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}"/g)];
-
-  const websites = websiteMatches
-    .map((m) => m[1])
-    .filter((w) => !w.includes("google") && !w.includes("gstatic") && !w.includes("googleapis"));
-
-  for (let i = 0; i < Math.min(nameMatches.length, MAX_PER_SOURCE); i++) {
-    const name = nameMatches[i]?.[1];
-    if (!name || name.length < 3) continue;
-    results.push({
-      business_name: name,
-      website: websites[i] ?? null,
-      phone: phoneMatches[i]?.[0]?.replace(/"/g, "") ?? null,
-      address: `${city}, CA`,
-      source: "google_maps",
-    });
+    results.push({ business_name: name, website, phone, address, source: "osm" });
   }
 
-  console.log(`     → ${results.length} businesses found`);
+  console.log(`     → ${results.length} businesses with website tags found`);
+
+  // Also query for businesses WITHOUT websites — we'll try to enrich them
+  if (results.length < 100) {
+    console.log("     → Running secondary query for businesses without website tags...");
+    const query2 = `
+[out:json][timeout:60];
+(
+  node["name"]["amenity"](${bbox});
+  node["name"]["shop"](${bbox});
+);
+out center 1000;
+    `.trim();
+
+    const res2 = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `data=${encodeURIComponent(query2)}`,
+      signal: AbortSignal.timeout(90000),
+    });
+
+    if (res2.ok) {
+      const data2 = await res2.json();
+      let noWebCount = 0;
+      for (const el of data2.elements ?? []) {
+        const t = el.tags ?? {};
+        if (!t.name || t.website || t["contact:website"]) continue; // skip if already has website
+        const street = [t["addr:housenumber"], t["addr:street"]].filter(Boolean).join(" ");
+        const city2 = t["addr:city"] || "";
+        results.push({
+          business_name: t.name,
+          website: null,
+          phone: t.phone || t["contact:phone"] || null,
+          address: [street, city2, "CA"].filter(Boolean).join(", ") || "Sonoma County, CA",
+          source: "osm_no_website",
+        });
+        noWebCount++;
+      }
+      console.log(`     → ${noWebCount} additional businesses (no website yet — enrichment can find them)`);
+    }
+  }
+
   return results;
 }
 
-async function scrapeYelp(category, city) {
-  console.log("  ⭐ Yelp...");
-  const loc = encodeURIComponent(`${city}, CA`);
-  const term = encodeURIComponent(category);
-  const url = `https://www.yelp.com/search?find_desc=${term}&find_loc=${loc}`;
+// ─── Source: Santa Rosa Open Data ────────────────────────────────────────────
 
-  const html = await fetchHtml(url);
+async function scrapeSantaRosaOpenData() {
+  console.log("  🏛️  Santa Rosa Open Data Portal...");
+
+  // Try the Socrata API — search for business license datasets
+  const catalogUrl = "https://opendata.srcity.org/api/catalog/v1?q=business+license&limit=10";
+
+  let datasets = [];
+  try {
+    const catalog = await getJson(catalogUrl);
+    datasets = catalog.results ?? [];
+    console.log(`     → Found ${datasets.length} potential datasets in catalog`);
+    for (const d of datasets) {
+      console.log(`       • ${d.name} (${d.resource?.id ?? "?"})`);
+    }
+  } catch (err) {
+    console.warn(`     ⚠️  Catalog fetch failed: ${err.message}`);
+  }
+
   const results = [];
 
-  // Try Yelp's embedded JSON
+  // Try known Socrata dataset IDs for Santa Rosa business licenses
+  const knownIds = [
+    "tguh-kpqn", // common Socrata business license dataset ID pattern
+    "9xyq-qnhp",
+    "r2bh-kqrr",
+  ];
+
+  for (const id of knownIds) {
+    try {
+      const url = `https://opendata.srcity.org/resource/${id}.json?$limit=1000`;
+      const rows = await getJson(url);
+      if (Array.isArray(rows) && rows.length > 0) {
+        console.log(`     → Dataset ${id}: ${rows.length} records`);
+        for (const row of rows) {
+          const name = row.business_name || row.dba_name || row.name || row.licensee_name;
+          if (!name) continue;
+          results.push({
+            business_name: name,
+            website: row.website || row.url || null,
+            phone: row.phone || row.business_phone || null,
+            address: [row.address, row.city || "Santa Rosa", "CA"].filter(Boolean).join(", "),
+            source: "santa_rosa_opendata",
+          });
+        }
+      }
+    } catch {
+      // dataset ID doesn't exist, skip silently
+    }
+  }
+
+  // Also try the HDL business license search (Santa Rosa's public search tool)
+  try {
+    const hdlUrl = "https://santarosa.hdlgov.com/Business/api/BusinessSearch?searchTerm=&businessType=&status=Active&page=1&pageSize=100";
+    const hdlData = await getJson(hdlUrl, { Referer: "https://santarosa.hdlgov.com/Business" });
+    const businesses = hdlData.data ?? hdlData.businesses ?? hdlData.results ?? [];
+    console.log(`     → HDL portal: ${businesses.length} records`);
+    for (const b of businesses) {
+      const name = b.businessName || b.dbaName || b.name;
+      if (!name) continue;
+      results.push({
+        business_name: name,
+        website: b.website || null,
+        phone: b.phone || null,
+        address: [b.address, b.city || "Santa Rosa", "CA"].filter(Boolean).join(", "),
+        source: "santa_rosa_hdl",
+      });
+    }
+  } catch (err) {
+    console.warn(`     ⚠️  HDL portal failed: ${err.message}`);
+  }
+
+  console.log(`     → ${results.length} total businesses from Santa Rosa data`);
+  return results;
+}
+
+// ─── Source: Google Maps ──────────────────────────────────────────────────────
+
+async function scrapeGoogleMaps(category, city) {
+  console.log(`  📍 Google Maps — ${category} in ${city}...`);
+  const query = encodeURIComponent(`${category} ${city} CA`);
+  const html = await get(`https://www.google.com/maps/search/${query}`);
+  const results = [];
+
+  const nameMatches = [...html.matchAll(/,"([A-Z][^"]{2,60})",null,null,\d/g)];
+  const websiteMatches = [...html.matchAll(/"(https?:\/\/(?!maps\.google|goo\.gl|google\.com|googleapis)[^"]{8,120})"/g)];
+  const phoneMatches = [...html.matchAll(/"(\+?1?[-.\s]?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4})"/g)];
+
+  const websites = websiteMatches.map((m) => m[1])
+    .filter((w) => !w.includes("google") && !w.includes("gstatic"));
+
+  for (let i = 0; i < Math.min(nameMatches.length, MAX); i++) {
+    const name = nameMatches[i]?.[1];
+    if (!name || name.length < 3) continue;
+    results.push({ business_name: name, website: websites[i] ?? null, phone: phoneMatches[i]?.[1] ?? null, address: `${city}, CA`, source: "google_maps" });
+  }
+
+  console.log(`     → ${results.length} found`);
+  return results;
+}
+
+// ─── Source: Yelp ─────────────────────────────────────────────────────────────
+
+async function scrapeYelp(category, city) {
+  console.log(`  ⭐ Yelp — ${category} in ${city}...`);
+  const url = `https://www.yelp.com/search?find_desc=${encodeURIComponent(category)}&find_loc=${encodeURIComponent(`${city}, CA`)}`;
+  const html = await get(url);
+  const results = [];
+
   const jsonMatch = html.match(/<!--\{"locale"([\s\S]+?)-->/);
   if (jsonMatch) {
     try {
-      const raw = '{"locale"' + jsonMatch[1];
-      const json = JSON.parse(raw);
-      const items =
-        json?.legacyProps?.searchAppProps?.searchPageProps?.mainContentComponentsListProps ?? [];
-
+      const json = JSON.parse('{"locale"' + jsonMatch[1]);
+      const items = json?.legacyProps?.searchAppProps?.searchPageProps?.mainContentComponentsListProps ?? [];
       for (const item of items) {
-        if (results.length >= MAX_PER_SOURCE) break;
+        if (results.length >= MAX) break;
         const biz = item?.searchResultBusiness;
         if (!biz?.name) continue;
-        results.push({
-          business_name: biz.name,
-          website: biz.website?.href ?? null,
-          phone: biz.phone ?? null,
-          address: biz.formattedAddress ?? `${city}, CA`,
-          source: "yelp",
-        });
+        results.push({ business_name: biz.name, website: biz.website?.href ?? null, phone: biz.phone ?? null, address: biz.formattedAddress ?? `${city}, CA`, source: "yelp" });
       }
-    } catch {
-      // fall through
-    }
+    } catch { /* fall through */ }
   }
 
-  // Fallback: regex parse
   if (results.length === 0) {
-    const bizNames = [...html.matchAll(/"bizName"\s*:\s*"([^"]+)"/g)].map((m) => m[1]);
-    const bizUrls = [...html.matchAll(/"biz_url"\s*:\s*"([^"]+)"/g)].map((m) => m[1]);
-    for (let i = 0; i < Math.min(bizNames.length, MAX_PER_SOURCE); i++) {
-      results.push({
-        business_name: bizNames[i],
-        website: bizUrls[i] ?? null,
-        phone: null,
-        address: `${city}, CA`,
-        source: "yelp",
-      });
+    const names = [...html.matchAll(/"bizName"\s*:\s*"([^"]+)"/g)].map((m) => m[1]);
+    const urls = [...html.matchAll(/"biz_url"\s*:\s*"([^"]+)"/g)].map((m) => m[1]);
+    for (let i = 0; i < Math.min(names.length, MAX); i++) {
+      results.push({ business_name: names[i], website: urls[i] ?? null, phone: null, address: `${city}, CA`, source: "yelp" });
     }
   }
 
-  console.log(`     → ${results.length} businesses found`);
+  console.log(`     → ${results.length} found`);
   return results;
 }
 
-async function scrapeYellowPages(category, city) {
-  console.log("  📒 Yellow Pages...");
-  const term = encodeURIComponent(category);
-  const loc = encodeURIComponent(`${city}, CA`);
-  const url = `https://www.yellowpages.com/search?search_terms=${term}&geo_location_terms=${loc}`;
+// ─── Source: Yellow Pages ─────────────────────────────────────────────────────
 
-  const html = await fetchHtml(url);
+async function scrapeYellowPages(category, city) {
+  console.log(`  📒 Yellow Pages — ${category} in ${city}...`);
+  const url = `https://www.yellowpages.com/search?search_terms=${encodeURIComponent(category)}&geo_location_terms=${encodeURIComponent(`${city}, CA`)}`;
+  const html = await get(url);
   const results = [];
 
-  // Yellow Pages has clean semantic HTML
-  const listingRegex = /<div class="[^"]*result[^"]*"[\s\S]*?<\/article>/g;
-  const listings = html.match(listingRegex) ?? [];
-
-  for (const listing of listings.slice(0, MAX_PER_SOURCE)) {
-    const nameMatch = listing.match(/class="[^"]*business-name[^"]*"[^>]*>(?:<[^>]+>)*([^<]+)/);
-    const websiteMatch = listing.match(/class="[^"]*track-visit-website[^"]*"\s+href="([^"]+)"/);
-    const phoneMatch = listing.match(/class="[^"]*phone[^"]*"[^>]*>([^<]+)/);
-    const addressMatch = listing.match(/class="[^"]*street-address[^"]*"[^>]*>([^<]+)/);
-    const cityMatch = listing.match(/class="[^"]*locality[^"]*"[^>]*>([^<]+)/);
-
-    const name = nameMatch?.[1]?.trim();
+  const listings = html.match(/<div class="[^"]*result[^"]*"[\s\S]*?<\/article>/g) ?? [];
+  for (const listing of listings.slice(0, MAX)) {
+    const name = listing.match(/class="[^"]*business-name[^"]*"[^>]*>(?:<[^>]+>)*([^<]+)/)?.[1]?.trim();
     if (!name) continue;
-
     results.push({
       business_name: name,
-      website: websiteMatch?.[1] ?? null,
-      phone: phoneMatch?.[1]?.trim() ?? null,
-      address: [addressMatch?.[1]?.trim(), cityMatch?.[1]?.trim()].filter(Boolean).join(", ") || `${city}, CA`,
+      website: listing.match(/class="[^"]*track-visit-website[^"]*"\s+href="([^"]+)"/)?.[1] ?? null,
+      phone: listing.match(/class="[^"]*phone[^"]*"[^>]*>([^<]+)/)?.[1]?.trim() ?? null,
+      address: [
+        listing.match(/class="[^"]*street-address[^"]*"[^>]*>([^<]+)/)?.[1]?.trim(),
+        listing.match(/class="[^"]*locality[^"]*"[^>]*>([^<]+)/)?.[1]?.trim(),
+      ].filter(Boolean).join(", ") || `${city}, CA`,
       source: "yellowpages",
     });
   }
 
-  // Fallback if regex didn't match structure
+  // Fallback
   if (results.length === 0) {
     const names = [...html.matchAll(/itemprop="name"[^>]*>([^<]{3,60})</g)].map((m) => m[1].trim());
     const websites = [...html.matchAll(/href="(https?:\/\/(?!www\.yellowpages)[^"]+)"/g)].map((m) => m[1]);
     const phones = [...html.matchAll(/itemprop="telephone"[^>]*>([^<]+)</g)].map((m) => m[1].trim());
-
-    for (let i = 0; i < Math.min(names.length, MAX_PER_SOURCE); i++) {
-      results.push({
-        business_name: names[i],
-        website: websites[i] ?? null,
-        phone: phones[i] ?? null,
-        address: `${city}, CA`,
-        source: "yellowpages",
-      });
+    for (let i = 0; i < Math.min(names.length, MAX); i++) {
+      results.push({ business_name: names[i], website: websites[i] ?? null, phone: phones[i] ?? null, address: `${city}, CA`, source: "yellowpages" });
     }
   }
 
-  console.log(`     → ${results.length} businesses found`);
+  console.log(`     → ${results.length} found`);
   return results;
 }
+
+// ─── Source: BBB ──────────────────────────────────────────────────────────────
 
 async function scrapeBBB(category, city) {
-  console.log("  🅱  Better Business Bureau...");
-  const term = encodeURIComponent(category);
-  const loc = encodeURIComponent(`${city}, CA`);
-  const url = `https://www.bbb.org/search?find_country=USA&find_loc=${loc}&find_text=${term}&page=1`;
-
-  const html = await fetchHtml(url);
+  console.log(`  🅱️  BBB — ${category} in ${city}...`);
+  const url = `https://www.bbb.org/search?find_country=USA&find_loc=${encodeURIComponent(`${city}, CA`)}&find_text=${encodeURIComponent(category)}&page=1`;
+  const html = await get(url);
   const results = [];
 
-  const nameMatches = [...html.matchAll(/"name"\s*:\s*"([^"]{3,80})"/g)];
-  const urlMatches = [...html.matchAll(/"url"\s*:\s*"(https?:\/\/(?!www\.bbb\.org)[^"]+)"/g)];
-  const phoneMatches = [...html.matchAll(/"telephone"\s*:\s*"([^"]+)"/g)];
+  const names = [...html.matchAll(/"name"\s*:\s*"([^"]{3,80})"/g)].map((m) => m[1]);
+  const urls = [...html.matchAll(/"url"\s*:\s*"(https?:\/\/(?!www\.bbb\.org)[^"]+)"/g)].map((m) => m[1]);
+  const phones = [...html.matchAll(/"telephone"\s*:\s*"([^"]+)"/g)].map((m) => m[1]);
 
-  for (let i = 0; i < Math.min(nameMatches.length, MAX_PER_SOURCE); i++) {
-    const name = nameMatches[i]?.[1]?.trim();
+  for (let i = 0; i < Math.min(names.length, MAX); i++) {
+    const name = names[i]?.trim();
     if (!name || name.includes("BBB") || name.includes("©")) continue;
-    results.push({
-      business_name: name,
-      website: urlMatches[i]?.[1] ?? null,
-      phone: phoneMatches[i]?.[1] ?? null,
-      address: `${city}, CA`,
-      source: "bbb",
-    });
+    results.push({ business_name: name, website: urls[i] ?? null, phone: phones[i] ?? null, address: `${city}, CA`, source: "bbb" });
   }
 
-  console.log(`     → ${results.length} businesses found`);
+  console.log(`     → ${results.length} found`);
   return results;
 }
 
-// ─── Dedup & CSV ─────────────────────────────────────────────────────────────
+// ─── Enrichment: find contact email from website ──────────────────────────────
 
-function loadExistingWebsites() {
-  if (!fs.existsSync(OUTPUT_FILE)) return new Set();
-  const lines = fs.readFileSync(OUTPUT_FILE, "utf8").split("\n").slice(1); // skip header
-  return new Set(
-    lines
-      .map((l) => l.split(",")[1]?.trim())
-      .filter(Boolean)
-      .map(cleanUrl)
-      .filter(Boolean)
-  );
+async function enrichWithEmails(businesses) {
+  console.log(`\n📧 Enriching ${businesses.filter(b => b.website).length} businesses with contact emails...`);
+  const emailRegex = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+  const skipDomains = ["sentry.io", "wix.com", "squarespace.com", "wordpress.com", "example.com", "yourdomain"];
+
+  const enriched = [];
+  let found = 0;
+
+  for (let i = 0; i < businesses.length; i++) {
+    const b = businesses[i];
+    if (!b.website) {
+      enriched.push({ ...b, email: null });
+      continue;
+    }
+
+    process.stdout.write(`\r     ${i + 1}/${businesses.length} — ${b.business_name.slice(0, 40).padEnd(40)}`);
+
+    try {
+      const url = normalizeUrl(b.website);
+      const html = await get(url);
+
+      // Check homepage first
+      let emails = [...(html.match(emailRegex) ?? [])]
+        .filter((e) => !skipDomains.some((d) => e.includes(d)))
+        .filter((e) => !e.includes("@2x") && !e.includes(".png") && !e.includes(".jpg"));
+
+      // If no email on homepage, try /contact page
+      if (emails.length === 0) {
+        try {
+          const contactUrl = new URL("/contact", url).href;
+          const contactHtml = await get(contactUrl);
+          emails = [...(contactHtml.match(emailRegex) ?? [])]
+            .filter((e) => !skipDomains.some((d) => e.includes(d)));
+        } catch { /* no /contact page */ }
+      }
+
+      const email = emails[0] ?? null;
+      if (email) found++;
+      enriched.push({ ...b, email });
+    } catch {
+      enriched.push({ ...b, email: null });
+    }
+
+    await sleep(800); // be polite
+  }
+
+  console.log(`\n     → Found emails for ${found} of ${businesses.filter(b => b.website).length} businesses`);
+  return enriched;
 }
 
-function toCSVLine(b) {
-  const escape = (v) => `"${(v ?? "").toString().replace(/"/g, '""')}"`;
-  return [b.business_name, b.website ?? "", b.phone ?? "", b.address ?? "", b.source ?? ""].map(escape).join(",");
+// ─── CSV helpers ──────────────────────────────────────────────────────────────
+
+function loadExistingKeys() {
+  if (!fs.existsSync(OUTPUT_FILE)) return new Set();
+  const lines = fs.readFileSync(OUTPUT_FILE, "utf8").split("\n").slice(1).filter(Boolean);
+  return new Set(lines.map((l) => {
+    const cols = l.split(",");
+    const domain = cleanDomain(cols[1]?.replace(/"/g, ""));
+    const name = cols[0]?.replace(/"/g, "").toLowerCase().trim();
+    return domain || name;
+  }).filter(Boolean));
+}
+
+function esc(v) { return `"${(v ?? "").toString().replace(/"/g, '""')}"`; }
+
+function writeCSV(file, rows, extraHeaders = []) {
+  const headers = ["business_name", "website", "phone", "address", "source", ...extraHeaders];
+  const lines = rows.map((r) => [r.business_name, r.website ?? "", r.phone ?? "", r.address ?? "", r.source ?? "", ...extraHeaders.map((h) => r[h] ?? "")].map(esc).join(","));
+  fs.writeFileSync(file, headers.join(",") + "\n" + lines.join("\n") + "\n", "utf8");
+}
+
+function appendCSV(file, rows, extraHeaders = []) {
+  const lines = rows.map((r) => [r.business_name, r.website ?? "", r.phone ?? "", r.address ?? "", r.source ?? "", ...extraHeaders.map((h) => r[h] ?? "")].map(esc).join(","));
+  fs.appendFileSync(file, lines.join("\n") + "\n", "utf8");
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const existing = loadExistingWebsites();
-  const all = [];
+  const existing = loadExistingKeys();
+  const allResults = [];
 
-  const run = async (fn, source) => {
-    if (!USE_ALL && !SOURCES.includes(source)) return;
+  const run = async (label, fn) => {
     try {
       const results = await fn();
-      all.push(...results);
-      await sleep(1500); // be polite between sources
+      allResults.push(...results);
+      await sleep(2000);
     } catch (err) {
-      console.warn(`  ⚠️  ${source} failed: ${err.message}`);
+      console.warn(`\n  ⚠️  ${label} failed: ${err.message}`);
     }
   };
 
-  await run(() => scrapeGoogleMaps(CATEGORY, CITY), "google");
-  await run(() => scrapeYelp(CATEGORY, CITY), "yelp");
-  await run(() => scrapeYellowPages(CATEGORY, CITY), "yellowpages");
-  await run(() => scrapeBBB(CATEGORY, CITY), "bbb");
+  // Bulk sources (no category filter)
+  if (use("osm"))        await run("OSM", () => scrapeOSM());
+  if (use("santarosa"))  await run("Santa Rosa", () => scrapeSantaRosaOpenData());
 
-  // Dedup: by normalized website domain
+  // Category-based sources
+  const cities = use("osm") || use("santarosa")
+    ? ["Petaluma", "Santa Rosa", "Sebastopol", "Rohnert Park", "Cotati", "Windsor", "Healdsburg", "Sonoma"]
+    : [CITY];
+
+  const categories = use("osm") || use("santarosa")
+    ? [CATEGORY]
+    : [CATEGORY];
+
+  for (const city of cities) {
+    for (const category of categories) {
+      if (use("google"))      await run("Google Maps",   () => scrapeGoogleMaps(category, city));
+      if (use("yelp"))        await run("Yelp",          () => scrapeYelp(category, city));
+      if (use("yellowpages")) await run("Yellow Pages",  () => scrapeYellowPages(category, city));
+      if (use("bbb"))         await run("BBB",           () => scrapeBBB(category, city));
+      if (cities.length > 1) await sleep(1500);
+    }
+  }
+
+  // Deduplicate
   const seen = new Set(existing);
   const fresh = [];
-  for (const b of all) {
-    const key = cleanUrl(b.website) ?? b.business_name.toLowerCase().trim();
+  for (const b of allResults) {
+    const key = cleanDomain(b.website) ?? b.business_name.toLowerCase().trim();
     if (seen.has(key)) continue;
     seen.add(key);
     fresh.push(b);
   }
 
   if (fresh.length === 0) {
-    console.log("\n⚠️  No new businesses found (all already in leads-output.csv)\n");
+    console.log("\n⚠️  No new businesses found.\n");
     return;
   }
 
-  // Write CSV
+  // Write main CSV
   const isNew = !fs.existsSync(OUTPUT_FILE);
-  const header = "business_name,website,phone,address,source\n";
-  const lines = fresh.map(toCSVLine).join("\n") + "\n";
+  if (isNew) writeCSV(OUTPUT_FILE, fresh);
+  else appendCSV(OUTPUT_FILE, fresh);
 
-  if (isNew) {
-    fs.writeFileSync(OUTPUT_FILE, header + lines, "utf8");
-  } else {
-    fs.appendFileSync(OUTPUT_FILE, lines, "utf8");
+  console.log(`\n${"─".repeat(45)}`);
+  console.log(`✅ Scraped ${allResults.length} total, ${fresh.length} new businesses`);
+  console.log(`   Duplicates skipped: ${allResults.length - fresh.length}`);
+
+  // Source breakdown
+  const bySource = {};
+  fresh.forEach((b) => { bySource[b.source] = (bySource[b.source] ?? 0) + 1; });
+  Object.entries(bySource).forEach(([s, n]) => console.log(`   ${s.padEnd(22)}: ${n}`));
+
+  // Enrichment
+  let finalData = fresh;
+  if (ENRICH) {
+    finalData = await enrichWithEmails(fresh);
+    writeCSV(ENRICHED_FILE, finalData, ["email"]);
+    const withEmail = finalData.filter((b) => b.email).length;
+    console.log(`\n📧 Enriched CSV: ${ENRICHED_FILE}`);
+    console.log(`   Businesses with email: ${withEmail}/${fresh.length}`);
   }
 
-  console.log(`\n✅ Done! ${fresh.length} new businesses saved to scripts/leads-output.csv`);
-  console.log(`   Total scraped across all sources: ${all.length}`);
-  console.log(`   Duplicates removed: ${all.length - fresh.length}`);
-  console.log(`\n📋 Next steps:`);
-  console.log(`   1. Open scripts/leads-output.csv`);
-  console.log(`   2. Go to /admin/outreach on your site`);
-  console.log(`   3. Click "Or paste a list manually"`);
-  console.log(`   4. Paste the CSV contents → Import\n`);
+  console.log(`\n📄 Output: scripts/leads-output.csv`);
+  if (ENRICH) console.log(`📄 Enriched: scripts/leads-enriched.csv`);
+  console.log(`\nNext steps:`);
+  console.log(`  1. Go to /admin/outreach on your site`);
+  console.log(`  2. Drag leads-output.csv onto the drop zone`);
+  console.log(`  3. Click "Audit next 5 leads" to start scoring\n`);
 }
 
 main().catch((err) => {

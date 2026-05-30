@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "scrape": "node scripts/scrape-leads.mjs",
+    "scrape:osm": "node scripts/scrape-leads.mjs --sources osm",
+    "scrape:all": "node scripts/scrape-leads.mjs --sources all",
+    "scrape:enrich": "node scripts/scrape-leads.mjs --sources all --enrich"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
