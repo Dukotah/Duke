@@ -6,10 +6,10 @@ import Link from "next/link";
 
 const links = [
   { label: "Services", href: "/#services" },
-  { label: "How It Works", href: "/#how-it-works" },
-  { label: "About", href: "/#about" },
+  { label: "Pricing", href: "/pricing" },
   { label: "Resources", href: "/blog" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Tools", href: "/tools" },
+  { label: "About", href: "/#about" },
 ];
 
 export default function Nav() {
@@ -18,7 +18,7 @@ export default function Nav() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -30,7 +30,7 @@ export default function Nav() {
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-2">
           <span
             className="text-xl font-bold tracking-tight"
             style={{ fontFamily: "var(--font-heading)", color: scrolled ? "#18181B" : "#ffffff" }}
@@ -41,7 +41,7 @@ export default function Nav() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-7">
           {links.map((l) => (
             <Link
               key={l.href}
@@ -54,16 +54,23 @@ export default function Nav() {
           ))}
         </nav>
 
-        {/* CTA */}
-        <Link
-          href="/#contact"
-          className="hidden md:inline-flex items-center px-5 py-2 rounded-md text-sm font-semibold text-white transition-colors"
-          style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#ea6c0a")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F97316")}
-        >
-          Free Consultation
-        </Link>
+        {/* CTAs */}
+        <div className="hidden md:flex items-center gap-3">
+          <Link
+            href="/assessment"
+            className={`text-sm font-semibold transition-colors ${scrolled ? "text-[#3F3F46]/60 hover:text-[#18181B]" : "text-white/60 hover:text-white"}`}
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Free Assessment
+          </Link>
+          <Link
+            href="/#contact"
+            className="inline-flex items-center px-5 py-2 rounded-md text-sm font-semibold text-white transition-colors bg-[#F97316] hover:bg-[#ea6c0a]"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Book a Call
+          </Link>
+        </div>
 
         {/* Mobile toggle */}
         <button
@@ -90,12 +97,20 @@ export default function Nav() {
             </Link>
           ))}
           <Link
+            href="/assessment"
+            onClick={() => setOpen(false)}
+            className="text-sm font-medium text-[#F97316]"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Free Assessment →
+          </Link>
+          <Link
             href="/#contact"
             onClick={() => setOpen(false)}
-            className="inline-flex items-center justify-center px-5 py-2 rounded-md text-sm font-semibold text-white"
-            style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+            className="inline-flex items-center justify-center px-5 py-2 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a]"
+            style={{ fontFamily: "var(--font-heading)" }}
           >
-            Free Consultation
+            Book a Call
           </Link>
         </div>
       )}

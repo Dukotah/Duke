@@ -4,9 +4,9 @@ import SocialProof from "@/components/SocialProof";
 import Problem from "@/components/Problem";
 import Services from "@/components/Services";
 import HowItWorks from "@/components/HowItWorks";
-import ITQuiz from "@/components/ITQuiz";
+import AssessmentTeaser from "@/components/AssessmentTeaser";
 import CaseStudies from "@/components/CaseStudies";
-import PricingEstimator from "@/components/PricingEstimator";
+import PricingTeaser from "@/components/PricingTeaser";
 import ToolsTeaser from "@/components/ToolsTeaser";
 import FAQ from "@/components/FAQ";
 import About from "@/components/About";
@@ -24,9 +24,9 @@ export default function Home() {
         <Problem />
         <Services />
         <HowItWorks />
-        <ITQuiz />
+        <AssessmentTeaser />
         <CaseStudies />
-        <PricingEstimator />
+        <PricingTeaser />
         <ToolsTeaser />
         <FAQ />
         <About />
