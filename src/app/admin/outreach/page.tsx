@@ -53,12 +53,14 @@ export default function OutreachDashboard() {
   const [scraping, setScraping] = useState(false);
   const [auditing, setAuditing] = useState(false);
   const [sending, setSending] = useState<number | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ msg: string; type: "ok" | "err" } | null>(null);
   const [stats, setStats] = useState<Record<string, number>>({});
+  const [showManual, setShowManual] = useState(false);
+  const [manualCsv, setManualCsv] = useState("");
 
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3500);
+  const showToast = (msg: string, type: "ok" | "err" = "ok") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 4000);
   };
 
   const loadLeads = useCallback(async () => {
@@ -82,17 +84,23 @@ export default function OutreachDashboard() {
     loadLeads();
   }, [loadLeads]);
 
-  async function handleScrape() {
+  async function handleScrape(manual = false) {
     setScraping(true);
     try {
+      const body: Record<string, string> = { category: scrapeCategory, city: scrapeCity };
+      if (manual && manualCsv.trim()) body.manual_csv = manualCsv;
       const res = await fetch("/api/admin/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category: scrapeCategory, city: scrapeCity }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (data.error) showToast(`Error: ${data.error}`);
-      else showToast(`Found ${data.total} businesses, added ${data.added} new leads`);
+      if (data.error) showToast(data.error, "err");
+      else {
+        showToast(`Added ${data.added} of ${data.total} businesses as leads`);
+        setManualCsv("");
+        setShowManual(false);
+      }
       loadLeads();
     } finally {
       setScraping(false);
@@ -180,8 +188,8 @@ export default function OutreachDashboard() {
     <div className="min-h-screen bg-zinc-950 text-white">
       {/* Toast */}
       {toast && (
-        <div className="fixed top-4 right-4 z-50 bg-zinc-800 border border-zinc-700 text-white text-sm px-5 py-3 rounded-xl shadow-lg">
-          {toast}
+        <div className={`fixed top-4 right-4 z-50 text-white text-sm px-5 py-3 rounded-xl shadow-lg border ${toast.type === "err" ? "bg-red-900 border-red-700" : "bg-zinc-800 border-zinc-700"}`}>
+          {toast.msg}
         </div>
       )}
 
@@ -246,12 +254,42 @@ export default function OutreachDashboard() {
               </select>
             </div>
             <button
-              onClick={handleScrape}
+              onClick={() => handleScrape(false)}
               disabled={scraping}
-              className="w-full bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 mb-3"
             >
-              {scraping ? <><RefreshCw size={14} className="animate-spin" /> Scraping…</> : <><Search size={14} /> Scrape Google Maps</>}
+              {scraping ? <><RefreshCw size={14} className="animate-spin" /> Searching…</> : <><Search size={14} /> Search Yelp</>}
             </button>
+
+            {/* Manual import toggle */}
+            <button
+              onClick={() => setShowManual(!showManual)}
+              className="w-full text-xs text-zinc-500 hover:text-zinc-300 transition-colors text-center"
+            >
+              {showManual ? "Hide" : "Or paste a list manually ↓"}
+            </button>
+            {showManual && (
+              <div className="mt-3 space-y-2">
+                <p className="text-xs text-zinc-500">
+                  One business per line: <span className="text-zinc-400 font-mono">Business Name, website.com, phone, address</span><br />
+                  Website and other fields are optional.
+                </p>
+                <textarea
+                  value={manualCsv}
+                  onChange={(e) => setManualCsv(e.target.value)}
+                  placeholder={"Joe's Pizza, joespizza.com, 707-555-1234\nPetaluma Plumbing, , 707-555-5678"}
+                  rows={5}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-orange-500 resize-none"
+                />
+                <button
+                  onClick={() => handleScrape(true)}
+                  disabled={scraping || !manualCsv.trim()}
+                  className="w-full bg-zinc-700 hover:bg-zinc-600 disabled:opacity-40 text-white text-sm font-semibold py-2 rounded-lg transition-colors"
+                >
+                  Import list
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Audit */}

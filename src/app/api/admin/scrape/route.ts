@@ -8,81 +8,115 @@ interface ScrapedBusiness {
   address: string | null;
 }
 
-async function scrapeGoogleMaps(query: string, city: string): Promise<ScrapedBusiness[]> {
-  const searchQuery = encodeURIComponent(`${query} in ${city} CA`);
-  const url = `https://www.google.com/maps/search/${searchQuery}`;
+async function scrapeYelp(category: string, city: string): Promise<ScrapedBusiness[]> {
+  const location = encodeURIComponent(`${city}, CA`);
+  const find_desc = encodeURIComponent(category);
+  const url = `https://www.yelp.com/search?find_desc=${find_desc}&find_loc=${location}`;
 
   const res = await fetch(url, {
     headers: {
       "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       "Accept-Language": "en-US,en;q=0.9",
     },
   });
 
-  if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+  if (!res.ok) throw new Error(`Yelp fetch failed: ${res.status}`);
   const html = await res.text();
 
   const businesses: ScrapedBusiness[] = [];
 
-  // Extract business data from Google Maps JSON embedded in the page
-  const jsonMatch = html.match(/window\.APP_INITIALIZATION_STATE\s*=\s*(\[[\s\S]+?\]);\s*window/);
-  if (!jsonMatch) {
-    // Fallback: parse visible text patterns for business names
-    const nameMatches = html.matchAll(/"([^"]{3,60})",null,null,null,null,\[null,null,(\d+\.\d+),(-?\d+\.\d+)\]/g);
-    for (const m of nameMatches) {
-      if (businesses.length >= 20) break;
-      businesses.push({ business_name: m[1], website: null, phone: null, address: null });
+  // Yelp embeds business data in a JSON blob in a <script> tag
+  const scriptMatch = html.match(/<!--{"locale"[\s\S]+?-->/);
+  if (scriptMatch) {
+    try {
+      const json = JSON.parse(scriptMatch[0].replace(/^<!--/, "").replace(/-->$/, ""));
+      const searchResults =
+        json?.legacyProps?.searchAppProps?.searchPageProps?.mainContentComponentsListProps ?? [];
+
+      for (const item of searchResults) {
+        if (businesses.length >= 20) break;
+        const biz = item?.searchResultBusiness;
+        if (!biz?.name) continue;
+        businesses.push({
+          business_name: biz.name,
+          website: biz.website?.href ?? null,
+          phone: biz.phone ?? null,
+          address: biz.formattedAddress ?? null,
+        });
+      }
+
+      if (businesses.length > 0) return businesses;
+    } catch {
+      // fall through to regex fallback
     }
-    return businesses;
   }
 
-  try {
-    // Pull business name + website patterns from the raw JSON blob
-    const raw = jsonMatch[1];
-    const nameWebPairs = raw.matchAll(/"([A-Z][^"]{2,60})","(https?:\/\/[^"]+)"/g);
-    for (const match of nameWebPairs) {
-      if (businesses.length >= 25) break;
-      const name = match[1];
-      const site = match[2];
-      if (
-        site.includes("google") ||
-        site.includes("facebook") ||
-        site.includes("yelp") ||
-        site.includes("instagram")
-      )
-        continue;
-      businesses.push({ business_name: name, website: site, phone: null, address: null });
-    }
-  } catch {
-    // ignore parse errors
+  // Regex fallback — parse business names from Yelp's structured markup
+  const nameMatches = html.matchAll(/"name"\s*:\s*"([^"]{3,80})"/g);
+  const websiteMatches = [...html.matchAll(/"website"\s*:\s*\{[^}]*"href"\s*:\s*"([^"]+)"/g)];
+  const phoneMatches = [...html.matchAll(/"phone"\s*:\s*"([^"]+)"/g)];
+
+  let i = 0;
+  for (const m of nameMatches) {
+    if (businesses.length >= 20) break;
+    const name = m[1];
+    if (name.length < 3 || name.includes("\\") || name === city) continue;
+    businesses.push({
+      business_name: name,
+      website: websiteMatches[i]?.[1] ?? null,
+      phone: phoneMatches[i]?.[1] ?? null,
+      address: null,
+    });
+    i++;
   }
 
   return businesses;
 }
 
+function parseManualCSV(csv: string, city: string, category: string): ScrapedBusiness[] {
+  const lines = csv.trim().split("\n").filter(Boolean);
+  return lines.slice(0, 50).map((line) => {
+    const [business_name, website, phone, address] = line.split(",").map((s) => s.trim());
+    return {
+      business_name: business_name ?? "Unknown",
+      website: website || null,
+      phone: phone || null,
+      address: address || null,
+    };
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { category, city } = await req.json();
+    const { category, city, manual_csv } = await req.json();
     if (!category || !city) {
       return NextResponse.json({ error: "category and city required" }, { status: 400 });
     }
 
-    const businesses = await scrapeGoogleMaps(category, city);
+    let businesses: ScrapedBusiness[];
+
+    if (manual_csv) {
+      businesses = parseManualCSV(manual_csv, city, category);
+    } else {
+      businesses = await scrapeYelp(category, city);
+    }
+
     if (businesses.length === 0) {
-      return NextResponse.json({ error: "No businesses found — try a different category or city" }, { status: 404 });
+      return NextResponse.json({
+        error: "No businesses found. Try the manual import — paste business names and websites as CSV.",
+      }, { status: 404 });
     }
 
     const db = getDb();
+    const dedup = db.prepare("SELECT id FROM leads WHERE website = ? AND website IS NOT NULL");
     const insert = db.prepare(`
-      INSERT OR IGNORE INTO leads (business_name, website, phone, address, city, category, status)
+      INSERT INTO leads (business_name, website, phone, address, city, category, status)
       VALUES (@business_name, @website, @phone, @address, @city, @category, 'scraped')
     `);
 
-    // Use website as unique key to avoid dupes
-    const dedup = db.prepare("SELECT id FROM leads WHERE website = ?");
     let added = 0;
-
     for (const b of businesses) {
       if (b.website) {
         const existing = dedup.get(b.website);
