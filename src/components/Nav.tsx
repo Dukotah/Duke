@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
 
 const links = [
-  { label: "Services", href: "#services" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Services", href: "/#services" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "About", href: "/#about" },
+  { label: "Resources", href: "/blog" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Nav() {
@@ -28,7 +30,7 @@ export default function Nav() {
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-2 group">
           <span
             className="text-xl font-bold tracking-tight"
             style={{ fontFamily: "var(--font-heading)", color: scrolled ? "#18181B" : "#ffffff" }}
@@ -36,32 +38,32 @@ export default function Nav() {
             Copper Bay
             <span style={{ color: "#F97316" }}>Tech</span>
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a
+            <Link
               key={l.href}
               href={l.href}
               className={`text-sm font-medium transition-colors ${scrolled ? "text-[#3F3F46]/70 hover:text-[#18181B]" : "text-white/80 hover:text-white"}`}
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {l.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
         {/* CTA */}
-        <a
-          href="#contact"
+        <Link
+          href="/#contact"
           className="hidden md:inline-flex items-center px-5 py-2 rounded-md text-sm font-semibold text-white transition-colors"
-          style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#111113")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#18181B")}
+          style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#ea6c0a")}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F97316")}
         >
           Free Consultation
-        </a>
+        </Link>
 
         {/* Mobile toggle */}
         <button
@@ -77,7 +79,7 @@ export default function Nav() {
       {open && (
         <div className="md:hidden bg-[#FAFAF9] border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
           {links.map((l) => (
-            <a
+            <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
@@ -85,16 +87,16 @@ export default function Nav() {
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {l.label}
-            </a>
+            </Link>
           ))}
-          <a
-            href="#contact"
+          <Link
+            href="/#contact"
             onClick={() => setOpen(false)}
             className="inline-flex items-center justify-center px-5 py-2 rounded-md text-sm font-semibold text-white"
-            style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
+            style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
           >
             Free Consultation
-          </a>
+          </Link>
         </div>
       )}
     </header>
