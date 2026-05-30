@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -545,7 +545,7 @@ const idleChecks: AllChecks = {
   compliance: { status: "idle" },
 };
 
-export default function ReportPage() {
+function ReportPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [inputUrl, setInputUrl] = useState("");
@@ -778,5 +778,17 @@ export default function ReportPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function ReportPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#18181B] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ReportPageInner />
+    </Suspense>
   );
 }
