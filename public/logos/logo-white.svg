@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 180" width="500" height="180">
+  <!-- Transparent background - for use on dark backgrounds -->
+
+  <!-- "COPPER BAY" text white -->
+  <text
+    x="0"
+    y="90"
+    font-family="Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="72"
+    fill="#FFFFFF"
+    letter-spacing="-2"
+  >COPPER BAY</text>
+
+  <!-- "TECH" in orange -->
+  <text
+    x="0"
+    y="165"
+    font-family="Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="72"
+    fill="#F97316"
+    letter-spacing="-2"
+  >TECH</text>
+
+  <!-- Accent bar under COPPER BAY -->
+  <rect x="0" y="100" width="55" height="5" fill="#F97316" rx="2.5"/>
+</svg>

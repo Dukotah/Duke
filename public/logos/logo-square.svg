@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <!-- Background -->
+  <rect width="500" height="500" fill="#18181B" rx="40"/>
+
+  <!-- Orange accent bar -->
+  <rect x="60" y="310" width="80" height="6" fill="#F97316" rx="3"/>
+
+  <!-- "COPPER BAY" text -->
+  <text
+    x="60"
+    y="230"
+    font-family="Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="72"
+    fill="#FFFFFF"
+    letter-spacing="-2"
+  >COPPER</text>
+
+  <text
+    x="60"
+    y="310"
+    font-family="Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="72"
+    fill="#FFFFFF"
+    letter-spacing="-2"
+  >BAY</text>
+
+  <!-- "TECH" in orange -->
+  <text
+    x="60"
+    y="395"
+    font-family="Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="72"
+    fill="#F97316"
+    letter-spacing="-2"
+  >TECH</text>
+
+  <!-- Tagline -->
+  <text
+    x="60"
+    y="440"
+    font-family="Arial, sans-serif"
+    font-weight="400"
+    font-size="22"
+    fill="#FFFFFF"
+    opacity="0.4"
+    letter-spacing="4"
+  >SONOMA COUNTY</text>
+</svg>

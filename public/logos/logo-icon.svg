@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" width="250" height="250">
+  <!-- Background -->
+  <rect width="250" height="250" fill="#18181B" rx="32"/>
+
+  <!-- CB monogram - C -->
+  <text
+    x="22"
+    y="175"
+    font-family="Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="160"
+    fill="#FFFFFF"
+  >C</text>
+
+  <!-- CB monogram - B in orange -->
+  <text
+    x="108"
+    y="175"
+    font-family="Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="160"
+    fill="#F97316"
+  >B</text>
+
+  <!-- Bottom accent bar -->
+  <rect x="22" y="195" width="60" height="5" fill="#F97316" rx="2.5"/>
+</svg>
