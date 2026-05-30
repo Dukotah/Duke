@@ -10,24 +10,9 @@ export default function Hero() {
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="topo" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-              <path
-                d="M0 40 Q20 20 40 40 Q60 60 80 40"
-                fill="none"
-                stroke="#F97316"
-                strokeWidth="0.8"
-              />
-              <path
-                d="M0 20 Q20 0 40 20 Q60 40 80 20"
-                fill="none"
-                stroke="#F97316"
-                strokeWidth="0.5"
-              />
-              <path
-                d="M0 60 Q20 40 40 60 Q60 80 80 60"
-                fill="none"
-                stroke="#F97316"
-                strokeWidth="0.5"
-              />
+              <path d="M0 40 Q20 20 40 40 Q60 60 80 40" fill="none" stroke="#F97316" strokeWidth="0.8" />
+              <path d="M0 20 Q20 0 40 20 Q60 40 80 20" fill="none" stroke="#F97316" strokeWidth="0.5" />
+              <path d="M0 60 Q20 40 40 60 Q60 80 80 60" fill="none" stroke="#F97316" strokeWidth="0.5" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#topo)" />
@@ -73,9 +58,9 @@ export default function Hero() {
             <a
               href="#contact"
               className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold text-white transition-colors"
-              style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#111113")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#18181B")}
+              style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#ea6c0a")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F97316")}
             >
               Get a Free Consultation
             </a>
