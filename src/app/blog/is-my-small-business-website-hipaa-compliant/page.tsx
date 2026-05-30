@@ -18,11 +18,27 @@ const checks = [
   { item: "Privacy policy covers health data handling", what: "Your privacy policy should specifically address when health info is collected, how it is stored, and who can access it." },
 ];
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Is My Small Business Website HIPAA Compliant? A Plain-English Checklist",
+  description:
+    "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
+  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  datePublished: "2026-04-01",
+  url: "https://copperbaytech.com/blog/is-my-small-business-website-hipaa-compliant",
+};
+
 export default function Article() {
   return (
     <>
       <Nav />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-8 transition-colors" style={{ fontFamily: "var(--font-heading)" }}>

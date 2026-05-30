@@ -37,11 +37,27 @@ const signs = [
   },
 ];
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "5 Signs Your Business Website Is Costing You Customers Right Now",
+  description:
+    "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  datePublished: "2026-03-01",
+  url: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers",
+};
+
 export default function Article() {
   return (
     <>
       <Nav />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-8 transition-colors" style={{ fontFamily: "var(--font-heading)" }}>

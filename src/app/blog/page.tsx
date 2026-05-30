@@ -21,6 +21,33 @@ type Post = {
 
 const posts: Post[] = [
   {
+    slug: "ransomware-protection-small-business",
+    tag: "Cybersecurity",
+    title: "Ransomware Protection for Small Business: What Actually Works",
+    excerpt:
+      "Small businesses are the #1 ransomware target. Here's what actually protects you — and what's a waste of money — explained without the technical jargon.",
+    readTime: "7 min read",
+    date: "May 2026",
+  },
+  {
+    slug: "best-website-for-a-sonoma-county-winery",
+    tag: "Web Development",
+    title: "What Makes a Great Website for a Sonoma County Winery?",
+    excerpt:
+      "Tasting room visits, wine club signups, and DTC sales all start with your website. Here's what most winery sites get wrong — and what actually drives results.",
+    readTime: "5 min read",
+    date: "May 2026",
+  },
+  {
+    slug: "how-much-does-it-support-cost-for-small-business",
+    tag: "IT Support",
+    title: "How Much Does IT Support Cost for a Small Business in Sonoma County?",
+    excerpt:
+      "Hourly? Retainer? Break-fix? Here's what IT support actually costs for small businesses — and how to avoid overpaying.",
+    readTime: "6 min read",
+    date: "May 2026",
+  },
+  {
     slug: "how-to-choose-an-it-company-sonoma-county",
     tag: "IT Support",
     title: "How to Choose an IT Company in Sonoma County (Without Getting Burned)",
