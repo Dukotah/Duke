@@ -31,7 +31,7 @@ export default function Nav() {
         <a href="#" className="flex items-center gap-2 group">
           <span
             className="text-xl font-bold tracking-tight"
-            style={{ fontFamily: "var(--font-heading)", color: "#18181B" }}
+            style={{ fontFamily: "var(--font-heading)", color: scrolled ? "#18181B" : "#ffffff" }}
           >
             Copper Bay
             <span style={{ color: "#F97316" }}>Tech</span>
@@ -44,7 +44,7 @@ export default function Nav() {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-[#3F3F46]/70 hover:text-[#18181B] transition-colors"
+              className={`text-sm font-medium transition-colors ${scrolled ? "text-[#3F3F46]/70 hover:text-[#18181B]" : "text-white/80 hover:text-white"}`}
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {l.label}
@@ -65,7 +65,7 @@ export default function Nav() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2 text-[#18181B]"
+          className={`md:hidden p-2 ${scrolled ? "text-[#18181B]" : "text-white"}`}
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
