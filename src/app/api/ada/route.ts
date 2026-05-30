@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateAuditUrl } from "@/lib/validate-url";
 import { rateLimit } from "@/lib/rate-limit";
+import { fetchHtml } from "@/lib/fetch-html";
 
 export interface ADAIssue {
   label: string;
@@ -34,13 +35,7 @@ export async function POST(req: NextRequest) {
 
     let html: string;
     try {
-      const res = await fetch(normalizedUrl, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; CopperBayAudit/1.0)",
-        },
-        signal: AbortSignal.timeout(10000),
-      });
-      html = await res.text();
+      html = await fetchHtml(normalizedUrl);
     } catch {
       return NextResponse.json({ error: "Failed to fetch URL" }, { status: 502 });
     }

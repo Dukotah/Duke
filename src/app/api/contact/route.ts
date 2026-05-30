@@ -4,18 +4,45 @@ import { rateLimit } from "@/lib/rate-limit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MAX_MESSAGE_LEN = 10_000;
+// Reject bodies larger than 64 KB before parsing JSON
+const MAX_BODY_BYTES = 64 * 1024;
 
 export async function POST(req: NextRequest) {
   const rl = rateLimit(req, { limit: 20, windowMs: 60_000 });
   if (!rl.ok) {
-    return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
+    return NextResponse.json(
+      { error: rl.message },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
+  // Body size guard — check Content-Length before parsing
+  const contentLength = req.headers.get("content-length");
+  if (contentLength && parseInt(contentLength, 10) > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Request body too large" }, { status: 413 });
   }
 
   try {
-    const body = await req.json();
-    const { name, business, email, phone, service, message } = body;
+    // Read as raw bytes first to enforce hard cap regardless of Content-Length
+    const raw = await req.arrayBuffer();
+    if (raw.byteLength > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: "Request body too large" }, { status: 413 });
+    }
 
-    // Validate required fields
+    let body: unknown;
+    try {
+      body = JSON.parse(new TextDecoder().decode(raw));
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+
+    const { name, business, email, phone, service, message } =
+      body as Record<string, unknown>;
+
     if (!name || typeof name !== "string" || !name.trim()) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
@@ -32,7 +59,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message is too long" }, { status: 400 });
     }
 
-    // Escape all user-supplied fields before inserting into HTML
     const safeName     = escapeHtml(truncate(String(name).trim(), 200));
     const safeBusiness = escapeHtml(truncate(String(business).trim(), 200));
     const safeEmail    = escapeHtml(String(email).trim());
@@ -75,14 +101,12 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      const errorBody = await res.text();
-      console.error("Resend error:", res.status, errorBody);
+      console.error("Resend error:", res.status);
       return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error("Contact route error:", err);
+  } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

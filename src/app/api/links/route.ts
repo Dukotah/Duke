@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateAuditUrl } from "@/lib/validate-url";
 import { rateLimit } from "@/lib/rate-limit";
+import { fetchHtml } from "@/lib/fetch-html";
 
 interface LinkResult {
   url: string;
@@ -12,12 +13,18 @@ function extractLinks(html: string, baseUrl: string): Array<{ url: string; text:
   const base = new URL(baseUrl);
   const results: Array<{ url: string; text: string }> = [];
   const seen = new Set<string>();
-  const re = /<a[^>]+href=["']([^"'#][^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
+
+  // Safe regex: [^<]* cannot backtrack catastrophically (no nested quantifiers)
+  const re = /<a\b[^>]+href=["']([^"'#][^"']*)["'][^>]*>([^<]*(?:<(?!\/a>)[^<]*)*)<\/a>/gi;
   let m: RegExpExecArray | null;
 
   while ((m = re.exec(html)) !== null) {
     const href = m[1].trim();
     const rawText = m[2].replace(/<[^>]+>/g, "").trim().slice(0, 80) || href;
+
+    if (href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("javascript:")) {
+      continue;
+    }
 
     let resolved: string;
     try {
@@ -25,8 +32,6 @@ function extractLinks(html: string, baseUrl: string): Array<{ url: string; text:
         resolved = href;
       } else if (href.startsWith("/")) {
         resolved = `${base.protocol}//${base.host}${href}`;
-      } else if (href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("javascript:")) {
-        continue;
       } else {
         resolved = new URL(href, baseUrl).href;
       }
@@ -53,7 +58,6 @@ async function checkLink(url: string, text: string): Promise<LinkResult & { to: 
         "User-Agent": "Mozilla/5.0 (compatible; CopperBayLinkChecker/1.0)",
       },
     });
-    // Capture the Location header for redirects so the UI can show where they go
     const to = (res.status === 301 || res.status === 302 || res.status === 307 || res.status === 308)
       ? (res.headers.get("Location") ?? "")
       : "";
@@ -66,7 +70,10 @@ async function checkLink(url: string, text: string): Promise<LinkResult & { to: 
 export async function POST(req: NextRequest) {
   const rl = rateLimit(req, { limit: 10, windowMs: 60_000 });
   if (!rl.ok) {
-    return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
+    return NextResponse.json(
+      { error: rl.message },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
   }
 
   try {
@@ -80,13 +87,7 @@ export async function POST(req: NextRequest) {
 
     let html: string;
     try {
-      const res = await fetch(normalizedUrl, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
-        },
-        signal: AbortSignal.timeout(10000),
-      });
-      html = await res.text();
+      html = await fetchHtml(normalizedUrl);
     } catch {
       return NextResponse.json({ error: "Failed to fetch URL" }, { status: 502 });
     }

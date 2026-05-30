@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateAuditUrl } from "@/lib/validate-url";
 import { rateLimit } from "@/lib/rate-limit";
+import { fetchHtml } from "@/lib/fetch-html";
 
 interface SEOIssue {
   label: string;
@@ -65,14 +66,7 @@ export async function POST(req: NextRequest) {
 
     let html: string;
     try {
-      const res = await fetch(normalizedUrl, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        },
-        signal: AbortSignal.timeout(10000),
-      });
-      html = await res.text();
+      html = await fetchHtml(normalizedUrl);
     } catch {
       return NextResponse.json({ error: "Failed to fetch URL" }, { status: 502 });
     }
