@@ -7,6 +7,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE,               lastModified: now, changeFrequency: "weekly",  priority: 1.0 },
+    { url: `${BASE}/services`,                  lastModified: now, changeFrequency: "monthly", priority: 0.95 },
+    { url: `${BASE}/services/web-development`,  lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/services/it-support`,       lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/services/cybersecurity`,    lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/assessment`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/pricing`,    lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/tools`,      lastModified: now, changeFrequency: "monthly", priority: 0.8 },
