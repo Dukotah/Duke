@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { MapPin, ShieldCheck, Code2 } from "lucide-react";
+import Image from "next/image";
 
 const highlights = [
   { icon: MapPin, text: "Based in Sonoma County — we show up in person when it matters" },
@@ -13,7 +14,7 @@ export default function About() {
   return (
     <section id="about" className="py-24 bg-white">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-16 items-start">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -34,15 +35,42 @@ export default function About() {
               <br />
               Enterprise-grade standards.
             </h2>
+
+            {/* Headshot / Avatar */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-[#18181B] flex items-center justify-center border-2 border-[#F97316]/30">
+                {/* Replace with: <Image src="/duke-headshot.jpg" alt="Duke Hutcheon" fill className="object-cover" /> */}
+                <span
+                  className="text-2xl font-bold text-[#F97316]"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  D
+                </span>
+              </div>
+              <div>
+                <p
+                  className="text-base font-bold text-[#18181B]"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Duke Hutcheon
+                </p>
+                <p
+                  className="text-sm text-[#3F3F46]/50"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  Founder, Developer & IT Consultant
+                </p>
+              </div>
+            </div>
+
             <p
               className="text-[#3F3F46]/60 leading-relaxed mb-6"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              I&apos;m Duke, a Sonoma County-based developer and IT consultant with a
-              rigorous background in cybersecurity principles and custom application
-              development. I started Copper Bay Tech because local businesses deserve
-              the same quality of technology that larger companies take for granted —
-              without the overhead or the runaround.
+              I started Copper Bay Tech because local businesses deserve the same quality
+              of technology that larger companies take for granted — without the overhead
+              or the runaround. My background spans custom application development,
+              network infrastructure, and cybersecurity principles.
             </p>
             <p
               className="text-[#3F3F46]/60 leading-relaxed mb-8"
@@ -96,16 +124,9 @@ export default function About() {
             </p>
             <div className="grid grid-cols-2 gap-3">
               {[
-                "Petaluma",
-                "Santa Rosa",
-                "Sebastopol",
-                "Rohnert Park",
-                "Sonoma",
-                "Bodega Bay",
-                "Cotati",
-                "Windsor",
-                "Healdsburg",
-                "Cloverdale",
+                "Petaluma", "Santa Rosa", "Sebastopol", "Rohnert Park",
+                "Sonoma", "Bodega Bay", "Cotati", "Windsor",
+                "Healdsburg", "Cloverdale",
               ].map((city) => (
                 <div key={city} className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0" />
