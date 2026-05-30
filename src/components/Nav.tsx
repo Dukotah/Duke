@@ -6,8 +6,9 @@ import { Menu, X } from "lucide-react";
 const links = [
   { label: "Services", href: "#services" },
   { label: "How It Works", href: "#how-it-works" },
+  { label: "Pricing", href: "/pricing" },
   { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 export default function Nav() {
@@ -55,12 +56,10 @@ export default function Nav() {
         {/* CTA */}
         <a
           href="#contact"
-          className="hidden md:inline-flex items-center px-5 py-2 rounded-md text-sm font-semibold text-white transition-colors"
-          style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#111113")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#18181B")}
+          className="hidden md:inline-flex items-center px-5 py-2 rounded-md text-sm font-semibold text-white transition-colors bg-[#F97316] hover:bg-[#ea6c0a]"
+          style={{ fontFamily: "var(--font-heading)" }}
         >
-          Free Consultation
+          Get in Touch
         </a>
 
         {/* Mobile toggle */}
@@ -90,10 +89,10 @@ export default function Nav() {
           <a
             href="#contact"
             onClick={() => setOpen(false)}
-            className="inline-flex items-center justify-center px-5 py-2 rounded-md text-sm font-semibold text-white"
-            style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
+            className="inline-flex items-center justify-center px-5 py-2 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+            style={{ fontFamily: "var(--font-heading)" }}
           >
-            Free Consultation
+            Get in Touch
           </a>
         </div>
       )}
