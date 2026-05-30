@@ -49,6 +49,16 @@ const articleSchema = {
   url: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers",
 };
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
+    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
+    { "@type": "ListItem", position: 3, name: "5 Signs Your Business Website Is Costing You Customers Right Now", item: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers" },
+  ],
+};
+
 export default function Article() {
   return (
     <>
@@ -57,6 +67,10 @@ export default function Article() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">

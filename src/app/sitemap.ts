@@ -51,5 +51,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/sebastopol`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/rohnert-park`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/sonoma`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/healdsburg`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/windsor`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/novato`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/privacy`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
+    {
+      url: `${base}/blog/google-business-profile-setup-sonoma-county`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${base}/blog/google-workspace-vs-microsoft-365-small-business`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${base}/blog/how-to-rank-on-google-maps-local-business`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
   ];
 }

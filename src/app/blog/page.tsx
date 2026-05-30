@@ -21,6 +21,33 @@ type Post = {
 
 const posts: Post[] = [
   {
+    slug: "google-business-profile-setup-sonoma-county",
+    tag: "Local SEO",
+    title: "How to Set Up and Optimize Your Google Business Profile in Sonoma County",
+    excerpt:
+      "Getting into Google's Map Pack is one of the highest-ROI things a local business can do. Here's a step-by-step guide to claiming, verifying, and fully optimizing your profile.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "google-workspace-vs-microsoft-365-small-business",
+    tag: "IT Support",
+    title: "Google Workspace vs Microsoft 365: Which Is Right for Your Small Business?",
+    excerpt:
+      "An honest comparison of Google Workspace and Microsoft 365 — pricing, real-world strengths, and who should use which. No brand favoritism, just practical guidance.",
+    readTime: "5 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "how-to-rank-on-google-maps-local-business",
+    tag: "Local SEO",
+    title: "How to Get Your Sonoma County Business to Rank Higher on Google Maps",
+    excerpt:
+      "The 3 factors Google uses to rank local businesses — and the specific, actionable steps you can take to move up in Google Maps results.",
+    readTime: "5 min read",
+    date: "June 2026",
+  },
+  {
     slug: "ransomware-protection-small-business",
     tag: "Cybersecurity",
     title: "Ransomware Protection for Small Business: What Actually Works",
