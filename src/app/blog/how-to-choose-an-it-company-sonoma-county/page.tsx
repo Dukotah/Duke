@@ -8,11 +8,38 @@ export const metadata: Metadata = {
   title: "How to Choose an IT Company in Sonoma County | Copper Bay Tech",
   description:
     "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
+  alternates: {
+    canonical: "/blog/how-to-choose-an-it-company-sonoma-county",
+  },
+  openGraph: {
+    title: "How to Choose an IT Company in Sonoma County | Copper Bay Tech",
+    description:
+      "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
+    type: "article",
+    publishedTime: "2026-05-01",
+    authors: ["Copper Bay Tech"],
+  },
+};
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "How to Choose an IT Company in Sonoma County (Without Getting Burned)",
+  description:
+    "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
+  datePublished: "2026-05-01",
+  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  url: "https://copperbaytech.com/blog/how-to-choose-an-it-company-sonoma-county",
 };
 
 export default function Article() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

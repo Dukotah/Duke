@@ -7,6 +7,27 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "5 Signs Your Website Is Costing You Customers | Copper Bay Tech",
   description: "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+  alternates: {
+    canonical: "/blog/5-signs-your-business-website-is-costing-you-customers",
+  },
+  openGraph: {
+    title: "5 Signs Your Website Is Costing You Customers | Copper Bay Tech",
+    description: "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+    type: "article",
+    publishedTime: "2026-03-01",
+    authors: ["Copper Bay Tech"],
+  },
+};
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "5 Signs Your Website Is Costing You Customers",
+  description: "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+  datePublished: "2026-03-01",
+  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  url: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers",
 };
 
 const signs = [
@@ -40,6 +61,10 @@ const signs = [
 export default function Article() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

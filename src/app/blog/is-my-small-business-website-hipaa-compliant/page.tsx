@@ -7,6 +7,27 @@ import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 export const metadata: Metadata = {
   title: "Is My Small Business Website HIPAA Compliant? | Copper Bay Tech",
   description: "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
+  alternates: {
+    canonical: "/blog/is-my-small-business-website-hipaa-compliant",
+  },
+  openGraph: {
+    title: "Is My Small Business Website HIPAA Compliant? | Copper Bay Tech",
+    description: "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
+    type: "article",
+    publishedTime: "2026-04-01",
+    authors: ["Copper Bay Tech"],
+  },
+};
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Is My Small Business Website HIPAA Compliant? A Plain-English Checklist",
+  description: "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
+  datePublished: "2026-04-01",
+  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  url: "https://copperbaytech.com/blog/is-my-small-business-website-hipaa-compliant",
 };
 
 const checks = [
@@ -21,6 +42,10 @@ const checks = [
 export default function Article() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">
