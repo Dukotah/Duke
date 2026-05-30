@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import ITQuiz from "@/components/ITQuiz";
+import PricingEstimator from "@/components/PricingEstimator";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -497,18 +499,50 @@ export default function ToolsPage() {
       <section className="pt-32 pb-12 px-6 text-center">
         <div className="max-w-2xl mx-auto">
           <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
-            Free Tool
+            Free Tools
           </span>
           <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
-            Full Website{" "}
-            <span className="text-orange-400">Health Check</span>
+            Free Tools for{" "}
+            <span className="text-orange-400">Your Business</span>
           </h1>
-          <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
-            Enter your URL and get a complete audit — speed, SSL, SEO, broken links, and mobile
-            readiness — all at once. Free, no signup.
+          <p className="text-zinc-400 text-lg mb-10 max-w-xl mx-auto">
+            No signup, no catch. Check your website health, assess your cybersecurity risk,
+            or get an instant project estimate.
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+          {/* Tool index */}
+          <div className="flex flex-wrap justify-center gap-3 mb-4">
+            {[
+              { label: "Website Health Check", anchor: "#health-check" },
+              { label: "Cybersecurity Risk Quiz", anchor: "#security-quiz" },
+              { label: "Project Cost Estimator", anchor: "#pricing-estimator" },
+            ].map(t => (
+              <a
+                key={t.anchor}
+                href={t.anchor}
+                className="bg-zinc-900 border border-zinc-800 hover:border-orange-500/50 text-zinc-300 hover:text-orange-400 text-xs font-semibold px-4 py-2 rounded-full transition-colors"
+              >
+                {t.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Website Health Check ───────────────────────────────────────────── */}
+      <section id="health-check" className="pb-4 px-6">
+        <div className="max-w-2xl mx-auto text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl font-black mb-2">
+            Website{" "}<span className="text-orange-400">Health Check</span>
+          </h2>
+          <p className="text-zinc-400 text-sm max-w-xl mx-auto">
+            Enter your URL and get a complete audit — speed, SSL, SEO, broken links, and mobile
+            readiness — all at once.
+          </p>
+        </div>
+        <div className="max-w-2xl mx-auto">
+
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto justify-center">
             <input
               type="text"
               value={inputUrl}
@@ -570,31 +604,41 @@ export default function ToolsPage() {
         </section>
       )}
 
-      {/* What you get — only when idle */}
+      {/* What gets checked — only when idle */}
       {!hasResults && (
-        <section className="px-6 pb-24">
+        <div className="px-6 pb-8">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-center text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-6">
+            <p className="text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">
               What Gets Checked
-            </h2>
-            <div className="grid sm:grid-cols-5 gap-3">
+            </p>
+            <div className="grid grid-cols-5 gap-2">
               {[
-                { icon: "⚡", label: "Speed", desc: "PageSpeed score & Core Web Vitals" },
+                { icon: "⚡", label: "Speed", desc: "PageSpeed & Core Web Vitals" },
                 { icon: "🔒", label: "SSL", desc: "Certificate validity & expiry" },
                 { icon: "🔍", label: "SEO", desc: "Title, meta, H1s, OG tags" },
                 { icon: "🔗", label: "Links", desc: "404s and redirect chains" },
                 { icon: "📱", label: "Mobile", desc: "Responsiveness & accessibility" },
               ].map(item => (
-                <div key={item.label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-                  <div className="text-2xl mb-2">{item.icon}</div>
-                  <p className="text-white font-bold text-xs mb-1">{item.label}</p>
-                  <p className="text-zinc-500 text-[11px]">{item.desc}</p>
+                <div key={item.label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
+                  <div className="text-xl mb-1">{item.icon}</div>
+                  <p className="text-white font-bold text-xs mb-0.5">{item.label}</p>
+                  <p className="text-zinc-500 text-[10px]">{item.desc}</p>
                 </div>
               ))}
             </div>
           </div>
-        </section>
+        </div>
       )}
+
+      {/* ── Cybersecurity Risk Quiz ───────────────────────────────────────────── */}
+      <section id="security-quiz" className="scroll-mt-24">
+        <ITQuiz />
+      </section>
+
+      {/* ── Project Cost Estimator ────────────────────────────────────────────── */}
+      <section id="pricing-estimator" className="scroll-mt-24">
+        <PricingEstimator />
+      </section>
 
       <Footer />
     </div>
