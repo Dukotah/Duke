@@ -35,7 +35,10 @@ export default function Footer() {
     { label: "Web Design — Santa Rosa", href: "/web-design-santa-rosa" },
     { label: "Web Design — Petaluma", href: "/web-design-petaluma" },
     { label: "IT Support — Sonoma County", href: "/it-support-sonoma-county" },
+    { label: "IT Support — Santa Rosa", href: "/it-support-santa-rosa" },
+    { label: "IT Support — Petaluma", href: "/it-support-petaluma" },
     { label: "Cybersecurity for Small Business", href: "/cybersecurity-small-business" },
+    { label: "Our Work", href: "/work" },
   ];
 
   return (

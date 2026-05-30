@@ -443,6 +443,24 @@ export default function ToolsPage() {
   const [checks, setChecks] = useState<AllChecks>(idle);
   const [running, setRunning] = useState(false);
   const [auditedUrl, setAuditedUrl] = useState("");
+  const [captureEmail, setCaptureEmail] = useState("");
+  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done">("idle");
+
+  const handleEmailCapture = async () => {
+    if (!captureEmail.includes("@") || captureStatus !== "idle") return;
+    setCaptureStatus("loading");
+    try {
+      await fetch("/api/capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: captureEmail,
+          context: `Website Audit Tool — ${auditedUrl}`,
+        }),
+      });
+    } catch (_) {}
+    setCaptureStatus("done");
+  };
 
   function setCheck<K extends keyof AllChecks>(key: K, state: AllChecks[K]) {
     setChecks(prev => ({ ...prev, [key]: state }));
@@ -552,19 +570,52 @@ export default function ToolsPage() {
             </div>
 
             {!running && (
-              <div className="mt-10 rounded-2xl p-6 text-center" style={{ border: "1px solid #F97316", background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
-                <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">Free Consultation</p>
-                <h4 className="text-white text-xl font-black mb-2">Want us to fix this?</h4>
-                <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
-                  Copper Bay Tech can resolve most issues in under a week. Get a free 30-minute call.
-                </p>
-                <a
-                  href="/#contact"
-                  className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
-                >
-                  Get a Free Review
-                </a>
-              </div>
+              <>
+                {/* Email capture */}
+                <div className="mt-6 bg-zinc-900 border border-zinc-700 rounded-2xl p-6">
+                  <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-1">Save Your Report</p>
+                  {captureStatus === "done" ? (
+                    <p className="text-green-400 text-sm mt-2">✓ Sent — check your inbox. Duke will follow up if he spots anything worth flagging.</p>
+                  ) : (
+                    <>
+                      <p className="text-white text-sm font-semibold mb-3">Email me this report</p>
+                      <div className="flex gap-2">
+                        <input
+                          type="email"
+                          value={captureEmail}
+                          onChange={e => setCaptureEmail(e.target.value)}
+                          onKeyDown={e => e.key === "Enter" && handleEmailCapture()}
+                          placeholder="your@email.com"
+                          className="flex-1 bg-zinc-800 border border-zinc-700 rounded-full px-4 py-2.5 text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-orange-500 transition-colors"
+                        />
+                        <button
+                          onClick={handleEmailCapture}
+                          disabled={!captureEmail.includes("@") || captureStatus === "loading"}
+                          className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white font-bold px-5 py-2.5 rounded-full text-sm transition-colors whitespace-nowrap"
+                        >
+                          {captureStatus === "loading" ? "…" : "Send Report"}
+                        </button>
+                      </div>
+                      <p className="text-zinc-600 text-xs mt-2">No spam. Just your results and an offer to help.</p>
+                    </>
+                  )}
+                </div>
+
+                {/* CTA */}
+                <div className="mt-4 rounded-2xl p-6 text-center" style={{ border: "1px solid #F97316", background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
+                  <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">Free Consultation</p>
+                  <h4 className="text-white text-xl font-black mb-2">Want us to fix this?</h4>
+                  <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
+                    Copper Bay Tech can resolve most issues in under a week. Get a free 30-minute call.
+                  </p>
+                  <a
+                    href="/#contact"
+                    className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
+                  >
+                    Get a Free Review
+                  </a>
+                </div>
+              </>
             )}
           </div>
         </section>

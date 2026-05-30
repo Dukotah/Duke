@@ -21,13 +21,40 @@ type Post = {
 
 const posts: Post[] = [
   {
+    slug: "how-much-does-a-website-cost-sonoma-county",
+    tag: "Web Development",
+    title: "How Much Does a Website Cost in Sonoma County? (2026)",
+    excerpt:
+      "Real pricing for small business websites in Sonoma County. What you should expect to pay, what drives costs up, and how to avoid getting ripped off.",
+    readTime: "6 min read",
+    date: "May 2026",
+  },
+  {
+    slug: "managed-it-support-vs-break-fix-sonoma-county",
+    tag: "IT Support",
+    title: "Managed IT Support vs. Break-Fix: Which Is Right for Your Business?",
+    excerpt:
+      "Break-fix IT feels cheaper until something breaks at the worst moment. Here's how to actually think through which model makes sense for a Sonoma County small business.",
+    readTime: "5 min read",
+    date: "May 2026",
+  },
+  {
+    slug: "hipaa-security-checklist-sonoma-county-healthcare",
+    tag: "Cybersecurity",
+    title: "HIPAA Security Checklist for Sonoma County Healthcare Practices",
+    excerpt:
+      "A practical checklist covering technical safeguards under the HIPAA Security Rule — what small practices need, what most are missing, and the four gaps we find almost every time.",
+    readTime: "7 min read",
+    date: "May 2026",
+  },
+  {
     slug: "how-to-choose-an-it-company-sonoma-county",
     tag: "IT Support",
     title: "How to Choose an IT Company in Sonoma County (Without Getting Burned)",
     excerpt:
       "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
     readTime: "5 min read",
-    date: "May 2026",
+    date: "April 2026",
   },
   {
     slug: "is-my-small-business-website-hipaa-compliant",
@@ -36,7 +63,7 @@ const posts: Post[] = [
     excerpt:
       "If your business handles any patient or health information — even just appointment scheduling — HIPAA applies to your website. Here's what that actually means.",
     readTime: "6 min read",
-    date: "April 2026",
+    date: "March 2026",
   },
   {
     slug: "5-signs-your-business-website-is-costing-you-customers",
@@ -45,7 +72,7 @@ const posts: Post[] = [
     excerpt:
       "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here's how to diagnose them in under 10 minutes — no technical knowledge required.",
     readTime: "4 min read",
-    date: "March 2026",
+    date: "February 2026",
   },
 ];
 

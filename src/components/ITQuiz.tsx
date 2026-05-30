@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, AlertTriangle, CheckCircle, ShieldAlert } from "lucide-react";
+import { ArrowRight, AlertTriangle, CheckCircle, ShieldAlert, Mail } from "lucide-react";
 
 const questions = [
   {
@@ -102,6 +102,8 @@ export default function ITQuiz() {
   const [answers, setAnswers] = useState<number[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [done, setDone] = useState(false);
+  const [captureEmail, setCaptureEmail] = useState("");
+  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done">("idle");
 
   const totalScore = answers.reduce((a, b) => a + b, 0);
   const result = getResult(totalScore);
@@ -124,6 +126,24 @@ export default function ITQuiz() {
     setAnswers([]);
     setSelected(null);
     setDone(false);
+    setCaptureEmail("");
+    setCaptureStatus("idle");
+  };
+
+  const handleCapture = async () => {
+    if (!captureEmail.includes("@") || captureStatus !== "idle") return;
+    setCaptureStatus("loading");
+    try {
+      await fetch("/api/capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: captureEmail,
+          context: `IT Risk Quiz — ${result.label} (score: ${totalScore})`,
+        }),
+      });
+    } catch (_) {}
+    setCaptureStatus("done");
   };
 
   const progress = ((current) / questions.length) * 100;
@@ -259,7 +279,7 @@ export default function ITQuiz() {
               >
                 {result.description}
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
                 <a
                   href="#contact"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
@@ -274,6 +294,43 @@ export default function ITQuiz() {
                 >
                   Start Over
                 </button>
+              </div>
+
+              {/* Email capture */}
+              <div className="border-t border-white/10 pt-6">
+                {captureStatus === "done" ? (
+                  <p className="text-green-400 text-sm text-center" style={{ fontFamily: "var(--font-body)" }}>
+                    ✓ Got it — Duke will follow up with personalized recommendations.
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-white/50 text-xs text-center mb-3" style={{ fontFamily: "var(--font-body)" }}>
+                      Want a personalized action plan sent to your inbox?
+                    </p>
+                    <div className="flex gap-2 max-w-sm mx-auto">
+                      <div className="flex-1 flex items-center gap-2 bg-white/10 border border-white/15 rounded-lg px-3 py-2">
+                        <Mail size={14} color="rgba(255,255,255,0.4)" className="flex-shrink-0" />
+                        <input
+                          type="email"
+                          value={captureEmail}
+                          onChange={(e) => setCaptureEmail(e.target.value)}
+                          placeholder="your@email.com"
+                          onKeyDown={(e) => e.key === "Enter" && handleCapture()}
+                          className="flex-1 bg-transparent text-sm text-white placeholder-white/30 focus:outline-none"
+                          style={{ fontFamily: "var(--font-body)" }}
+                        />
+                      </div>
+                      <button
+                        onClick={handleCapture}
+                        disabled={!captureEmail.includes("@") || captureStatus === "loading"}
+                        className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 rounded-lg text-white text-xs font-semibold transition-colors disabled:opacity-40"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {captureStatus === "loading" ? "…" : "Send"}
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </motion.div>
           )}

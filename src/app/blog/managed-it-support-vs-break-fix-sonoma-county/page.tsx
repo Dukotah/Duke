@@ -1,0 +1,161 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Managed IT Support vs Break-Fix: Which Is Right for Your Business? | Copper Bay Tech",
+  description:
+    "Break-fix IT feels cheaper until something breaks at the worst possible moment. Here's how to decide which model makes sense for your Sonoma County business.",
+  keywords: "managed IT support Sonoma County, break-fix IT, IT support Santa Rosa, IT services small business",
+  alternates: { canonical: "https://copperbaytech.com/blog/managed-it-support-vs-break-fix-sonoma-county" },
+};
+
+export default function Article() {
+  return (
+    <>
+      <Nav />
+      <main>
+        <section className="pt-32 pb-8 bg-[#18181B]">
+          <div className="max-w-2xl mx-auto px-6">
+            <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-8 transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <ArrowLeft size={14} /> All Resources
+            </Link>
+            <span className="inline-block mb-4 px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-widest" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#F97316", fontFamily: "var(--font-heading)" }}>
+              IT Support
+            </span>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
+              Managed IT Support vs. Break-Fix: Which Is Right for Your Sonoma County Business?
+            </h1>
+            <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>5 min read · May 2026</p>
+          </div>
+        </section>
+
+        <section className="py-12 bg-white">
+          <div className="max-w-2xl mx-auto px-6">
+            <div style={{ fontFamily: "var(--font-body)" }}>
+              <p className="text-lg text-[#3F3F46]/70 leading-relaxed mb-8">
+                Most small businesses default to break-fix IT — call someone when something breaks, pay them to fix it, move on. It feels like the smart choice until the server goes down on a Monday morning before a big client presentation. Here&apos;s how to actually think about this decision.
+              </p>
+
+              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+                What break-fix actually costs you
+              </h2>
+              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
+                Break-fix feels cheap because there&apos;s no recurring cost. But the math changes when you factor in:
+              </p>
+              <ul className="space-y-2 mb-8">
+                {[
+                  "Emergency rates — most IT providers charge 1.5–2x for urgent calls",
+                  "Downtime cost — an hour of downtime for a 5-person office at average wages is $300–$600 before you count lost revenue",
+                  "The learning curve — whoever fixes it has to relearn your setup every time",
+                  "Deferred maintenance — break-fix encourages ignoring problems until they become emergencies",
+                  "No relationship — you call someone new every time, explain your whole setup, and hope they're good",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-[#3F3F46]/70">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0 mt-1.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+                What managed IT support actually means
+              </h2>
+              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
+                Managed IT means you pay a flat monthly fee for a defined scope of services. At minimum, that should include:
+              </p>
+              <ul className="space-y-2 mb-8">
+                {[
+                  "Someone who knows your setup and is reachable when something goes wrong",
+                  "Proactive monitoring — catching issues before they become outages",
+                  "Patch management and firmware updates on a regular schedule",
+                  "Clear expectations on response time for different types of issues",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-[#3F3F46]/70">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#18181B] flex-shrink-0 mt-1.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[#3F3F46]/70 leading-relaxed mb-8">
+                What it doesn&apos;t mean: an impersonal helpdesk ticket system, a different tech every time, or a long-term contract that&apos;s hard to exit.
+              </p>
+
+              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+                Which model is right for you?
+              </h2>
+
+              <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                <div className="border border-[#18181B]/10 rounded-xl p-5 bg-[#FAFAF9]">
+                  <p className="text-sm font-bold text-[#18181B] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Break-fix makes sense if:</p>
+                  <ul className="space-y-1.5">
+                    {[
+                      "You're a solo operator with minimal IT dependency",
+                      "Your \"IT\" is just a laptop and Google Workspace",
+                      "You have an in-house tech person",
+                      "Downtime doesn't directly cost you revenue",
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-xs text-[#3F3F46]/60">
+                        <span className="w-1 h-1 rounded-full bg-[#3F3F46]/40 flex-shrink-0 mt-1.5" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="border-2 border-[#F97316] rounded-xl p-5 bg-[#F97316]/5">
+                  <p className="text-sm font-bold text-[#18181B] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Managed IT makes sense if:</p>
+                  <ul className="space-y-1.5">
+                    {[
+                      "You have 3+ employees relying on shared systems",
+                      "Downtime = lost revenue or unhappy clients",
+                      "You handle customer data or payments",
+                      "Your team calls you when anything breaks",
+                      "You want to stop thinking about IT",
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-xs text-[#3F3F46]/70">
+                        <span className="w-1 h-1 rounded-full bg-[#F97316] flex-shrink-0 mt-1.5" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+                What to watch out for in a managed IT contract
+              </h2>
+              <ul className="space-y-2 mb-8">
+                {[
+                  "Long-term contracts with painful exit clauses — look for month-to-month",
+                  "Vague scope — \"unlimited support\" that excludes everything that actually breaks",
+                  "A helpdesk ticket system instead of a direct line to someone who knows your setup",
+                  "Pricing tiers that hide what you actually need in an upsell",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-[#3F3F46]/70">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0 mt-1.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <p className="text-[#3F3F46]/70 leading-relaxed mb-8">
+                Copper Bay Tech&apos;s IT support is month-to-month, flat-fee, and comes with a direct line — not a ticket queue. Most clients in the $400–$900/month range get the same access a large company&apos;s IT department would provide.
+              </p>
+
+              <div className="bg-[#18181B] rounded-xl p-6 text-center">
+                <p className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Not sure which model fits your situation?</p>
+                <p className="text-white/60 text-sm mb-5">Free 30-minute call — no obligation, no sales pressure.</p>
+                <Link href="/it-support-sonoma-county" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+                  Learn About IT Support <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+}
