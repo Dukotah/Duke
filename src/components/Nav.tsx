@@ -36,8 +36,15 @@ export default function Nav() {
         setServicesOpen(false);
       }
     };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setServicesOpen(false); setOpen(false); }
+    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   return (
@@ -45,6 +52,7 @@ export default function Nav() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? "bg-[#FAFAF9]/95 backdrop-blur border-b border-[#18181B]/10 shadow-sm" : "bg-transparent"
       }`}
+      role="banner"
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
@@ -71,15 +79,19 @@ export default function Nav() {
               className={`flex items-center gap-1 text-sm font-medium transition-colors ${scrolled ? "text-[#3F3F46]/70 hover:text-[#18181B]" : "text-white/80 hover:text-white"}`}
               style={{ fontFamily: "var(--font-heading)" }}
               onClick={() => setServicesOpen(!servicesOpen)}
+              aria-expanded={servicesOpen}
+              aria-haspopup="true"
+              aria-controls="services-dropdown"
             >
-              Services <ChevronDown size={14} className={`transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
+              Services <ChevronDown size={14} className={`transition-transform ${servicesOpen ? "rotate-180" : ""}`} aria-hidden="true" />
             </button>
             {servicesOpen && (
-              <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-[#18181B]/10 py-2 z-50">
+              <div id="services-dropdown" role="menu" className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-[#18181B]/10 py-2 z-50">
                 {serviceLinks.map((l) => (
                   <Link
                     key={l.href}
                     href={l.href}
+                    role="menuitem"
                     className="block px-4 py-2.5 text-sm text-[#3F3F46]/70 hover:text-[#18181B] hover:bg-[#FAFAF9] transition-colors"
                     style={{ fontFamily: "var(--font-heading)" }}
                     onClick={() => setServicesOpen(false)}
@@ -118,7 +130,9 @@ export default function Nav() {
         <button
           className={`md:hidden p-2 ${scrolled ? "text-[#18181B]" : "text-white"}`}
           onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
         >
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -126,18 +140,20 @@ export default function Nav() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-[#FAFAF9] border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
+        <div id="mobile-menu" className="md:hidden bg-[#FAFAF9] border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
           {/* Services expandable */}
           <div>
             <button
               className="flex items-center gap-1 text-sm font-medium text-[#3F3F46]/80 hover:text-[#18181B] w-full text-left"
               style={{ fontFamily: "var(--font-heading)" }}
               onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+              aria-expanded={mobileServicesOpen}
+              aria-controls="mobile-services-menu"
             >
-              Services <ChevronDown size={14} className={`ml-auto transition-transform ${mobileServicesOpen ? "rotate-180" : ""}`} />
+              Services <ChevronDown size={14} className={`ml-auto transition-transform ${mobileServicesOpen ? "rotate-180" : ""}`} aria-hidden="true" />
             </button>
             {mobileServicesOpen && (
-              <div className="mt-2 ml-4 flex flex-col gap-3">
+              <div id="mobile-services-menu" className="mt-2 ml-4 flex flex-col gap-3">
                 {serviceLinks.map((l) => (
                   <Link
                     key={l.href}

@@ -44,16 +44,32 @@ export default function BlogEmailCapture() {
         One email when we publish something worth reading. No spam, unsubscribe anytime.
       </p>
 
-      {status === "success" ? (
-        <p
-          className="text-sm font-semibold text-[#F97316]"
-          style={{ fontFamily: "var(--font-heading)" }}
-        >
-          You&apos;re in. We&apos;ll be in touch.
-        </p>
-      ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+      <div aria-live="polite" aria-atomic="true">
+        {status === "success" && (
+          <p
+            className="text-sm font-semibold text-[#F97316]"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            You&apos;re in. We&apos;ll be in touch.
+          </p>
+        )}
+        {status === "error" && (
+          <p
+            className="text-xs text-red-400"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
+            Something went wrong. Try again.
+          </p>
+        )}
+      </div>
+
+      {status !== "success" && (
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3" noValidate>
+          <label htmlFor="blog-subscribe-email" className="sr-only">
+            Email address
+          </label>
           <input
+            id="blog-subscribe-email"
             type="email"
             required
             value={email}
@@ -62,6 +78,7 @@ export default function BlogEmailCapture() {
             className="flex-1 rounded-md px-4 py-2.5 text-sm bg-white/10 text-white placeholder:text-white/30 border border-white/10 focus:outline-none focus:border-white/30"
             style={{ fontFamily: "var(--font-body)" }}
             disabled={status === "loading"}
+            aria-required="true"
           />
           <button
             type="submit"
@@ -72,15 +89,6 @@ export default function BlogEmailCapture() {
             {status === "loading" ? "Subscribing…" : "Subscribe"}
           </button>
         </form>
-      )}
-
-      {status === "error" && (
-        <p
-          className="mt-3 text-xs text-red-400"
-          style={{ fontFamily: "var(--font-body)" }}
-        >
-          Something went wrong. Try again.
-        </p>
       )}
     </div>
   );

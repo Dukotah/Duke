@@ -184,59 +184,69 @@ export default function Contact() {
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <label className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
-                      Your Name *
+                    <label htmlFor="contact-name" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
+                      Your Name <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
                     </label>
                     <input
+                      id="contact-name"
                       {...register("name", { required: true })}
                       placeholder="Jane Smith"
                       className={inputClass}
                       style={{ fontFamily: "var(--font-body)" }}
+                      aria-required="true"
+                      aria-describedby={errors.name ? "name-error" : undefined}
                     />
                     {errors.name && (
-                      <p className="text-red-500 text-xs mt-1">Required</p>
+                      <p id="name-error" role="alert" className="text-red-500 text-xs mt-1">Required</p>
                     )}
                   </div>
                   <div>
-                    <label className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
-                      Business Name *
+                    <label htmlFor="contact-business" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
+                      Business Name <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
                     </label>
                     <input
+                      id="contact-business"
                       {...register("business", { required: true })}
                       placeholder="Acme Co."
                       className={inputClass}
                       style={{ fontFamily: "var(--font-body)" }}
+                      aria-required="true"
+                      aria-describedby={errors.business ? "business-error" : undefined}
                     />
                     {errors.business && (
-                      <p className="text-red-500 text-xs mt-1">Required</p>
+                      <p id="business-error" role="alert" className="text-red-500 text-xs mt-1">Required</p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <label className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
-                      Email *
+                    <label htmlFor="contact-email" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
+                      Email <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
                     </label>
                     <input
+                      id="contact-email"
                       {...register("email", { required: true })}
                       type="email"
                       placeholder="jane@example.com"
                       className={inputClass}
                       style={{ fontFamily: "var(--font-body)" }}
+                      aria-required="true"
+                      aria-describedby={errors.email ? "email-error" : undefined}
                     />
                     {errors.email && (
-                      <p className="text-red-500 text-xs mt-1">Required</p>
+                      <p id="email-error" role="alert" className="text-red-500 text-xs mt-1">Required</p>
                     )}
                   </div>
                   <div>
-                    <label className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
+                    <label htmlFor="contact-phone" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
                       Phone (optional)
                     </label>
                     <input
+                      id="contact-phone"
                       {...register("phone")}
                       type="tel"
                       placeholder="(707) 239-6725"
@@ -247,13 +257,16 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
-                    What can we help with? *
+                  <label htmlFor="contact-service" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
+                    What can we help with? <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
                   </label>
                   <select
+                    id="contact-service"
                     {...register("service", { required: true })}
                     className={inputClass}
                     style={{ fontFamily: "var(--font-body)" }}
+                    aria-required="true"
+                    aria-describedby={errors.service ? "service-error" : undefined}
                   >
                     <option value="">Select a service...</option>
                     <option value="website">Website Design & Development</option>
@@ -264,15 +277,16 @@ export default function Contact() {
                     <option value="other">Not sure — I need advice</option>
                   </select>
                   {errors.service && (
-                    <p className="text-red-500 text-xs mt-1">Please select a service</p>
+                    <p id="service-error" role="alert" className="text-red-500 text-xs mt-1">Please select a service</p>
                   )}
                 </div>
 
                 <div>
-                  <label className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
+                  <label htmlFor="contact-message" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>
                     Tell us more (optional)
                   </label>
                   <textarea
+                    id="contact-message"
                     {...register("message")}
                     rows={4}
                     placeholder="Describe your situation, current setup, or what you'd like to accomplish..."
@@ -282,7 +296,7 @@ export default function Contact() {
                 </div>
 
                 {status === "error" && (
-                  <div className="rounded-md bg-red-50 border border-red-200 p-4">
+                  <div role="alert" className="rounded-md bg-red-50 border border-red-200 p-4">
                     <p className="text-red-700 text-sm font-medium mb-1" style={{ fontFamily: "var(--font-heading)" }}>
                       Message couldn&apos;t be sent
                     </p>

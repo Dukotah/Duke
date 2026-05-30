@@ -54,6 +54,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
