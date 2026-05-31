@@ -2,6 +2,7 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import SocialProof from "@/components/SocialProof";
 import Problem from "@/components/Problem";
+import GamePlan from "@/components/GamePlan";
 import Services from "@/components/Services";
 import Stats from "@/components/Stats";
 import Industries from "@/components/Industries";
@@ -26,6 +27,7 @@ export default function Home() {
         <Hero />
         <SocialProof />
         <Problem />
+        <GamePlan />
         <Services />
         <Stats />
         <Industries />
