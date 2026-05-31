@@ -119,6 +119,7 @@ export async function POST(req: NextRequest) {
       },
       opportunities,
       fetchTime: (data as Record<string, unknown> & { lighthouseResult?: { fetchTime?: string } })?.lighthouseResult?.fetchTime,
+      screenshotUrl: (audits as Record<string, { details?: { data?: string } }>)["final-screenshot"]?.details?.data ?? null,
     });
   } catch (err) {
     console.error("Audit error:", err);
