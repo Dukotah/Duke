@@ -47,9 +47,12 @@ export type PublicUser = Omit<User, "passwordHash">;
 
 export interface LeadState {
   status: "new" | "contacted" | "follow_up" | "not_interested" | "won";
+  stage: string;
   notes: string;
   lastContacted?: string;
   submittedAt?: string;
+  callCount?: number;
+  lastOutcome?: string;
 }
 
 export interface Submission {
