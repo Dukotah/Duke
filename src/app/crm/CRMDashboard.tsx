@@ -123,6 +123,7 @@ const CallQueue = dynamic(() => import("./components/CallQueue"), { ssr: false }
 const Pipeline = dynamic(() => import("./components/Pipeline"), { ssr: false });
 const ScriptsGuide = dynamic(() => import("./components/ScriptsGuide"), { ssr: false });
 const EarningsView = dynamic(() => import("./components/Earnings"), { ssr: false });
+const BulkOutreach = dynamic(() => import("./components/BulkOutreach"), { ssr: false });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -213,8 +214,9 @@ function Select({ value, onChange, children, icon: Icon }: {
 
 // ─── All Leads table view ─────────────────────────────────────────────────────
 
-function AllLeads({ states, onSelectLead }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void }) {
+function AllLeads({ states, onSelectLead, userName }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string }) {
   const [data, setData] = useState<LeadsResponse | null>(null);
+  const [showBulkOutreach, setShowBulkOutreach] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [q, setQ] = useState("");
@@ -250,6 +252,7 @@ function AllLeads({ states, onSelectLead }: { states: Record<string, LeadState>;
 
   return (
     <div className="space-y-3">
+      {showBulkOutreach && <BulkOutreach repName={userName} onClose={() => setShowBulkOutreach(false)} />}
       {/* Search */}
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -264,6 +267,12 @@ function AllLeads({ states, onSelectLead }: { states: Record<string, LeadState>;
           style={H}>
           <Filter size={13} />
           {activeFilters > 0 && <span className="bg-[#F97316] text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">{activeFilters}</span>}
+        </button>
+        <button onClick={() => setShowBulkOutreach(true)}
+          className="inline-flex items-center gap-1.5 px-3 rounded-xl text-sm bg-[#1C1C1F] text-white/50 border border-white/10 hover:text-white/80 hover:border-white/20 transition-all"
+          title="Bulk Email" style={H}>
+          <Mail size={13} />
+          <span className="hidden sm:inline">Bulk Email</span>
         </button>
       </div>
 
@@ -498,7 +507,7 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
             <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
           )}
           {tab === "leads" && (
-            <AllLeads states={states} onSelectLead={setSelectedLead} />
+            <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} />
           )}
           {tab === "scripts" && <ScriptsGuide />}
           {tab === "earnings" && (
