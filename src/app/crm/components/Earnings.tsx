@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react";
 import { DollarSign, TrendingUp, Check, Clock, Send, Trophy, Flame } from "lucide-react";
 
+interface WeekDay { date: string; calls: number; }
+interface GoalsData {
+  dailyStats: { callsLogged: number };
+  streak: { currentStreak: number; longestStreak: number };
+  weekHistory: WeekDay[];
+}
+
+const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 interface Submission {
   id: string; leadName: string; leadCity: string; status: "pending" | "accepted" | "rejected";
   dealValue?: number; commissionAmount?: number; commissionPaid?: boolean;
@@ -21,6 +30,7 @@ interface Props {
 export default function Earnings({ states, repName }: Props) {
   const [subs, setSubs] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [goals, setGoals] = useState<GoalsData | null>(null);
   const H = { fontFamily: "var(--font-heading)" };
 
   useEffect(() => {
@@ -28,6 +38,7 @@ export default function Earnings({ states, repName }: Props) {
       if (Array.isArray(d)) setSubs(d);
       setLoading(false);
     }).catch(() => setLoading(false));
+    fetch("/api/crm/goals").then((r) => r.json()).then((d) => setGoals(d)).catch(() => {});
   }, []);
 
   const leadsWorked = Object.values(states).filter((s) => s.lastContacted || s.callCount).length;
@@ -62,6 +73,53 @@ export default function Earnings({ states, repName }: Props) {
           </div>
         </div>
       </div>
+
+      {/* This Week */}
+      {goals && (
+        <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl px-5 py-4">
+          <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3" style={H}>This Week</p>
+          <div className="flex items-start gap-4 flex-wrap">
+            <div className="flex-1 min-w-0 space-y-1">
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="text-sm text-white/60" style={H}>
+                  Calls: <span className="text-white font-bold">{goals.weekHistory.reduce((s, d) => s + d.calls, 0)}</span>
+                </span>
+                {goals.streak.currentStreak > 0 ? (
+                  <span className="text-sm text-white/60" style={H}>
+                    🔥 <span className="text-white font-bold">{goals.streak.currentStreak}</span> day streak
+                  </span>
+                ) : (
+                  <span className="text-sm text-white/40" style={H}>No streak yet</span>
+                )}
+                {goals.streak.longestStreak > 0 && (
+                  <span className="text-xs text-white/30" style={H}>Best: {goals.streak.longestStreak} days</span>
+                )}
+              </div>
+            </div>
+            {/* Mini bar chart */}
+            <div className="flex items-end gap-1 shrink-0" style={{ height: 36 }}>
+              {(() => {
+                const maxC = Math.max(...goals.weekHistory.map((d) => d.calls), 1);
+                const todayStr = new Date().toISOString().slice(0, 10);
+                return goals.weekHistory.map((day) => {
+                  const label = DAY_LABELS[new Date(day.date + "T12:00:00").getDay()];
+                  const bh = maxC > 0 ? Math.max(4, Math.round((day.calls / maxC) * 24)) : 4;
+                  const isToday = day.date === todayStr;
+                  return (
+                    <div key={day.date} className="flex flex-col items-center gap-0.5">
+                      <div className="w-5 rounded-sm" style={{
+                        height: bh,
+                        backgroundColor: isToday ? "#F97316" : day.calls > 0 ? "rgba(249,115,22,0.4)" : "rgba(255,255,255,0.06)",
+                      }} />
+                      <span className="text-[9px] font-semibold" style={{ color: isToday ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.25)" }}>{label}</span>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">

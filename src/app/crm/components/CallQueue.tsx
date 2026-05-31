@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Phone, Mail, Flame, Zap, Globe, ChevronRight, RefreshCw, Star, PhoneCall } from "lucide-react";
+import DailyGoals from "./DailyGoals";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -125,6 +126,8 @@ export default function CallQueue({ states, onSelectLead, onRefresh }: Props) {
 
   return (
     <div className="space-y-6">
+
+      <DailyGoals />
 
       {/* Hero stat */}
       <div className="bg-gradient-to-br from-[#F97316]/15 to-[#F97316]/5 border border-[#F97316]/20 rounded-2xl px-5 py-5 flex items-center justify-between">

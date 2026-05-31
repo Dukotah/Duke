@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllLeadStates, setLeadState } from "@/lib/db";
+import { getAllLeadStates, setLeadState, incrementDailyCalls } from "@/lib/db";
 
 function getUserId(req: NextRequest): string | null {
   return req.headers.get("x-user-id");
@@ -22,5 +22,11 @@ export async function POST(req: NextRequest) {
   if (!leadId) return NextResponse.json({ error: "leadId required" }, { status: 400 });
 
   await setLeadState(userId, leadId, patch);
+
+  // If callCount is being incremented, track it for daily goals
+  if (patch.callCount !== undefined) {
+    await incrementDailyCalls(userId);
+  }
+
   return NextResponse.json({ ok: true });
 }
