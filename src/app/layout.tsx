@@ -48,8 +48,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-          <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
-                  <body className="min-h-full flex flex-col">{children}</body>body>
-          </html>html>
-        );
-}</body>
+        <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
+            <body className="min-h-full flex flex-col">{children}</body>
+        </html>
+    );
+}

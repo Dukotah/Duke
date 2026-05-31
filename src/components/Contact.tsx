@@ -44,7 +44,7 @@ export default function Contact() {
   };
 
   const inputClass =
-    "w-full px-4 py-3 rounded-md border border-[#18181B]/15 bg-white text-[#3F3F46] text-sm focus:outline-none focus:ring-2 focus:ring-[#18181B]/30 transition placeholder-[#3F3F46]/30";
+    "w-full px-4 py-3 rounded-lg border border-[#18181B]/15 bg-white text-[#3F3F46] text-sm focus:outline-none focus:border-[var(--copper-500)] focus:ring-2 focus:ring-[var(--copper-500)]/25 transition placeholder-[#3F3F46]/30";
 
   const labelClass = "block text-xs font-semibold uppercase tracking-widest text-[#18181B]/60 mb-1.5";
 
@@ -164,8 +164,8 @@ export default function Contact() {
               <div className="h-full flex items-center justify-center rounded-2xl bg-[#FAFAF9] p-12 text-center">
                 <div>
                   <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                    style={{ backgroundColor: "rgba(45,106,79,0.12)" }}
+                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-[0_8px_24px_rgba(232,133,58,0.35)]"
+                    style={{ background: "var(--grad-copper)" }}
                   >
                     <span className="text-2xl">✓</span>
                   </div>
@@ -302,18 +302,8 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="w-full py-3.5 rounded-md text-sm font-semibold text-white transition-colors disabled:opacity-60"
-                  style={{
-                    backgroundColor: "#18181B",
-                    fontFamily: "var(--font-heading)",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (status !== "loading")
-                      e.currentTarget.style.backgroundColor = "#111113";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#18181B";
-                  }}
+                  className="btn-copper w-full py-4 rounded-full text-sm font-semibold text-white disabled:opacity-60"
+                  style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {status === "loading" ? "Sending..." : "Send Message"}
                 </button>

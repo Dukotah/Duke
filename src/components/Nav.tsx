@@ -24,19 +24,27 @@ export default function Nav() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-[#FAFAF9]/95 backdrop-blur border-b border-[#18181B]/10 shadow-sm" : "bg-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-[var(--linen)]/80 backdrop-blur-xl border-b border-[var(--ink-900)]/8 shadow-[0_8px_30px_rgba(14,16,20,0.06)]"
+          : "bg-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-2.5 group">
           <span
-            className="text-xl font-bold tracking-tight"
+            className="grid place-items-center w-8 h-8 rounded-lg text-sm font-bold text-white shadow-[0_4px_14px_rgba(232,133,58,0.4)] transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3"
+            style={{ background: "var(--grad-copper)", fontFamily: "var(--font-heading)" }}
+          >
+            C
+          </span>
+          <span
+            className="text-xl font-bold tracking-tight transition-colors duration-300"
             style={{ fontFamily: "var(--font-heading)", color: scrolled ? "#18181B" : "#ffffff" }}
           >
             Copper Bay
-            <span style={{ color: "#F97316" }}>Tech</span>
+            <span className="text-gradient-copper">Tech</span>
           </span>
         </Link>
 
@@ -46,7 +54,7 @@ export default function Nav() {
             <Link
               key={l.href}
               href={l.href}
-              className={`text-sm font-medium transition-colors ${scrolled ? "text-[#3F3F46]/70 hover:text-[#18181B]" : "text-white/80 hover:text-white"}`}
+              className={`link-underline text-sm font-medium transition-colors ${scrolled ? "text-[#3F3F46]/70 hover:text-[#18181B]" : "text-white/80 hover:text-white"}`}
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {l.label}
@@ -57,10 +65,8 @@ export default function Nav() {
         {/* CTA */}
         <Link
           href="/#contact"
-          className="hidden md:inline-flex items-center px-5 py-2 rounded-md text-sm font-semibold text-white transition-colors"
-          style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#ea6c0a")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F97316")}
+          className="btn-copper hidden md:inline-flex items-center px-5 py-2 rounded-full text-sm font-semibold text-white"
+          style={{ fontFamily: "var(--font-heading)" }}
         >
           Free Consultation
         </Link>
@@ -77,7 +83,7 @@ export default function Nav() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-[#FAFAF9] border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
+        <div className="md:hidden bg-[var(--linen)]/95 backdrop-blur-xl border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
           {links.map((l) => (
             <Link
               key={l.href}
@@ -92,8 +98,8 @@ export default function Nav() {
           <Link
             href="/#contact"
             onClick={() => setOpen(false)}
-            className="inline-flex items-center justify-center px-5 py-2 rounded-md text-sm font-semibold text-white"
-            style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+            className="btn-copper inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-semibold text-white"
+            style={{ fontFamily: "var(--font-heading)" }}
           >
             Free Consultation
           </Link>

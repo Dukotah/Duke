@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { MapPin, ShieldCheck, Code2 } from "lucide-react";
-import Image from "next/image";
 
 const highlights = [
   { icon: MapPin, text: "Based in Sonoma County — we show up in person when it matters" },
@@ -38,10 +37,13 @@ export default function About() {
 
             {/* Headshot / Avatar */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-[#18181B] flex items-center justify-center border-2 border-[#F97316]/30">
+              <div
+                className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center shadow-[0_8px_24px_rgba(232,133,58,0.3)]"
+                style={{ background: "var(--grad-copper)" }}
+              >
                 {/* Replace with: <Image src="/duke-headshot.jpg" alt="Duke Hutcheon" fill className="object-cover" /> */}
                 <span
-                  className="text-2xl font-bold text-[#F97316]"
+                  className="text-2xl font-bold text-white"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   D

@@ -31,6 +31,7 @@ export default function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
+          <p className="eyebrow text-gradient-copper mb-4">The process</p>
           <h2
             className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -47,7 +48,10 @@ export default function HowItWorks() {
 
         <div className="grid md:grid-cols-3 gap-8 relative">
           {/* Connector line on desktop */}
-          <div className="hidden md:block absolute top-12 left-1/6 right-1/6 h-px bg-[#18181B]/15" />
+          <div
+            className="hidden md:block absolute top-12 left-1/6 right-1/6 h-px"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(232,133,58,0.5), transparent)" }}
+          />
 
           {steps.map((s, i) => (
             <motion.div
@@ -56,15 +60,15 @@ export default function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="text-center relative"
+              className="text-center relative group"
             >
               <div
-                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 relative z-10"
-                style={{ backgroundColor: "#18181B" }}
+                className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 relative z-10 shadow-[0_10px_30px_rgba(232,133,58,0.32)] transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-3"
+                style={{ background: "var(--grad-copper)" }}
               >
                 <span
-                  className="text-2xl font-bold"
-                  style={{ color: "#F97316", fontFamily: "var(--font-heading)" }}
+                  className="text-2xl font-bold text-white"
+                  style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {s.number}
                 </span>

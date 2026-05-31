@@ -32,6 +32,7 @@ export default function Problem() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
+          <p className="eyebrow text-gradient-copper mb-4">The reality check</p>
           <h2
             className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -56,13 +57,13 @@ export default function Problem() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-white rounded-xl p-8 shadow-sm border border-[#18181B]/5"
+              className="card-premium p-8"
             >
               <div
-                className="w-12 h-12 rounded-lg flex items-center justify-center mb-5"
-                style={{ backgroundColor: "rgba(24,24,27,0.07)" }}
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                style={{ background: "linear-gradient(135deg, rgba(245,166,35,0.16), rgba(232,133,58,0.12))", border: "1px solid rgba(232,133,58,0.2)" }}
               >
-                <p.icon size={22} color="#18181B" />
+                <p.icon size={22} color="var(--copper-600)" />
               </div>
               <h3
                 className="text-lg font-semibold text-[#18181B] mb-3"

@@ -340,10 +340,11 @@ export default function CaseStudies() {
         >
           <a
             href="#contact"
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+            className="btn-copper group inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-white"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Become the next case study <ArrowRight size={15} />
+            Become the next case study
+            <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
           </a>
         </motion.div>
       </div>

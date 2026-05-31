@@ -1,29 +1,403 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Copper Bay Tech — Design System
+   "Warm copper metal against deep bay-night ink."
+   ============================================================ */
+
 :root {
-  --navy: #18181B;
-  --gold: #F97316;
-  --linen: #FAFAF9;
-  --text: #3F3F46;
-  --green: #18181B;
-  --background: #FAFAF9;
-  --foreground: #3F3F46;
+  /* — Ink (the deep bay night) — layered for depth — */
+  --ink-950: #0a0b0e;
+  --ink-900: #0e1014;
+  --ink-850: #131419;
+  --ink-800: #18181b;
+  --ink-700: #232329;
+
+  /* — Copper (the signature warm metal) — */
+  --copper-300: #f6c189;
+  --copper-400: #ef9e54;
+  --copper-500: #e8853a; /* primary copper */
+  --copper-600: #cf6f2c;
+  --copper-700: #a8551f;
+  --amber: #f5a623;
+  --orange: #f97316; /* legacy accent, lives inside the copper range */
+
+  /* — Paper & linen — */
+  --linen: #fafaf9;
+  --paper: #f4f2ed;
+  --paper-200: #ebe8e1;
+
+  /* — Text — */
+  --text: #3f3f46;
+  --text-soft: #52525b;
+
+  /* — Legacy aliases (kept so existing markup stays valid) — */
+  --navy: #18181b;
+  --gold: #e8853a;
+  --green: #18181b;
+  --background: #fafaf9;
+  --foreground: #3f3f46;
+
+  /* — Signature gradients — */
+  --grad-copper: linear-gradient(
+    135deg,
+    #f5a623 0%,
+    #e8853a 38%,
+    #cf6f2c 72%,
+    #a8551f 100%
+  );
+  --grad-copper-soft: linear-gradient(135deg, #f6c189 0%, #e8853a 100%);
+  --grad-ink: linear-gradient(180deg, #16171d 0%, #0e1014 100%);
+
+  /* — Layered shadows (the "expensive" depth) — */
+  --shadow-sm: 0 1px 2px rgba(14, 16, 20, 0.04),
+    0 1px 3px rgba(14, 16, 20, 0.06);
+  --shadow-md: 0 4px 12px rgba(14, 16, 20, 0.06),
+    0 12px 28px rgba(14, 16, 20, 0.07);
+  --shadow-lg: 0 8px 24px rgba(14, 16, 20, 0.08),
+    0 24px 56px rgba(14, 16, 20, 0.1);
+  --shadow-copper: 0 8px 28px rgba(232, 133, 58, 0.28),
+    0 2px 8px rgba(232, 133, 58, 0.22);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-navy: var(--navy);
-  --color-gold: var(--gold);
+  --color-navy: var(--ink-800);
+  --color-ink: var(--ink-900);
+  --color-gold: var(--copper-500);
+  --color-copper: var(--copper-500);
   --color-linen: var(--linen);
+  --color-paper: var(--paper);
   --color-green: var(--green);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
+
+/* ============================================================
+   Base
+   ============================================================ */
 
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background-color: var(--linen);
   color: var(--text);
+  font-family: var(--font-body), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings: tighter optical tracking for that crafted feel */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+::selection {
+  background: rgba(232, 133, 58, 0.22);
+  color: var(--ink-900);
+}
+
+/* Custom scrollbar — subtle, on-brand */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 133, 58, 0.4) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--copper-400), var(--copper-600));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--copper-300), var(--copper-500));
+  background-clip: padding-box;
+}
+
+/* ============================================================
+   Signature utilities
+   ============================================================ */
+
+/* Copper gradient text */
+.text-gradient-copper {
+  background: var(--grad-copper);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Eyebrow / kicker label */
+.eyebrow {
+  font-family: var(--font-heading), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* The signature CTA — copper gradient, soft glow, shine sweep */
+.btn-copper {
+  position: relative;
+  overflow: hidden;
+  background: var(--grad-copper);
+  color: #fff;
+  font-family: var(--font-heading), sans-serif;
+  box-shadow: var(--shadow-copper);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.25s ease, filter 0.25s ease;
+}
+.btn-copper:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.08) brightness(1.04);
+  box-shadow: 0 12px 36px rgba(232, 133, 58, 0.4),
+    0 4px 12px rgba(232, 133, 58, 0.28);
+}
+.btn-copper:active {
+  transform: translateY(0);
+}
+/* shine sweep */
+.btn-copper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 80%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.btn-copper:hover::after {
+  transform: translateX(130%);
+}
+
+/* Glass surface for dark backgrounds */
+.glass-dark {
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Premium light card with hairline + depth + hover lift */
+.card-premium {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(14, 16, 20, 0.07);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.card-premium:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(232, 133, 58, 0.35);
+}
+/* copper hairline that fades in at the top edge on hover */
+.card-premium::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 133, 58, 0.55),
+    rgba(232, 133, 58, 0)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.card-premium:hover::before {
+  opacity: 1;
+}
+
+/* Gradient hairline ring for dark cards */
+.ring-copper {
+  box-shadow: inset 0 0 0 1px rgba(232, 133, 58, 0.25),
+    0 18px 48px rgba(0, 0, 0, 0.35);
+}
+
+/* Film-grain / noise texture overlay (very subtle, adds richness) */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+}
+
+/* Aurora / mesh glow blobs for dark sections */
+.aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Decorative animated underline for nav links */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 100%;
+  background: var(--grad-copper);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -26px, 0);
+  }
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(28px, -18px, 0) scale(1.08);
+  }
+}
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+.animate-float {
+  animation: float-slow 9s ease-in-out infinite;
+}
+.animate-drift {
+  animation: drift 16s ease-in-out infinite;
+}
+.animate-pulse-glow {
+  animation: pulse-glow 6s ease-in-out infinite;
+}
+
+/* Flowing marquee track */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Animated shimmer for the scroll-progress bar tip */
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--copper-600) 0%,
+    var(--copper-300) 50%,
+    var(--copper-600) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

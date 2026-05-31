@@ -36,8 +36,14 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           <div>
-            <p className="text-2xl font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
-              Copper Bay<span style={{ color: "#F97316" }}>Tech</span>
+            <p className="flex items-center gap-2.5 text-2xl font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+              <span
+                className="grid place-items-center w-8 h-8 rounded-lg text-sm text-white shadow-[0_4px_14px_rgba(232,133,58,0.4)]"
+                style={{ background: "var(--grad-copper)" }}
+              >
+                C
+              </span>
+              Copper Bay<span className="text-gradient-copper">Tech</span>
             </p>
             <p className="text-white/50 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
               Custom-built technology for Sonoma County businesses. Websites, IT support, and cybersecurity — done right.

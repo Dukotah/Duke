@@ -60,11 +60,12 @@ export default function Services() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
+          <p className="eyebrow text-gradient-copper mb-4">What we do</p>
           <h2
             className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            What we do
+            One partner, every layer of your tech
           </h2>
           <p
             className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
@@ -82,18 +83,26 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className={`rounded-xl p-8 flex flex-col ${
+              className={`relative rounded-2xl p-8 flex flex-col transition-transform duration-500 hover:-translate-y-1.5 ${
                 t.featured
-                  ? "bg-[#18181B] text-white shadow-xl"
-                  : "bg-[#FAFAF9] border border-[#18181B]/5"
+                  ? "grain bg-[var(--ink-900)] text-white ring-copper md:-mt-4 md:mb-4 overflow-hidden"
+                  : "card-premium"
               }`}
             >
+              {t.featured && (
+                <span className="eyebrow absolute top-5 right-5 px-3 py-1 rounded-full text-[var(--ink-900)]" style={{ background: "var(--grad-copper)" }}>
+                  Most popular
+                </span>
+              )}
               <div
-                className={`w-12 h-12 rounded-lg flex items-center justify-center mb-5 ${
-                  t.featured ? "bg-white/10" : "bg-[#18181B]/8"
-                }`}
+                className="relative w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                style={
+                  t.featured
+                    ? { background: "rgba(232,133,58,0.16)", border: "1px solid rgba(232,133,58,0.3)" }
+                    : { background: "linear-gradient(135deg, rgba(245,166,35,0.16), rgba(232,133,58,0.12))", border: "1px solid rgba(232,133,58,0.2)" }
+                }
               >
-                <t.icon size={22} color={t.featured ? "#F97316" : "#18181B"} />
+                <t.icon size={22} color={t.featured ? "#f5a623" : "var(--copper-600)"} />
               </div>
 
               <p
@@ -135,9 +144,9 @@ export default function Services() {
 
               <a
                 href="#contact"
-                className={`inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold transition-colors ${
+                className={`inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-semibold transition-colors ${
                   t.featured
-                    ? "bg-[#F97316] text-[#18181B] hover:bg-[#ea6c0a]"
+                    ? "btn-copper text-white"
                     : "bg-[#18181B] text-white hover:bg-[#0d0d0f]"
                 }`}
                 style={{ fontFamily: "var(--font-heading)" }}
