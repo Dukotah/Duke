@@ -23,15 +23,19 @@ export default function Article() {
     <>
       <Nav />
       <main>
-        <section className="pt-32 pb-8 bg-[#18181B]">
-          <div className="max-w-2xl mx-auto px-6">
+        <section className="grain relative pt-32 pb-8 bg-[var(--ink-900)] overflow-hidden">
+          <div
+            className="aurora animate-drift"
+            style={{ top: "-40%", left: "20%", width: "40vw", height: "40vw", background: "radial-gradient(circle, rgba(232,133,58,0.18), transparent 65%)" }}
+          />
+          <div className="relative z-10 max-w-2xl mx-auto px-6">
             <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-8 transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
               <ArrowLeft size={14} /> All Resources
             </Link>
-            <span className="inline-block mb-4 px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-widest" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#F97316", fontFamily: "var(--font-heading)" }}>
+            <span className="eyebrow inline-block mb-4 px-3 py-1.5 rounded-md glass-dark text-[var(--copper-300)]">
               Cybersecurity
             </span>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-[1.1]" style={{ fontFamily: "var(--font-heading)" }}>
               Is My Small Business Website HIPAA Compliant? A Plain-English Checklist
             </h1>
             <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>6 min read &middot; April 2026</p>
@@ -61,7 +65,7 @@ export default function Article() {
               <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="btn-copper inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>
                 Get a Security Review <ArrowRight size={14} />
               </Link>
             </div>

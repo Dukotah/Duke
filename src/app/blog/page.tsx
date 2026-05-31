@@ -55,25 +55,22 @@ export default function BlogPage() {
       <Nav />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-16 bg-[#18181B]">
-          <div className="max-w-4xl mx-auto px-6">
-            <span
-              className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
-              style={{
-                backgroundColor: "rgba(249,115,22,0.15)",
-                color: "#F97316",
-                fontFamily: "var(--font-heading)",
-              }}
-            >
+        <section className="grain relative pt-32 pb-16 bg-[var(--ink-900)] overflow-hidden">
+          <div
+            className="aurora animate-drift"
+            style={{ top: "-30%", left: "10%", width: "40vw", height: "40vw", background: "radial-gradient(circle, rgba(232,133,58,0.2), transparent 65%)" }}
+          />
+          <div className="relative z-10 max-w-4xl mx-auto px-6">
+            <span className="eyebrow inline-block mb-4 px-3 py-1.5 rounded-full glass-dark text-[var(--copper-300)]">
               Resources
             </span>
             <h1
-              className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight"
+              className="text-4xl md:text-6xl font-bold text-white mb-4 leading-[1.05]"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Practical tech advice for
               <br />
-              <span style={{ color: "#F97316" }}>Sonoma County businesses.</span>
+              <span className="text-gradient-copper">Sonoma County businesses.</span>
             </h1>
             <p
               className="text-white/60 text-lg max-w-xl"
@@ -85,22 +82,22 @@ export default function BlogPage() {
         </section>
 
         {/* Posts */}
-        <section className="py-16 bg-[#FAFAF9]">
+        <section className="py-16 bg-[var(--linen)]">
           <div className="max-w-4xl mx-auto px-6">
             <div className="space-y-6">
               {posts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className="group block rounded-2xl bg-white border border-[#18181B]/10 hover:border-[#18181B]/30 transition-all overflow-hidden shadow-sm hover:shadow-md"
+                  className="card-premium group block overflow-hidden"
                 >
                   <div className="p-8">
                     <div className="flex items-center gap-3 mb-4">
                       <span
                         className="text-xs font-semibold uppercase tracking-widest px-2.5 py-1 rounded-md"
                         style={{
-                          backgroundColor: "rgba(249,115,22,0.1)",
-                          color: "#F97316",
+                          backgroundColor: "rgba(232,133,58,0.1)",
+                          color: "var(--copper-700)",
                           fontFamily: "var(--font-heading)",
                         }}
                       >
@@ -120,7 +117,7 @@ export default function BlogPage() {
                       </span>
                     </div>
                     <h2
-                      className="text-xl font-bold text-[#18181B] mb-3 group-hover:text-[#F97316] transition-colors leading-snug"
+                      className="text-xl font-bold text-[#18181B] mb-3 group-hover:text-[var(--copper-700)] transition-colors leading-snug"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {post.title}
@@ -132,7 +129,7 @@ export default function BlogPage() {
                       {post.excerpt}
                     </p>
                     <span
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#F97316] group-hover:gap-2.5 transition-all"
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--copper-600)] group-hover:gap-2.5 transition-all"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       Read article <ArrowRight size={14} />
@@ -143,32 +140,35 @@ export default function BlogPage() {
             </div>
 
             {/* CTA */}
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-10 text-center">
-              <p
-                className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Want personalized advice?
-              </p>
-              <h3
-                className="text-2xl font-bold text-white mb-3"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Skip the reading — just ask us.
-              </h3>
-              <p
-                className="text-white/60 text-sm mb-6 max-w-md mx-auto"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                Free 30-minute consultation. We'll tell you exactly where you stand and what matters most for your business.
-              </p>
-              <Link
-                href="/#contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Get a Free Consultation <ArrowRight size={15} />
-              </Link>
+            <div className="grain relative overflow-hidden mt-16 rounded-2xl bg-[var(--ink-900)] ring-copper p-10 text-center">
+              <div
+                className="aurora animate-float"
+                style={{ top: "-40%", right: "10%", width: "45%", height: "150%", background: "radial-gradient(circle, rgba(232,133,58,0.18), transparent 65%)" }}
+              />
+              <div className="relative z-10">
+                <p className="eyebrow text-gradient-copper mb-3">
+                  Want personalized advice?
+                </p>
+                <h3
+                  className="text-2xl font-bold text-white mb-3"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Skip the reading — just ask us.
+                </h3>
+                <p
+                  className="text-white/60 text-sm mb-6 max-w-md mx-auto"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  Free 30-minute consultation. We&rsquo;ll tell you exactly where you stand and what matters most for your business.
+                </p>
+                <Link
+                  href="/#contact"
+                  className="btn-copper inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Get a Free Consultation <ArrowRight size={15} />
+                </Link>
+              </div>
             </div>
           </div>
         </section>

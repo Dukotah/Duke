@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 
 interface Metric {
   value: string;
@@ -172,28 +173,25 @@ export default function AuditResults({ data }: { data: AuditData }) {
       {/* CTA */}
       <div
         ref={ctaRef}
-        className="rounded-2xl p-6 text-center"
-        style={{
-          background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)",
-          border: "1px solid #F97316",
-        }}
+        className="grain relative overflow-hidden rounded-2xl p-6 text-center ring-copper"
+        style={{ background: "linear-gradient(135deg, #16171d 0%, #0e1014 100%)" }}
       >
-        <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">
+        <p className="eyebrow text-gradient-copper mb-2">
           Free Fix Consultation
         </p>
-        <h4 className="text-white text-xl font-black mb-2">
+        <h4 className="text-white text-xl font-bold mb-2">
           Want us to fix this?
         </h4>
-        <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
+        <p className="text-white/60 text-sm mb-5 max-w-sm mx-auto">
           Copper Bay Tech can resolve most performance issues in under a week. Get a
           free 30-minute call to see exactly what we&apos;d do.
         </p>
-        <a
+        <Link
           href="/#contact"
-          className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
+          className="btn-copper inline-block text-white font-semibold px-8 py-3 rounded-full text-sm"
         >
           Get a Free Performance Review
-        </a>
+        </Link>
       </div>
     </div>
   );

@@ -27,7 +27,6 @@ export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(BOT_INTROS);
   const [input, setInput] = useState("");
-  const [sent, setSent] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"chat" | "collect" | "done">("chat");
@@ -74,7 +73,7 @@ export default function ChatWidget() {
           message: userMessage,
         }),
       });
-    } catch (_) {}
+    } catch {}
     setMessages((prev) => [
       ...prev,
       {
@@ -83,7 +82,6 @@ export default function ChatWidget() {
       },
     ]);
     setStep("done");
-    setSent(true);
   };
 
   const unreadCount = !open && messages.length > BOT_INTROS.length ? 1 : 0;
@@ -101,9 +99,9 @@ export default function ChatWidget() {
             style={{ backgroundColor: "#fff" }}
           >
             {/* Header */}
-            <div className="bg-[#18181B] px-5 py-4 flex items-center justify-between">
+            <div className="bg-[var(--ink-900)] px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#F97316] flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "var(--grad-copper)" }}>
                   <span className="text-white text-sm font-bold" style={{ fontFamily: "var(--font-heading)" }}>D</span>
                 </div>
                 <div>
@@ -183,7 +181,7 @@ export default function ChatWidget() {
                   />
                   <button
                     onClick={submitContact}
-                    className="px-3 py-2 bg-[#F97316] text-white rounded-lg hover:bg-[#ea6c0a] transition-colors"
+                    className="btn-copper px-3 py-2 text-white rounded-lg"
                   >
                     <Send size={15} />
                   </button>
@@ -231,7 +229,8 @@ export default function ChatWidget() {
       {/* Toggle button */}
       <motion.button
         onClick={() => setOpen(!open)}
-        className="relative w-14 h-14 rounded-full bg-[#F97316] text-white shadow-lg hover:bg-[#ea6c0a] transition-colors flex items-center justify-center"
+        className="relative w-14 h-14 rounded-full text-white flex items-center justify-center shadow-[0_8px_28px_rgba(232,133,58,0.45)]"
+        style={{ background: "var(--grad-copper)" }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label="Open chat"

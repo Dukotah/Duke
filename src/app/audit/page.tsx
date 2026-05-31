@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -28,18 +28,21 @@ interface AuditData {
 
 function AuditPageInner() {
   const searchParams = useSearchParams();
-  const [url, setUrl] = useState(searchParams.get("url") ?? "");
+  const urlParam = searchParams.get("url");
+  const [url, setUrl] = useState(urlParam ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AuditData | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const preUrl = searchParams.get("url");
-    if (preUrl) {
-      setUrl(preUrl);
-    }
-  }, [searchParams]);
+  // Sync the input when the ?url= query param changes — done during render
+  // (React's recommended pattern) rather than in an effect, which avoids the
+  // cascading-render lint warning and an extra paint.
+  const [prevUrlParam, setPrevUrlParam] = useState(urlParam);
+  if (urlParam !== prevUrlParam) {
+    setPrevUrlParam(urlParam);
+    if (urlParam) setUrl(urlParam);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,20 +77,24 @@ function AuditPageInner() {
   }
 
   return (
-    <div className="min-h-screen bg-[#18181B] text-white" suppressHydrationWarning>
+    <div className="min-h-screen bg-[var(--ink-900)] text-white" suppressHydrationWarning>
       <Nav />
 
       {/* Hero */}
-      <section className="pt-32 pb-16 px-6 text-center">
-        <div className="max-w-2xl mx-auto">
-          <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
+      <section className="grain relative pt-32 pb-16 px-6 text-center overflow-hidden">
+        <div
+          className="aurora animate-drift"
+          style={{ top: "-10%", left: "20%", width: "40vw", height: "40vw", background: "radial-gradient(circle, rgba(232,133,58,0.22), transparent 65%)" }}
+        />
+        <div className="relative z-10 max-w-2xl mx-auto">
+          <span className="eyebrow inline-block glass-dark text-[var(--copper-300)] px-4 py-1.5 rounded-full mb-6">
             Free Tool
           </span>
-          <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
-            How Fast Is<br />
-            <span className="text-orange-400">Your Website?</span>
+          <h1 className="text-4xl sm:text-6xl font-bold mb-4 leading-[1.05]">
+            How fast is<br />
+            <span className="text-gradient-copper">your website?</span>
           </h1>
-          <p className="text-zinc-400 text-lg mb-10 max-w-lg mx-auto">
+          <p className="text-white/60 text-lg mb-10 max-w-lg mx-auto" style={{ fontFamily: "var(--font-body)" }}>
             A slow site costs you customers. Enter your URL to get a free Google
             PageSpeed audit in seconds — no signup required.
           </p>
@@ -99,13 +106,14 @@ function AuditPageInner() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="yourwebsite.com"
-              className="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm"
+              className="flex-1 bg-white/5 border border-white/15 rounded-full px-5 py-3.5 text-white placeholder-white/40 focus:outline-none focus:border-[var(--copper-500)] focus:ring-2 focus:ring-[var(--copper-500)]/25 transition text-sm"
               disabled={loading}
             />
             <button
               type="submit"
               disabled={loading || !url.trim()}
-              className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-7 py-3.5 rounded-full transition-colors text-sm whitespace-nowrap"
+              className="btn-copper disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-7 py-3.5 rounded-full text-sm whitespace-nowrap"
+              style={{ fontFamily: "var(--font-heading)" }}
             >
               {loading ? "Analyzing…" : "Run Audit"}
             </button>
@@ -124,7 +132,7 @@ function AuditPageInner() {
         <section className="px-6 pb-16">
           <div className="max-w-2xl mx-auto text-center">
             <div className="inline-flex flex-col items-center gap-4">
-              <div className="w-12 h-12 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-12 h-12 border-2 border-[var(--copper-500)] border-t-transparent rounded-full animate-spin" />
               <p className="text-zinc-400 text-sm">Running PageSpeed analysis — this takes about 15 seconds…</p>
             </div>
           </div>
@@ -196,7 +204,7 @@ function AuditPageInner() {
 
 export default function AuditPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#18181B]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[var(--ink-900)]" />}>
       <AuditPageInner />
     </Suspense>
   );

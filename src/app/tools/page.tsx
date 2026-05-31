@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
@@ -119,7 +120,7 @@ function SectionCard({ title, icon, status, children }: {
         <span className="text-xl">{icon}</span>
         <h3 className="text-white font-bold text-sm flex-1">{title}</h3>
         {status === "loading" && (
-          <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-4 h-4 border-2 border-[var(--copper-500)] border-t-transparent rounded-full animate-spin" />
         )}
         {status === "done" && <span className="text-green-400 text-xs font-semibold">Done</span>}
         {status === "error" && <span className="text-red-400 text-xs font-semibold">Failed</span>}
@@ -490,20 +491,24 @@ export default function ToolsPage() {
   const hasResults = Object.values(checks).some(c => c.status !== "idle");
 
   return (
-    <div className="min-h-screen bg-[#18181B] text-white">
+    <div className="min-h-screen bg-[var(--ink-900)] text-white">
       <Nav />
 
       {/* Hero */}
-      <section className="pt-32 pb-12 px-6 text-center">
-        <div className="max-w-2xl mx-auto">
-          <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
+      <section className="grain relative pt-32 pb-12 px-6 text-center overflow-hidden">
+        <div
+          className="aurora animate-drift"
+          style={{ top: "-10%", left: "18%", width: "44vw", height: "44vw", background: "radial-gradient(circle, rgba(232,133,58,0.22), transparent 65%)" }}
+        />
+        <div className="relative z-10 max-w-2xl mx-auto">
+          <span className="eyebrow inline-block glass-dark text-[var(--copper-300)] px-4 py-1.5 rounded-full mb-6">
             Free Tool
           </span>
-          <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
-            Full Website{" "}
-            <span className="text-orange-400">Health Check</span>
+          <h1 className="text-4xl sm:text-6xl font-bold mb-4 leading-[1.05]">
+            Full website{" "}
+            <span className="text-gradient-copper">health check</span>
           </h1>
-          <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
+          <p className="text-white/60 text-lg mb-8 max-w-xl mx-auto" style={{ fontFamily: "var(--font-body)" }}>
             Enter your URL and get a complete audit — speed, SSL, SEO, broken links, and mobile
             readiness — all at once. Free, no signup.
           </p>
@@ -515,19 +520,20 @@ export default function ToolsPage() {
               onChange={e => setInputUrl(e.target.value)}
               placeholder="yourwebsite.com"
               disabled={running}
-              className="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm"
+              className="flex-1 bg-white/5 border border-white/15 rounded-full px-5 py-3.5 text-white placeholder-white/40 focus:outline-none focus:border-[var(--copper-500)] focus:ring-2 focus:ring-[var(--copper-500)]/25 transition text-sm"
             />
             <button
               type="submit"
               disabled={running || !inputUrl.trim()}
-              className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-7 py-3.5 rounded-full transition-colors text-sm whitespace-nowrap"
+              className="btn-copper disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-7 py-3.5 rounded-full text-sm whitespace-nowrap"
+              style={{ fontFamily: "var(--font-heading)" }}
             >
               {running ? "Analyzing…" : "Run Full Audit"}
             </button>
           </form>
 
           {running && (
-            <p className="text-zinc-500 text-xs mt-4">
+            <p className="text-white/40 text-xs mt-4">
               Running 5 checks in parallel — results appear as each one completes
             </p>
           )}
@@ -552,18 +558,18 @@ export default function ToolsPage() {
             </div>
 
             {!running && (
-              <div className="mt-10 rounded-2xl p-6 text-center" style={{ border: "1px solid #F97316", background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
-                <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">Free Consultation</p>
-                <h4 className="text-white text-xl font-black mb-2">Want us to fix this?</h4>
-                <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
+              <div className="grain relative overflow-hidden mt-10 rounded-2xl p-6 text-center ring-copper" style={{ background: "linear-gradient(135deg, #16171d 0%, #0e1014 100%)" }}>
+                <p className="eyebrow text-gradient-copper mb-2">Free Consultation</p>
+                <h4 className="text-white text-xl font-bold mb-2">Want us to fix this?</h4>
+                <p className="text-white/60 text-sm mb-5 max-w-sm mx-auto">
                   Copper Bay Tech can resolve most issues in under a week. Get a free 30-minute call.
                 </p>
-                <a
+                <Link
                   href="/#contact"
-                  className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
+                  className="btn-copper inline-block text-white font-semibold px-8 py-3 rounded-full text-sm"
                 >
                   Get a Free Review
-                </a>
+                </Link>
               </div>
             )}
           </div>

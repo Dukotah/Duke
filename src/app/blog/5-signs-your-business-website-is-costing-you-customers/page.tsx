@@ -42,15 +42,19 @@ export default function Article() {
     <>
       <Nav />
       <main>
-        <section className="pt-32 pb-8 bg-[#18181B]">
-          <div className="max-w-2xl mx-auto px-6">
+        <section className="grain relative pt-32 pb-8 bg-[var(--ink-900)] overflow-hidden">
+          <div
+            className="aurora animate-drift"
+            style={{ top: "-40%", left: "20%", width: "40vw", height: "40vw", background: "radial-gradient(circle, rgba(232,133,58,0.18), transparent 65%)" }}
+          />
+          <div className="relative z-10 max-w-2xl mx-auto px-6">
             <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-8 transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
               <ArrowLeft size={14} /> All Resources
             </Link>
-            <span className="inline-block mb-4 px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-widest" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#F97316", fontFamily: "var(--font-heading)" }}>
+            <span className="eyebrow inline-block mb-4 px-3 py-1.5 rounded-md glass-dark text-[var(--copper-300)]">
               Web Development
             </span>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-[1.1]" style={{ fontFamily: "var(--font-heading)" }}>
               5 Signs Your Business Website Is Costing You Customers Right Now
             </h1>
             <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>4 min read &middot; March 2026</p>
@@ -59,14 +63,14 @@ export default function Article() {
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6">
             <p className="text-lg text-[#3F3F46]/70 mb-10 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-              Most business owners don't realize their website is a problem until a customer mentions it — or worse, they never find out because the visitor just left. Here are five things to check right now, no technical knowledge required.
+              Most business owners don&rsquo;t realize their website is a problem until a customer mentions it — or worse, they never find out because the visitor just left. Here are five things to check right now, no technical knowledge required.
             </p>
             <div className="space-y-8">
               {signs.map((s) => (
                 <div key={s.num} className="flex gap-6">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-xl bg-[#18181B] flex items-center justify-center">
-                      <span className="text-sm font-bold text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>{s.num}</span>
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-[0_8px_22px_rgba(232,133,58,0.32)]" style={{ background: "var(--grad-copper)" }}>
+                      <span className="text-sm font-bold text-white" style={{ fontFamily: "var(--font-heading)" }}>{s.num}</span>
                     </div>
                   </div>
                   <div>
@@ -76,12 +80,12 @@ export default function Article() {
                 </div>
               ))}
             </div>
-            <div className="mt-12 p-6 rounded-2xl bg-[#18181B] text-white">
-              <p className="text-sm font-semibold mb-2 text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>Quick action</p>
+            <div className="grain relative overflow-hidden mt-12 p-6 rounded-2xl bg-[var(--ink-900)] ring-copper text-white">
+              <p className="eyebrow mb-2 text-gradient-copper" style={{ fontFamily: "var(--font-heading)" }}>Quick action</p>
               <p className="text-sm text-white/70 mb-4" style={{ fontFamily: "var(--font-body)" }}>
                 Run a free audit at our Website Health Check tool — it checks speed, SSL, SEO, broken links, and mobile readiness in about 30 seconds.
               </p>
-              <Link href="/tools" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/tools" className="btn-copper inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>
                 Run Free Website Audit <ArrowRight size={14} />
               </Link>
             </div>
@@ -89,7 +93,7 @@ export default function Article() {
               <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="btn-copper inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>
                 Get Your Site Fixed <ArrowRight size={14} />
               </Link>
             </div>
