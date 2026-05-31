@@ -5,8 +5,9 @@ import {
   X, Phone, Mail, Globe, MapPin, ExternalLink, Copy, Check,
   StickyNote, Send, ChevronDown, Star, Link, Flame, Zap,
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
-  CalendarClock, CheckCircle2, DollarSign,
+  CalendarClock, CheckCircle2, DollarSign, Activity,
 } from "lucide-react";
+import ActivityTimeline from "./ActivityTimeline";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -117,15 +118,35 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
 }) {
   const [notes, setNotes] = useState(state.notes ?? "");
   const [showSubmit, setShowSubmit] = useState(false);
+  const [activityKey, setActivityKey] = useState(0);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
 
-  useEffect(() => { setNotes(state.notes ?? ""); }, [state.notes]);
+  useEffect(() => { setNotes(state.notes ?? ""); prevNotes.current = state.notes ?? ""; }, [state.notes]);
+
+  const postActivity = (body: Record<string, unknown>) => {
+    fetch("/api/crm/activity", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ leadId: lead.id, ...body }),
+    }).then(() => setActivityKey((k) => k + 1)).catch(() => {});
+  };
 
   const handleNotes = (v: string) => {
     setNotes(v);
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => onUpdate({ notes: v }), 500);
+  };
+
+  const handleNotesBlur = () => {
+    const trimmed = notes.trim();
+    const prev = prevNotes.current.trim();
+    // Only log if text changed meaningfully (more than 5 chars different)
+    if (trimmed && Math.abs(trimmed.length - prev.length) > 5) {
+      prevNotes.current = trimmed;
+      postActivity({ type: "note", note: trimmed });
+    }
   };
 
   const logOutcome = (outcome: typeof OUTCOMES[0]) => {
@@ -135,6 +156,12 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
       outcome.key === "interested" ? "follow_up" :
       outcome.key === "call_back" ? "follow_up" : "contacted";
     onUpdate({ status: newStatus, stage: outcome.stage, lastContacted: now, callCount: newCount, lastOutcome: outcome.key });
+    postActivity({ type: "call", outcome: outcome.key });
+  };
+
+  const handleSubmitted = () => {
+    postActivity({ type: "submitted" });
+    onSubmitted();
   };
 
   const tier = lead.tier;
@@ -146,7 +173,7 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
 
   return (
     <>
-      {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={onSubmitted} />}
+      {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
 
       <div className="fixed inset-0 z-50 flex items-end sm:items-stretch sm:justify-end" onClick={onClose}>
         <div className="absolute inset-0 bg-black/50 sm:bg-black/30 backdrop-blur-sm sm:backdrop-blur-none" />
@@ -298,15 +325,23 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
             </div>
 
             {/* Notes */}
-            <div className="px-5 py-4">
+            <div className="px-5 py-4 border-b border-white/[0.06]">
               <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
                 <StickyNote size={11} />Your Notes
               </p>
-              <textarea value={notes} onChange={(e) => handleNotes(e.target.value)} rows={5}
+              <textarea value={notes} onChange={(e) => handleNotes(e.target.value)} onBlur={handleNotesBlur} rows={5}
                 placeholder="What did they say? Are they coming back? What's their situation?"
                 className="w-full bg-[#1C1C1F] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/80 placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/40 transition-colors"
                 style={H} />
               <p className="text-xs text-white/20 mt-1.5" style={H}>Auto-saved as you type</p>
+            </div>
+
+            {/* Activity Timeline */}
+            <div className="px-5 py-4">
+              <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
+                <Activity size={11} />Activity
+              </p>
+              <ActivityTimeline key={activityKey} leadId={lead.id} />
             </div>
 
           </div>

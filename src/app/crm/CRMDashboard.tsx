@@ -6,10 +6,11 @@ import {
   Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail, Globe,
   Flame, Zap, ArrowUpDown, X, Download, LogOut, LayoutGrid,
   BookOpen, DollarSign, List, ChevronDown, Check,
-  AlertCircle, Copy,
+  AlertCircle, Copy, Plus,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
+import AddLeadModal from "./components/AddLeadModal";
 
 const CallQueue = dynamic(() => import("./components/CallQueue"), { ssr: false });
 const Pipeline = dynamic(() => import("./components/Pipeline"), { ssr: false });
@@ -268,6 +269,8 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [allLeads, setAllLeads] = useState<Lead[]>([]);
   const [statesLoaded, setStatesLoaded] = useState(false);
+  const [showAddLead, setShowAddLead] = useState(false);
+  const [queueRefreshKey, setQueueRefreshKey] = useState(0);
 
   // Load all state + submissions once
   useEffect(() => {
@@ -311,6 +314,12 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
 
   return (
     <>
+      {showAddLead && (
+        <AddLeadModal
+          onClose={() => setShowAddLead(false)}
+          onAdded={() => { setQueueRefreshKey((k) => k + 1); setShowAddLead(false); }}
+        />
+      )}
       {selectedLead && (
         <LeadPanel lead={selectedLead}
           state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
@@ -351,7 +360,7 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
         {/* Main content */}
         <div className="flex-1 max-w-3xl mx-auto w-full px-4 pt-5 pb-24 overflow-y-auto">
           {tab === "queue" && (
-            <CallQueue states={states} onSelectLead={(l) => setSelectedLead(l as Lead)} onRefresh={refreshSubs} />
+            <CallQueue key={queueRefreshKey} states={states} onSelectLead={(l) => setSelectedLead(l as Lead)} onRefresh={refreshSubs} />
           )}
           {tab === "pipeline" && (
             <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
@@ -362,6 +371,14 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
           {tab === "scripts" && <ScriptsGuide />}
           {tab === "earnings" && <EarningsView states={states} repName={userName} />}
         </div>
+
+        {/* FAB — add lead */}
+        <button onClick={() => setShowAddLead(true)}
+          className="fixed bottom-20 right-4 z-30 w-[52px] h-[52px] rounded-full flex items-center justify-center shadow-xl transition-transform active:scale-95 hover:brightness-110"
+          style={{ backgroundColor: "#F97316" }}
+          aria-label="Add lead">
+          <Plus size={22} className="text-white" />
+        </button>
 
         {/* Bottom tab bar — always visible */}
         <nav className="fixed bottom-0 left-0 right-0 z-30 bg-[#111113]/95 backdrop-blur border-t border-white/[0.07] pb-safe">
