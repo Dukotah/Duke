@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAllClaims, getTerritory } from "@/lib/db";
 
 const CSV_URL =
   "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/claude/lead-data-sourcing-eyOeN/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
@@ -127,12 +128,32 @@ export async function GET(req: NextRequest) {
     const hasEmail = sp.get("hasEmail") ?? "";
     const hasWebsite = sp.get("hasWebsite") ?? "";
     const hotLeads = sp.get("hotLeads") === "1";
+    const allTerritories = sp.get("allTerritories") === "1";
     const sortBy = sp.get("sortBy") ?? "outreach_score";
     const page = Math.max(1, parseInt(sp.get("page") ?? "1"));
     const limit = Math.min(100, parseInt(sp.get("limit") ?? "50"));
 
+    const userId = req.headers.get("x-user-id");
+
     const all = await getLeads();
     let filtered = all;
+
+    // Territory filtering — apply unless allTerritories=1 or admin
+    if (userId && !allTerritories) {
+      const territory = await getTerritory(userId);
+      if (territory) {
+        if (territory.counties.length > 0) {
+          filtered = filtered.filter((l) =>
+            territory.counties.some((c) => c.toLowerCase() === l.county.toLowerCase())
+          );
+        }
+        if (territory.niches.length > 0) {
+          filtered = filtered.filter((l) =>
+            territory.niches.some((n) => n.toLowerCase() === l.category.toLowerCase())
+          );
+        }
+      }
+    }
 
     if (q) filtered = filtered.filter((l) =>
       l.name.toLowerCase().includes(q) ||
@@ -161,7 +182,7 @@ export async function GET(req: NextRequest) {
     });
 
     const total = filtered.length;
-    const leads = filtered.slice((page - 1) * limit, (page - 1) * limit + limit);
+    const pageLeads = filtered.slice((page - 1) * limit, (page - 1) * limit + limit);
 
     const counties = [...new Set(all.map((l) => l.county).filter(Boolean))].sort();
     const niches = [...new Set(all.map((l) => l.category).filter(Boolean))].sort();
@@ -173,7 +194,16 @@ export async function GET(req: NextRequest) {
       C: filtered.filter((l) => l.tier === "C").length,
     };
 
-    return NextResponse.json({ leads, total, page, limit, counties, niches, tierCounts });
+    // Merge claim info
+    const claims = await getAllClaims();
+    const claimMap: Record<string, { userId: string; repName: string }> = {};
+    for (const c of claims) claimMap[c.leadId] = { userId: c.userId, repName: c.repName };
+    const leads = pageLeads.map((l) => ({ ...l, claimedBy: claimMap[l.id] ?? null }));
+
+    // Territory info for current user
+    const territory = userId ? await getTerritory(userId) : null;
+
+    return NextResponse.json({ leads, total, page, limit, counties, niches, tierCounts, territory });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to load leads" }, { status: 500 });

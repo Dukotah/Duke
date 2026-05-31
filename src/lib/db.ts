@@ -242,6 +242,112 @@ export async function getRepStats(userId: string) {
   };
 }
 
+// ─── Lead Claims ─────────────────────────────────────────────────────────────
+
+export interface LeadClaim {
+  leadId: string;
+  userId: string;
+  repName: string;
+  claimedAt: string;
+}
+
+export async function claimLead(leadId: string, userId: string, repName: string): Promise<LeadClaim> {
+  const redis = getRedis();
+  const claim: LeadClaim = { leadId, userId, repName, claimedAt: new Date().toISOString() };
+  await redis.hset(`claim:${leadId}`, claim as unknown as Record<string, unknown>);
+  await redis.expire(`claim:${leadId}`, 60 * 60 * 24 * 30); // 30 days
+  await redis.sadd(`claimed_by_user:${userId}`, leadId);
+  return claim;
+}
+
+export async function unclaimLead(leadId: string, userId: string): Promise<void> {
+  const redis = getRedis();
+  const existing = await getLeadClaim(leadId);
+  if (!existing || existing.userId !== userId) return;
+  await redis.del(`claim:${leadId}`);
+  await redis.srem(`claimed_by_user:${userId}`, leadId);
+}
+
+export async function getLeadClaim(leadId: string): Promise<LeadClaim | null> {
+  const redis = getRedis();
+  const c = await redis.hgetall(`claim:${leadId}`);
+  if (!c || !c.leadId) return null;
+  return c as unknown as LeadClaim;
+}
+
+export async function getClaimedLeadIds(userId: string): Promise<string[]> {
+  const redis = getRedis();
+  const ids = await redis.smembers(`claimed_by_user:${userId}`);
+  return ids as string[];
+}
+
+export async function getAllClaims(): Promise<LeadClaim[]> {
+  const redis = getRedis();
+  const keys = await redis.keys("claim:*");
+  if (!keys.length) return [];
+  const claims = await Promise.all(
+    (keys as string[]).map(async (key) => {
+      const c = await redis.hgetall(key);
+      if (!c || !c.leadId) return null;
+      return c as unknown as LeadClaim;
+    })
+  );
+  return claims.filter(Boolean) as LeadClaim[];
+}
+
+// ─── Territories ──────────────────────────────────────────────────────────────
+
+export interface Territory {
+  userId: string;
+  counties: string[];
+  niches: string[];
+  updatedAt: string;
+}
+
+export async function setTerritory(userId: string, territory: { counties: string[]; niches: string[] }): Promise<Territory> {
+  const redis = getRedis();
+  const t: Territory = { ...territory, userId, updatedAt: new Date().toISOString() };
+  await redis.hset(`territory:${userId}`, {
+    userId: t.userId,
+    counties: JSON.stringify(t.counties),
+    niches: JSON.stringify(t.niches),
+    updatedAt: t.updatedAt,
+  });
+  await redis.sadd("territories:index", userId);
+  return t;
+}
+
+export async function getTerritory(userId: string): Promise<Territory | null> {
+  const redis = getRedis();
+  const raw = await redis.hgetall(`territory:${userId}`);
+  if (!raw || !raw.userId) return null;
+  return {
+    userId: raw.userId as string,
+    counties: JSON.parse((raw.counties as string) ?? "[]"),
+    niches: JSON.parse((raw.niches as string) ?? "[]"),
+    updatedAt: raw.updatedAt as string,
+  };
+}
+
+export async function deleteTerritory(userId: string): Promise<void> {
+  const redis = getRedis();
+  await redis.del(`territory:${userId}`);
+  await redis.srem("territories:index", userId);
+}
+
+export async function getAllTerritories(): Promise<Record<string, Territory>> {
+  const redis = getRedis();
+  const ids = await redis.smembers("territories:index");
+  const result: Record<string, Territory> = {};
+  await Promise.all(
+    (ids as string[]).map(async (id) => {
+      const t = await getTerritory(id as string);
+      if (t) result[id as string] = t;
+    })
+  );
+  return result;
+}
+
 // ─── Admin seed ───────────────────────────────────────────────────────────────
 
 export async function ensureAdminExists(): Promise<void> {
