@@ -12,6 +12,113 @@ import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
 import AddLeadModal from "./components/AddLeadModal";
 
+// ─── Broadcast Banner ─────────────────────────────────────────────────────────
+
+interface BroadcastMsg {
+  id: string; message: string; type: "info" | "success" | "urgent";
+  createdAt: string; expiresAt: string; createdBy: string;
+}
+
+function BroadcastBanners() {
+  const [broadcasts, setBroadcasts] = useState<BroadcastMsg[]>([]);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    fetch("/api/crm/admin/broadcast")
+      .then((r) => r.json())
+      .then((d) => setBroadcasts(d.broadcasts ?? []))
+      .catch(() => {});
+  }, []);
+
+  const visible = broadcasts.filter((b) => !dismissed.has(b.id));
+  if (visible.length === 0) return null;
+
+  const styles = {
+    info: { bar: "bg-blue-500/15 border-blue-500/30 text-blue-200", icon: "ℹ️" },
+    success: { bar: "bg-green-500/15 border-green-500/30 text-green-200", icon: "✅" },
+    urgent: { bar: "bg-red-500/15 border-red-500/30 text-red-200 animate-pulse", icon: "🚨" },
+  };
+
+  return (
+    <div className="space-y-2 mb-4">
+      {visible.map((b) => {
+        const s = styles[b.type];
+        return (
+          <div key={b.id} className={`flex items-start gap-3 px-4 py-3 rounded-xl border ${s.bar}`} style={H}>
+            <span className="text-base shrink-0">{s.icon}</span>
+            <p className="flex-1 text-sm font-medium">{b.message}</p>
+            <button onClick={() => setDismissed((prev) => new Set([...prev, b.id]))} className="opacity-50 hover:opacity-100 transition-opacity shrink-0 mt-0.5">
+              <X size={13} />
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Leaderboard Peek ─────────────────────────────────────────────────────────
+
+interface LeaderboardEntry {
+  userId: string; name: string; rank: number;
+  submissionsThisMonth: number; callsThisMonth: number; totalEarned: number;
+}
+
+function LeaderboardPeek({ userId }: { userId: string }) {
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+
+  useEffect(() => {
+    fetch("/api/crm/admin/leaderboard")
+      .then((r) => r.json())
+      .then((d) => setEntries(d.leaderboard ?? []))
+      .catch(() => {});
+  }, []);
+
+  if (entries.length === 0) return null;
+
+  const myEntry = entries.find((e) => e.userId === userId);
+  const medals = ["🥇", "🥈", "🥉"];
+
+  return (
+    <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-4 mt-4" style={H}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-base">🏆</span>
+        <h3 className="text-sm font-bold text-white">This Month's Rankings</h3>
+        {myEntry && (
+          <span className="ml-auto text-xs text-[#F97316] font-semibold">
+            You're #{myEntry.rank}
+          </span>
+        )}
+      </div>
+      <div className="space-y-1.5">
+        {entries.slice(0, 5).map((e) => (
+          <div key={e.userId}
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg ${e.userId === userId ? "bg-[#F97316]/10 border border-[#F97316]/20" : "bg-[#111113]"}`}>
+            <span className="text-sm w-6 text-center">
+              {e.rank <= 3 ? medals[e.rank - 1] : <span className="text-white/30 font-bold text-xs">#{e.rank}</span>}
+            </span>
+            <p className={`flex-1 text-sm font-semibold ${e.userId === userId ? "text-[#F97316]" : "text-white/70"}`}>{e.name}</p>
+            <div className="flex items-center gap-3 text-xs text-white/40">
+              <span>{e.submissionsThisMonth} sub</span>
+              <span>{e.callsThisMonth} calls</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      {myEntry && myEntry.rank > 5 && (
+        <div className="mt-2 pt-2 border-t border-white/[0.06] flex items-center gap-3 px-3 py-2 rounded-lg bg-[#F97316]/10 border border-[#F97316]/20">
+          <span className="text-sm w-6 text-center text-white/30 font-bold text-xs">#{myEntry.rank}</span>
+          <p className="flex-1 text-sm font-semibold text-[#F97316]">{myEntry.name} (you)</p>
+          <div className="flex items-center gap-3 text-xs text-white/40">
+            <span>{myEntry.submissionsThisMonth} sub</span>
+            <span>{myEntry.callsThisMonth} calls</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const CallQueue = dynamic(() => import("./components/CallQueue"), { ssr: false });
 const Pipeline = dynamic(() => import("./components/Pipeline"), { ssr: false });
 const ScriptsGuide = dynamic(() => import("./components/ScriptsGuide"), { ssr: false });
@@ -383,6 +490,7 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
 
         {/* Main content */}
         <div className="flex-1 max-w-3xl mx-auto w-full px-4 pt-5 pb-24 overflow-y-auto">
+          <BroadcastBanners />
           {tab === "queue" && (
             <CallQueue key={queueRefreshKey} states={states} onSelectLead={(l) => setSelectedLead(l as Lead)} onRefresh={refreshSubs} />
           )}
@@ -393,7 +501,12 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
             <AllLeads states={states} onSelectLead={setSelectedLead} />
           )}
           {tab === "scripts" && <ScriptsGuide />}
-          {tab === "earnings" && <EarningsView states={states} repName={userName} />}
+          {tab === "earnings" && (
+            <>
+              <EarningsView states={states} repName={userName} />
+              <LeaderboardPeek userId={userId} />
+            </>
+          )}
         </div>
 
         {/* FAB — add lead */}

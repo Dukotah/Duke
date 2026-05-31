@@ -217,6 +217,7 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
   const handleSubmitted = () => {
     postActivity({ type: "submitted" });
     onSubmitted();
+  };
 
   const tier = lead.tier;
   const websiteHost = lead.website ? lead.website.replace(/^https?:\/\//, "").split("/")[0] : null;
