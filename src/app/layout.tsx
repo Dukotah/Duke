@@ -11,7 +11,7 @@ const dmSans = DM_Sans({
 const lora = Lora({
     variable: "--font-body",
     subsets: ["latin"],
-    weight: ["400", "500"],
+    weight: ["400", "500"],h
 });
 
 export const metadata: Metadata = {
@@ -49,7 +49,7 @@ export default function RootLayout({
 }>) {
     return (
           <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
-                  <body className="min-h-full flex flex-col">{children}</body>body>
-          </html>html>
+                  <body className="min-h-full flex flex-col">{children}</body>
+          </html>
         );
 }</body>
