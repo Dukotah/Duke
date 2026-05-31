@@ -242,6 +242,141 @@ export async function getRepStats(userId: string) {
   };
 }
 
+// ─── Leaderboard ──────────────────────────────────────────────────────────────
+
+export interface LeaderboardEntry {
+  userId: string;
+  name: string;
+  email: string;
+  submissionsThisMonth: number;
+  acceptedThisMonth: number;
+  callsThisMonth: number;
+  totalEarned: number;
+  currentStreak: number;
+  rank: number;
+}
+
+export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
+  const redis = getRedis();
+  const users = await listUsers();
+  const reps = users.filter((u) => u.role === "rep" && u.active);
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth(); // 0-indexed
+
+  const allSubs = await listSubmissions();
+
+  const entries = await Promise.all(
+    reps.map(async (rep) => {
+      const repSubs = allSubs.filter((s) => s.userId === rep.id);
+      const thisMonthSubs = repSubs.filter((s) => {
+        const d = new Date(s.submittedAt);
+        return d.getFullYear() === year && d.getMonth() === month;
+      });
+      const acceptedThisMonth = thisMonthSubs.filter((s) => s.status === "accepted").length;
+      const totalEarned = repSubs
+        .filter((s) => s.status === "accepted")
+        .reduce((sum, s) => sum + (s.commissionAmount ?? 0), 0);
+
+      // Count calls this month from daily Redis keys
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      let callsThisMonth = 0;
+      await Promise.all(
+        Array.from({ length: daysInMonth }, (_, i) => {
+          const day = String(i + 1).padStart(2, "0");
+          const monthStr = String(month + 1).padStart(2, "0");
+          const dateStr = `${year}-${monthStr}-${day}`;
+          return redis.get(`daily:${rep.id}:${dateStr}:calls`).then((v) => {
+            callsThisMonth += typeof v === "number" ? v : parseInt(String(v ?? "0"), 10) || 0;
+          });
+        })
+      );
+
+      // Streak: consecutive days with at least 1 call (going back from today)
+      let currentStreak = 0;
+      const today = new Date();
+      for (let i = 0; i < 30; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        const calls = await redis.get(`daily:${rep.id}:${dateStr}:calls`);
+        const count = typeof calls === "number" ? calls : parseInt(String(calls ?? "0"), 10) || 0;
+        if (count > 0) currentStreak++;
+        else break;
+      }
+
+      return {
+        userId: rep.id,
+        name: rep.name,
+        email: rep.email,
+        submissionsThisMonth: thisMonthSubs.length,
+        acceptedThisMonth,
+        callsThisMonth,
+        totalEarned,
+        currentStreak,
+        rank: 0,
+      };
+    })
+  );
+
+  // Sort: submissions this month, then calls, then total earned
+  entries.sort((a, b) => {
+    if (b.submissionsThisMonth !== a.submissionsThisMonth) return b.submissionsThisMonth - a.submissionsThisMonth;
+    if (b.callsThisMonth !== a.callsThisMonth) return b.callsThisMonth - a.callsThisMonth;
+    return b.totalEarned - a.totalEarned;
+  });
+
+  return entries.map((e, i) => ({ ...e, rank: i + 1 }));
+}
+
+// ─── Broadcasts ───────────────────────────────────────────────────────────────
+
+export interface Broadcast {
+  id: string;
+  message: string;
+  type: "info" | "success" | "urgent";
+  createdAt: string;
+  expiresAt: string;
+  createdBy: string;
+}
+
+export async function createBroadcast(
+  message: string,
+  type: Broadcast["type"],
+  expiresInDays: number,
+  createdBy: string
+): Promise<Broadcast> {
+  const redis = getRedis();
+  const id = crypto.randomUUID();
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + expiresInDays * 24 * 60 * 60 * 1000).toISOString();
+  const broadcast: Broadcast = { id, message, type, createdAt: now.toISOString(), expiresAt, createdBy };
+  await redis.hset(`broadcast:${id}`, broadcast as unknown as Record<string, unknown>);
+  await redis.sadd("broadcasts:index", id);
+  return broadcast;
+}
+
+export async function getActiveBroadcasts(): Promise<Broadcast[]> {
+  const redis = getRedis();
+  const ids = await redis.smembers("broadcasts:index");
+  if (!ids.length) return [];
+  const broadcasts = await Promise.all(
+    (ids as string[]).map(async (id) => {
+      const b = await redis.hgetall(`broadcast:${id}`);
+      return b as unknown as Broadcast;
+    })
+  );
+  const now = new Date().toISOString();
+  return broadcasts.filter((b) => b && b.id && b.expiresAt > now);
+}
+
+export async function deleteBroadcast(id: string): Promise<void> {
+  const redis = getRedis();
+  await redis.del(`broadcast:${id}`);
+  await redis.srem("broadcasts:index", id);
+}
+
 // ─── Admin seed ───────────────────────────────────────────────────────────────
 
 export async function ensureAdminExists(): Promise<void> {

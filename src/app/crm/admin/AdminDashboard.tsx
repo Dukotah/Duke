@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  LogOut, Users, Send, DollarSign, Check, X, Plus, ChevronDown,
-  Phone, Mail, Globe, Flame, Zap, RefreshCw, CheckCircle2, Edit2, Trash2, Eye,
+  LogOut, Users, Send, DollarSign, Check, X, Plus,
+  Phone, Mail, Globe, Flame, Zap, CheckCircle2, Eye, Trash2,
+  TrendingUp, BarChart2, Megaphone, Trophy,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -31,14 +32,33 @@ interface Submission {
   commissionAmount?: number; commissionPaid?: boolean; submittedAt: string; resolvedAt?: string;
 }
 
+interface LeaderboardEntry {
+  userId: string; name: string; email: string;
+  submissionsThisMonth: number; acceptedThisMonth: number;
+  callsThisMonth: number; totalEarned: number; currentStreak: number; rank: number;
+}
+
+interface RevenueData {
+  thisMonth: { deals: number; revenue: number; commissions: number };
+  allTime: { deals: number; revenue: number; commissions: number };
+  pipeline: { interested: number; submitted: number; projectedValue: number };
+  monthlyTrend: { month: string; revenue: number; deals: number }[];
+  dealsThisMonth: Submission[];
+}
+
+interface Broadcast {
+  id: string; message: string; type: "info" | "success" | "urgent";
+  createdAt: string; expiresAt: string; createdBy: string;
+}
+
 // ─── Create Rep Modal ─────────────────────────────────────────────────────────
 
 function CreateRepModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
   const [form, setForm] = useState({ name: "", email: "", password: "", commissionRate: "0.10" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const H = { fontFamily: "var(--font-heading)" };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,8 +71,6 @@ function CreateRepModal({ onClose, onCreated }: { onClose: () => void; onCreated
     if (res.ok) { onCreated(); onClose(); }
     else { const d = await res.json(); setError(d.error ?? "Failed"); setLoading(false); }
   }
-
-  const H = { fontFamily: "var(--font-heading)" };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -117,9 +135,6 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
     onResolved(); onClose();
   }
 
-  const commissionPreview = action === "accept" && dealValue ? null : null; // shown below
-  void commissionPreview;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -131,7 +146,6 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
           </div>
           <button onClick={onClose} className="text-white/30 hover:text-white/60"><X size={18} /></button>
         </div>
-
         <div className="bg-[#111113] rounded-xl border border-white/[0.06] p-4 mb-5 space-y-2">
           {sub.leadPhone && <p className="text-xs text-white/60 flex items-center gap-2" style={H}><Phone size={11} className="text-[#F97316]/60" />{sub.leadPhone}</p>}
           {sub.leadEmail && <p className="text-xs text-white/60 flex items-center gap-2" style={H}><Mail size={11} className="text-[#F97316]/60" />{sub.leadEmail}</p>}
@@ -147,7 +161,6 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
             </div>
           )}
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex gap-2">
             {(["accept", "reject"] as const).map((a) => (
@@ -182,11 +195,380 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
   );
 }
 
+// ─── Leaderboard Tab ──────────────────────────────────────────────────────────
+
+function LeaderboardTab() {
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const H = { fontFamily: "var(--font-heading)" };
+
+  useEffect(() => {
+    fetch("/api/crm/admin/leaderboard")
+      .then((r) => r.json())
+      .then((d) => { setEntries(d.leaderboard ?? []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  function shareLeaderboard() {
+    const now = new Date();
+    const monthName = now.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    const lines = [
+      `🏆 Copper BayTech Sales Leaderboard — ${monthName}`,
+      "",
+      ...entries.map((e) => {
+        const medal = e.rank === 1 ? "🥇" : e.rank === 2 ? "🥈" : e.rank === 3 ? "🥉" : `#${e.rank}`;
+        return `${medal} ${e.name} — ${e.submissionsThisMonth} submissions, ${e.callsThisMonth} calls, $${e.totalEarned.toFixed(0)} earned`;
+      }),
+    ];
+    navigator.clipboard.writeText(lines.join("\n")).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  const medals = ["🥇", "🥈", "🥉"];
+  const top3 = entries.slice(0, 3);
+  const rest = entries.slice(3);
+
+  if (loading) return (
+    <div className="flex items-center justify-center py-16">
+      <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (entries.length === 0) return (
+    <div className="text-center py-16 text-white/25 text-sm" style={H}>
+      No reps yet. Add sales reps to see rankings here.
+    </div>
+  );
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-white/40" style={H}>
+          {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })} rankings
+        </p>
+        <button onClick={shareLeaderboard}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/[0.04] text-white/60 border border-white/10 hover:border-white/20 transition-colors"
+          style={H}>
+          {copied ? <><Check size={11} />Copied!</> : <><Trophy size={11} />Share Leaderboard</>}
+        </button>
+      </div>
+
+      {/* Top 3 */}
+      {top3.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {top3.map((entry) => (
+            <div key={entry.userId}
+              className={`bg-[#1C1C1F] rounded-2xl border p-5 space-y-3 ${
+                entry.rank === 1 ? "border-yellow-400/30 bg-yellow-400/5" :
+                entry.rank === 2 ? "border-zinc-400/20" :
+                "border-orange-400/20"
+              }`}>
+              <div className="flex items-center justify-between">
+                <span className="text-3xl">{medals[entry.rank - 1]}</span>
+                {entry.currentStreak > 0 && (
+                  <span className="text-xs text-orange-400 flex items-center gap-1" style={H}>
+                    <Flame size={10} />{entry.currentStreak}d
+                  </span>
+                )}
+              </div>
+              <div>
+                <p className="font-bold text-white text-base" style={H}>{entry.name}</p>
+                <p className="text-xs text-white/40 truncate" style={H}>{entry.email}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-center">
+                <div className="bg-[#111113] rounded-lg py-2">
+                  <p className="text-xs text-white/30" style={H}>Submissions</p>
+                  <p className="text-lg font-bold text-white" style={H}>{entry.submissionsThisMonth}</p>
+                </div>
+                <div className="bg-[#111113] rounded-lg py-2">
+                  <p className="text-xs text-white/30" style={H}>Calls</p>
+                  <p className="text-lg font-bold text-white" style={H}>{entry.callsThisMonth}</p>
+                </div>
+                <div className="bg-[#111113] rounded-lg py-2">
+                  <p className="text-xs text-white/30" style={H}>Accepted</p>
+                  <p className="text-lg font-bold text-green-400" style={H}>{entry.acceptedThisMonth}</p>
+                </div>
+                <div className="bg-[#111113] rounded-lg py-2">
+                  <p className="text-xs text-white/30" style={H}>Earned</p>
+                  <p className="text-sm font-bold text-[#F97316]" style={H}>${entry.totalEarned.toFixed(0)}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Rest of the list */}
+      {rest.length > 0 && (
+        <div className="space-y-2">
+          {rest.map((entry) => (
+            <div key={entry.userId} className="flex items-center gap-4 bg-[#1C1C1F] border border-white/[0.06] rounded-xl px-4 py-3">
+              <span className="text-lg font-bold text-white/30 w-8 tabular-nums" style={H}>#{entry.rank}</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-white text-sm" style={H}>{entry.name}</p>
+                <p className="text-xs text-white/35" style={H}>{entry.email}</p>
+              </div>
+              <div className="hidden sm:flex items-center gap-4 text-xs text-white/50" style={H}>
+                <span><span className="text-white font-semibold">{entry.callsThisMonth}</span> calls</span>
+                <span><span className="text-white font-semibold">{entry.submissionsThisMonth}</span> subs</span>
+                <span><span className="text-green-400 font-semibold">{entry.acceptedThisMonth}</span> accepted</span>
+                <span><span className="text-[#F97316] font-semibold">${entry.totalEarned.toFixed(0)}</span> earned</span>
+              </div>
+              {entry.currentStreak > 0 && (
+                <span className="text-xs text-orange-400 flex items-center gap-1 shrink-0" style={H}>
+                  <Flame size={10} />{entry.currentStreak}d
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Revenue Tab ──────────────────────────────────────────────────────────────
+
+function RevenueTab() {
+  const [data, setData] = useState<RevenueData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const H = { fontFamily: "var(--font-heading)" };
+
+  useEffect(() => {
+    fetch("/api/crm/admin/revenue")
+      .then((r) => r.json())
+      .then((d) => { setData(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading) return (
+    <div className="flex items-center justify-center py-16">
+      <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (!data) return <div className="text-center py-16 text-white/25 text-sm" style={H}>Could not load revenue data.</div>;
+
+  const maxRevenue = Math.max(...data.monthlyTrend.map((m) => m.revenue), 1);
+
+  return (
+    <div className="space-y-5">
+      {/* Hero numbers */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {[
+          { label: "This Month Revenue", val: `$${data.thisMonth.revenue.toLocaleString()}`, sub: `${data.thisMonth.deals} deals`, color: "text-[#F97316]" },
+          { label: "All-Time Revenue", val: `$${data.allTime.revenue.toLocaleString()}`, sub: `${data.allTime.deals} deals total`, color: "text-white" },
+          { label: "Commissions Owed", val: `$${data.thisMonth.commissions.toFixed(2)}`, sub: "this month", color: "text-amber-400" },
+        ].map(({ label, val, sub, color }) => (
+          <div key={label} className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-6">
+            <p className="text-xs text-white/40 uppercase tracking-wider mb-2" style={H}>{label}</p>
+            <p className={`text-3xl font-bold tabular-nums ${color}`} style={H}>{val}</p>
+            <p className="text-xs text-white/30 mt-1" style={H}>{sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* 6-month trend bar chart (CSS only) */}
+      <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-5">
+          <BarChart2 size={14} className="text-[#F97316]" />
+          <h3 className="text-sm font-bold text-white" style={H}>6-Month Revenue Trend</h3>
+        </div>
+        <div className="flex items-end gap-2 h-32">
+          {data.monthlyTrend.map((m) => {
+            const pct = maxRevenue > 0 ? (m.revenue / maxRevenue) * 100 : 0;
+            return (
+              <div key={m.month} className="flex-1 flex flex-col items-center gap-1.5">
+                <p className="text-xs font-bold text-white/60 tabular-nums" style={H}>
+                  {m.revenue > 0 ? `$${(m.revenue / 1000).toFixed(1)}k` : "–"}
+                </p>
+                <div className="w-full rounded-t-md bg-[#F97316]/20 overflow-hidden relative" style={{ height: "80px" }}>
+                  <div
+                    className="absolute bottom-0 w-full rounded-t-md bg-[#F97316] transition-all"
+                    style={{ height: `${pct}%` }}
+                  />
+                </div>
+                <p className="text-[9px] text-white/30 text-center leading-tight" style={H}>{m.month.split(" ")[0]}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Pipeline funnel */}
+      <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <TrendingUp size={14} className="text-[#F97316]" />
+          <h3 className="text-sm font-bold text-white" style={H}>Pipeline Funnel</h3>
+        </div>
+        <div className="space-y-3">
+          {[
+            { label: "Interested", count: data.pipeline.interested, color: "bg-[#F97316]", pct: 100 },
+            { label: "Submitted (Pending)", count: data.pipeline.submitted, color: "bg-amber-400", pct: 66 },
+            { label: "Projected Value", count: null, val: `$${data.pipeline.projectedValue.toLocaleString()}`, color: "bg-green-400", pct: 33 },
+          ].map(({ label, count, val, color, pct }) => (
+            <div key={label}>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs text-white/50" style={H}>{label}</p>
+                <p className="text-sm font-bold text-white" style={H}>{count !== null ? count : val}</p>
+              </div>
+              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Deals this month */}
+      {data.dealsThisMonth.length > 0 && (
+        <div>
+          <h3 className="text-sm font-bold text-white mb-3" style={H}>Deals Closed This Month</h3>
+          <div className="space-y-2">
+            {data.dealsThisMonth.map((sub) => (
+              <div key={sub.id} className="flex items-center justify-between bg-[#1C1C1F] border border-white/[0.06] rounded-xl px-4 py-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white" style={H}>{sub.leadName}</p>
+                  <p className="text-xs text-white/40" style={H}>{sub.repName} · {new Date(sub.submittedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-sm font-bold text-green-400" style={H}>${(sub.dealValue ?? 0).toLocaleString()}</p>
+                  {sub.commissionAmount && <p className="text-xs text-white/40" style={H}>+${sub.commissionAmount.toFixed(2)} comm.</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Broadcast Panel ──────────────────────────────────────────────────────────
+
+function BroadcastPanel() {
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState<"info" | "success" | "urgent">("info");
+  const [expiresInDays, setExpiresInDays] = useState(3);
+  const [sending, setSending] = useState(false);
+  const [broadcasts, setBroadcasts] = useState<Broadcast[]>([]);
+  const H = { fontFamily: "var(--font-heading)" };
+
+  const loadBroadcasts = useCallback(async () => {
+    const res = await fetch("/api/crm/admin/broadcast");
+    if (res.ok) {
+      const d = await res.json();
+      setBroadcasts(d.broadcasts ?? []);
+    }
+  }, []);
+
+  useEffect(() => { loadBroadcasts(); }, [loadBroadcasts]);
+
+  async function sendBroadcast() {
+    if (!message.trim()) return;
+    setSending(true);
+    await fetch("/api/crm/admin/broadcast", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, type, expiresInDays }),
+    });
+    setMessage("");
+    await loadBroadcasts();
+    setSending(false);
+  }
+
+  async function deleteBroadcast(id: string) {
+    await fetch("/api/crm/admin/broadcast", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    await loadBroadcasts();
+  }
+
+  const typeColors = {
+    info: "text-blue-400 bg-blue-400/10 border-blue-400/20",
+    success: "text-green-400 bg-green-400/10 border-green-400/20",
+    urgent: "text-red-400 bg-red-400/10 border-red-400/20",
+  };
+
+  return (
+    <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <Megaphone size={14} className="text-[#F97316]" />
+        <h3 className="text-sm font-bold text-white" style={H}>Broadcast to All Reps</h3>
+      </div>
+
+      <div className="space-y-3">
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type a message to show as a banner in every rep's dashboard…"
+          rows={2}
+          className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors resize-none"
+          style={H}
+        />
+        <div className="flex flex-wrap gap-2 items-center">
+          <div className="flex gap-1">
+            {(["info", "success", "urgent"] as const).map((t) => (
+              <button key={t} onClick={() => setType(t)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border capitalize transition-all ${
+                  type === t ? typeColors[t] : "bg-white/[0.03] text-white/40 border-white/10"
+                }`} style={H}>
+                {t === "info" ? "ℹ️ Info" : t === "success" ? "✅ Success" : "🚨 Urgent"}
+              </button>
+            ))}
+          </div>
+          <select
+            value={expiresInDays}
+            onChange={(e) => setExpiresInDays(parseInt(e.target.value))}
+            className="px-3 py-1.5 rounded-lg bg-[#111113] border border-white/10 text-xs text-white focus:outline-none"
+            style={H}>
+            <option value={1}>Expires in 1 day</option>
+            <option value={3}>Expires in 3 days</option>
+            <option value={7}>Expires in 7 days</option>
+          </select>
+          <button
+            onClick={sendBroadcast}
+            disabled={sending || !message.trim()}
+            className="ml-auto inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold text-white disabled:opacity-40 transition-all hover:opacity-90"
+            style={{ backgroundColor: "#F97316", ...H }}>
+            <Megaphone size={13} />{sending ? "Sending…" : "Send to All Reps"}
+          </button>
+        </div>
+      </div>
+
+      {/* Active broadcasts */}
+      {broadcasts.length > 0 && (
+        <div className="space-y-2 border-t border-white/[0.06] pt-4">
+          <p className="text-xs text-white/40 uppercase tracking-wider" style={H}>Active Broadcasts</p>
+          {broadcasts.map((b) => (
+            <div key={b.id} className={`flex items-start justify-between gap-3 px-3 py-2.5 rounded-xl border ${typeColors[b.type]}`}>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium" style={H}>{b.message}</p>
+                <p className="text-xs opacity-60 mt-0.5" style={H}>
+                  By {b.createdBy} · expires {new Date(b.expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                </p>
+              </div>
+              <button onClick={() => deleteBroadcast(b.id)} className="opacity-50 hover:opacity-100 transition-opacity shrink-0 mt-0.5">
+                <Trash2 size={13} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function AdminDashboard({ adminName }: { adminName: string }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"submissions" | "reps">("submissions");
+  const [tab, setTab] = useState<"submissions" | "reps" | "leaderboard" | "revenue">("submissions");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [reps, setReps] = useState<RepWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -278,14 +660,19 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
             ))}
           </div>
 
+          {/* Broadcast panel (always visible above tabs) */}
+          <BroadcastPanel />
+
           {/* Tabs */}
-          <div className="flex items-center gap-1 border-b border-white/[0.06]">
+          <div className="flex items-center gap-1 border-b border-white/[0.06] overflow-x-auto">
             {[
               { key: "submissions", label: "Submissions", count: pending.length },
               { key: "reps", label: "Sales Reps", count: reps.length },
+              { key: "leaderboard", label: "Leaderboard", count: 0 },
+              { key: "revenue", label: "Revenue", count: 0 },
             ].map(({ key, label, count }) => (
               <button key={key} onClick={() => setTab(key as typeof tab)}
-                className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
+                className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
                   tab === key ? "border-[#F97316] text-[#F97316]" : "border-transparent text-white/40 hover:text-white/70"
                 }`} style={H}>
                 {label}
@@ -301,7 +688,6 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
           {/* Submissions tab */}
           {tab === "submissions" && (
             <div className="space-y-3">
-              {/* Filter pills */}
               <div className="flex items-center gap-2">
                 {(["", "pending", "accepted", "rejected"] as const).map((f) => (
                   <button key={f || "all"} onClick={() => setSubFilter(f)}
@@ -457,6 +843,13 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               )}
             </div>
           )}
+
+          {/* Leaderboard tab */}
+          {tab === "leaderboard" && <LeaderboardTab />}
+
+          {/* Revenue tab */}
+          {tab === "revenue" && <RevenueTab />}
+
         </main>
       </div>
     </>
