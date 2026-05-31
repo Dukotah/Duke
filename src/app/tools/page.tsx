@@ -643,13 +643,14 @@ export default function ToolsPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const preUrl = params.get("url");
-    if (preUrl) {
-      setInputUrl(preUrl);
-      // slight delay to let React hydrate
-      setTimeout(() => {
-        document.getElementById("audit-form")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-      }, 300);
-    }
+    if (!preUrl) return;
+    const url = normalizeUrl(preUrl);
+    setInputUrl(preUrl);
+    setAuditedUrl(url);
+    setRunning(true);
+    setLinkCopied(false);
+    runAllChecks(url, setCheckA, c => setChecks(c)).then(() => setRunning(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function setCheckA<K extends keyof AllChecks>(key: K, state: AllChecks[K]) {
