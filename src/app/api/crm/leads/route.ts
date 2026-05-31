@@ -38,6 +38,11 @@ let cachedLeads: Lead[] | null = null;
 let cacheTime = 0;
 const CACHE_TTL = 1000 * 60 * 60;
 
+export function clearLeadsCache() {
+  cachedLeads = null;
+  cacheTime = 0;
+}
+
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = "";
