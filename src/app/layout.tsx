@@ -11,7 +11,7 @@ const dmSans = DM_Sans({
 const lora = Lora({
     variable: "--font-body",
     subsets: ["latin"],
-    weight: ["400", "500"],h
+    weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
