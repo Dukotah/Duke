@@ -8,6 +8,7 @@ const links = [
   { label: "Services", href: "/#services" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "About", href: "/#about" },
+  { label: "Free Audit", href: "/tools" },
   { label: "Resources", href: "/blog" },
   { label: "Contact", href: "/#contact" },
 ];
@@ -49,7 +50,7 @@ export default function Nav() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-7">
           {links.map((l) => (
             <Link
               key={l.href}
@@ -65,7 +66,7 @@ export default function Nav() {
         {/* CTA */}
         <Link
           href="/#contact"
-          className="btn-copper hidden md:inline-flex items-center px-5 py-2 rounded-full text-sm font-semibold text-white"
+          className="btn-copper hidden lg:inline-flex items-center px-5 py-2 rounded-full text-sm font-semibold text-white"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           Free Consultation
@@ -73,7 +74,7 @@ export default function Nav() {
 
         {/* Mobile toggle */}
         <button
-          className={`md:hidden p-2 ${scrolled ? "text-[#18181B]" : "text-white"}`}
+          className={`lg:hidden p-2 ${scrolled ? "text-[#18181B]" : "text-white"}`}
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -83,7 +84,7 @@ export default function Nav() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-[var(--linen)]/95 backdrop-blur-xl border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
+        <div className="lg:hidden bg-[var(--linen)]/95 backdrop-blur-xl border-t border-[#18181B]/10 px-6 py-4 flex flex-col gap-4">
           {links.map((l) => (
             <Link
               key={l.href}

@@ -343,7 +343,12 @@ function LinksResults({ state }: { state: CheckState<LinksData> }) {
                     <span className="bg-orange-500/10 text-orange-400 text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0">
                       {link.status}
                     </span>
-                    <p className="text-zinc-300 text-xs break-all">{link.url}</p>
+                    <div className="min-w-0">
+                      <p className="text-zinc-300 text-xs break-all">{link.url}</p>
+                      {link.to && (
+                        <p className="text-zinc-500 text-xs break-all mt-0.5">&rarr; {link.to}</p>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -439,14 +444,80 @@ async function runCheck<T>(endpoint: string, url: string): Promise<T> {
   return json as T;
 }
 
+type SummaryLine = { label: string; value: string };
+
+// Roll the five independent checks into one 0–100 health score, plus a
+// human-readable summary used both on-screen and in the emailed report.
+function summarize(checks: AllChecks): { score: number | null; lines: SummaryLine[] } {
+  const parts: number[] = [];
+  const lines: SummaryLine[] = [];
+
+  if (checks.speed.status === "done") {
+    const s = checks.speed.data.score;
+    parts.push(s);
+    lines.push({ label: "Speed", value: `${s}/100` });
+  }
+  if (checks.ssl.status === "done") {
+    const d = checks.ssl.data;
+    const ok = d.valid && !d.error;
+    parts.push(!ok ? 0 : d.daysUntilExpiry > 14 ? 100 : d.daysUntilExpiry >= 0 ? 70 : 0);
+    lines.push({ label: "SSL", value: ok ? `Valid · ${d.daysUntilExpiry}d left` : d.error || "Invalid" });
+  }
+  if (checks.seo.status === "done") {
+    const s = checks.seo.data.score;
+    parts.push(s);
+    lines.push({ label: "SEO", value: `${s}/100` });
+  }
+  if (checks.links.status === "done") {
+    const d = checks.links.data;
+    parts.push(d.total > 0 ? Math.round((d.ok / d.total) * 100) : 100);
+    lines.push({ label: "Broken links", value: `${d.broken.length} of ${d.total}` });
+  }
+  if (checks.mobile.status === "done") {
+    const s = checks.mobile.data.mobileScore;
+    parts.push(s);
+    lines.push({ label: "Mobile", value: `${s}/100` });
+  }
+
+  const score = parts.length ? Math.round(parts.reduce((a, b) => a + b, 0) / parts.length) : null;
+  return { score, lines };
+}
+
+function overallLabel(score: number) {
+  if (score >= 90) return "Healthy";
+  if (score >= 50) return "Needs Work";
+  return "At Risk";
+}
+
 export default function ToolsPage() {
   const [inputUrl, setInputUrl] = useState("");
   const [checks, setChecks] = useState<AllChecks>(idle);
   const [running, setRunning] = useState(false);
   const [auditedUrl, setAuditedUrl] = useState("");
 
+  // Lead capture — turn an anonymous audit into a lead
+  const [email, setEmail] = useState("");
+  const [reportStatus, setReportStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
+
   function setCheck<K extends keyof AllChecks>(key: K, state: AllChecks[K]) {
     setChecks(prev => ({ ...prev, [key]: state }));
+  }
+
+  async function sendReport(e: React.FormEvent) {
+    e.preventDefault();
+    if (reportStatus === "loading") return;
+    const { score, lines } = summarize(checks);
+    setReportStatus("loading");
+    try {
+      const res = await fetch("/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, url: auditedUrl, overall: score, scores: lines }),
+      });
+      setReportStatus(res.ok ? "sent" : "error");
+    } catch {
+      setReportStatus("error");
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -455,6 +526,7 @@ export default function ToolsPage() {
     const url = normalizeUrl(inputUrl);
     setAuditedUrl(url);
     setRunning(true);
+    setReportStatus("idle");
     setChecks({
       speed: { status: "loading" },
       ssl:   { status: "loading" },
@@ -489,6 +561,7 @@ export default function ToolsPage() {
   }
 
   const hasResults = Object.values(checks).some(c => c.status !== "idle");
+  const { score: overall, lines: summaryLines } = summarize(checks);
 
   return (
     <div className="min-h-screen bg-[var(--ink-900)] text-white">
@@ -549,6 +622,32 @@ export default function ToolsPage() {
                 Auditing: <span className="text-zinc-300">{auditedUrl}</span>
               </p>
             )}
+
+            {/* Overall health score */}
+            {overall !== null && (
+              <div className="grain relative overflow-hidden mb-4 rounded-2xl ring-copper p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6" style={{ background: "linear-gradient(135deg, #16171d 0%, #0e1014 100%)" }}>
+                <ScoreCircle score={overall} label="" size={120} />
+                <div className="flex-1 text-center sm:text-left">
+                  <p className="eyebrow text-gradient-copper mb-1">Overall Health Score</p>
+                  <h3 className="text-2xl font-bold text-white mb-1">
+                    {overallLabel(overall)} · {overall}/100
+                  </h3>
+                  <p className="text-white/55 text-sm mb-3">
+                    {running
+                      ? "Calculating from completed checks — updates as the rest finish…"
+                      : "A weighted blend of speed, SSL, SEO, links, and mobile readiness."}
+                  </p>
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+                    {summaryLines.map((l) => (
+                      <span key={l.label} className="text-xs text-white/70 bg-white/5 border border-white/10 rounded-full px-3 py-1">
+                        <span className="text-white/45">{l.label}:</span> {l.value}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-4">
               <SpeedResults  state={checks.speed}  />
               <SSLResults    state={checks.ssl}    />
@@ -557,8 +656,53 @@ export default function ToolsPage() {
               <MobileResults state={checks.mobile} />
             </div>
 
+            {/* Lead capture — email the report */}
             {!running && (
-              <div className="grain relative overflow-hidden mt-10 rounded-2xl p-6 text-center ring-copper" style={{ background: "linear-gradient(135deg, #16171d 0%, #0e1014 100%)" }}>
+              <div className="mt-4 rounded-2xl bg-zinc-900 border border-zinc-800 p-6 text-center">
+                {reportStatus === "sent" ? (
+                  <div className="flex flex-col items-center gap-2 py-2">
+                    <span className="w-11 h-11 rounded-full flex items-center justify-center text-white text-lg" style={{ background: "var(--grad-copper)" }}>✓</span>
+                    <p className="text-white font-semibold text-sm" style={{ fontFamily: "var(--font-heading)" }}>Report sent</p>
+                    <p className="text-white/50 text-xs">Check your inbox — and we&apos;ll follow up with a plan to fix anything that needs it.</p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="eyebrow text-gradient-copper mb-2">Get the full report</p>
+                    <h4 className="text-white text-lg font-bold mb-1.5">Email me this report</h4>
+                    <p className="text-white/55 text-sm mb-5 max-w-md mx-auto">
+                      We&apos;ll send the full breakdown and a short, no-pressure plan for fixing the issues that matter.
+                    </p>
+                    <form onSubmit={sendReport} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@business.com"
+                        className="flex-1 bg-white/5 border border-white/15 rounded-full px-5 py-3 text-white placeholder-white/40 focus:outline-none focus:border-[var(--copper-500)] focus:ring-2 focus:ring-[var(--copper-500)]/25 transition text-sm"
+                      />
+                      <button
+                        type="submit"
+                        disabled={reportStatus === "loading"}
+                        className="btn-copper disabled:opacity-60 text-white font-semibold px-6 py-3 rounded-full text-sm whitespace-nowrap"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {reportStatus === "loading" ? "Sending…" : "Send Report"}
+                      </button>
+                    </form>
+                    {reportStatus === "error" && (
+                      <p className="text-red-400 text-xs mt-3">
+                        Couldn&apos;t send — email us at{" "}
+                        <a href="mailto:duke@copperbaytech.com" className="underline">duke@copperbaytech.com</a>.
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {!running && (
+              <div className="grain relative overflow-hidden mt-4 rounded-2xl p-6 text-center ring-copper" style={{ background: "linear-gradient(135deg, #16171d 0%, #0e1014 100%)" }}>
                 <p className="eyebrow text-gradient-copper mb-2">Free Consultation</p>
                 <h4 className="text-white text-xl font-bold mb-2">Want us to fix this?</h4>
                 <p className="text-white/60 text-sm mb-5 max-w-sm mx-auto">

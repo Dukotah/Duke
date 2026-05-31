@@ -4,7 +4,10 @@ interface LinkResult {
   url: string;
   status: number;
   text: string;
+  location?: string;
 }
+
+const REDIRECT_CODES = new Set([301, 302, 303, 307, 308]);
 
 function extractLinks(html: string, baseUrl: string): Array<{ url: string; text: string }> {
   const base = new URL(baseUrl);
@@ -42,16 +45,30 @@ function extractLinks(html: string, baseUrl: string): Array<{ url: string; text:
 }
 
 async function checkLink(url: string, text: string): Promise<LinkResult> {
+  const headers = { "User-Agent": "Mozilla/5.0 (compatible; LinkChecker/1.0)" };
   try {
-    const res = await fetch(url, {
+    let res = await fetch(url, {
       method: "HEAD",
       redirect: "manual",
       signal: AbortSignal.timeout(5000),
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; LinkChecker/1.0)",
-      },
+      headers,
     });
-    return { url, status: res.status, text };
+
+    // Some servers reject HEAD (405/501) — fall back to a lightweight GET so
+    // we don't report a working link as broken.
+    if (res.status === 405 || res.status === 501) {
+      res = await fetch(url, {
+        method: "GET",
+        redirect: "manual",
+        signal: AbortSignal.timeout(5000),
+        headers,
+      });
+    }
+
+    const location = REDIRECT_CODES.has(res.status)
+      ? res.headers.get("location") ?? undefined
+      : undefined;
+    return { url, status: res.status, text, location };
   } catch {
     return { url, status: 0, text };
   }
@@ -98,8 +115,19 @@ export async function POST(req: NextRequest) {
 
     const broken: LinkResult[] = results.filter((r) => r.status >= 400 || r.status === 0);
     const redirects: Array<LinkResult & { to: string }> = results
-      .filter((r) => r.status === 301 || r.status === 302)
-      .map((r) => ({ ...r, to: "" }));
+      .filter((r) => REDIRECT_CODES.has(r.status))
+      .map((r) => {
+        // Resolve relative Location headers against the link's own URL.
+        let to = r.location ?? "";
+        if (to) {
+          try {
+            to = new URL(to, r.url).href;
+          } catch {
+            /* leave as-is if it won't parse */
+          }
+        }
+        return { ...r, to };
+      });
     const ok = results.filter(
       (r) => r.status >= 200 && r.status < 300
     ).length;

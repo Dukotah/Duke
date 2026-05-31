@@ -70,19 +70,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No data returned for this URL" }, { status: 502 });
     }
 
-    // PageSpeed mobile score (performance) - try fetching performance category too
-    // We only requested accessibility, seo, best-practices so no performance score
     const accessibilityScore = Math.round((cats.accessibility?.score ?? 0) * 100);
     const seoScore = Math.round((cats.seo?.score ?? 0) * 100);
     const bestPracticesScore = Math.round((cats["best-practices"]?.score ?? 0) * 100);
 
-    // For mobile score we use the average of the three or a composite
-    const mobileScore = Math.round((accessibilityScore + seoScore + bestPracticesScore) / 3);
-
-    // Extract specific audits
+    // Extract the actual mobile-friendliness audits
     const viewport = audits["viewport"]?.score === 1;
     const textSizeOk = audits["font-size"]?.score === 1;
     const tapTargetsOk = audits["tap-targets"]?.score === 1;
+
+    // Mobile score is derived from the mobile-specific audits themselves
+    // (viewport, legible text, tap target sizing) rather than an unrelated
+    // average — so the number actually reflects mobile readiness. We average
+    // the Lighthouse scores that are present, ignoring any the run skipped.
+    const mobileAuditScores = ["viewport", "font-size", "tap-targets"]
+      .map((k) => audits[k]?.score)
+      .filter((s): s is number => typeof s === "number");
+    const mobileScore = mobileAuditScores.length
+      ? Math.round(
+          (mobileAuditScores.reduce((a, b) => a + b, 0) / mobileAuditScores.length) * 100
+        )
+      : seoScore;
 
     return NextResponse.json({
       mobileScore,

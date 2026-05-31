@@ -17,6 +17,8 @@ function checkSSL(hostname: string): Promise<SSLResult> {
       hostname,
       { servername: hostname, rejectUnauthorized: false },
       () => {
+        const authorized = socket.authorized;
+        const authError = socket.authorizationError;
         const cert = socket.getPeerCertificate();
         socket.destroy();
         if (!cert || !cert.valid_to) {
@@ -27,12 +29,18 @@ function checkSSL(hostname: string): Promise<SSLResult> {
         const daysUntilExpiry = Math.floor(
           (expiresAt.getTime() - Date.now()) / 86400000
         );
+        // A certificate is "valid" only if it chains to a trusted CA and
+        // hasn't expired. `socket.authorized` reflects CA validation (we
+        // connect with rejectUnauthorized:false so we can still read the
+        // cert details on failure), and we double-check the expiry date.
+        const valid = authorized && daysUntilExpiry >= 0;
         resolve({
-          valid: socket.authorized || true,
+          valid,
           daysUntilExpiry,
           expiresAt: expiresAt.toISOString(),
           issuer: (Array.isArray(cert.issuer?.O) ? cert.issuer.O[0] : cert.issuer?.O) ?? "Unknown",
           hostname,
+          ...(valid ? {} : { error: authError ? String(authError) : daysUntilExpiry < 0 ? "Certificate has expired" : "Certificate is not trusted" }),
         });
       }
     );

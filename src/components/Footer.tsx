@@ -25,6 +25,7 @@ export default function Footer() {
     { label: "Services", href: "/#services" },
     { label: "How It Works", href: "/#how-it-works" },
     { label: "About", href: "/#about" },
+    { label: "Free Website Audit", href: "/tools" },
     { label: "Resources", href: "/blog" },
     { label: "FAQ", href: "/#faq" },
     { label: "Contact", href: "/#contact" },
