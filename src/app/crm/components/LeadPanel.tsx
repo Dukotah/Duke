@@ -3,9 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import {
   X, Phone, Mail, Globe, MapPin, ExternalLink, Copy, Check,
-  StickyNote, Send, ChevronDown, Star, Link, Flame, Zap,
+  StickyNote, Send, Star, Link, Flame, Zap,
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
-  CalendarClock, CheckCircle2, DollarSign, Activity,
+  CalendarClock, CheckCircle2, DollarSign, Activity, Lock, UserCheck,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 
@@ -119,6 +119,9 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
   const [notes, setNotes] = useState(state.notes ?? "");
   const [showSubmit, setShowSubmit] = useState(false);
   const [activityKey, setActivityKey] = useState(0);
+  const [claim, setClaim] = useState<{ userId: string; repName: string } | null | undefined>(undefined);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [claimLoading, setClaimLoading] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
@@ -132,6 +135,50 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
       body: JSON.stringify({ leadId: lead.id, ...body }),
     }).then(() => setActivityKey((k) => k + 1)).catch(() => {});
   };
+
+  // Fetch claim status on mount
+  useEffect(() => {
+    fetch(`/api/crm/claim?leadId=${encodeURIComponent(lead.id)}`)
+      .then((r) => r.json())
+      .then((d) => setClaim(d.claim ?? null))
+      .catch(() => setClaim(null));
+    // Get current user ID from a whoami-like endpoint via crm/state
+    fetch("/api/crm/state")
+      .then((r) => {
+        const uid = r.headers.get("x-user-id");
+        if (uid) setCurrentUserId(uid);
+      })
+      .catch(() => {});
+    // Fallback: read from cookie via document if available
+    const match = document.cookie.match(/crm_user_id=([^;]+)/);
+    if (match) setCurrentUserId(decodeURIComponent(match[1]));
+  }, [lead.id]);
+
+  async function handleClaim() {
+    setClaimLoading(true);
+    try {
+      const res = await fetch("/api/crm/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId: lead.id, action: "claim" }),
+      });
+      const d = await res.json();
+      if (res.ok) setClaim(d.claim);
+      else alert(d.error ?? "Failed to claim");
+    } finally { setClaimLoading(false); }
+  }
+
+  async function handleUnclaim() {
+    setClaimLoading(true);
+    try {
+      const res = await fetch("/api/crm/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId: lead.id, action: "unclaim" }),
+      });
+      if (res.ok) setClaim(null);
+    } finally { setClaimLoading(false); }
+  }
 
   const handleNotes = (v: string) => {
     setNotes(v);
@@ -157,12 +204,19 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
       outcome.key === "call_back" ? "follow_up" : "contacted";
     onUpdate({ status: newStatus, stage: outcome.stage, lastContacted: now, callCount: newCount, lastOutcome: outcome.key });
     postActivity({ type: "call", outcome: outcome.key });
+    // Auto-claim when logging an outcome if not already claimed
+    if (!claim) {
+      fetch("/api/crm/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId: lead.id, action: "claim" }),
+      }).then((r) => r.json()).then((d) => { if (d.claim) setClaim(d.claim); }).catch(() => {});
+    }
   };
 
   const handleSubmitted = () => {
     postActivity({ type: "submitted" });
     onSubmitted();
-  };
 
   const tier = lead.tier;
   const websiteHost = lead.website ? lead.website.replace(/^https?:\/\//, "").split("/")[0] : null;
@@ -219,6 +273,34 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
                 )}
               </div>
             )}
+
+            {/* Claim status */}
+            <div className="px-5 py-3 border-b border-white/[0.06]">
+              {claim === undefined ? (
+                <div className="h-8 bg-white/5 animate-pulse rounded-xl" />
+              ) : claim === null ? (
+                <button onClick={handleClaim} disabled={claimLoading}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-all disabled:opacity-50"
+                  style={H}>
+                  <UserCheck size={14} />{claimLoading ? "Claiming…" : "Claim This Lead"}
+                </button>
+              ) : claim.userId === currentUserId || (!currentUserId) ? (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 flex items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-semibold bg-green-500/10 text-green-400 border border-green-500/20" style={H}>
+                    <Check size={14} />My Lead
+                  </div>
+                  <button onClick={handleUnclaim} disabled={claimLoading}
+                    className="px-3 py-2.5 rounded-xl text-xs font-semibold text-white/40 bg-white/5 border border-white/10 hover:text-white/70 hover:bg-white/10 transition-all disabled:opacity-50"
+                    style={H}>
+                    {claimLoading ? "…" : "Unclaim"}
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-semibold bg-zinc-500/10 text-zinc-500 border border-zinc-500/20" style={H}>
+                  <Lock size={13} />Claimed by {claim.repName}
+                </div>
+              )}
+            </div>
 
             {/* Quick outcome log */}
             <div className="px-5 py-4 border-b border-white/[0.06]">

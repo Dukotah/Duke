@@ -38,10 +38,15 @@ interface Submission {
   commissionAmount?: number; commissionPaid?: boolean; submittedAt: string;
 }
 
+interface Territory {
+  userId: string; counties: string[]; niches: string[]; updatedAt: string;
+}
+
 interface LeadsResponse {
   leads: Lead[]; total: number; page: number; limit: number;
   counties: string[]; niches: string[];
   tierCounts: { A: number; B: number; C: number };
+  territory?: Territory | null;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -113,25 +118,28 @@ function AllLeads({ states, onSelectLead }: { states: Record<string, LeadState>;
   const [sortBy, setSortBy] = useState("outreach_score");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
+  const [allTerritories, setAllTerritories] = useState(false);
 
   const fetch_ = useCallback(async () => {
     setLoading(true); setError("");
     try {
       const p = new URLSearchParams({ page: String(page), limit: String(LIMIT), sortBy,
         ...(q && { q }), ...(county && { county }), ...(niche && { niche }),
-        ...(tier && { tier }), ...(hasEmail && { hasEmail }) });
+        ...(tier && { tier }), ...(hasEmail && { hasEmail }),
+        ...(allTerritories && { allTerritories: "1" }) });
       const res = await fetch(`/api/crm/leads?${p}`);
       if (!res.ok) throw new Error();
       setData(await res.json());
     } catch { setError("Could not load leads."); }
     finally { setLoading(false); }
-  }, [q, county, niche, tier, hasEmail, sortBy, page]);
+  }, [q, county, niche, tier, hasEmail, sortBy, page, allTerritories]);
 
   useEffect(() => { fetch_(); }, [fetch_]);
-  useEffect(() => { setPage(1); }, [q, county, niche, tier, hasEmail, sortBy]);
+  useEffect(() => { setPage(1); }, [q, county, niche, tier, hasEmail, sortBy, allTerritories]);
 
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
   const activeFilters = [q, county, niche, tier, hasEmail].filter(Boolean).length;
+  const territory = data?.territory;
 
   return (
     <div className="space-y-3">
@@ -196,6 +204,22 @@ function AllLeads({ states, onSelectLead }: { states: Record<string, LeadState>;
           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${hasEmail === "yes" ? "bg-blue-400/15 text-blue-400 border-blue-400/30" : "bg-white/[0.03] text-white/40 border-white/10"}`}
           style={H}><Mail size={10} />Has Email</button>
       </div>
+
+      {/* Territory badge + toggle */}
+      {territory && (
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="inline-flex items-center gap-1.5 text-xs text-white/50 bg-[#1C1C1F] border border-white/[0.08] px-3 py-1.5 rounded-full" style={H}>
+            <MapPin size={10} className="text-[#F97316]" />
+            {territory.counties.length > 0 ? territory.counties.map((c) => c.charAt(0).toUpperCase() + c.slice(1)).join(", ") : "All Areas"}
+            {territory.niches.length > 0 && <span className="text-white/30">· {territory.niches.join(", ")}</span>}
+          </div>
+          <button onClick={() => setAllTerritories((v) => !v)}
+            className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${allTerritories ? "bg-[#F97316]/10 text-[#F97316] border-[#F97316]/30" : "text-white/35 border-white/10 bg-white/[0.03] hover:border-white/20"}`}
+            style={H}>
+            {allTerritories ? "My Territory" : "Show all areas"}
+          </button>
+        </div>
+      )}
 
       {/* Results count */}
       {data && (

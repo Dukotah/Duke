@@ -184,9 +184,150 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+interface Territory {
+  userId: string; counties: string[]; niches: string[]; updatedAt: string;
+}
+
+const ALL_COUNTIES = ["Sonoma", "Napa", "Marin", "Mendocino", "Lake", "Solano"];
+const COMMON_NICHES = ["restaurant", "salon", "retail", "auto_repair", "dental", "law_office", "real_estate", "contractor", "plumber", "electrician", "gym", "spa", "cafe", "bakery", "bar"];
+
+function TerritoryTab({ reps }: { reps: RepWithStats[] }) {
+  const [territories, setTerritories] = useState<Record<string, Territory>>({});
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editCounties, setEditCounties] = useState<string[]>([]);
+  const [editNiches, setEditNiches] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+  const H = { fontFamily: "var(--font-heading)" };
+
+  useEffect(() => {
+    fetch("/api/crm/admin/territory")
+      .then((r) => r.json())
+      .then((d) => setTerritories(d.territories ?? {}))
+      .catch(() => {});
+  }, []);
+
+  function startEdit(rep: RepWithStats) {
+    setEditing(rep.id);
+    const t = territories[rep.id];
+    setEditCounties(t?.counties ?? []);
+    setEditNiches(t?.niches ?? []);
+  }
+
+  async function saveTerritory(userId: string) {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/crm/admin/territory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, counties: editCounties, niches: editNiches }),
+      });
+      if (res.ok) {
+        const d = await res.json();
+        setTerritories((prev) => ({ ...prev, [userId]: d.territory }));
+        setEditing(null);
+      }
+    } finally { setSaving(false); }
+  }
+
+  async function removeTerritory(userId: string) {
+    await fetch("/api/crm/admin/territory", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+    setTerritories((prev) => { const n = { ...prev }; delete n[userId]; return n; });
+    setEditing(null);
+  }
+
+  function toggleItem(arr: string[], setArr: (v: string[]) => void, item: string) {
+    setArr(arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item]);
+  }
+
+  return (
+    <div className="space-y-3">
+      {reps.length === 0 ? (
+        <div className="text-center py-16 text-white/25 text-sm" style={H}>No sales reps yet.</div>
+      ) : (
+        <div className="space-y-2">
+          {reps.map((rep) => {
+            const t = territories[rep.id];
+            const isEditing = editing === rep.id;
+            return (
+              <div key={rep.id} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-5">
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <p className="font-bold text-white" style={H}>{rep.name}</p>
+                    <p className="text-xs text-white/40 mt-0.5" style={H}>{rep.email}</p>
+                    {t ? (
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {t.counties.length > 0 ? t.counties.map((c) => (
+                          <span key={c} className="text-xs bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20 px-2 py-0.5 rounded-full" style={H}>{c.charAt(0).toUpperCase() + c.slice(1)}</span>
+                        )) : <span className="text-xs text-white/30" style={H}>All counties</span>}
+                        {t.niches.map((n) => (
+                          <span key={n} className="text-xs bg-blue-400/10 text-blue-400 border border-blue-400/20 px-2 py-0.5 rounded-full" style={H}>{n.replace(/_/g, " ")}</span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-white/30 mt-1 inline-block" style={H}>All Areas</span>
+                    )}
+                  </div>
+                  <button onClick={() => isEditing ? setEditing(null) : startEdit(rep)}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-white/10 text-white/40 hover:text-white/70 hover:border-white/20 transition-colors"
+                    style={H}>
+                    {isEditing ? "Cancel" : "Edit"}
+                  </button>
+                </div>
+
+                {isEditing && (
+                  <div className="mt-4 space-y-4">
+                    <div>
+                      <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Counties (leave blank = all)</p>
+                      <div className="flex flex-wrap gap-2">
+                        {ALL_COUNTIES.map((c) => (
+                          <button key={c} type="button" onClick={() => toggleItem(editCounties, setEditCounties, c.toLowerCase())}
+                            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${editCounties.includes(c.toLowerCase()) ? "bg-[#F97316]/15 text-[#F97316] border-[#F97316]/30" : "bg-white/[0.04] text-white/50 border-white/10 hover:border-white/20"}`}
+                            style={H}>{c}</button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Niches (leave blank = all)</p>
+                      <div className="flex flex-wrap gap-2">
+                        {COMMON_NICHES.map((n) => (
+                          <button key={n} type="button" onClick={() => toggleItem(editNiches, setEditNiches, n)}
+                            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${editNiches.includes(n) ? "bg-blue-400/15 text-blue-400 border-blue-400/30" : "bg-white/[0.04] text-white/50 border-white/10 hover:border-white/20"}`}
+                            style={H}>{n.replace(/_/g, " ")}</button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button onClick={() => saveTerritory(rep.id)} disabled={saving}
+                        className="px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-40 transition-all hover:opacity-90"
+                        style={{ backgroundColor: "#F97316", ...H }}>
+                        {saving ? "Saving…" : "Save Territory"}
+                      </button>
+                      {t && (
+                        <button onClick={() => removeTerritory(rep.id)}
+                          className="px-4 py-2 rounded-xl text-sm font-semibold text-red-400 bg-red-400/10 border border-red-400/20 hover:bg-red-400/15 transition-all"
+                          style={H}>
+                          Remove Restriction
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminDashboard({ adminName }: { adminName: string }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"submissions" | "reps">("submissions");
+  const [tab, setTab] = useState<"submissions" | "reps" | "territories">("submissions");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [reps, setReps] = useState<RepWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -282,6 +423,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
           <div className="flex items-center gap-1 border-b border-white/[0.06]">
             {[
               { key: "submissions", label: "Submissions", count: pending.length },
+              { key: "territories", label: "Territories", count: 0 },
               { key: "reps", label: "Sales Reps", count: reps.length },
             ].map(({ key, label, count }) => (
               <button key={key} onClick={() => setTab(key as typeof tab)}
@@ -392,6 +534,9 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               )}
             </div>
           )}
+
+          {/* Territories tab */}
+          {tab === "territories" && <TerritoryTab reps={reps} />}
 
           {/* Reps tab */}
           {tab === "reps" && (
