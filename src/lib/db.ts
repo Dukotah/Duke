@@ -242,6 +242,93 @@ export async function getRepStats(userId: string) {
   };
 }
 
+// ─── Activity Timeline ────────────────────────────────────────────────────────
+
+export interface ActivityEntry {
+  id: string;
+  userId: string;
+  repName: string;
+  type: "call" | "note" | "email" | "submitted" | "status_change";
+  outcome?: string; // "no_answer" | "voicemail" | "interested" etc
+  note?: string;
+  createdAt: string;
+}
+
+export async function addActivity(
+  leadId: string,
+  userId: string,
+  repName: string,
+  entry: Omit<ActivityEntry, "id" | "userId" | "repName" | "createdAt">
+): Promise<void> {
+  const redis = getRedis();
+  const full: ActivityEntry = {
+    ...entry,
+    id: crypto.randomUUID(),
+    userId,
+    repName,
+    createdAt: new Date().toISOString(),
+  };
+  const key = `activity:${leadId}`;
+  await redis.lpush(key, JSON.stringify(full));
+  await redis.ltrim(key, 0, 49);
+}
+
+export async function getActivity(leadId: string): Promise<ActivityEntry[]> {
+  const redis = getRedis();
+  const items = await redis.lrange(`activity:${leadId}`, 0, -1);
+  return (items as string[]).map((s) => JSON.parse(s) as ActivityEntry);
+}
+
+export async function deleteActivity(leadId: string): Promise<void> {
+  const redis = getRedis();
+  await redis.del(`activity:${leadId}`);
+}
+
+// ─── Custom Leads ─────────────────────────────────────────────────────────────
+
+export interface CustomLead {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  website: string;
+  city: string;
+  county: string;
+  niche: string;
+  notes: string;
+  addedBy: string;
+  createdAt: string;
+}
+
+export async function createCustomLead(
+  userId: string,
+  data: Omit<CustomLead, "id" | "addedBy" | "createdAt">
+): Promise<CustomLead> {
+  const redis = getRedis();
+  const lead: CustomLead = {
+    ...data,
+    id: crypto.randomUUID(),
+    addedBy: userId,
+    createdAt: new Date().toISOString(),
+  };
+  await redis.hset(`custom_lead:${lead.id}`, lead as unknown as Record<string, unknown>);
+  await redis.sadd(`custom_leads:${userId}`, lead.id);
+  return lead;
+}
+
+export async function getCustomLeads(userId: string): Promise<CustomLead[]> {
+  const redis = getRedis();
+  const ids = await redis.smembers(`custom_leads:${userId}`);
+  if (!ids.length) return [];
+  const leads = await Promise.all(
+    (ids as string[]).map(async (id) => {
+      const l = await redis.hgetall(`custom_lead:${id}`);
+      return l as unknown as CustomLead;
+    })
+  );
+  return leads.filter(Boolean).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 // ─── Admin seed ───────────────────────────────────────────────────────────────
 
 export async function ensureAdminExists(): Promise<void> {

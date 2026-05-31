@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCustomLeads } from "@/lib/db";
 
 const CSV_URL =
   "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/claude/lead-data-sourcing-eyOeN/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
@@ -160,8 +161,58 @@ export async function GET(req: NextRequest) {
       return b.outreach_score - a.outreach_score; // default
     });
 
-    const total = filtered.length;
-    const leads = filtered.slice((page - 1) * limit, (page - 1) * limit + limit);
+    // Fetch custom leads for this user and prepend them
+    const userId = req.headers.get("x-user-id");
+    let customLeads: (Lead & { isCustom: true })[] = [];
+    if (userId) {
+      try {
+        const custom = await getCustomLeads(userId);
+        customLeads = custom.map((cl) => ({
+          id: `custom:${cl.id}`,
+          name: cl.name,
+          category: cl.niche || "custom",
+          alt_categories: "",
+          phone: cl.phone,
+          phone_fmt: cl.phone,
+          email: cl.email,
+          email_owned: "0",
+          website: cl.website,
+          socials: "",
+          social_platforms: "",
+          best_contact: cl.phone ? "phone" : cl.email ? "email" : "",
+          address: "",
+          city: cl.city,
+          state: "",
+          zip: "",
+          county: cl.county,
+          lat: "",
+          lon: "",
+          tier: "A",
+          tier_reason: "Manually added lead",
+          builder: "",
+          industry_fit: "high",
+          outreach_score: 100,
+          score: 100,
+          pitch: cl.notes || `Hi, I'm reaching out to ${cl.name} — do you have 2 minutes?`,
+          is_chain: "0",
+          isCustom: true as const,
+        }));
+      } catch {}
+    }
+
+    const total = filtered.length + customLeads.length;
+    const pagedCustom = customLeads.slice(Math.max(0, (page - 1) * limit - filtered.length));
+    const remainingLimit = limit - Math.min(customLeads.length, Math.max(0, limit - Math.max(0, (page - 1) * limit - customLeads.length)));
+    const pagedFiltered = filtered.slice(
+      Math.max(0, (page - 1) * limit - customLeads.length),
+      Math.max(0, (page - 1) * limit - customLeads.length) + remainingLimit
+    );
+    // Simpler: on page 1 prepend custom leads, then fill with csv leads
+    const leads = page === 1
+      ? [...customLeads, ...filtered].slice(0, limit)
+      : filtered.slice((page - 1) * limit - customLeads.length, (page - 1) * limit - customLeads.length + limit);
+    // suppress unused vars
+    void pagedCustom; void pagedFiltered;
 
     const counties = [...new Set(all.map((l) => l.county).filter(Boolean))].sort();
     const niches = [...new Set(all.map((l) => l.category).filter(Boolean))].sort();
