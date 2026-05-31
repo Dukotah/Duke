@@ -6,42 +6,54 @@ const CSV_URL =
 export interface Lead {
   id: string;
   name: string;
+  category: string;
+  alt_categories: string;
   phone: string;
+  phone_fmt: string;
+  email: string;
+  email_owned: string;
   website: string;
-  city: string;
-  county: string;
-  niche: string;
+  socials: string;
+  social_platforms: string;
+  best_contact: string;
   address: string;
+  city: string;
+  state: string;
+  zip: string;
+  county: string;
   lat: string;
   lon: string;
+  tier: string;
+  tier_reason: string;
+  builder: string;
+  industry_fit: string;
+  outreach_score: number;
+  score: number;
+  pitch: string;
+  is_chain: string;
 }
 
 let cachedLeads: Lead[] | null = null;
 let cacheTime = 0;
-const CACHE_TTL = 1000 * 60 * 60; // 1 hour
+const CACHE_TTL = 1000 * 60 * 60;
 
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = "";
   let inQuotes = false;
-
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
     if (ch === '"') {
-      if (inQuotes && line[i + 1] === '"') {
-        current += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
+      if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+      else inQuotes = !inQuotes;
     } else if (ch === "," && !inQuotes) {
-      result.push(current.trim());
+      result.push(current);
       current = "";
     } else {
       current += ch;
     }
   }
-  result.push(current.trim());
+  result.push(current);
   return result;
 }
 
@@ -53,29 +65,48 @@ async function getLeads(): Promise<Lead[]> {
 
   const text = await res.text();
   const lines = text.split("\n").filter(Boolean);
-  const headers = parseCSVLine(lines[0]).map((h) => h.toLowerCase().replace(/\s+/g, "_"));
+  const rawHeaders = parseCSVLine(lines[0]);
+  const headers = rawHeaders.map((h) => h.trim().toLowerCase().replace(/\s+/g, "_"));
+
+  const col = (row: string[], key: string) => {
+    const idx = headers.indexOf(key);
+    return idx >= 0 ? (row[idx] ?? "").trim() : "";
+  };
 
   const leads: Lead[] = [];
   for (let i = 1; i < lines.length; i++) {
-    const cols = parseCSVLine(lines[i]);
-    const row: Record<string, string> = {};
-    headers.forEach((h, idx) => (row[h] = cols[idx] ?? ""));
-
-    const name =
-      row["name"] || row["business_name"] || row["business"] || row["title"] || "";
+    const row = parseCSVLine(lines[i]);
+    const name = col(row, "name") || col(row, "business") || col(row, "business_name");
     if (!name) continue;
 
     leads.push({
-      id: `${i}`,
+      id: col(row, "id") || String(i),
       name,
-      phone: row["phone"] || row["phone_number"] || "",
-      website: row["website"] || row["website_url"] || row["url"] || "",
-      city: row["city"] || row["locality"] || "",
-      county: row["county"] || row["region"] || "",
-      niche: row["niche"] || row["category"] || row["type"] || "",
-      address: row["address"] || row["full_address"] || "",
-      lat: row["lat"] || row["latitude"] || "",
-      lon: row["lon"] || row["longitude"] || row["lng"] || "",
+      category: col(row, "category") || col(row, "niche"),
+      alt_categories: col(row, "alt_categories"),
+      phone: col(row, "phone_fmt") || col(row, "phone"),
+      phone_fmt: col(row, "phone_fmt"),
+      email: col(row, "email"),
+      email_owned: col(row, "email_owned"),
+      website: col(row, "website"),
+      socials: col(row, "socials"),
+      social_platforms: col(row, "social_platforms"),
+      best_contact: col(row, "best_contact"),
+      address: col(row, "address"),
+      city: col(row, "city"),
+      state: col(row, "state"),
+      zip: col(row, "zip"),
+      county: col(row, "county"),
+      lat: col(row, "lat"),
+      lon: col(row, "lon"),
+      tier: col(row, "tier"),
+      tier_reason: col(row, "tier_reason"),
+      builder: col(row, "builder"),
+      industry_fit: col(row, "industry_fit"),
+      outreach_score: parseFloat(col(row, "outreach_score")) || 0,
+      score: parseFloat(col(row, "score")) || 0,
+      pitch: col(row, "pitch"),
+      is_chain: col(row, "is_chain"),
     });
   }
 
@@ -86,52 +117,63 @@ async function getLeads(): Promise<Lead[]> {
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = req.nextUrl;
-    const q = searchParams.get("q")?.toLowerCase() ?? "";
-    const county = searchParams.get("county") ?? "";
-    const niche = searchParams.get("niche") ?? "";
-    const hasWebsite = searchParams.get("hasWebsite") ?? "";
-    const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
-    const limit = Math.min(100, parseInt(searchParams.get("limit") ?? "50"));
+    const sp = req.nextUrl.searchParams;
+    const q = sp.get("q")?.toLowerCase() ?? "";
+    const county = sp.get("county") ?? "";
+    const niche = sp.get("niche") ?? "";
+    const tier = sp.get("tier") ?? "";
+    const industryFit = sp.get("industryFit") ?? "";
+    const bestContact = sp.get("bestContact") ?? "";
+    const hasEmail = sp.get("hasEmail") ?? "";
+    const hasWebsite = sp.get("hasWebsite") ?? "";
+    const hotLeads = sp.get("hotLeads") === "1";
+    const sortBy = sp.get("sortBy") ?? "outreach_score";
+    const page = Math.max(1, parseInt(sp.get("page") ?? "1"));
+    const limit = Math.min(100, parseInt(sp.get("limit") ?? "50"));
 
     const all = await getLeads();
-
     let filtered = all;
 
-    if (q) {
-      filtered = filtered.filter(
-        (l) =>
-          l.name.toLowerCase().includes(q) ||
-          l.city.toLowerCase().includes(q) ||
-          l.niche.toLowerCase().includes(q)
-      );
-    }
-    if (county) {
-      filtered = filtered.filter((l) =>
-        l.county.toLowerCase().includes(county.toLowerCase())
-      );
-    }
-    if (niche) {
-      filtered = filtered.filter((l) =>
-        l.niche.toLowerCase().includes(niche.toLowerCase())
-      );
-    }
-    if (hasWebsite === "yes") {
-      filtered = filtered.filter((l) => l.website && l.website !== "");
-    }
-    if (hasWebsite === "no") {
-      filtered = filtered.filter((l) => !l.website || l.website === "");
-    }
+    if (q) filtered = filtered.filter((l) =>
+      l.name.toLowerCase().includes(q) ||
+      l.city.toLowerCase().includes(q) ||
+      l.category.toLowerCase().includes(q) ||
+      l.email.toLowerCase().includes(q) ||
+      l.pitch.toLowerCase().includes(q)
+    );
+    if (county) filtered = filtered.filter((l) => l.county.toLowerCase() === county.toLowerCase());
+    if (niche) filtered = filtered.filter((l) => l.category.toLowerCase() === niche.toLowerCase());
+    if (tier) filtered = filtered.filter((l) => l.tier.toUpperCase() === tier.toUpperCase());
+    if (industryFit) filtered = filtered.filter((l) => l.industry_fit.toLowerCase() === industryFit.toLowerCase());
+    if (bestContact) filtered = filtered.filter((l) => l.best_contact.toLowerCase() === bestContact.toLowerCase());
+    if (hasEmail === "yes") filtered = filtered.filter((l) => !!l.email);
+    if (hasEmail === "no") filtered = filtered.filter((l) => !l.email);
+    if (hasWebsite === "no") filtered = filtered.filter((l) => !l.website);
+    if (hasWebsite === "yes") filtered = filtered.filter((l) => !!l.website);
+    if (hotLeads) filtered = filtered.filter((l) => l.tier === "A" && l.industry_fit === "high");
+
+    // Sort
+    filtered = [...filtered].sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "city") return a.city.localeCompare(b.city);
+      if (sortBy === "score") return b.score - a.score;
+      return b.outreach_score - a.outreach_score; // default
+    });
 
     const total = filtered.length;
-    const start = (page - 1) * limit;
-    const leads = filtered.slice(start, start + limit);
+    const leads = filtered.slice((page - 1) * limit, (page - 1) * limit + limit);
 
-    // Collect filter options from full dataset
     const counties = [...new Set(all.map((l) => l.county).filter(Boolean))].sort();
-    const niches = [...new Set(all.map((l) => l.niche).filter(Boolean))].sort();
+    const niches = [...new Set(all.map((l) => l.category).filter(Boolean))].sort();
 
-    return NextResponse.json({ leads, total, page, limit, counties, niches });
+    // Tier breakdown of filtered results
+    const tierCounts = {
+      A: filtered.filter((l) => l.tier === "A").length,
+      B: filtered.filter((l) => l.tier === "B").length,
+      C: filtered.filter((l) => l.tier === "C").length,
+    };
+
+    return NextResponse.json({ leads, total, page, limit, counties, niches, tierCounts });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to load leads" }, { status: 500 });
