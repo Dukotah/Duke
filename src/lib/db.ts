@@ -261,3 +261,105 @@ export async function ensureAdminExists(): Promise<void> {
     active: true,
   });
 }
+
+// ─── Daily Goals & Streaks ────────────────────────────────────────────────────
+
+export interface DailyStats {
+  date: string; // YYYY-MM-DD
+  callsLogged: number;
+  leadsWorked: number;
+  submissionsToday: number;
+}
+
+export interface RepStreak {
+  currentStreak: number;
+  longestStreak: number;
+  lastActiveDate: string;
+  totalCallsAllTime: number;
+}
+
+function todayStr(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export async function incrementDailyCalls(userId: string): Promise<void> {
+  const redis = getRedis();
+  const date = todayStr();
+  const key = `daily:${userId}:${date}:calls`;
+  await redis.incr(key);
+  // TTL: 90 days in seconds
+  await redis.expire(key, 90 * 24 * 60 * 60);
+  await updateStreak(userId);
+}
+
+export async function getDailyStats(userId: string, date?: string): Promise<DailyStats> {
+  const redis = getRedis();
+  const d = date ?? todayStr();
+  const callsRaw = await redis.get(`daily:${userId}:${d}:calls`);
+  const leadsRaw = await redis.get(`daily:${userId}:${d}:leads`);
+  const subsRaw = await redis.get(`daily:${userId}:${d}:submissions`);
+  return {
+    date: d,
+    callsLogged: Number(callsRaw ?? 0),
+    leadsWorked: Number(leadsRaw ?? 0),
+    submissionsToday: Number(subsRaw ?? 0),
+  };
+}
+
+export async function getStreak(userId: string): Promise<RepStreak> {
+  const redis = getRedis();
+  const raw = await redis.hgetall(`streak:${userId}`);
+  if (!raw || !raw.currentStreak) {
+    return { currentStreak: 0, longestStreak: 0, lastActiveDate: "", totalCallsAllTime: 0 };
+  }
+  return {
+    currentStreak: Number(raw.currentStreak),
+    longestStreak: Number(raw.longestStreak),
+    lastActiveDate: String(raw.lastActiveDate ?? ""),
+    totalCallsAllTime: Number(raw.totalCallsAllTime ?? 0),
+  };
+}
+
+export async function updateStreak(userId: string): Promise<void> {
+  const redis = getRedis();
+  const today = todayStr();
+  const streak = await getStreak(userId);
+
+  if (streak.lastActiveDate === today) {
+    // Already counted today — just bump all-time calls
+    await redis.hincrby(`streak:${userId}`, "totalCallsAllTime", 1);
+    return;
+  }
+
+  let newCurrent: number;
+  if (!streak.lastActiveDate) {
+    newCurrent = 1;
+  } else {
+    const last = new Date(streak.lastActiveDate);
+    const todayDate = new Date(today);
+    const diffMs = todayDate.getTime() - last.getTime();
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+    newCurrent = diffDays === 1 ? streak.currentStreak + 1 : 1;
+  }
+
+  const newLongest = Math.max(newCurrent, streak.longestStreak);
+  await redis.hset(`streak:${userId}`, {
+    currentStreak: newCurrent,
+    longestStreak: newLongest,
+    lastActiveDate: today,
+    totalCallsAllTime: streak.totalCallsAllTime + 1,
+  });
+}
+
+export async function getWeeklyCallHistory(userId: string): Promise<{ date: string; calls: number }[]> {
+  const redis = getRedis();
+  const result: { date: string; calls: number }[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const date = d.toISOString().slice(0, 10);
+    const raw = await redis.get(`daily:${userId}:${date}:calls`);
+    result.push({ date, calls: Number(raw ?? 0) });
+  }
+  return result;
+}

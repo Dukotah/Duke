@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { CALENDLY_URL } from "@/config/site";
 
 export default function Hero() {
   return (
@@ -56,16 +57,18 @@ export default function Hero() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="#contact"
+              href={CALENDLY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold text-white transition-colors"
               style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#ea6c0a")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F97316")}
             >
-              Get a Free Consultation
+              Book a Free Call
             </a>
             <a
-              href="#services"
+              href="#contact"
               className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold transition-colors"
               style={{
                 border: "2px solid rgba(255,255,255,0.3)",
@@ -79,7 +82,7 @@ export default function Hero() {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
               }}
             >
-              See Our Services
+              Send a Message
             </a>
           </div>
         </motion.div>
