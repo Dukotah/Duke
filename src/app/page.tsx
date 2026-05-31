@@ -3,8 +3,12 @@ import Hero from "@/components/Hero";
 import SocialProof from "@/components/SocialProof";
 import Problem from "@/components/Problem";
 import Services from "@/components/Services";
+import Stats from "@/components/Stats";
+import Industries from "@/components/Industries";
 import HowItWorks from "@/components/HowItWorks";
+import WhyUs from "@/components/WhyUs";
 import ITQuiz from "@/components/ITQuiz";
+import Testimonials from "@/components/Testimonials";
 import CaseStudies from "@/components/CaseStudies";
 import PricingEstimator from "@/components/PricingEstimator";
 import ToolsTeaser from "@/components/ToolsTeaser";
@@ -23,8 +27,12 @@ export default function Home() {
         <SocialProof />
         <Problem />
         <Services />
+        <Stats />
+        <Industries />
         <HowItWorks />
+        <WhyUs />
         <ITQuiz />
+        <Testimonials />
         <CaseStudies />
         <PricingEstimator />
         <ToolsTeaser />

@@ -27,7 +27,6 @@ export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(BOT_INTROS);
   const [input, setInput] = useState("");
-  const [sent, setSent] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"chat" | "collect" | "done">("chat");
@@ -74,7 +73,7 @@ export default function ChatWidget() {
           message: userMessage,
         }),
       });
-    } catch (_) {}
+    } catch {}
     setMessages((prev) => [
       ...prev,
       {
@@ -83,7 +82,6 @@ export default function ChatWidget() {
       },
     ]);
     setStep("done");
-    setSent(true);
   };
 
   const unreadCount = !open && messages.length > BOT_INTROS.length ? 1 : 0;

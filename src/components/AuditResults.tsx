@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 
 interface Metric {
   value: string;
@@ -188,12 +189,12 @@ export default function AuditResults({ data }: { data: AuditData }) {
           Copper Bay Tech can resolve most performance issues in under a week. Get a
           free 30-minute call to see exactly what we&apos;d do.
         </p>
-        <a
+        <Link
           href="/#contact"
           className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
         >
           Get a Free Performance Review
-        </a>
+        </Link>
       </div>
     </div>
   );

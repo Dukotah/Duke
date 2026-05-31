@@ -22,19 +22,25 @@ export default function Footer() {
   };
 
   const navLinks = [
-    { label: "Services", href: "/#services" },
     { label: "How It Works", href: "/#how-it-works" },
     { label: "About", href: "/#about" },
     { label: "Resources", href: "/blog" },
+    { label: "Free Website Audit", href: "/tools" },
     { label: "FAQ", href: "/#faq" },
     { label: "Contact", href: "/#contact" },
+  ];
+
+  const serviceLinks = [
+    { label: "Web Development", href: "/services/web-development" },
+    { label: "IT Support & Networking", href: "/services/it-support" },
+    { label: "Cybersecurity", href: "/services/cybersecurity" },
   ];
 
   return (
     <footer className="bg-[#18181B] text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-3 gap-12 mb-12">
+        <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div>
             <p className="text-2xl font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
               Copper Bay<span style={{ color: "#F97316" }}>Tech</span>
@@ -42,6 +48,21 @@ export default function Footer() {
             <p className="text-white/50 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
               Custom-built technology for Sonoma County businesses. Websites, IT support, and cybersecurity — done right.
             </p>
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              Services
+            </p>
+            <ul className="space-y-2">
+              {serviceLinks.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="text-sm text-white/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div>
@@ -87,9 +108,14 @@ export default function Footer() {
           <p className="text-xs text-white/30" style={{ fontFamily: "var(--font-body)" }}>
             &copy; {year} Copper Bay Tech. All rights reserved.
           </p>
-          <Link href="/privacy" className="text-xs text-white/30 hover:text-white/60 transition-colors" style={{ fontFamily: "var(--font-body)" }}>
-            Privacy Policy
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/privacy" className="text-xs text-white/30 hover:text-white/60 transition-colors" style={{ fontFamily: "var(--font-body)" }}>
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="text-xs text-white/30 hover:text-white/60 transition-colors" style={{ fontFamily: "var(--font-body)" }}>
+              Terms of Service
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

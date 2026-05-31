@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -33,13 +33,6 @@ function AuditPageInner() {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AuditData | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const preUrl = searchParams.get("url");
-    if (preUrl) {
-      setUrl(preUrl);
-    }
-  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

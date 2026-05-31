@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
@@ -558,12 +559,12 @@ export default function ToolsPage() {
                 <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
                   Copper Bay Tech can resolve most issues in under a week. Get a free 30-minute call.
                 </p>
-                <a
+                <Link
                   href="/#contact"
                   className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
                 >
                   Get a Free Review
-                </a>
+                </Link>
               </div>
             )}
           </div>
