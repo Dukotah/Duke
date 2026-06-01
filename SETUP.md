@@ -111,13 +111,29 @@ That's it — your team is live. 🎉
 
 These aren't needed to go live. Add them when you're ready.
 
-### Send real outreach emails — `RESEND_API_KEY`
-Until this is set, outreach runs in **safe practice mode**: emails appear in
-**Admin → Email** but aren't actually delivered. To send for real:
+### Send real outreach emails — `RESEND_API_KEY` + `OUTREACH_DOMAIN_VERIFIED`
+Until both of these are set, outreach runs in **safe practice mode**: emails
+appear in **Admin → Email** and on each lead's timeline, but aren't actually
+delivered.
+
+> **Why two steps?** Sending real mail from a domain that isn't verified (no
+> SPF/DKIM/DMARC records) is the quickest way to get flagged as spam — and a
+> burned domain reputation is hard to recover. So real sending stays **locked**
+> until you explicitly confirm the domain is verified.
+
+To send for real:
 
 1. Sign up at **[resend.com](https://resend.com)**.
-2. Verify your sending domain (Resend walks you through it).
+2. Add your sending domain in Resend and add the **SPF, DKIM, and DMARC** DNS
+   records it gives you. Wait until Resend shows the domain as **Verified**.
 3. Create an **API Key** and add it as `RESEND_API_KEY`.
+4. Set **`OUTREACH_DOMAIN_VERIFIED=true`**. This is the switch that unlocks
+   real delivery — only flip it once step 2 shows "Verified".
+5. *(Optional)* Set **`OUTREACH_DAILY_CAP`** to warm the domain up slowly —
+   start around `25`–`50` and raise it over a couple of weeks. Defaults to 200.
+
+Before all that, you can send freely in practice mode — every email is tracked
+on the lead's timeline (marked **logged · not delivered**) so nothing is lost.
 
 ### Faster website audits — `PAGESPEED_API_KEY`
 The audit tools work without this, but may be rate-limited. A free Google key
@@ -146,5 +162,11 @@ The **Setup** tab will tell you if the connection failed.
 **A rep can't sign in**
 → Confirm you added them in the **Sales Reps** tab and that their account is
 marked active.
+
+**Emails show as "logged" but aren't being delivered**
+→ This is the spam safeguard working as intended. Real sending stays locked
+until you've (1) added `RESEND_API_KEY`, (2) verified your domain in Resend,
+and (3) set `OUTREACH_DOMAIN_VERIFIED=true` — then redeployed. The **Setup**
+tab's *Email delivery* row tells you which of these is still missing.
 
 Still stuck? The **Setup** tab is the fastest way to see what's missing.

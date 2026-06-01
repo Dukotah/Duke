@@ -19,9 +19,21 @@ interface OutreachBody {
 }
 
 const MAX_PER_REQUEST = 50;
-const MAX_PER_DAY = 200;
+// Conservative daily cap, overridable so a freshly verified domain can be
+// warmed up slowly (e.g. start at 25–50/day and ramp up over a couple weeks).
+// A cold domain that suddenly blasts hundreds of emails looks like spam.
+const MAX_PER_DAY = (() => {
+  const n = parseInt(process.env.OUTREACH_DAILY_CAP ?? "", 10);
+  return Number.isFinite(n) && n > 0 ? n : 200;
+})();
 const FOLLOW_UP_DAYS = 3;
 const SENDER = OUTREACH_FROM;
+
+// Basic shape check to avoid sending to obviously malformed addresses.
+// Hard bounces are one of the strongest signals that flags a sender as spam.
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
 
 function addDays(days: number): string {
   const d = new Date();
@@ -68,7 +80,8 @@ export async function POST(req: NextRequest) {
 
   // Check daily limit
   const sentToday = parseInt((await redis.get(dailyKey) as string | null) ?? "0", 10);
-  const leadsWithEmail = leads.filter((l) => l.email && l.email.trim());
+  // Only well-formed addresses are eligible — malformed ones would hard-bounce.
+  const leadsWithEmail = leads.filter((l) => l.email && isValidEmail(l.email));
 
   // Never email anyone who has unsubscribed — count them as skipped.
   const suppressed = new Set(await getSuppressedEmails());
@@ -88,6 +101,14 @@ export async function POST(req: NextRequest) {
   const toSend = sendable.slice(0, canSend);
   const apiKey = process.env.RESEND_API_KEY;
   const secret = process.env.SESSION_SECRET ?? "dev-secret-change-in-production";
+
+  // Real delivery is gated behind explicit domain verification. Sending from a
+  // domain whose SPF/DKIM/DMARC records aren't verified in Resend is the fastest
+  // way to get flagged as spam and do lasting damage to its reputation — so until
+  // someone confirms the domain is verified and sets OUTREACH_DOMAIN_VERIFIED=true,
+  // we track every email but never actually send it.
+  const domainVerified = (process.env.OUTREACH_DOMAIN_VERIFIED ?? "").trim().toLowerCase() === "true";
+  const canDeliver = Boolean(apiKey) && domainVerified;
 
   // Track an email regardless of whether it was actually delivered. This keeps
   // the outreach log, the lead's timeline, and the follow-up schedule accurate
@@ -146,9 +167,11 @@ export async function POST(req: NextRequest) {
 
     const sentAt = new Date().toISOString();
 
-    if (!apiKey) {
-      // Practice mode — delivery integration not configured yet. Still track it.
-      console.log(`[Outreach] No RESEND_API_KEY — tracking (not delivering) to ${lead.email}: ${personalizedSubject}`);
+    if (!canDeliver) {
+      // Track-only mode. Either no Resend key, or the domain isn't verified yet —
+      // in both cases we deliberately don't send, to protect domain reputation.
+      const reason = !apiKey ? "no RESEND_API_KEY" : "domain not verified (set OUTREACH_DOMAIN_VERIFIED=true once verified)";
+      console.log(`[Outreach] Track-only (${reason}) — ${lead.email}: ${personalizedSubject}`);
       try {
         await track(lead, personalizedSubject, sentAt, false);
         sent++;
@@ -204,9 +227,10 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Update daily counter with TTL of 25 hours
-  const newTotal = sentToday + sent;
+  // Only actual deliveries count toward the warm-up cap — track-only emails
+  // send nothing, so they shouldn't consume the daily sending budget.
+  const newTotal = sentToday + delivered;
   await redis.set(dailyKey, String(newTotal), { ex: 90000 });
 
-  return NextResponse.json({ sent, delivered, failed, skipped });
+  return NextResponse.json({ sent, delivered, failed, skipped, domainVerified });
 }

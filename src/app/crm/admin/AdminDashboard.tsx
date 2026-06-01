@@ -771,7 +771,8 @@ function EmailTab() {
           <p className="text-xs text-white/60 leading-relaxed">
             <span className="font-bold text-white">Email delivery isn&apos;t live yet.</span>{" "}
             {loggedOnly} recent {loggedOnly === 1 ? "email was" : "emails were"} tracked on lead timelines but not actually sent.
-            Add a <code className="text-[#F97316]">RESEND_API_KEY</code> in the Setup tab to start delivering for real.
+            Sending stays locked until the domain is verified — see <span className="text-white/80">Email delivery</span> in the Setup tab.
+            This protects your domain from being flagged as spam.
           </p>
         </div>
       )}
