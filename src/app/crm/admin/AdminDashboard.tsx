@@ -952,6 +952,9 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
   const [showCreate, setShowCreate] = useState(false);
   const [resolveSub, setResolveSub] = useState<Submission | null>(null);
   const [subFilter, setSubFilter] = useState<"" | "pending" | "accepted" | "rejected">("");
+  // Lightweight setup status for the dashboard nudge. null = not yet checked.
+  const [setupLeft, setSetupLeft] = useState<number | null>(null);
+  const [nudgeDismissed, setNudgeDismissed] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -966,6 +969,23 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
   }, [subFilter]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Check setup health once on mount so we can nudge if required items are missing.
+  const checkSetup = useCallback(() => {
+    fetch("/api/crm/admin/health")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.checks) {
+          setSetupLeft(d.checks.filter((c: HealthCheck) => c.required && !c.ok).length);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => { checkSetup(); }, [checkSetup]);
+
+  // Re-check whenever the admin opens the Setup tab, so the nudge clears once fixed.
+  useEffect(() => { if (tab === "setup") checkSetup(); }, [tab, checkSetup]);
 
   async function markPaid(id: string) {
     await fetch("/api/crm/admin/submissions", {
@@ -1040,6 +1060,25 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
           {/* Broadcast panel (always visible above tabs) */}
           <BroadcastPanel />
 
+          {/* Setup nudge — only when required items are missing and not on the Setup tab */}
+          {!nudgeDismissed && setupLeft !== null && setupLeft > 0 && tab !== "setup" && (
+            <div className="flex items-center gap-3 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 px-4 py-3" style={H}>
+              <AlertTriangle size={16} className="text-[#F97316] shrink-0" />
+              <p className="text-sm text-white/80 flex-1 leading-relaxed">
+                <span className="font-bold text-white">Finish setup</span>
+                {" — "}{setupLeft} required {setupLeft === 1 ? "item needs" : "items need"} attention before the CRM is fully live.
+              </p>
+              <button onClick={() => setTab("setup")}
+                className="text-xs font-bold text-[#F97316] hover:text-[#F97316]/80 whitespace-nowrap transition-colors">
+                Finish setup →
+              </button>
+              <button onClick={() => setNudgeDismissed(true)} aria-label="Dismiss setup reminder"
+                className="text-white/30 hover:text-white/60 transition-colors shrink-0">
+                <X size={14} />
+              </button>
+            </div>
+          )}
+
           {/* Tabs */}
           <div className="flex items-center gap-1 border-b border-white/[0.06] overflow-x-auto">
             {[
@@ -1049,7 +1088,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               { key: "email", label: "Email", count: 0 },
               { key: "leaderboard", label: "Leaderboard", count: 0 },
               { key: "revenue", label: "Revenue", count: 0 },
-              { key: "setup", label: "Setup", count: 0 },
+              { key: "setup", label: "Setup", count: setupLeft ?? 0 },
             ].map(({ key, label, count }) => (
               <button key={key} onClick={() => setTab(key as typeof tab)}
                 className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
