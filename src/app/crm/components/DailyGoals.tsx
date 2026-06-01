@@ -89,7 +89,7 @@ export default function DailyGoals() {
                                               )}
                                   </div>
                                   <div className="h-2.5 bg-white/[0.06] rounded-full overflow-hidden">
-                                              <divh
+                                              <div
                                                                 className="h-full rounded-full transition-all duration-500"
                                                                 style={{
                                                                                     width: `${pct}%`,
@@ -133,4 +133,4 @@ export default function DailyGoals() {
                 </div>
           </div>
         );
-}</div>
+}
