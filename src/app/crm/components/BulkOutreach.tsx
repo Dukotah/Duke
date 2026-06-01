@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   X, Search, Mail, Filter, Check, Send, ChevronDown, Flame, Zap,
-  Tag, MapPin, ArrowUpDown,
+  Tag, MapPin, ArrowUpDown, Calendar, Link,
 } from "lucide-react";
 
 const H = { fontFamily: "var(--font-heading)" };
@@ -36,6 +36,11 @@ interface Template {
   body: string;
 }
 
+function getCalendlyLink(): string {
+    if (typeof window === "undefined") return "";
+      return localStorage.getItem("calendly_link") ?? "";
+      }
+}
 const TEMPLATES: Template[] = [
   {
     key: "no_website",
@@ -107,6 +112,10 @@ interface BulkOutreachProps {
 export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   // Step: "select" | "compose" | "preview" | "result"
   const [step, setStep] = useState<"select" | "compose" | "preview" | "result">("select");
+    // Calendly
+      const [calendlyLink, setCalendlyLink] = useState("");
+        const [showCalendlyInput, setShowCalendlyInput] = useState(false);
+          const [calendlyDraft, setCalendlyDraft] = useState("");
 
   // Lead selection state
   const [data, setData] = useState<LeadsResponse | null>(null);
@@ -156,6 +165,14 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
   useEffect(() => { setPage(1); }, [q, county, niche, tier, sortBy]);
+    useEffect(() => { const saved = getCalendlyLink(); setCalendlyLink(saved); setCalendlyDraft(saved); }, []);
+
+      const saveCalendlyLink = () => {
+          const trimmed = calendlyDraft.trim();
+              setCalendlyLink(trimmed);
+                  if (typeof window !== "undefined") localStorage.setItem("calendly_link", trimmed);
+                      setShowCalendlyInput(false);
+                        };
 
   const toggleLead = (lead: Lead) => {
     setSelected((prev) => {
@@ -225,10 +242,11 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
         email: l.email,
         city: l.city,
       }));
+            const finalBody = calendlyLink ? body + "\n\nBook a free 15-minute call: " + calendlyLink : body;
       const res = await fetch("/api/crm/outreach", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ leads: leadsPayload, subject, body, fromName }),
+        body: JSON.stringify({ leads: leadsPayload, subject, body: finalBody, fromName }),
       });
       const d = await res.json();
       if (!res.ok) {
@@ -266,6 +284,27 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
           <X size={18} />
         </button>
       </div>
+            {/* Calendly link banner */}
+                  <div className="px-5 py-3 border-b border-white/[0.06] bg-violet-500/5 shrink-0">
+                          {!showCalendlyInput ? (
+                                    <button onClick={() => { setCalendlyDraft(calendlyLink); setShowCalendlyInput(true); }}
+                                                className="flex items-center gap-2 text-xs text-violet-300 hover:text-violet-200 transition-colors" style={H}>
+                                                            <Calendar size={12} />
+                                                                        {calendlyLink ? <><span className="text-white/40">Calendly:</span><span className="truncate max-w-[220px] ml-1">{calendlyLink}</span></> : <span className="text-violet-400">+ Add your Calendly link to include in emails</span>}
+                                                                                  </button>
+                                                                                          ) : (
+                                                                                                    <div className="flex gap-2 items-center">
+                                                                                                                <Link size={12} className="text-violet-400 shrink-0" />
+                                                                                                                            <input value={calendlyDraft} onChange={(e) => setCalendlyDraft(e.target.value)}
+                                                                                                                                          placeholder="https://calendly.com/your-name/15min"
+                                                                                                                                                        className="flex-1 bg-transparent border-b border-violet-400/40 text-xs text-white placeholder-white/25 focus:outline-none pb-0.5"
+                                                                                                                                                                      style={H} autoFocus
+                                                                                                                                                                                    onKeyDown={(e) => { if (e.key === "Enter") saveCalendlyLink(); if (e.key === "Escape") setShowCalendlyInput(false); }} />
+                                                                                                                                                                                                <button onClick={saveCalendlyLink} className="text-xs text-violet-300 font-semibold px-2 py-1 rounded-lg bg-violet-500/20 hover:bg-violet-500/30" style={H}>Save</button>
+                                                                                                                                                                                                            <button onClick={() => setShowCalendlyInput(false)} className="text-xs text-white/30 hover:text-white/60 px-1" style={H}>✕</button>
+                                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                                              )}
+                                                                                                                                                                                                                                    </div>
 
       {/* Step indicator */}
       {step !== "result" && (
