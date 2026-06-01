@@ -38,6 +38,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [delivered, setDelivered] = useState(true);
   const [savedFlash, setSavedFlash] = useState(false);
 
   const editable = templateKey !== "custom";
@@ -93,6 +94,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
         setSending(false);
         return;
       }
+      setDelivered((d.delivered ?? 0) >= 1);
       setDone(true);
       onSent?.();
     } catch {
@@ -121,9 +123,15 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
 
         {done ? (
           <div className="flex flex-col items-center justify-center px-6 py-12 text-center gap-4">
-            <div className="text-5xl">✉️</div>
-            <h3 className="text-lg font-bold text-white" style={H}>Email sent to {lead.name}</h3>
-            <p className="text-sm text-white/50" style={H}>Logged to their timeline. A follow up was scheduled for 3 days out.</p>
+            <div className="text-5xl">{delivered ? "✉️" : "📝"}</div>
+            <h3 className="text-lg font-bold text-white" style={H}>
+              {delivered ? `Email sent to ${lead.name}` : `Email logged for ${lead.name}`}
+            </h3>
+            <p className="text-sm text-white/50" style={H}>
+              {delivered
+                ? "Logged to their timeline. A follow up was scheduled for 3 days out."
+                : "Email delivery isn't live yet, so this was recorded on their timeline (not actually sent). A follow up was scheduled for 3 days out."}
+            </p>
             <button onClick={onClose} className="px-8 py-3 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: "#F97316", ...H }}>Done</button>
           </div>
         ) : (

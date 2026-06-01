@@ -95,7 +95,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const [savedFlash, setSavedFlash] = useState(false);
 
   // Result
-  const [result, setResult] = useState<{ sent: number; failed: number; skipped: number } | null>(null);
+  const [result, setResult] = useState<{ sent: number; delivered?: number; failed: number; skipped: number } | null>(null);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
 
@@ -540,32 +540,44 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
       {/* STEP 4: Result */}
       {step === "result" && result && (
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center gap-6">
-          <div className="text-5xl">✉️</div>
-          <div>
-            <h3 className="text-xl font-bold text-white mb-2" style={H}>Emails sent!</h3>
-            <p className="text-sm text-white/50">Here&apos;s how it went:</p>
-          </div>
-          <div className="w-full max-w-xs space-y-3">
-            <div className="flex items-center justify-between px-4 py-3 bg-green-400/10 border border-green-400/20 rounded-xl">
-              <span className="text-sm font-semibold text-green-400">Sent</span>
-              <span className="text-xl font-bold text-green-400">{result.sent}</span>
-            </div>
-            <div className="flex items-center justify-between px-4 py-3 bg-red-400/10 border border-red-400/20 rounded-xl">
-              <span className="text-sm font-semibold text-red-400">Failed</span>
-              <span className="text-xl font-bold text-red-400">{result.failed}</span>
-            </div>
-            <div className="flex items-center justify-between px-4 py-3 bg-white/5 border border-white/10 rounded-xl">
-              <span className="text-sm font-semibold text-white/40">No email</span>
-              <span className="text-xl font-bold text-white/40">{result.skipped}</span>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="px-8 py-3 rounded-xl text-sm font-bold text-white"
-            style={{ backgroundColor: "#F97316", ...H }}
-          >
-            Done
-          </button>
+          {(() => {
+            // When delivery isn't live yet, everything tracked was logged, not sent.
+            const loggedOnly = result.delivered !== undefined && result.delivered < result.sent;
+            return (
+              <>
+                <div className="text-5xl">{loggedOnly ? "📝" : "✉️"}</div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2" style={H}>{loggedOnly ? "Emails logged!" : "Emails sent!"}</h3>
+                  <p className="text-sm text-white/50">
+                    {loggedOnly
+                      ? "Delivery isn't live yet — these were tracked on lead timelines but not actually sent."
+                      : "Here's how it went:"}
+                  </p>
+                </div>
+                <div className="w-full max-w-xs space-y-3">
+                  <div className="flex items-center justify-between px-4 py-3 bg-green-400/10 border border-green-400/20 rounded-xl">
+                    <span className="text-sm font-semibold text-green-400">{loggedOnly ? "Logged" : "Sent"}</span>
+                    <span className="text-xl font-bold text-green-400">{result.sent}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-3 bg-red-400/10 border border-red-400/20 rounded-xl">
+                    <span className="text-sm font-semibold text-red-400">Failed</span>
+                    <span className="text-xl font-bold text-red-400">{result.failed}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-3 bg-white/5 border border-white/10 rounded-xl">
+                    <span className="text-sm font-semibold text-white/40">No email</span>
+                    <span className="text-xl font-bold text-white/40">{result.skipped}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="px-8 py-3 rounded-xl text-sm font-bold text-white"
+                  style={{ backgroundColor: "#F97316", ...H }}
+                >
+                  Done
+                </button>
+              </>
+            );
+          })()}
         </div>
       )}
 

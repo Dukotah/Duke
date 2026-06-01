@@ -609,6 +609,10 @@ export interface OutreachLogEntry {
   email: string;
   subject: string;
   sentAt: string;
+  // Whether the email was actually delivered (Resend configured) or only
+  // tracked/logged (delivery integration not live yet). Older entries
+  // predate this field — treat a missing value as delivered.
+  delivered?: boolean;
 }
 
 export async function getAllOutreachLog(limit = 250): Promise<OutreachLogEntry[]> {

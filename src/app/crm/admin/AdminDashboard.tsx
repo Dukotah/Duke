@@ -711,7 +711,7 @@ function TerritoryTab({ reps }: { reps: RepWithStats[] }) {
 
 interface SendEntry {
   userId: string; repName: string; leadId: string; leadName: string;
-  email: string; subject: string; sentAt: string;
+  email: string; subject: string; sentAt: string; delivered?: boolean;
 }
 
 function EmailTab() {
@@ -759,13 +759,31 @@ function EmailTab() {
     );
   }
 
+  // Entries logged while the delivery integration is off (delivered === false).
+  const loggedOnly = entries.filter((e) => e.delivered === false).length;
+
   return (
     <div className="space-y-5">
+      {/* Practice-mode banner — emails are being tracked but not delivered yet */}
+      {loggedOnly > 0 && (
+        <div className="flex items-start gap-3 rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-4 py-3" style={H}>
+          <AlertTriangle size={16} className="text-yellow-400 shrink-0 mt-0.5" />
+          <p className="text-xs text-white/60 leading-relaxed">
+            <span className="font-bold text-white">Email delivery isn&apos;t live yet.</span>{" "}
+            {loggedOnly} recent {loggedOnly === 1 ? "email was" : "emails were"} tracked on lead timelines but not actually sent.
+            Add a <code className="text-[#F97316]">RESEND_API_KEY</code> in the Setup tab to start delivering for real.
+          </p>
+        </div>
+      )}
+
       {/* Summary */}
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] px-4 py-4">
-          <div className="flex items-center gap-2 text-xs text-white/40 mb-2" style={H}><Mail size={14} className="text-[#F97316]" />Emails sent (recent)</div>
+          <div className="flex items-center gap-2 text-xs text-white/40 mb-2" style={H}><Mail size={14} className="text-[#F97316]" />Emails tracked (recent)</div>
           <p className="text-2xl font-bold text-white tabular-nums" style={H}>{entries.length}</p>
+          {loggedOnly > 0 && (
+            <p className="text-[11px] text-white/30 mt-1" style={H}>{entries.length - loggedOnly} delivered · {loggedOnly} logged</p>
+          )}
         </div>
         <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] px-4 py-4">
           <div className="flex items-center gap-2 text-xs text-white/40 mb-2" style={H}><X size={14} className="text-red-400" />Unsubscribes</div>
@@ -785,7 +803,14 @@ function EmailTab() {
             {entries.map((e, i) => (
               <div key={`${e.email}-${i}`} className="flex items-center gap-3 px-4 py-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white truncate" style={H}>{e.subject || "(no subject)"}</p>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <p className="text-sm font-semibold text-white truncate" style={H}>{e.subject || "(no subject)"}</p>
+                    {e.delivered === false && (
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-white/35 bg-white/10 rounded px-1.5 py-0.5 shrink-0" style={H}>
+                        logged
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-white/40 truncate mt-0.5" style={H}>
                     {e.leadName} · {e.email}
                   </p>

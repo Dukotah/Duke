@@ -37,8 +37,10 @@ function buildFooter(unsubUrl: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const userId = req.headers.get("x-user-id");
+  const userId: string | null = req.headers.get("x-user-id");
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Narrowed copy so closures below keep the non-null type.
+  const senderId: string = userId;
   const repName = req.headers.get("x-user-name") ?? "";
 
   let body: OutreachBody;
@@ -87,7 +89,45 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.RESEND_API_KEY;
   const secret = process.env.SESSION_SECRET ?? "dev-secret-change-in-production";
 
-  let sent = 0;
+  // Track an email regardless of whether it was actually delivered. This keeps
+  // the outreach log, the lead's timeline, and the follow-up schedule accurate
+  // even while the delivery integration (Resend) is still being set up.
+  async function track(lead: OutreachLead, personalizedSubject: string, sentAt: string, delivered: boolean) {
+    const logEntry = JSON.stringify({
+      leadId: lead.id,
+      leadName: lead.name,
+      email: lead.email,
+      subject: personalizedSubject,
+      sentAt,
+      delivered,
+    });
+    await redis.lpush(`outreach_log:${senderId}`, logEntry);
+    await redis.ltrim(`outreach_log:${senderId}`, 0, 199);
+
+    await addActivity(lead.id, senderId, repName, {
+      type: "email",
+      outcome: delivered ? "sent" : "logged",
+      note: personalizedSubject,
+    });
+
+    // Don't disturb leads that are already won or written off.
+    const existing = await getLeadState(senderId, lead.id);
+    const terminal =
+      existing?.status === "won" ||
+      existing?.status === "not_interested" ||
+      ["won", "lost", "submitted"].includes(existing?.stage ?? "");
+    if (!terminal) {
+      await setLeadState(senderId, lead.id, {
+        status: "contacted",
+        stage: "contacted",
+        lastContacted: sentAt,
+        followUpDate: addDays(FOLLOW_UP_DAYS),
+      });
+    }
+  }
+
+  let sent = 0;      // emails tracked (logged or delivered)
+  let delivered = 0; // subset actually delivered via Resend
   let failed = 0;
 
   for (const lead of toSend) {
@@ -104,9 +144,18 @@ export async function POST(req: NextRequest) {
       .replace(/\{city\}/gi, lead.city)
       .replace(/\{fromName\}/gi, fromName);
 
+    const sentAt = new Date().toISOString();
+
     if (!apiKey) {
-      console.log(`[Outreach] No RESEND_API_KEY — would send to ${lead.email}: ${personalizedSubject}`);
-      sent++;
+      // Practice mode — delivery integration not configured yet. Still track it.
+      console.log(`[Outreach] No RESEND_API_KEY — tracking (not delivering) to ${lead.email}: ${personalizedSubject}`);
+      try {
+        await track(lead, personalizedSubject, sentAt, false);
+        sent++;
+      } catch (logErr) {
+        failed++;
+        console.error(`[Outreach] Failed to track email to ${lead.email}:`, logErr);
+      }
       continue;
     }
 
@@ -136,41 +185,13 @@ export async function POST(req: NextRequest) {
 
       if (res.ok) {
         sent++;
-        const sentAt = new Date().toISOString();
-        // Log to Redis (capped list)
-        const logEntry = JSON.stringify({
-          leadId: lead.id,
-          leadName: lead.name,
-          email: lead.email,
-          subject: personalizedSubject,
-          sentAt,
-        });
-        await redis.lpush(`outreach_log:${userId}`, logEntry);
-        await redis.ltrim(`outreach_log:${userId}`, 0, 199);
-
+        delivered++;
         // Close the loop: record on the lead's timeline and schedule a follow-up.
         // Failures here must not flip a successful send into a "failed".
         try {
-          await addActivity(lead.id, userId, repName, {
-            type: "email",
-            note: personalizedSubject,
-          });
-          // Don't disturb leads that are already won or written off.
-          const existing = await getLeadState(userId, lead.id);
-          const terminal =
-            existing?.status === "won" ||
-            existing?.status === "not_interested" ||
-            ["won", "lost", "submitted"].includes(existing?.stage ?? "");
-          if (!terminal) {
-            await setLeadState(userId, lead.id, {
-              status: "contacted",
-              stage: "contacted",
-              lastContacted: sentAt,
-              followUpDate: addDays(FOLLOW_UP_DAYS),
-            });
-          }
+          await track(lead, personalizedSubject, sentAt, true);
         } catch (logErr) {
-          console.error(`[Outreach] Sent to ${lead.email} but failed to log activity/follow-up:`, logErr);
+          console.error(`[Outreach] Delivered to ${lead.email} but failed to log activity/follow-up:`, logErr);
         }
       } else {
         failed++;
@@ -187,5 +208,5 @@ export async function POST(req: NextRequest) {
   const newTotal = sentToday + sent;
   await redis.set(dailyKey, String(newTotal), { ex: 90000 });
 
-  return NextResponse.json({ sent, failed, skipped });
+  return NextResponse.json({ sent, delivered, failed, skipped });
 }

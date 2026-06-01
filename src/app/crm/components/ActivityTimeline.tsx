@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Phone, StickyNote, Send, PhoneMissed, PhoneOff, CalendarClock, ThumbsDown, ThumbsUp, Clock } from "lucide-react";
+import { Phone, StickyNote, Send, Mail, PhoneMissed, PhoneOff, CalendarClock, ThumbsDown, ThumbsUp, Clock } from "lucide-react";
 
 interface ActivityEntry {
   id: string;
@@ -37,7 +37,7 @@ function timeAgo(iso: string): string {
 function EntryIcon({ type, outcome }: { type: ActivityEntry["type"]; outcome?: string }) {
   if (type === "submitted") return <Send size={13} className="text-[#F97316]" />;
   if (type === "note") return <StickyNote size={13} className="text-yellow-400" />;
-  if (type === "email") return <Send size={13} className="text-blue-400" />;
+  if (type === "email") return <Mail size={13} className={outcome === "logged" ? "text-white/40" : "text-blue-400"} />;
   if (type === "call") {
     if (outcome === "no_answer") return <PhoneMissed size={13} className="text-zinc-400" />;
     if (outcome === "voicemail") return <PhoneOff size={13} className="text-blue-400" />;
@@ -95,11 +95,19 @@ export default function ActivityTimeline({ leadId }: { leadId: string }) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="text-xs font-semibold text-white/70" style={H}>
-                  {entry.type === "submitted" ? "Submitted to Duke" :
-                   entry.type === "note" ? "Note saved" :
-                   entry.outcome ? OUTCOME_LABELS[entry.outcome] ?? entry.outcome :
-                   entry.type}
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <span className="text-xs font-semibold text-white/70" style={H}>
+                    {entry.type === "submitted" ? "Submitted to Duke" :
+                     entry.type === "note" ? "Note saved" :
+                     entry.type === "email" ? (entry.outcome === "logged" ? "Email logged" : "Email sent") :
+                     entry.outcome ? OUTCOME_LABELS[entry.outcome] ?? entry.outcome :
+                     entry.type}
+                  </span>
+                  {entry.type === "email" && entry.outcome === "logged" && (
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-white/30 bg-white/10 rounded px-1.5 py-0.5 shrink-0" style={H}>
+                      not delivered
+                    </span>
+                  )}
                 </span>
                 <span className="text-[10px] text-white/25 shrink-0" style={H}>{timeAgo(entry.createdAt)}</span>
               </div>
