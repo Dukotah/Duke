@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
+import { addActivity, getLeadState, setLeadState } from "@/lib/db";
 
 interface OutreachLead {
   id: string;
@@ -17,10 +18,19 @@ interface OutreachBody {
 
 const MAX_PER_REQUEST = 50;
 const MAX_PER_DAY = 200;
+const FOLLOW_UP_DAYS = 3;
+const SENDER = "contact@copperbaytech.com";
+
+function addDays(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10); // YYYY-MM-DD
+}
 
 export async function POST(req: NextRequest) {
   const userId = req.headers.get("x-user-id");
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const repName = req.headers.get("x-user-name") ?? "";
 
   let body: OutreachBody;
   try {
@@ -92,7 +102,8 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: `${fromName} via Copper Bay Tech <noreply@copperbaytech.com>`,
+          from: `${fromName} via Copper Bay Tech <${SENDER}>`,
+          reply_to: SENDER,
           to: [lead.email],
           subject: personalizedSubject,
           text: personalizedBody,
@@ -101,16 +112,42 @@ export async function POST(req: NextRequest) {
 
       if (res.ok) {
         sent++;
+        const sentAt = new Date().toISOString();
         // Log to Redis (capped list)
         const logEntry = JSON.stringify({
           leadId: lead.id,
           leadName: lead.name,
           email: lead.email,
           subject: personalizedSubject,
-          sentAt: new Date().toISOString(),
+          sentAt,
         });
         await redis.lpush(`outreach_log:${userId}`, logEntry);
         await redis.ltrim(`outreach_log:${userId}`, 0, 199);
+
+        // Close the loop: record on the lead's timeline and schedule a follow-up.
+        // Failures here must not flip a successful send into a "failed".
+        try {
+          await addActivity(lead.id, userId, repName, {
+            type: "email",
+            note: personalizedSubject,
+          });
+          // Don't disturb leads that are already won or written off.
+          const existing = await getLeadState(userId, lead.id);
+          const terminal =
+            existing?.status === "won" ||
+            existing?.status === "not_interested" ||
+            ["won", "lost", "submitted"].includes(existing?.stage ?? "");
+          if (!terminal) {
+            await setLeadState(userId, lead.id, {
+              status: "contacted",
+              stage: "contacted",
+              lastContacted: sentAt,
+              followUpDate: addDays(FOLLOW_UP_DAYS),
+            });
+          }
+        } catch (logErr) {
+          console.error(`[Outreach] Sent to ${lead.email} but failed to log activity/follow-up:`, logErr);
+        }
       } else {
         failed++;
         const errText = await res.text();
