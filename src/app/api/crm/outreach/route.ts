@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { addActivity, getLeadState, setLeadState } from "@/lib/db";
+import { addActivity, getLeadState, setLeadState, getSuppressedEmails } from "@/lib/db";
+import { unsubscribeUrl } from "@/lib/unsubscribe";
+import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
 
 interface OutreachLead {
   id: string;
@@ -19,12 +21,19 @@ interface OutreachBody {
 const MAX_PER_REQUEST = 50;
 const MAX_PER_DAY = 200;
 const FOLLOW_UP_DAYS = 3;
-const SENDER = "contact@copperbaytech.com";
+const SENDER = OUTREACH_FROM;
 
 function addDays(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);
   return d.toISOString().slice(0, 10); // YYYY-MM-DD
+}
+
+// CAN-SPAM compliant footer + a plain-text opt-out link recipients can click.
+function buildFooter(unsubUrl: string): string {
+  return `\n\n\nYou're receiving this because we work with local businesses in your area.` +
+    `\nNot interested? Unsubscribe here: ${unsubUrl}` +
+    `\n${MAILING_ADDRESS}`;
 }
 
 export async function POST(req: NextRequest) {
@@ -58,9 +67,13 @@ export async function POST(req: NextRequest) {
   // Check daily limit
   const sentToday = parseInt((await redis.get(dailyKey) as string | null) ?? "0", 10);
   const leadsWithEmail = leads.filter((l) => l.email && l.email.trim());
-  const skipped = leads.length - leadsWithEmail.length;
 
-  const canSend = Math.min(leadsWithEmail.length, MAX_PER_DAY - sentToday);
+  // Never email anyone who has unsubscribed — count them as skipped.
+  const suppressed = new Set(await getSuppressedEmails());
+  const sendable = leadsWithEmail.filter((l) => !suppressed.has(l.email.toLowerCase().trim()));
+  const skipped = leads.length - sendable.length;
+
+  const canSend = Math.min(sendable.length, MAX_PER_DAY - sentToday);
   if (canSend <= 0) {
     return NextResponse.json({
       error: `Daily outreach limit of ${MAX_PER_DAY} reached`,
@@ -70,8 +83,9 @@ export async function POST(req: NextRequest) {
     }, { status: 429 });
   }
 
-  const toSend = leadsWithEmail.slice(0, canSend);
+  const toSend = sendable.slice(0, canSend);
   const apiKey = process.env.RESEND_API_KEY;
+  const secret = process.env.SESSION_SECRET ?? "dev-secret-change-in-production";
 
   let sent = 0;
   let failed = 0;
@@ -96,6 +110,8 @@ export async function POST(req: NextRequest) {
       continue;
     }
 
+    const unsubUrl = await unsubscribeUrl(lead.email, secret);
+
     try {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -108,7 +124,13 @@ export async function POST(req: NextRequest) {
           reply_to: SENDER,
           to: [lead.email],
           subject: personalizedSubject,
-          text: personalizedBody,
+          text: personalizedBody + buildFooter(unsubUrl),
+          // RFC 8058 one-click unsubscribe — required by Gmail/Yahoo bulk
+          // sender rules and a major signal against being marked as spam.
+          headers: {
+            "List-Unsubscribe": `<${unsubUrl}>, <mailto:${SENDER}?subject=unsubscribe>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
         }),
       });
 

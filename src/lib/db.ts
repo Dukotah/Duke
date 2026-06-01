@@ -571,6 +571,28 @@ export async function deleteBroadcast(id: string): Promise<void> {
   await redis.srem("broadcasts:index", id);
 }
 
+// ─── Outreach suppression list (unsubscribes) ─────────────────────────────────
+// Emails that have opted out. We must never send to these again — re-mailing
+// someone who unsubscribed is the fastest way to get reported as spam.
+
+const SUPPRESS_KEY = "outreach:suppressed";
+
+export async function suppressEmail(email: string): Promise<void> {
+  const redis = getRedis();
+  await redis.sadd(SUPPRESS_KEY, email.toLowerCase().trim());
+}
+
+export async function getSuppressedEmails(): Promise<string[]> {
+  const redis = getRedis();
+  const members = await redis.smembers(SUPPRESS_KEY);
+  return (members as string[]).map((e) => e.toLowerCase());
+}
+
+export async function getSuppressedCount(): Promise<number> {
+  const redis = getRedis();
+  return (await redis.scard(SUPPRESS_KEY)) as number;
+}
+
 // ─── Admin seed ───────────────────────────────────────────────────────────────
 
 export async function ensureAdminExists(): Promise<void> {
