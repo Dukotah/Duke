@@ -224,6 +224,48 @@ export const OBJECTIONS: Objection[] = [
   },
 ];
 
+// Cold-outreach email draft, tailored to the prospect's actual website
+// problems. Pure + deterministic so the UI and an assisting agent can both
+// generate the same strong starting point. Returns plain text (good for a
+// mailto: link); the send API wraps it in light HTML.
+export function buildEmailDraft(lead: Lead, repName: string): { subject: string; body: string } {
+  const problems = problemList(lead.signals);
+  const top = problems[0];
+  const first = lead.contactName?.split(" ")[0];
+  const greeting = first ? `Hi ${first},` : "Hi,";
+
+  const subject =
+    top?.key === "no_site"
+      ? `${lead.business} — getting you found online`
+      : `A couple things on ${lead.business}'s website`;
+
+  const opener =
+    top?.key === "no_site"
+      ? `I went looking for ${lead.business} online and couldn't find a website — which means people searching for "${lead.industry} in ${lead.city}" are landing on your competitors instead of you.`
+      : top
+        ? `I was looking at ${lead.business}'s website and noticed a few things that are quietly costing you customers — starting with ${lowerFirst(top.label)}.`
+        : `I came across ${lead.business} and wanted to reach out about your website.`;
+
+  const bullets = problems.slice(0, 3).map((p) => `• ${p.label} — ${p.detail}`);
+
+  const lines = [
+    greeting,
+    "",
+    opener,
+    ...(bullets.length ? ["", "Here's what stood out:", ...bullets] : []),
+    "",
+    "We rebuild sites like yours — fast, secure, and mobile-friendly — usually live in about two weeks. It tends to pay for itself quickly in customers you're currently losing.",
+    "",
+    "Would you be open to a quick 15-minute call this week? I'll walk you through exactly what I'd change — no charge, no pressure.",
+    "",
+    "Best,",
+    ...(repName && repName.trim().toLowerCase() !== "me" ? [repName.trim()] : []),
+    "Copper Bay Tech",
+  ];
+
+  return { subject, body: lines.join("\n") };
+}
+
 function clamp01(n: number) {
   return Math.max(0, Math.min(1, n));
 }

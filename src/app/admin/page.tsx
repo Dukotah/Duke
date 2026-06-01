@@ -43,7 +43,7 @@ interface RepsResponse {
   reps: Rep[];
 }
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ embedded = false }: { embedded?: boolean }) {
   const [stats, setStats] = useState<CrmStats | null>(null);
   const [repStats, setRepStats] = useState<RepStat[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -142,9 +142,10 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#18181B] text-white">
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Header */}
+    <div className={embedded ? "text-white" : "min-h-screen bg-[#18181B] text-white"}>
+      <div className={embedded ? "" : "max-w-7xl mx-auto px-6 py-8"}>
+        {/* Header — hidden when embedded as a CRM tab (the tab bar provides chrome) */}
+        {!embedded && (
         <header className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div>
             <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-3 border border-orange-500/20">
@@ -185,6 +186,7 @@ export default function AdminDashboard() {
             </button>
           </div>
         </header>
+        )}
 
         {error && (
           <div className="mb-8 flex items-center gap-3 bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-4 text-red-400 text-sm">

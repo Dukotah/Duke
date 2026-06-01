@@ -83,6 +83,7 @@ export interface Lead {
   business: string;
   contactName?: string;
   phone: string;
+  email?: string;
   website?: string;
   industry: string;
   city: string;
@@ -111,6 +112,7 @@ export interface Rep {
 export interface CrmStats {
   totalLeads: number;
   callsToday: number;
+  emailsToday: number;
   connectsToday: number;
   connectRate: number; // 0-1
   bookedToday: number;

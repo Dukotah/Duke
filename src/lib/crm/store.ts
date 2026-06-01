@@ -97,6 +97,28 @@ export function addNote(leadId: string, body: string, repId?: string): Activity 
   return activity;
 }
 
+// Record a sent email on the lead's timeline. Keeps the lead in its current
+// stage (an email is a touch, not a disposition) but updates last-contacted.
+export function logEmail(
+  leadId: string,
+  input: { subject: string; body: string; repId?: string },
+): Lead | undefined {
+  const lead = getLead(leadId);
+  if (!lead) return undefined;
+  const now = new Date().toISOString();
+  lead.activities.push({
+    id: nextId("act"),
+    leadId,
+    type: "email",
+    body: `Subject: ${input.subject}\n\n${input.body}`,
+    repId: input.repId,
+    createdAt: now,
+  });
+  lead.lastContactedAt = now;
+  if (input.repId) lead.ownerRepId = input.repId;
+  return lead;
+}
+
 // Map a call disposition onto the resulting pipeline stage.
 function stageForDisposition(d: Disposition, current: PipelineStage): PipelineStage {
   switch (d) {
@@ -165,6 +187,7 @@ export function createLead(input: Partial<Lead> & { business: string; phone: str
     business: input.business,
     contactName: input.contactName,
     phone: input.phone,
+    email: input.email,
     website: input.website,
     industry: input.industry ?? "Unknown",
     city: input.city ?? "",
@@ -202,6 +225,7 @@ export function getStats(): CrmStats {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
 
   let callsToday = 0;
+  let emailsToday = 0;
   let connectsToday = 0;
   let bookedToday = 0;
   let wonThisMonth = 0;
@@ -226,19 +250,23 @@ export function getStats(): CrmStats {
     }
 
     for (const a of lead.activities) {
-      if (a.type !== "call") continue;
       const t = new Date(a.createdAt).getTime();
-      if (t >= startOfDay) {
-        callsToday += 1;
-        if (a.disposition === "connected" || a.disposition === "booked") connectsToday += 1;
-        if (a.disposition === "booked") bookedToday += 1;
+      if (t < startOfDay) continue;
+      if (a.type === "email") {
+        emailsToday += 1;
+        continue;
       }
+      if (a.type !== "call") continue;
+      callsToday += 1;
+      if (a.disposition === "connected" || a.disposition === "booked") connectsToday += 1;
+      if (a.disposition === "booked") bookedToday += 1;
     }
   }
 
   return {
     totalLeads: leads.length,
     callsToday,
+    emailsToday,
     connectsToday,
     connectRate: callsToday ? connectsToday / callsToday : 0,
     bookedToday,

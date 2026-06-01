@@ -1,4 +1,4 @@
-import { Phone, PhoneCall, CalendarCheck, DollarSign, Flame } from "lucide-react";
+import { Phone, PhoneCall, CalendarCheck, DollarSign, Flame, Mail } from "lucide-react";
 import type { CrmStats } from "@/lib/crm/types";
 import { fmtCurrency, fmtPct } from "../_lib";
 
@@ -33,6 +33,7 @@ export default function LiveBar({ stats, dialedStreak }: { stats: CrmStats | nul
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 py-2.5">
       <Stat icon={<Phone size={16} />} label="Calls Today" value={String(stats.callsToday)} />
+      <Stat icon={<Mail size={16} />} label="Emails Today" value={String(stats.emailsToday)} />
       <Stat icon={<PhoneCall size={16} />} label="Connect Rate" value={fmtPct(stats.connectRate)} />
       <Stat icon={<CalendarCheck size={16} />} label="Booked Today" value={String(stats.bookedToday)} accent={stats.bookedToday > 0} />
       <Stat icon={<DollarSign size={16} />} label="Pipeline" value={fmtCurrency(stats.pipelineValue)} />

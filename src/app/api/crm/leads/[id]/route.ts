@@ -15,9 +15,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params;
   try {
     const body = await req.json();
-    const patch: { stage?: PipelineStage; ownerRepId?: string } = {};
+    const patch: { stage?: PipelineStage; ownerRepId?: string; email?: string } = {};
     if (body.stage) patch.stage = body.stage as PipelineStage;
     if (body.ownerRepId) patch.ownerRepId = body.ownerRepId as string;
+    if (typeof body.email === "string") patch.email = body.email.trim();
 
     if (typeof body.note === "string" && body.note.trim()) {
       addNote(id, body.note.trim(), body.repId);
