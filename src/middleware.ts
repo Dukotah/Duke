@@ -7,6 +7,8 @@ export async function middleware(req: NextRequest) {
 
   // Public CRM routes
   if (pathname.startsWith("/crm/login")) return NextResponse.next();
+  if (pathname.startsWith("/api/crm/login")) return NextResponse.next();
+  if (pathname.startsWith("/api/crm/logout")) return NextResponse.next();
 
   const token = req.cookies.get("crm_session")?.value;
   const secret = process.env.SESSION_SECRET ?? "dev-secret-change-in-production";
