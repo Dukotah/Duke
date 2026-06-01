@@ -25,6 +25,7 @@ interface LeadState {
   submittedAt?: string;
   callCount?: number;
   lastOutcome?: string;
+  followUpDate?: string;
 }
 
 interface Submission {

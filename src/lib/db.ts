@@ -53,6 +53,7 @@ export interface LeadState {
   submittedAt?: string;
   callCount?: number;
   lastOutcome?: string;
+  followUpDate?: string; // YYYY-MM-DD
 }
 
 export interface Submission {
