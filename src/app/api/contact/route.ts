@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getStore } from "@/lib/crm/store";
+
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,6 +10,28 @@ export async function POST(req: NextRequest) {
 
     if (!name || !business || !email || !service) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    // Capture every inbound lead into the CRM. Never let a CRM hiccup block
+    // the notification email — log and continue.
+    try {
+      const store = getStore();
+      const contact = await store.upsertContact({
+        name,
+        email,
+        business,
+        phone,
+        service,
+        source: "contact_form",
+        notes: message,
+      });
+      await store.addActivity(contact.id, {
+        type: "form_submitted",
+        detail: service,
+        meta: { business, message },
+      });
+    } catch (crmErr) {
+      console.error("CRM capture failed (continuing):", crmErr);
     }
 
     const apiKey = process.env.RESEND_API_KEY;
