@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { DollarSign, TrendingUp, Check, Clock, Send, Trophy, Flame } from "lucide-react";
+import { DollarSign, TrendingUp, Check, Clock, Send, Trophy, Flame, Star, BarChart2 } from "lucide-react";
+import CallHistory from "./CallHistory";
 
 interface WeekDay { date: string; calls: number; }
 interface GoalsData {
@@ -20,11 +21,27 @@ interface Submission {
 
 interface LeadState {
   status: string; stage: string; callCount?: number; lastContacted?: string;
+  submittedAt?: string;
 }
 
 interface Props {
   states: Record<string, LeadState>;
   repName: string;
+}
+
+function getBestDay(weekHistory: WeekDay[]): string {
+  if (!weekHistory.length) return "—";
+  const best = weekHistory.reduce((a, b) => (b.calls > a.calls ? b : a));
+  if (best.calls === 0) return "—";
+  const dow = new Date(best.date + "T12:00:00").getDay();
+  return DAY_LABELS[dow];
+}
+
+function getAvgCallsPerDay(weekHistory: WeekDay[]): string {
+  const activeDays = weekHistory.filter((d) => d.calls > 0);
+  if (!activeDays.length) return "0";
+  const total = weekHistory.reduce((s, d) => s + d.calls, 0);
+  return (total / activeDays.length).toFixed(1);
 }
 
 export default function Earnings({ states, repName }: Props) {
@@ -44,6 +61,7 @@ export default function Earnings({ states, repName }: Props) {
   const leadsWorked = Object.values(states).filter((s) => s.lastContacted || s.callCount).length;
   const totalCalls = Object.values(states).reduce((sum, s) => sum + (s.callCount ?? 0), 0);
   const interested = Object.values(states).filter((s) => s.stage === "interested").length;
+  const submitted = Object.values(states).filter((s) => !!s.submittedAt).length;
 
   const accepted = subs.filter((s) => s.status === "accepted");
   const pending = accepted.filter((s) => !s.commissionPaid);
@@ -54,6 +72,18 @@ export default function Earnings({ states, repName }: Props) {
   const totalEarned = accepted.reduce((sum, s) => sum + (s.commissionAmount ?? 0), 0);
 
   const conversionRate = subs.length > 0 ? Math.round((accepted.length / subs.length) * 100) : 0;
+  const winRate = subs.length > 0 ? Math.round((accepted.length / subs.length) * 100) : 0;
+
+  const bestDay = goals ? getBestDay(goals.weekHistory) : "—";
+  const avgCallsPerDay = goals ? getAvgCallsPerDay(goals.weekHistory) : "0";
+
+  // Funnel data
+  const funnelSteps = [
+    { label: "Leads Worked", count: leadsWorked, color: "#F97316" },
+    { label: "Interested", count: interested, color: "#FB923C" },
+    { label: "Submitted to Duke", count: subs.length, color: "#C2410C" },
+    { label: "Accepted", count: accepted.length, color: "#7C3AED" },
+  ];
 
   if (loading) {
     return <div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" /></div>;
@@ -64,7 +94,7 @@ export default function Earnings({ states, repName }: Props) {
 
       {/* Hero */}
       <div className="bg-gradient-to-br from-[#F97316]/15 via-[#F97316]/5 to-transparent border border-[#F97316]/20 rounded-2xl p-6">
-        <p className="text-xs font-semibold text-[#F97316]/70 uppercase tracking-wider mb-1" style={H}>{repName}'s Earnings</p>
+        <p className="text-xs font-semibold text-[#F97316]/70 uppercase tracking-wider mb-1" style={H}>{repName}&apos;s Earnings</p>
         <div className="flex items-end gap-3 flex-wrap">
           <p className="text-5xl font-bold text-white tabular-nums" style={H}>${totalEarned.toFixed(2)}</p>
           <div className="mb-1">
@@ -121,7 +151,7 @@ export default function Earnings({ states, repName }: Props) {
         </div>
       )}
 
-      {/* Stats grid */}
+      {/* Stats grid (with Best Day, Avg Calls/Day, Win Rate) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
           { label: "Total Calls Made", val: totalCalls, icon: <Flame size={16} className="text-[#F97316]" />, color: "text-white" },
@@ -130,6 +160,9 @@ export default function Earnings({ states, repName }: Props) {
           { label: "Submitted to Duke", val: subs.length, icon: <Send size={16} className="text-purple-400" />, color: "text-white" },
           { label: "Accepted", val: accepted.length, icon: <Check size={16} className="text-green-400" />, color: "text-green-400" },
           { label: "Conversion Rate", val: `${conversionRate}%`, icon: <TrendingUp size={16} className="text-[#F97316]" />, color: "text-[#F97316]" },
+          { label: "Best Day", val: bestDay, icon: <Star size={16} className="text-yellow-400" />, color: "text-yellow-400" },
+          { label: "Avg Calls / Day", val: avgCallsPerDay, icon: <BarChart2 size={16} className="text-blue-400" />, color: "text-white" },
+          { label: "Win Rate", val: `${winRate}%`, icon: <Check size={16} className="text-green-400" />, color: "text-green-400" },
         ].map(({ label, val, icon, color }) => (
           <div key={label} className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl px-4 py-4">
             <div className="flex items-center gap-2 text-xs text-white/40 mb-2" style={H}>{icon}{label}</div>
@@ -210,6 +243,47 @@ export default function Earnings({ states, repName }: Props) {
         )}
       </div>
 
+      {/* Conversion Funnel */}
+      <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5">
+        <h2 className="text-sm font-bold text-white mb-4" style={H}>Conversion Funnel</h2>
+        <div className="space-y-3">
+          {funnelSteps.map((step, i) => {
+            const prevCount = i === 0 ? step.count : funnelSteps[i - 1].count;
+            const pct = prevCount > 0 ? Math.round((step.count / prevCount) * 100) : 0;
+            const widthPct = funnelSteps[0].count > 0
+              ? Math.max(8, Math.round((step.count / funnelSteps[0].count) * 100))
+              : 8;
+            return (
+              <div key={step.label}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-white/50" style={H}>{step.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-white tabular-nums" style={H}>{step.count}</span>
+                    {i > 0 && (
+                      <span className="text-xs text-white/30" style={H}>({pct}% of prev)</span>
+                    )}
+                  </div>
+                </div>
+                <div className="h-5 rounded-md overflow-hidden bg-white/[0.04]">
+                  <div
+                    className="h-full rounded-md transition-all"
+                    style={{
+                      width: `${widthPct}%`,
+                      background: `linear-gradient(to right, ${step.color}, ${step.color}88)`,
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {submitted > 0 && (
+          <p className="text-xs text-white/25 mt-3" style={H}>
+            {submitted} lead{submitted !== 1 ? "s" : ""} marked submitted from pipeline view
+          </p>
+        )}
+      </div>
+
       {/* Motivation */}
       <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5">
         <h2 className="text-sm font-bold text-white mb-3" style={H}>💰 Commission Works Like This</h2>
@@ -231,6 +305,10 @@ export default function Earnings({ states, repName }: Props) {
           ))}
         </div>
       </div>
+
+      {/* Call History */}
+      <CallHistory />
+
     </div>
   );
 }
