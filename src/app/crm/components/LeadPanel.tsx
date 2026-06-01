@@ -8,6 +8,7 @@ import {
   CalendarClock, CheckCircle2, DollarSign, Activity, Lock, UserCheck, Info,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
+import LeadIntel from "./LeadIntel";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -113,8 +114,8 @@ function SubmitModal({ lead, state, onClose, onSubmitted }: {
   );
 }
 
-export default function LeadPanel({ lead, state, submission, onClose, onUpdate, onSubmitted }: {
-  lead: Lead; state: LeadState; submission?: Submission;
+export default function LeadPanel({ lead, state, submission, repName, onClose, onUpdate, onSubmitted }: {
+  lead: Lead; state: LeadState; submission?: Submission; repName?: string;
   onClose: () => void; onUpdate: (patch: Partial<LeadState>) => void; onSubmitted: () => void;
 }) {
   const [notes, setNotes] = useState(state.notes ?? "");
@@ -406,6 +407,9 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
                 <p className="text-xs text-white/25 mt-2 px-1 leading-relaxed" style={H}>{lead.tier_reason}</p>
               )}
             </div>
+
+            {/* Lead intelligence: heat score, problem breakdown, tailored script + email, objections */}
+            <LeadIntel lead={lead} repName={repName ?? "me"} />
 
             {/* Contact info */}
             <div className="px-5 py-4 border-b border-white/[0.06]">
