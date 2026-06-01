@@ -161,11 +161,13 @@ interface LeadsResponse {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 type Tab = "queue" | "pipeline" | "leads" | "scripts" | "earnings";
+type NavKey = Tab | "email";
 
-const TABS: { key: Tab; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
+const TABS: { key: NavKey; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: "queue", label: "Queue", icon: Phone },
   { key: "pipeline", label: "Pipeline", icon: LayoutGrid },
-  { key: "leads", label: "All Leads", icon: List },
+  { key: "leads", label: "Leads", icon: List },
+  { key: "email", label: "Email", icon: Mail },
   { key: "scripts", label: "Scripts", icon: BookOpen },
   { key: "earnings", label: "Earnings", icon: DollarSign },
 ];
@@ -402,7 +404,7 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
 
 // ─── Dashboard shell ──────────────────────────────────────────────────────────
 
-export default function CRMDashboard({ userId, userName }: { userId: string; userName: string }) {
+export default function CRMDashboard({ userId, userName, role }: { userId: string; userName: string; role: "admin" | "rep" }) {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("queue");
   const [states, setStates] = useState<Record<string, LeadState>>({});
@@ -413,6 +415,7 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
   const [showAddLead, setShowAddLead] = useState(false);
   const [queueRefreshKey, setQueueRefreshKey] = useState(0);
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
+  const [showBulkEmail, setShowBulkEmail] = useState(false);
 
   // Load all state + submissions once
   useEffect(() => {
@@ -505,6 +508,7 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
           onUpdate={(patch) => updateState(selectedLead.id, patch)}
           onSubmitted={refreshSubs} />
       )}
+      {showBulkEmail && <BulkOutreach repName={userName} onClose={() => setShowBulkEmail(false)} />}
 
       <div className="min-h-screen bg-[#111113] flex flex-col" style={H}>
 
@@ -521,6 +525,13 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2.5 py-1 rounded-full"
                   style={H}>
                   🔥 {interestedCount} interested
+                </button>
+              )}
+              {role === "admin" && (
+                <button onClick={() => router.push("/crm/admin")}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-full transition-colors"
+                  style={H} title="Admin dashboard — analytics, leaderboard, revenue">
+                  <LayoutGrid size={12} /><span className="hidden sm:inline">Dashboard</span>
                 </button>
               )}
               <div className="hidden sm:flex items-center gap-1.5">
@@ -575,8 +586,9 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
             {TABS.map((t) => {
               const active = tab === t.key;
               const badge = t.key === "earnings" && pendingCount > 0 ? pendingCount : null;
+              const onClick = t.key === "email" ? () => setShowBulkEmail(true) : () => setTab(t.key as Tab);
               return (
-                <button key={t.key} onClick={() => setTab(t.key)}
+                <button key={t.key} onClick={onClick}
                   className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors relative ${active ? "text-[#F97316]" : "text-white/30 hover:text-white/60"}`}
                   style={H}>
                   <t.icon size={20} />

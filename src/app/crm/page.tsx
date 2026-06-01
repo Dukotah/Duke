@@ -15,7 +15,6 @@ export default async function CRMPage() {
   const secret = process.env.SESSION_SECRET!;
   const session = token ? await verifyToken(token, secret) : null;
   if (!session) redirect("/crm/login");
-  if (session.role === "admin") redirect("/crm/admin");
 
-  return <CRMDashboard userId={session.userId} userName={session.name} />;
+  return <CRMDashboard userId={session.userId} userName={session.name} role={session.role} />;
 }
