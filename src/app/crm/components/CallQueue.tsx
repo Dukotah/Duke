@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Phone, Mail, Flame, Zap, Globe, ChevronRight, RefreshCw, Star, PhoneCall } from "lucide-react";
 import DailyGoals from "./DailyGoals";
+import FollowUpBanner from "./FollowUpBanner";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -13,6 +14,7 @@ interface Lead {
 interface LeadState {
   status: string; stage: string; notes: string; lastContacted?: string;
   callCount?: number; lastOutcome?: string; submittedAt?: string;
+  followUpDate?: string;
 }
 
 interface Props {
@@ -56,21 +58,55 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
 
   useEffect(() => { load(); }, [load]);
 
-  // Sort: never-called first, then call_back, then voicemail, then everything else
+  // Sort priority:
+  // 0: never called (fresh)
+  // 1: follow-up (call_back / voicemail) with followUpDate <= today
+  // 2: stale (called > 7 days ago, not closed)
+  // 3: recently called
+  // 4: everything else
+  const today = new Date().toISOString().slice(0, 10);
+
+  function isStale(state: LeadState | undefined): boolean {
+    if (!state?.lastContacted) return false;
+    const closed = ["lost", "won", "submitted"];
+    if (closed.includes(state.stage)) return false;
+    // lastContacted is stored as locale string (e.g. "Jun 1, 2025"), try to parse it
+    const lastDate = new Date(state.lastContacted);
+    if (isNaN(lastDate.getTime())) return false;
+    const diffMs = Date.now() - lastDate.getTime();
+    return diffMs > 7 * 24 * 60 * 60 * 1000;
+  }
+
+  function getStaleDays(state: LeadState | undefined): number {
+    if (!state?.lastContacted) return 0;
+    const lastDate = new Date(state.lastContacted);
+    if (isNaN(lastDate.getTime())) return 0;
+    return Math.floor((Date.now() - lastDate.getTime()) / (24 * 60 * 60 * 1000));
+  }
+
+  function getPriority(lead: Lead): number {
+    const s = states[lead.id];
+    if (!s || s.stage === "to_call" || !s.lastContacted) return 0;
+    if (s.stage === "call_back" || s.stage === "voicemail") return 1;
+    if (isStale(s)) return 2;
+    if (s.lastContacted) return 3;
+    return 4;
+  }
+
   const sorted = [...leads].sort((a, b) => {
-    const sa = states[a.id]; const sb = states[b.id];
-    const priorityA = !sa || sa.stage === "to_call" ? 0 : sa.stage === "call_back" ? 1 : sa.stage === "voicemail" ? 2 : 3;
-    const priorityB = !sb || sb.stage === "to_call" ? 0 : sb.stage === "call_back" ? 1 : sb.stage === "voicemail" ? 2 : 3;
-    if (priorityA !== priorityB) return priorityA - priorityB;
+    const pA = getPriority(a);
+    const pB = getPriority(b);
+    if (pA !== pB) return pA - pB;
     return b.outreach_score - a.outreach_score;
   }).filter((l) => {
     const s = states[l.id];
     return !s || (s.stage !== "lost" && s.stage !== "won" && s.stage !== "submitted" && s.status !== "not_interested");
   });
 
-  const fresh = sorted.filter((l) => !states[l.id] || !states[l.id].lastContacted);
-  const followUp = sorted.filter((l) => states[l.id]?.stage === "call_back" || states[l.id]?.stage === "voicemail");
-  const called = sorted.filter((l) => states[l.id]?.stage === "called" && !states[l.id]?.lastOutcome?.includes("call_back"));
+  const fresh = sorted.filter((l) => getPriority(l) === 0);
+  const followUp = sorted.filter((l) => getPriority(l) === 1);
+  const stale = sorted.filter((l) => getPriority(l) === 2);
+  const called = sorted.filter((l) => getPriority(l) === 3);
 
   const H = { fontFamily: "var(--font-heading)" };
 
@@ -126,6 +162,7 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
             {lead.email && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Mail size={9} />{lead.email.split("@")[0]}@…</span>}
             {callCount > 0 && <span className="text-xs text-white/25 flex items-center gap-1" style={H}><PhoneCall size={9} />{callCount}x</span>}
             {lastOutcome && <span className={`text-xs ${lastOutcome.color}`} style={H}>{lastOutcome.label}</span>}
+            {isStale(state) && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full" style={H}>{getStaleDays(state)}d ago</span>}
           </div>
         </div>
 
@@ -156,6 +193,8 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
 
       <DailyGoals />
 
+      <FollowUpBanner />
+
       {/* Hero stat */}
       <div className="bg-gradient-to-br from-[#F97316]/15 to-[#F97316]/5 border border-[#F97316]/20 rounded-2xl px-5 py-5 flex items-center justify-between">
         <div>
@@ -177,6 +216,16 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
           <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-3" style={H}>↩ Follow Up ({followUp.length})</p>
           <div className="space-y-2">
             {followUp.map((l) => <LeadCard key={l.id} lead={l} priority />)}
+          </div>
+        </div>
+      )}
+
+      {/* Stale leads */}
+      {stale.length > 0 && (
+        <div>
+          <p className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3" style={H}>⏰ Stale — Not Called in 7+ Days ({stale.length})</p>
+          <div className="space-y-2">
+            {stale.slice(0, 10).map((l) => <LeadCard key={l.id} lead={l} />)}
           </div>
         </div>
       )}

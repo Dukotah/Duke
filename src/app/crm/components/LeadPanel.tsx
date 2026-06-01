@@ -5,7 +5,7 @@ import {
   X, Phone, Mail, Globe, MapPin, ExternalLink, Copy, Check,
   StickyNote, Send, Star, Link, Flame, Zap,
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
-  CalendarClock, CheckCircle2, DollarSign, Activity, Lock, UserCheck,
+  CalendarClock, CheckCircle2, DollarSign, Activity, Lock, UserCheck, Info,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 
@@ -123,6 +123,8 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
   const [claim, setClaim] = useState<{ userId: string; repName: string } | null | undefined>(undefined);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [claimLoading, setClaimLoading] = useState(false);
+  const [showFollowUp, setShowFollowUp] = useState(false);
+  const [showScorePopover, setShowScorePopover] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
@@ -205,6 +207,7 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
       outcome.key === "call_back" ? "follow_up" : "contacted";
     onUpdate({ status: newStatus, stage: outcome.stage, lastContacted: now, callCount: newCount, lastOutcome: outcome.key });
     postActivity({ type: "call", outcome: outcome.key });
+    if (outcome.key === "call_back") setShowFollowUp(true);
     // Auto-claim when logging an outcome if not already claimed
     if (!claim) {
       fetch("/api/crm/claim", {
@@ -215,12 +218,20 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
     }
   };
 
+  const setFollowUpDate = (dateStr: string) => {
+    onUpdate({ followUpDate: dateStr });
+    setShowFollowUp(false);
+  };
+
   const handleSubmitted = () => {
     postActivity({ type: "submitted" });
     onSubmitted();
   };
 
   const tier = lead.tier;
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const tomorrowISO = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); })();
+  const in3DaysISO = (() => { const d = new Date(); d.setDate(d.getDate() + 3); return d.toISOString().slice(0, 10); })();
   const websiteHost = lead.website ? lead.website.replace(/^https?:\/\//, "").split("/")[0] : null;
   const isSubmitted = !!state.submittedAt || !!submission;
 
@@ -254,6 +265,23 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
                 {state.callCount ? (
                   <span className="text-xs text-white/30 flex items-center gap-1" style={H}><PhoneCall size={9} />{state.callCount} call{state.callCount !== 1 ? "s" : ""}</span>
                 ) : null}
+                <div className="relative">
+                  <button onClick={() => setShowScorePopover((v) => !v)}
+                    className="text-white/25 hover:text-white/60 transition-colors flex items-center gap-1"
+                    style={H}>
+                    <Info size={12} />
+                    <span className="text-xs">{lead.outreach_score}</span>
+                  </button>
+                  {showScorePopover && (
+                    <div className="absolute left-0 top-6 z-10 w-64 bg-[#1C1C1F] border border-white/10 rounded-xl p-3 shadow-xl text-xs text-white/70 space-y-1.5" style={H}>
+                      <p className="font-bold text-white/90">Why this score?</p>
+                      {lead.tier_reason && <p>Tier {lead.tier}: {lead.tier_reason}</p>}
+                      {lead.industry_fit && <p>Industry fit: <span className="text-green-400">{lead.industry_fit}</span></p>}
+                      <p>Outreach score: <span className="text-[#F97316] font-semibold">{lead.outreach_score}/100</span></p>
+                      <button onClick={() => setShowScorePopover(false)} className="text-white/30 hover:text-white/60 pt-1">✕ close</button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <button onClick={onClose} className="p-2 rounded-lg text-white/30 hover:text-white hover:bg-white/5 transition-colors shrink-0"><X size={18} /></button>
@@ -335,6 +363,34 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
                 )}
               </div>
             </div>
+
+            {/* Follow-up date picker (shown after Call Back) */}
+            {showFollowUp && (
+              <div className="px-5 py-4 border-b border-white/[0.06] bg-purple-500/5">
+                <p className="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-3" style={H}>📅 Follow up on:</p>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={() => setFollowUpDate(todayISO)}
+                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
+                    style={H}>Today</button>
+                  <button onClick={() => setFollowUpDate(tomorrowISO)}
+                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
+                    style={H}>Tomorrow</button>
+                  <button onClick={() => setFollowUpDate(in3DaysISO)}
+                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
+                    style={H}>In 3 days</button>
+                  <input type="date" defaultValue={todayISO}
+                    onChange={(e) => { if (e.target.value) setFollowUpDate(e.target.value); }}
+                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20 focus:outline-none focus:border-purple-400/50 transition-all"
+                    style={H} />
+                  <button onClick={() => setShowFollowUp(false)}
+                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-white/5 text-white/30 border border-white/10 hover:text-white/60 transition-all"
+                    style={H}>Skip</button>
+                </div>
+                {state.followUpDate && (
+                  <p className="text-xs text-purple-300/60 mt-2" style={H}>Currently set: {state.followUpDate}</p>
+                )}
+              </div>
+            )}
 
             {/* Script */}
             <div className="px-5 py-4 border-b border-white/[0.06]">
