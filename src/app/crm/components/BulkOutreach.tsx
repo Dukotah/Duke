@@ -39,6 +39,7 @@ interface Template {
 function getCalendlyLink(): string {
     if (typeof window === "undefined") return "";
       return localStorage.getItem("calendly_link") ?? "";
+}
 const TEMPLATES: Template[] = [
   {
     key: "no_website",
