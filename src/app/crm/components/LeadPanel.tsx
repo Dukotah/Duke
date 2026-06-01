@@ -498,6 +498,27 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
               </div>
             </div>
 
+                        {/* Calendly scheduling link */}
+                                    {(() => { const cal = typeof window !== "undefined" ? localStorage.getItem("calendly_link") ?? "" : ""; return cal ? (
+                                                  <div className="pt-2">
+                                                                  <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-2 flex items-center gap-1.5" style={H}><CalendarClock size={11} />Schedule a Call</p>
+                                                                                  <div className="flex gap-2 flex-wrap">
+                                                                                                    {lead.email && <a href={`mailto:${lead.email}?subject=Schedule a quick call — ${lead.name}&body=Hi, I'd love to find a time to connect! You can book a free 15-minute call here: ${cal}`}
+                                                                                                                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
+                                                                                                                                            <Mail size={11} />Send via Email
+                                                                                                                                                              </a>}
+                                                                                                                                                                                {lead.phone && <a href={`sms:${lead.phone}&body=Hi! Book a free 15-minute call: ${cal}`}
+                                                                                                                                                                                                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
+                                                                                                                                                                                                                        <Phone size={11} />Send via Text
+                                                                                                                                                                                                                                          </a>}
+                                                                                                                                                                                                                                                            <button onClick={() => { navigator.clipboard.writeText(cal); }}
+                                                                                                                                                                                                                                                                                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white/5 text-white/50 border border-white/10 hover:text-white/70 hover:bg-white/10 transition-all" style={H}>
+                                                                                                                                                                                                                                                                                                    <Copy size={11} />Copy Link
+                                                                                                                                                                                                                                                                                                                      </button>
+                                                                                                                                                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                ) : null; })()}
+
             {/* Notes */}
             <div className="px-5 py-4 border-b border-white/[0.06]">
               <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
