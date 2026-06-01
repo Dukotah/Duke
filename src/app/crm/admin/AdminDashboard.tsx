@@ -707,9 +707,130 @@ function TerritoryTab({ reps }: { reps: RepWithStats[] }) {
   );
 }
 
+// ─── Email Tab ────────────────────────────────────────────────────────────────
+
+interface SendEntry {
+  userId: string; repName: string; leadId: string; leadName: string;
+  email: string; subject: string; sentAt: string;
+}
+
+function EmailTab() {
+  const H = { fontFamily: "var(--font-heading)" };
+  const [entries, setEntries] = useState<SendEntry[]>([]);
+  const [suppressed, setSuppressed] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/crm/admin/outreach");
+      if (res.ok) {
+        const d = await res.json();
+        setEntries(d.entries ?? []);
+        setSuppressed(d.suppressed ?? []);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function reAllow(email: string) {
+    setSuppressed((prev) => prev.filter((e) => e !== email));
+    await fetch("/api/crm/admin/outreach", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  const fmt = (iso: string) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? iso : d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Summary */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] px-4 py-4">
+          <div className="flex items-center gap-2 text-xs text-white/40 mb-2" style={H}><Mail size={14} className="text-[#F97316]" />Emails sent (recent)</div>
+          <p className="text-2xl font-bold text-white tabular-nums" style={H}>{entries.length}</p>
+        </div>
+        <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] px-4 py-4">
+          <div className="flex items-center gap-2 text-xs text-white/40 mb-2" style={H}><X size={14} className="text-red-400" />Unsubscribes</div>
+          <p className="text-2xl font-bold text-white tabular-nums" style={H}>{suppressed.length}</p>
+        </div>
+      </div>
+
+      {/* Recent sends */}
+      <div>
+        <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Recent Sends</p>
+        {entries.length === 0 ? (
+          <div className="text-center py-12 text-white/25 text-sm bg-[#1C1C1F] rounded-xl border border-white/[0.06]" style={H}>
+            No outreach emails logged yet.
+          </div>
+        ) : (
+          <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] divide-y divide-white/[0.05]">
+            {entries.map((e, i) => (
+              <div key={`${e.email}-${i}`} className="flex items-center gap-3 px-4 py-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-white truncate" style={H}>{e.subject || "(no subject)"}</p>
+                  <p className="text-xs text-white/40 truncate mt-0.5" style={H}>
+                    {e.leadName} · {e.email}
+                  </p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="text-xs text-white/50" style={H}>{e.repName}</p>
+                  <p className="text-xs text-white/25 mt-0.5" style={H}>{fmt(e.sentAt)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Unsubscribe list */}
+      <div>
+        <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Unsubscribed / Suppressed</p>
+        {suppressed.length === 0 ? (
+          <div className="text-center py-8 text-white/25 text-sm bg-[#1C1C1F] rounded-xl border border-white/[0.06]" style={H}>
+            Nobody has unsubscribed. 🎉
+          </div>
+        ) : (
+          <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] divide-y divide-white/[0.05]">
+            {suppressed.map((email) => (
+              <div key={email} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                <span className="text-sm text-white/70 truncate" style={H}>{email}</span>
+                <button onClick={() => reAllow(email)}
+                  className="shrink-0 text-xs font-semibold text-white/40 hover:text-green-400 transition-colors" style={H}>
+                  Re-allow
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="text-xs text-white/25 mt-2 px-1" style={H}>
+          Suppressed addresses are skipped on every send. Re-allow only with the person&apos;s consent.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard({ adminName }: { adminName: string }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue">("submissions");
+  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email">("submissions");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [reps, setReps] = useState<RepWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -810,6 +931,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               { key: "submissions", label: "Submissions", count: pending.length },
               { key: "territories", label: "Territories", count: 0 },
               { key: "reps", label: "Sales Reps", count: reps.length },
+              { key: "email", label: "Email", count: 0 },
               { key: "leaderboard", label: "Leaderboard", count: 0 },
               { key: "revenue", label: "Revenue", count: 0 },
             ].map(({ key, label, count }) => (
@@ -990,6 +1112,8 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
           )}
 
           {/* Leaderboard tab */}
+          {tab === "email" && <EmailTab />}
+
           {tab === "leaderboard" && <LeaderboardTab />}
 
           {/* Revenue tab */}

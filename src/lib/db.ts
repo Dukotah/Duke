@@ -593,6 +593,47 @@ export async function getSuppressedCount(): Promise<number> {
   return (await redis.scard(SUPPRESS_KEY)) as number;
 }
 
+// Re-allow an address that previously unsubscribed (admin action).
+export async function unsuppressEmail(email: string): Promise<void> {
+  const redis = getRedis();
+  await redis.srem(SUPPRESS_KEY, email.toLowerCase().trim());
+}
+
+// ─── Outreach send log (for admin email tracking) ─────────────────────────────
+// Each send is recorded under `outreach_log:<userId>`. This aggregates them.
+
+export interface OutreachLogEntry {
+  userId: string;
+  leadId: string;
+  leadName: string;
+  email: string;
+  subject: string;
+  sentAt: string;
+}
+
+export async function getAllOutreachLog(limit = 250): Promise<OutreachLogEntry[]> {
+  const redis = getRedis();
+  const keys = await redis.keys("outreach_log:*");
+  if (!keys.length) return [];
+  const all: OutreachLogEntry[] = [];
+  await Promise.all(
+    (keys as string[]).map(async (key) => {
+      const userId = key.replace("outreach_log:", "");
+      const items = await redis.lrange(key, 0, -1);
+      for (const raw of items as unknown[]) {
+        try {
+          const e = typeof raw === "string" ? JSON.parse(raw) : raw;
+          if (e && e.email) all.push({ ...(e as Omit<OutreachLogEntry, "userId">), userId });
+        } catch {
+          // skip malformed entry
+        }
+      }
+    })
+  );
+  all.sort((a, b) => (b.sentAt ?? "").localeCompare(a.sentAt ?? ""));
+  return all.slice(0, limit);
+}
+
 // ─── Admin seed ───────────────────────────────────────────────────────────────
 
 export async function ensureAdminExists(): Promise<void> {
