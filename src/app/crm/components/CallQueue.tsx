@@ -19,6 +19,7 @@ interface Props {
   states: Record<string, LeadState>;
   onSelectLead: (lead: Lead) => void;
   onRefresh: () => void;
+  onDialerStart?: (lead: Lead) => void;
 }
 
 const OUTCOME_LABEL: Record<string, { label: string; color: string }> = {
@@ -29,9 +30,10 @@ const OUTCOME_LABEL: Record<string, { label: string; color: string }> = {
   interested: { label: "Interested!", color: "text-green-400" },
 };
 
-export default function CallQueue({ states, onSelectLead, onRefresh }: Props) {
+export default function CallQueue({ states, onSelectLead, onRefresh, onDialerStart }: Props) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [powerDialer, setPowerDialer] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -86,8 +88,16 @@ export default function CallQueue({ states, onSelectLead, onRefresh }: Props) {
     const lastOutcome = state?.lastOutcome ? OUTCOME_LABEL[state.lastOutcome] : null;
     const callCount = state?.callCount ?? 0;
 
+    function handleCardClick() {
+      if (powerDialer && onDialerStart) {
+        onDialerStart(lead);
+      } else {
+        onSelectLead(lead);
+      }
+    }
+
     return (
-      <div onClick={() => onSelectLead(lead)}
+      <div onClick={handleCardClick}
         className={`group flex items-center gap-4 px-4 py-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.99] hover:border-[#F97316]/30 hover:bg-[#F97316]/5 ${
           priority ? "bg-[#F97316]/5 border-[#F97316]/20" : "bg-[#1C1C1F] border-white/[0.06]"
         }`}>
@@ -126,6 +136,23 @@ export default function CallQueue({ states, onSelectLead, onRefresh }: Props) {
 
   return (
     <div className="space-y-6">
+
+      {/* Power Dialer toggle */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => setPowerDialer((v) => !v)}
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold border transition-all ${
+            powerDialer
+              ? "bg-[#F97316] text-white border-[#F97316] shadow-lg shadow-[#F97316]/30"
+              : "bg-[#1C1C1F] text-white/50 border-white/10 hover:border-[#F97316]/40 hover:text-[#F97316]"
+          }`}
+          style={H}
+        >
+          <Zap size={13} />
+          ⚡ Power Dialer
+          {powerDialer && <span className="text-xs font-semibold bg-white/20 px-1.5 py-0.5 rounded-full">ON</span>}
+        </button>
+      </div>
 
       <DailyGoals />
 

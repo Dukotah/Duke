@@ -11,6 +11,7 @@ import {
 import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
 import AddLeadModal from "./components/AddLeadModal";
+import CallTimer from "./components/CallTimer";
 
 // ─── Broadcast Banner ─────────────────────────────────────────────────────────
 
@@ -411,6 +412,7 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
   const [statesLoaded, setStatesLoaded] = useState(false);
   const [showAddLead, setShowAddLead] = useState(false);
   const [queueRefreshKey, setQueueRefreshKey] = useState(0);
+  const [activeLead, setActiveLead] = useState<Lead | null>(null);
 
   // Load all state + submissions once
   useEffect(() => {
@@ -444,6 +446,33 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
     fetch("/api/crm/submit").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setSubmissions(d); }).catch(() => {});
   }, []);
 
+  const handleCallOutcome = useCallback(async (outcome: string) => {
+    if (!activeLead) return;
+    const leadId = activeLead.id;
+    setActiveLead(null);
+    const outcomeToStage: Record<string, string> = {
+      no_answer: "called",
+      voicemail: "voicemail",
+      call_back: "call_back",
+      interested: "interested",
+    };
+    const patch: Partial<LeadState> = {
+      stage: outcomeToStage[outcome] ?? "called",
+      status: outcome === "interested" ? "contacted" : "contacted",
+      lastOutcome: outcome,
+      lastContacted: new Date().toISOString(),
+    };
+    setStates((prev) => {
+      const cur = prev[leadId] ?? { status: "new", stage: "to_call", notes: "" };
+      return { ...prev, [leadId]: { ...cur, ...patch, callCount: (cur.callCount ?? 0) + 1 } };
+    });
+    await fetch("/api/crm/state", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ leadId, ...patch, callCount: ((states[leadId]?.callCount ?? 0) + 1) }),
+    });
+  }, [activeLead, states]);
+
   async function handleLogout() {
     await fetch("/api/crm/logout", { method: "POST" });
     router.push("/crm/login");
@@ -454,6 +483,13 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
 
   return (
     <>
+      {activeLead && (
+        <CallTimer
+          lead={activeLead}
+          onOutcome={handleCallOutcome}
+          onDismiss={() => setActiveLead(null)}
+        />
+      )}
       {showAddLead && (
         <AddLeadModal
           onClose={() => setShowAddLead(false)}
@@ -501,7 +537,13 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
         <div className="flex-1 max-w-3xl mx-auto w-full px-4 pt-5 pb-24 overflow-y-auto">
           <BroadcastBanners />
           {tab === "queue" && (
-            <CallQueue key={queueRefreshKey} states={states} onSelectLead={(l) => setSelectedLead(l as Lead)} onRefresh={refreshSubs} />
+            <CallQueue
+              key={queueRefreshKey}
+              states={states}
+              onSelectLead={(l) => setSelectedLead(l as Lead)}
+              onRefresh={refreshSubs}
+              onDialerStart={(l) => setActiveLead(l as Lead)}
+            />
           )}
           {tab === "pipeline" && (
             <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
