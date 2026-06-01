@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   LogOut, Users, Send, DollarSign, Check, X, Plus,
   Phone, Mail, Globe, Flame, Zap, CheckCircle2, Eye, Trash2,
-  TrendingUp, BarChart2, Megaphone, Trophy,
+  TrendingUp, BarChart2, Megaphone, Trophy, AlertTriangle,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -828,9 +828,124 @@ function EmailTab() {
   );
 }
 
+// ─── Setup Tab ────────────────────────────────────────────────────────────────
+
+interface HealthCheck {
+  id: string; label: string; required: boolean; ok: boolean;
+  vars: string[]; okText: string; problem: string;
+}
+
+function SetupTab() {
+  const H = { fontFamily: "var(--font-heading)" };
+  const [checks, setChecks] = useState<HealthCheck[]>([]);
+  const [ready, setReady] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/crm/admin/health");
+      if (res.ok) {
+        const d = await res.json();
+        setChecks(d.checks ?? []);
+        setReady(Boolean(d.ready));
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const requiredLeft = checks.filter((c) => c.required && !c.ok).length;
+
+  return (
+    <div className="space-y-5">
+      {/* Overall status banner */}
+      {ready ? (
+        <div className="flex items-start gap-3 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-4">
+          <CheckCircle2 size={20} className="text-green-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-bold text-white" style={H}>You&apos;re all set up</p>
+            <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>
+              Everything required is connected. Add your sales reps in the Sales Reps tab and they can sign in right away.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-start gap-3 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 px-4 py-4">
+          <AlertTriangle size={20} className="text-[#F97316] shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-bold text-white" style={H}>
+              {requiredLeft} thing{requiredLeft === 1 ? "" : "s"} left to finish setup
+            </p>
+            <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>
+              Add the settings marked <span className="text-[#F97316] font-semibold">Required</span> below to your hosting
+              provider&apos;s environment variables, then redeploy. See <span className="text-white/70">SETUP.md</span> for
+              step-by-step instructions on where to get each value.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Each check */}
+      <div className="space-y-2">
+        {checks.map((c) => (
+          <div key={c.id} className="rounded-xl border border-white/[0.06] bg-[#1C1C1F] px-4 py-3.5">
+            <div className="flex items-start gap-3">
+              {c.ok ? (
+                <CheckCircle2 size={18} className="text-green-400 shrink-0 mt-0.5" />
+              ) : c.required ? (
+                <X size={18} className="text-red-400 shrink-0 mt-0.5" />
+              ) : (
+                <AlertTriangle size={18} className="text-yellow-400 shrink-0 mt-0.5" />
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-bold text-white" style={H}>{c.label}</p>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5 ${
+                    c.required ? "bg-red-500/15 text-red-300" : "bg-white/10 text-white/40"
+                  }`} style={H}>
+                    {c.required ? "Required" : "Optional"}
+                  </span>
+                </div>
+                <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>
+                  {c.ok ? c.okText : c.problem}
+                </p>
+                {!c.ok && (
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {c.vars.map((v) => (
+                      <code key={v} className="text-[11px] font-mono text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 rounded px-1.5 py-0.5">
+                        {v}
+                      </code>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button onClick={load}
+        className="text-xs font-semibold text-white/40 hover:text-white/70 transition-colors" style={H}>
+        ↻ Re-check
+      </button>
+    </div>
+  );
+}
+
 export default function AdminDashboard({ adminName }: { adminName: string }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email">("submissions");
+  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "setup">("submissions");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [reps, setReps] = useState<RepWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -934,6 +1049,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               { key: "email", label: "Email", count: 0 },
               { key: "leaderboard", label: "Leaderboard", count: 0 },
               { key: "revenue", label: "Revenue", count: 0 },
+              { key: "setup", label: "Setup", count: 0 },
             ].map(({ key, label, count }) => (
               <button key={key} onClick={() => setTab(key as typeof tab)}
                 className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
@@ -1113,6 +1229,8 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
 
           {/* Leaderboard tab */}
           {tab === "email" && <EmailTab />}
+
+          {tab === "setup" && <SetupTab />}
 
           {tab === "leaderboard" && <LeaderboardTab />}
 
