@@ -500,6 +500,7 @@ export default function CRMDashboard({ userId, userName }: { userId: string; use
         <LeadPanel lead={selectedLead}
           state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
           submission={submissions.find((s) => s.leadId === selectedLead.id)}
+          repName={userName}
           onClose={() => setSelectedLead(null)}
           onUpdate={(patch) => updateState(selectedLead.id, patch)}
           onSubmitted={refreshSubs} />

@@ -3,8 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   X, Search, Mail, Filter, Check, Send, ChevronDown, Flame, Zap,
-  Tag, MapPin, ArrowUpDown,
+  Tag, MapPin, ArrowUpDown, Save, RotateCcw,
 } from "lucide-react";
+import {
+  loadTemplates, saveTemplateOverride, resetTemplateOverride, hasOverride,
+  personalize, type EmailTemplate,
+} from "./emailTemplates";
 
 const H = { fontFamily: "var(--font-heading)" };
 const LIMIT = 50;
@@ -28,54 +32,6 @@ interface LeadsResponse {
   counties: string[];
   niches: string[];
 }
-
-interface Template {
-  key: string;
-  label: string;
-  subject: string;
-  body: string;
-}
-
-const TEMPLATES: Template[] = [
-  {
-    key: "no_website",
-    label: "🔥 No Website",
-    subject: "Quick question about {business}'s online presence",
-    body: `Hi {name},
-
-I noticed {business} in {city} doesn't have a website yet, and I think that's actually a big opportunity.
-
-Most customers search online before calling — if you're not there, you're losing leads to competitors every day.
-
-We build clean, fast websites for local businesses starting at $1,500. Would you be open to a quick 10-minute chat?
-
-Best,
-{fromName}
-Copper Bay Tech`,
-  },
-  {
-    key: "diy_upgrade",
-    label: "⚡ DIY Site Upgrade",
-    subject: "Noticed something about {business}'s website",
-    body: `Hi {name},
-
-I was looking at {business}'s website and thought there are a few things that could really help it convert more visitors into customers.
-
-We specialize in upgrading DIY sites — faster load times, better mobile experience, clearer calls-to-action — and most projects are done in under 2 weeks.
-
-Would love to show you a quick mockup if you're curious. Worth a 10-minute call?
-
-Best,
-{fromName}
-Copper Bay Tech`,
-  },
-  {
-    key: "custom",
-    label: "✏️ Custom",
-    subject: "",
-    body: "",
-  },
-];
 
 function Select({ value, onChange, children, icon: Icon }: {
   value: string;
@@ -121,10 +77,12 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
 
   // Compose state
-  const [templateKey, setTemplateKey] = useState("no_website");
-  const [subject, setSubject] = useState(TEMPLATES[0].subject);
-  const [body, setBody] = useState(TEMPLATES[0].body);
+  const [templates, setTemplates] = useState<EmailTemplate[]>(() => loadTemplates());
+  const [templateKey, setTemplateKey] = useState(templates[0].key);
+  const [subject, setSubject] = useState(templates[0].subject);
+  const [body, setBody] = useState(templates[0].body);
   const [fromName, setFromName] = useState(repName);
+  const [savedFlash, setSavedFlash] = useState(false);
 
   // Result
   const [result, setResult] = useState<{ sent: number; failed: number; skipped: number } | null>(null);
@@ -195,8 +153,26 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
 
   const applyTemplate = (key: string) => {
     setTemplateKey(key);
-    const tmpl = TEMPLATES.find((t) => t.key === key);
+    const tmpl = templates.find((t) => t.key === key);
     if (tmpl && key !== "custom") {
+      setSubject(tmpl.subject);
+      setBody(tmpl.body);
+    }
+  };
+
+  const saveEdits = () => {
+    saveTemplateOverride(templateKey, subject, body);
+    setTemplates((prev) => prev.map((t) => (t.key === templateKey ? { ...t, subject, body } : t)));
+    setSavedFlash(true);
+    setTimeout(() => setSavedFlash(false), 1500);
+  };
+
+  const resetEdits = () => {
+    resetTemplateOverride(templateKey);
+    const fresh = loadTemplates();
+    setTemplates(fresh);
+    const tmpl = fresh.find((t) => t.key === templateKey);
+    if (tmpl) {
       setSubject(tmpl.subject);
       setBody(tmpl.body);
     }
@@ -205,14 +181,8 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const previewEmail = () => {
     if (selectedLeads.length === 0) return { subject: "", body: "" };
     const lead = selectedLeads[0];
-    return {
-      subject: subject.replace(/\{name\}/gi, lead.name).replace(/\{business\}/gi, lead.name).replace(/\{city\}/gi, lead.city),
-      body: body
-        .replace(/\{name\}/gi, lead.name)
-        .replace(/\{business\}/gi, lead.name)
-        .replace(/\{city\}/gi, lead.city)
-        .replace(/\{fromName\}/gi, fromName),
-    };
+    const vars = { name: lead.name, business: lead.name, city: lead.city, fromName };
+    return { subject: personalize(subject, vars), body: personalize(body, vars) };
   };
 
   const handleSend = async () => {
@@ -413,7 +383,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
           <div>
             <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Choose a Template</p>
             <div className="flex flex-col gap-2">
-              {TEMPLATES.map((t) => (
+              {templates.map((t) => (
                 <button
                   key={t.key}
                   onClick={() => applyTemplate(t.key)}
@@ -460,7 +430,21 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
 
           {/* Body */}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Message Body</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-semibold text-white/40 uppercase tracking-wider">Message Body</label>
+              {templateKey !== "custom" && (
+                <div className="flex items-center gap-3">
+                  <button onClick={saveEdits} className="text-xs font-semibold text-white/40 hover:text-[#F97316] flex items-center gap-1 transition-colors">
+                    {savedFlash ? <><Check size={11} className="text-green-400" />Saved</> : <><Save size={11} />Save edits</>}
+                  </button>
+                  {hasOverride(templateKey) && (
+                    <button onClick={resetEdits} className="text-xs font-semibold text-white/30 hover:text-white/60 flex items-center gap-1 transition-colors">
+                      <RotateCcw size={11} />Reset
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
             <textarea
               value={body}

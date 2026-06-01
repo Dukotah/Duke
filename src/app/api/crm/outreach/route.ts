@@ -77,16 +77,18 @@ export async function POST(req: NextRequest) {
   let failed = 0;
 
   for (const lead of toSend) {
-    // Personalize body — replace {name}, {business}, {city}
+    // Personalize body — replace {name}, {business}, {city}, {fromName}
     const personalizedBody = emailBody
       .replace(/\{name\}/gi, lead.name)
       .replace(/\{business\}/gi, lead.name)
-      .replace(/\{city\}/gi, lead.city);
+      .replace(/\{city\}/gi, lead.city)
+      .replace(/\{fromName\}/gi, fromName);
 
     const personalizedSubject = subject
       .replace(/\{name\}/gi, lead.name)
       .replace(/\{business\}/gi, lead.name)
-      .replace(/\{city\}/gi, lead.city);
+      .replace(/\{city\}/gi, lead.city)
+      .replace(/\{fromName\}/gi, fromName);
 
     if (!apiKey) {
       console.log(`[Outreach] No RESEND_API_KEY — would send to ${lead.email}: ${personalizedSubject}`);

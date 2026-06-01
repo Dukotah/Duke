@@ -8,6 +8,7 @@ import {
   CalendarClock, CheckCircle2, DollarSign, Activity, Lock, UserCheck, Info,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
+import EmailComposer from "./EmailComposer";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -113,12 +114,13 @@ function SubmitModal({ lead, state, onClose, onSubmitted }: {
   );
 }
 
-export default function LeadPanel({ lead, state, submission, onClose, onUpdate, onSubmitted }: {
-  lead: Lead; state: LeadState; submission?: Submission;
+export default function LeadPanel({ lead, state, submission, repName, onClose, onUpdate, onSubmitted }: {
+  lead: Lead; state: LeadState; submission?: Submission; repName: string;
   onClose: () => void; onUpdate: (patch: Partial<LeadState>) => void; onSubmitted: () => void;
 }) {
   const [notes, setNotes] = useState(state.notes ?? "");
   const [showSubmit, setShowSubmit] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
   const [activityKey, setActivityKey] = useState(0);
   const [claim, setClaim] = useState<{ userId: string; repName: string } | null | undefined>(undefined);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -228,6 +230,19 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
     onSubmitted();
   };
 
+  // The outreach API already logs the email and schedules a follow-up server
+  // side; mirror that in local state so the panel updates without a refetch.
+  const handleEmailSent = () => {
+    const nowDisplay = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const fu = new Date(); fu.setDate(fu.getDate() + 3);
+    const fuISO = fu.toISOString().slice(0, 10);
+    const terminal = state.status === "won" || state.status === "not_interested";
+    onUpdate(terminal
+      ? { lastContacted: nowDisplay }
+      : { status: "contacted", lastContacted: nowDisplay, followUpDate: fuISO });
+    setActivityKey((k) => k + 1);
+  };
+
   const tier = lead.tier;
   const todayISO = new Date().toISOString().slice(0, 10);
   const tomorrowISO = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); })();
@@ -241,6 +256,14 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
   return (
     <>
       {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
+      {showEmail && (
+        <EmailComposer
+          lead={{ id: lead.id, name: lead.name, email: lead.email, city: lead.city }}
+          repName={repName}
+          onClose={() => setShowEmail(false)}
+          onSent={handleEmailSent}
+        />
+      )}
 
       <div className="fixed inset-0 z-50 flex items-end sm:items-stretch sm:justify-end" onClick={onClose}>
         <div className="absolute inset-0 bg-black/50 sm:bg-black/30 backdrop-blur-sm sm:backdrop-blur-none" />
@@ -301,6 +324,17 @@ export default function LeadPanel({ lead, state, submission, onClose, onUpdate, 
                 {state.lastContacted && (
                   <p className="text-xs text-white/30 text-center mt-2" style={H}>Last contacted: {state.lastContacted}</p>
                 )}
+              </div>
+            )}
+
+            {/* SEND EMAIL */}
+            {lead.email && (
+              <div className="px-5 py-4 border-b border-white/[0.06]">
+                <button onClick={() => setShowEmail(true)}
+                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-bold border border-[#F97316]/30 bg-[#F97316]/10 text-[#F97316] hover:bg-[#F97316]/20 transition-all active:scale-95"
+                  style={H}>
+                  <Mail size={16} />Send Email
+                </button>
               </div>
             )}
 
