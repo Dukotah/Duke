@@ -38,7 +38,7 @@ export default function DailyGoals() {
   useEffect(() => {
     fetch("/api/crm/goals")
       .then((r) => r.json())
-      .then((d) => setData(d))
+              .then((d) => { if (d && d.dailyStats) setData(d); })
       .catch(() => {});
   }, []);
 
