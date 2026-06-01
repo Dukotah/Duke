@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, business, email, phone, service, message } = body;
+    const { name, business, email, phone, service, timeline, method, bestTime, message } = body;
 
     if (!name || !business || !email || !service) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -12,8 +12,8 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.RESEND_API_KEY;
 
     if (!apiKey) {
-      console.log("Contact form submission (no RESEND_API_KEY set):", {
-        name, business, email, phone, service, message,
+      console.log("Strategy call request (no RESEND_API_KEY set):", {
+        name, business, email, phone, service, timeline, method, bestTime, message,
       });
       return NextResponse.json({ ok: true });
     }
@@ -28,15 +28,18 @@ export async function POST(req: NextRequest) {
                   from: "Copper Bay Tech <noreply@copperbaytech.com>",
         to: ["duke@copperbaytech.com"],
         reply_to: email,
-        subject: `New inquiry from ${name} — ${business}`,
+        subject: `New strategy call request from ${name} — ${business}`,
         html: `
-          <h2>New Contact Form Submission</h2>
+          <h2>New Strategy Call Request</h2>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Business:</strong> ${business}</p>
           <p><strong>Email:</strong> ${email}</p>
           ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ""}
           <p><strong>Service:</strong> ${service}</p>
-          ${message ? `<p><strong>Message:</strong><br>${message.replace(/\n/g, "<br>")}</p>` : ""}
+          ${timeline ? `<p><strong>Timeline:</strong> ${timeline}</p>` : ""}
+          ${method ? `<p><strong>Preferred contact:</strong> ${method}</p>` : ""}
+          ${bestTime ? `<p><strong>Best time to reach:</strong> ${bestTime}</p>` : ""}
+          ${message ? `<p><strong>Details:</strong><br>${message.replace(/\n/g, "<br>")}</p>` : ""}
         `,
       }),
     });
