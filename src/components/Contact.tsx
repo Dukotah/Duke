@@ -13,9 +13,39 @@ type FormData = {
   business: string;
   email: string;
   phone?: string;
-  service: string;
+  bestTime?: string;
   message?: string;
 };
+
+const services = [
+  { value: "website", label: "Website Design & Development", icon: Globe },
+  { value: "it-support", label: "IT Support & Networking", icon: Network },
+  { value: "automation", label: "Process Automation", icon: Workflow },
+  { value: "cybersecurity", label: "Cybersecurity Audit", icon: ShieldCheck },
+  { value: "custom-dev", label: "Custom Web Application", icon: Code2 },
+  { value: "other", label: "Not sure — I need advice", icon: HelpCircle },
+];
+
+const timelines = [
+  { value: "asap", label: "As soon as possible", note: "Something's broken or urgent", icon: Zap },
+  { value: "weeks", label: "In the next few weeks", note: "Planning ahead", icon: CalendarClock },
+  { value: "exploring", label: "Just exploring options", note: "No rush — gathering info", icon: Compass },
+];
+
+const methods: { value: ContactMethod; label: string; icon: typeof Phone }[] = [
+  { value: "call", label: "Phone call", icon: Phone },
+  { value: "text", label: "Text message", icon: MessageSquare },
+  { value: "email", label: "Email", icon: Mail },
+  { value: "video", label: "Video call", icon: Video },
+];
+
+const bestTimes = [
+  { value: "morning", label: "Morning", icon: Sunrise },
+  { value: "afternoon", label: "Afternoon", icon: Sun },
+  { value: "evening", label: "Evening", icon: Sunset },
+];
+
+const TOTAL_STEPS = 4;
 
 export default function Contact() {
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -25,15 +55,51 @@ export default function Contact() {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<FormData>();
+
+  // Single-select steps advance automatically — keeps the flow snappy.
+  const choose = (key: keyof BookingData, value: string) => {
+    setBooking((prev) => ({ ...prev, [key]: value }));
+    setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
+  };
+
+  const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const onSubmit = async (data: FormData) => {
     setStatus("loading");
+
+    const serviceLabel =
+      services.find((s) => s.value === booking.service)?.label ?? booking.service;
+    const timelineLabel =
+      timelines.find((t) => t.value === booking.timeline)?.label ?? booking.timeline;
+    const methodLabel =
+      methods.find((m) => m.value === booking.method)?.label ?? booking.method;
+
+    const summary = [
+      `Preferred contact: ${methodLabel}`,
+      `Timeline: ${timelineLabel}`,
+      data.bestTime ? `Best time to reach: ${data.bestTime}` : null,
+      data.message ? `\nNotes: ${data.message}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          name: data.name,
+          business: data.business,
+          email: data.email,
+          phone: data.phone,
+          service: serviceLabel,
+          timeline: timelineLabel,
+          method: methodLabel,
+          bestTime: data.bestTime,
+          message: summary,
+        }),
       });
       if (res.ok) {
         track("contact_form_submit");
@@ -48,8 +114,20 @@ export default function Contact() {
 
   const inputClass =
     "w-full px-4 py-3 rounded-md border border-[#18181B]/15 bg-white text-[#3F3F46] text-sm focus:outline-none focus:ring-2 focus:ring-[#18181B]/30 transition placeholder-[#3F3F46]/30";
+  const labelClass =
+    "block text-xs font-semibold uppercase tracking-widest text-[#18181B]/60 mb-1.5";
 
-  const labelClass = "block text-xs font-semibold uppercase tracking-widest text-[#18181B]/60 mb-1.5";
+  const selectedService = services.find((s) => s.value === booking.service);
+  const selectedTimeline = timelines.find((t) => t.value === booking.timeline);
+  const selectedMethod = methods.find((m) => m.value === booking.method);
+  const progress = (step / TOTAL_STEPS) * 100;
+
+  const stepTitles = [
+    "What can we help you with?",
+    "How soon are you looking to start?",
+    "How should we reach you?",
+    "Last step — where do we send the details?",
+  ];
 
   return (
     <section id="contact" className="py-24 bg-white">
@@ -66,7 +144,7 @@ export default function Contact() {
               className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Get in touch
+              Book a free strategy call
             </p>
             <h2
               className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"
@@ -241,5 +319,25 @@ export default function Contact() {
         </div>
       </div>
     </section>
+  );
+}
+
+function Recap({ label, value }: { label: string; value?: string }) {
+  if (!value) return null;
+  return (
+    <div className="flex gap-3 py-1">
+      <span
+        className="text-xs text-[#3F3F46]/40 w-28 flex-shrink-0"
+        style={{ fontFamily: "var(--font-heading)" }}
+      >
+        {label}
+      </span>
+      <span
+        className="text-xs text-[#18181B] font-medium"
+        style={{ fontFamily: "var(--font-body)" }}
+      >
+        {value}
+      </span>
+    </div>
   );
 }
