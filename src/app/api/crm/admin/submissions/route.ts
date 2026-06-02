@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listSubmissions, resolveSubmission, markCommissionPaid, getRepStats, listUsers, getUserLeadCount, getUserById } from "@/lib/db";
 import { parseJsonBody, handleApiError } from "@/lib/api";
+import { NOREPLY_EMAIL } from "@/config/site";
 
 async function sendRepNotification(
   repEmail: string,
@@ -39,7 +40,7 @@ async function sendRepNotification(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Copper Bay Tech CRM <noreply@copperbaytech.com>",
+      from: `Copper Bay Tech CRM <${NOREPLY_EMAIL}>`,
       to: [repEmail],
       subject,
       html,

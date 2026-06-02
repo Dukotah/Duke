@@ -127,9 +127,13 @@ To send for real:
 2. Add your sending domain in Resend and add the **SPF, DKIM, and DMARC** DNS
    records it gives you. Wait until Resend shows the domain as **Verified**.
 3. Create an **API Key** and add it as `RESEND_API_KEY`.
-4. Set **`OUTREACH_DOMAIN_VERIFIED=true`**. This is the switch that unlocks
+4. Set **`MAILING_ADDRESS`** to a deliverable postal address — a P.O. Box or
+   virtual mailbox is fine (a digital agency doesn't need a street office). This
+   is legally required (CAN-SPAM) in every marketing email, so live outreach
+   stays gated until it's set.
+5. Set **`OUTREACH_DOMAIN_VERIFIED=true`**. This is the switch that unlocks
    real delivery — only flip it once step 2 shows "Verified".
-5. *(Optional)* Set **`OUTREACH_DAILY_CAP`** to warm the domain up slowly —
+6. *(Optional)* Set **`OUTREACH_DAILY_CAP`** to warm the domain up slowly —
    start around `25`–`50` and raise it over a couple of weeks. Defaults to 200.
 
 Before all that, you can send freely in practice mode — every email is tracked
