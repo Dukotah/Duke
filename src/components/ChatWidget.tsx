@@ -97,7 +97,7 @@ export default function ChatWidget() {
           message: userMessage,
         }),
       });
-    } catch (_) {}
+    } catch {}
     setMessages((prev) => [
       ...prev,
       {

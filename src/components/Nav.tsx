@@ -7,6 +7,12 @@ import Image from "next/image";
 import { PHONE, PHONE_HREF } from "@/config/site";
 import { track } from "@/lib/analytics";
 
+const services = [
+  { label: "Web Development", href: "/services/web-development", desc: "Fast, custom-coded websites" },
+  { label: "IT Support & Networking", href: "/services/it-support", desc: "Managed support that just works" },
+  { label: "Cybersecurity", href: "/services/cybersecurity", desc: "Audits & network security" },
+];
+
 const links = [
   { label: "Services", href: "/#services" },
   { label: "Pricing", href: "/pricing" },

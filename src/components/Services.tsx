@@ -25,6 +25,7 @@ const tiers = [
       "Domain, hosting & email setup",
     ],
     cta: "Start with a website",
+    href: "/services/web-development",
   },
   {
     icon: Server,
@@ -39,6 +40,7 @@ const tiers = [
       "Staff onboarding & support",
     ],
     cta: "Get IT support",
+    href: "/services/it-support",
     featured: true,
   },
   {
@@ -54,6 +56,7 @@ const tiers = [
       "Ongoing security monitoring",
     ],
     cta: "Talk security",
+    href: "/services/cybersecurity",
   },
 ];
 
@@ -141,17 +144,17 @@ export default function Services() {
                 ))}
               </ul>
 
-              <a
-                href="#contact"
-                className={`inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold transition-colors ${
+              <Link
+                href={t.href}
+                className={`inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold transition-colors ${
                   t.featured
                     ? "bg-[#F97316] text-[#18181B] hover:bg-[#ea6c0a]"
                     : "bg-[#18181B] text-white hover:bg-[#0d0d0f]"
                 }`}
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                {t.cta}
-              </a>
+                {t.cta} <ArrowRight size={15} />
+              </Link>
             </motion.div>
           ))}
         </div>

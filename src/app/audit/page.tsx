@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Gauge, Globe, Loader2, Zap, BarChart3, Wrench, AlertCircle } from "lucide-react";
 import Nav from "@/components/Nav";
