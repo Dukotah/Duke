@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { ArrowRight, Globe, Server, ShieldCheck, Check } from "lucide-react";
+import { ArrowRight, Globe, Server, ShieldCheck, Check, Phone, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pricing | Web Design, IT Support & Cybersecurity | Copper Bay Tech",
@@ -95,6 +95,12 @@ const tiers = [
   },
 ];
 
+const guarantees = [
+  "Fixed quote before any work starts",
+  "No hourly billing, ever",
+  "Month-to-month — cancel anytime",
+];
+
 const faqs = [
   {
     q: "Why aren't you cheaper?",
@@ -122,53 +128,99 @@ export default function Pricing() {
   return (
     <>
       <Nav />
-      <main>
+      <main className="bg-[#FAFAF9]">
         {/* Hero */}
-        <section className="pt-32 pb-16 bg-[#18181B]">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+        <section className="relative overflow-hidden bg-[#18181B] pt-36 pb-28">
+          {/* ambient texture */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+              backgroundSize: "56px 56px",
+              maskImage: "radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%)",
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] -translate-x-1/2 rounded-full blur-[120px]"
+            style={{ background: "radial-gradient(circle, rgba(249,115,22,0.22) 0%, transparent 70%)" }}
+          />
+          <div className="relative mx-auto max-w-4xl px-6 text-center">
             <span
-              className="inline-block mb-6 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase"
-              style={{ backgroundColor: "rgba(200,169,110,0.15)", color: "#F97316", border: "1px solid rgba(200,169,110,0.3)", fontFamily: "var(--font-heading)" }}
+              className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#F97316]/30 bg-[#F97316]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#F97316]"
+              style={{ fontFamily: "var(--font-heading)" }}
             >
+              <Sparkles size={13} />
               Transparent Pricing
             </span>
             <h1
-              className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6"
+              className="text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white md:text-7xl"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Flat fees.<br />
+              Flat fees.
+              <br />
               <span style={{ color: "#F97316" }}>No surprises.</span>
             </h1>
             <p
-              className="text-lg text-white/60 max-w-2xl mx-auto"
+              className="mx-auto mt-7 max-w-2xl text-pretty text-lg leading-relaxed text-white/60 md:text-xl"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              We quote a number before any work starts, and that&apos;s the number you pay. No hourly billing, no change-order padding, no hidden fees.
+              We quote a number before any work starts, and that&apos;s the number you pay. No hourly
+              billing, no change-order padding, no hidden fees.
             </p>
+
+            {/* guarantee strip */}
+            <ul className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-8">
+              {guarantees.map((g) => (
+                <li
+                  key={g}
+                  className="flex items-center gap-2 text-sm text-white/75"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#F97316]/20">
+                    <Check size={12} color="#F97316" strokeWidth={3} />
+                  </span>
+                  {g}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
         {/* Pricing cards */}
-        <section className="py-24 bg-[#FAFAF9]">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="grid md:grid-cols-3 gap-6">
+        <section className="relative -mt-16 pb-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="grid items-stretch gap-6 lg:grid-cols-3">
               {tiers.map((t) => (
                 <div
                   key={t.label}
-                  className={`rounded-2xl p-8 flex flex-col ${
-                    t.featured ? "bg-[#18181B] text-white shadow-2xl scale-[1.02]" : "bg-white border border-[#18181B]/8"
+                  className={`group relative flex flex-col rounded-3xl p-8 transition-all duration-300 ${
+                    t.featured
+                      ? "bg-[#18181B] text-white shadow-[0_30px_60px_-15px_rgba(24,24,27,0.45)] ring-1 ring-[#F97316]/40 lg:-mt-4 lg:mb-4 lg:scale-[1.03]"
+                      : "border border-[#18181B]/[0.07] bg-white shadow-[0_10px_30px_-12px_rgba(24,24,27,0.12)] hover:-translate-y-1 hover:shadow-[0_24px_48px_-16px_rgba(24,24,27,0.2)]"
                   }`}
                 >
+                  {t.featured && (
+                    <span
+                      className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#F97316] px-4 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-lg"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                      Most popular
+                    </span>
+                  )}
+
                   <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${
-                      t.featured ? "bg-white/10" : "bg-[#18181B]/6"
+                    className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-105 ${
+                      t.featured ? "bg-[#F97316]/15 ring-1 ring-[#F97316]/25" : "bg-[#18181B]/[0.05] ring-1 ring-[#18181B]/[0.06]"
                     }`}
                   >
-                    <t.icon size={22} color="#F97316" />
+                    <t.icon size={26} color="#F97316" strokeWidth={1.75} />
                   </div>
 
                   <p
-                    className={`text-xs font-semibold uppercase tracking-widest mb-1 ${
+                    className={`mb-1.5 text-xs font-semibold uppercase tracking-[0.18em] ${
                       t.featured ? "text-[#F97316]" : "text-[#18181B]/50"
                     }`}
                     style={{ fontFamily: "var(--font-heading)" }}
@@ -177,33 +229,39 @@ export default function Pricing() {
                   </p>
 
                   <p
-                    className={`text-sm mb-5 ${t.featured ? "text-white/60" : "text-[#3F3F46]/50"}`}
+                    className={`mb-6 text-[15px] leading-relaxed ${t.featured ? "text-white/65" : "text-[#3F3F46]/70"}`}
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     {t.tagline}
                   </p>
 
-                  <div className="mb-6">
+                  <div className={`mb-7 border-b pb-7 ${t.featured ? "border-white/10" : "border-[#18181B]/[0.08]"}`}>
                     <span
-                      className={`text-3xl font-bold ${t.featured ? "text-white" : "text-[#18181B]"}`}
+                      className={`text-[2.1rem] font-bold leading-none tracking-tight ${t.featured ? "text-white" : "text-[#18181B]"}`}
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {t.price}
                     </span>
                     <p
-                      className={`text-xs mt-1 ${t.featured ? "text-white/40" : "text-[#3F3F46]/40"}`}
-                      style={{ fontFamily: "var(--font-body)" }}
+                      className={`mt-2 text-xs uppercase tracking-wide ${t.featured ? "text-white/45" : "text-[#3F3F46]/45"}`}
+                      style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {t.priceNote}
                     </p>
                   </div>
 
-                  <ul className="space-y-2.5 mb-6 flex-1">
+                  <ul className="mb-7 flex-1 space-y-3">
                     {t.includes.map((item) => (
-                      <li key={item} className="flex items-start gap-2.5">
-                        <Check size={14} color="#F97316" className="flex-shrink-0 mt-0.5" />
+                      <li key={item} className="flex items-start gap-3">
                         <span
-                          className={`text-sm ${t.featured ? "text-white/80" : "text-[#3F3F46]/70"}`}
+                          className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${
+                            t.featured ? "bg-[#F97316]/20" : "bg-[#F97316]/12"
+                          }`}
+                        >
+                          <Check size={12} color="#F97316" strokeWidth={3} />
+                        </span>
+                        <span
+                          className={`text-[15px] leading-snug ${t.featured ? "text-white/85" : "text-[#3F3F46]"}`}
                           style={{ fontFamily: "var(--font-body)" }}
                         >
                           {item}
@@ -213,72 +271,106 @@ export default function Pricing() {
                   </ul>
 
                   {t.addons.length > 0 && (
-                    <div className={`rounded-lg p-4 mb-6 ${t.featured ? "bg-white/8" : "bg-[#FAFAF9]"}`}>
+                    <div className={`mb-7 rounded-2xl p-5 ${t.featured ? "bg-white/[0.06]" : "bg-[#FAFAF9]"}`}>
                       <p
-                        className={`text-xs font-semibold uppercase tracking-widest mb-2 ${t.featured ? "text-white/40" : "text-[#18181B]/40"}`}
+                        className={`mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] ${t.featured ? "text-white/45" : "text-[#18181B]/45"}`}
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         Common add-ons
                       </p>
-                      {t.addons.map((a) => (
-                        <div key={a.label} className="flex items-center justify-between mb-1">
-                          <span
-                            className={`text-xs ${t.featured ? "text-white/60" : "text-[#3F3F46]/60"}`}
-                            style={{ fontFamily: "var(--font-body)" }}
-                          >
-                            {a.label}
-                          </span>
-                          <span
-                            className={`text-xs font-semibold ${t.featured ? "text-white/60" : "text-[#18181B]/60"}`}
-                            style={{ fontFamily: "var(--font-heading)" }}
-                          >
-                            {a.price}
-                          </span>
-                        </div>
-                      ))}
+                      <div className="space-y-2.5">
+                        {t.addons.map((a) => (
+                          <div key={a.label} className="flex items-start justify-between gap-3">
+                            <span
+                              className={`text-[13px] leading-snug ${t.featured ? "text-white/65" : "text-[#3F3F46]/75"}`}
+                              style={{ fontFamily: "var(--font-body)" }}
+                            >
+                              {a.label}
+                            </span>
+                            <span
+                              className={`whitespace-nowrap text-[13px] font-semibold ${t.featured ? "text-[#F97316]" : "text-[#18181B]"}`}
+                              style={{ fontFamily: "var(--font-heading)" }}
+                            >
+                              {a.price}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
 
                   <Link
                     href={t.ctaHref}
-                    className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 ${
                       t.featured
-                        ? "bg-[#F97316] text-white hover:bg-[#ea6c0a]"
-                        : "bg-[#18181B] text-white hover:bg-[#0d0d0f]"
+                        ? "bg-[#F97316] text-white shadow-lg shadow-[#F97316]/25 hover:bg-[#ea6c0a] focus-visible:ring-offset-[#18181B]"
+                        : "bg-[#18181B] text-white hover:bg-[#0d0d0f] focus-visible:ring-offset-white"
                     }`}
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
-                    {t.cta} <ArrowRight size={14} />
+                    {t.cta}
+                    <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
                   </Link>
 
                   <Link
                     href={t.href}
-                    className={`mt-3 text-center text-xs underline underline-offset-2 ${t.featured ? "text-white/40 hover:text-white/60" : "text-[#3F3F46]/40 hover:text-[#3F3F46]/70"}`}
+                    className={`mt-4 text-center text-xs font-medium underline-offset-4 transition-colors hover:underline ${
+                      t.featured ? "text-white/45 hover:text-white/80" : "text-[#3F3F46]/45 hover:text-[#18181B]"
+                    }`}
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
-                    Learn more →
+                    Learn more about {t.label} →
                   </Link>
                 </div>
               ))}
             </div>
 
-            <p className="text-center text-sm text-[#3F3F46]/50 mt-8" style={{ fontFamily: "var(--font-body)" }}>
-              All prices are estimates. You&apos;ll get a specific quote before any work starts. No billing begins until you approve it in writing.
+            <p
+              className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-[#3F3F46]/55"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              All prices are estimates. You&apos;ll get a specific quote before any work starts. No
+              billing begins until you approve it in writing.
             </p>
           </div>
         </section>
 
         {/* FAQ */}
-        <section className="py-24 bg-white">
-          <div className="max-w-3xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>Pricing questions</h2>
+        <section className="bg-white py-24">
+          <div className="mx-auto max-w-3xl px-6">
+            <div className="mb-14 text-center">
+              <p
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#F97316]"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Pricing FAQ
+              </p>
+              <h2
+                className="text-balance text-4xl font-bold tracking-tight text-[#18181B] md:text-5xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Questions, answered
+              </h2>
             </div>
             <div className="space-y-4">
               {faqs.map((f, i) => (
-                <div key={i} className="bg-[#FAFAF9] rounded-xl border border-[#18181B]/8 p-6">
-                  <h3 className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{f.q}</h3>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{f.a}</p>
+                <div
+                  key={i}
+                  className="rounded-2xl border border-[#18181B]/[0.07] bg-[#FAFAF9] p-7 transition-colors hover:border-[#F97316]/30"
+                >
+                  <h3
+                    className="mb-2.5 flex items-start gap-3 text-lg font-bold text-[#18181B]"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    <span className="mt-0.5 text-[#F97316]">Q.</span>
+                    {f.q}
+                  </h3>
+                  <p
+                    className="pl-7 text-[15px] leading-relaxed text-[#3F3F46]/75"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    {f.a}
+                  </p>
                 </div>
               ))}
             </div>
@@ -286,27 +378,40 @@ export default function Pricing() {
         </section>
 
         {/* CTA */}
-        <section className="py-24 bg-[#18181B]">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+        <section className="relative overflow-hidden bg-[#18181B] py-28">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 bottom-0 h-[360px] w-[760px] -translate-x-1/2 rounded-full blur-[120px]"
+            style={{ background: "radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 70%)" }}
+          />
+          <div className="relative mx-auto max-w-3xl px-6 text-center">
+            <h2
+              className="text-balance text-4xl font-bold tracking-tight text-white md:text-5xl"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Not sure what you need?
             </h2>
-            <p className="text-lg text-white/60 mb-10" style={{ fontFamily: "var(--font-body)" }}>
-              Tell us what&apos;s going on. We&apos;ll recommend the right starting point and give you a clear number — free, no obligation.
+            <p
+              className="mx-auto mt-6 max-w-xl text-pretty text-lg leading-relaxed text-white/60"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              Tell us what&apos;s going on. We&apos;ll recommend the right starting point and give you a
+              clear number — free, no obligation.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="mt-11 flex flex-col justify-center gap-4 sm:flex-row">
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white"
-                style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#F97316] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#F97316]/25 transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-xl hover:shadow-[#F97316]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 Get a Free Quote <ArrowRight size={16} />
               </Link>
               <a
                 href="tel:+17072396725"
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold"
-                style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/25 px-8 py-4 text-base font-semibold text-white transition-colors duration-200 hover:border-white/50 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                style={{ fontFamily: "var(--font-heading)" }}
               >
+                <Phone size={16} />
                 Call (707) 239-6725
               </a>
             </div>
