@@ -36,7 +36,7 @@ export default function About() {
               className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              About Copper Bay Tech
+              About CopperBayTech
             </p>
             <h2
               className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"
