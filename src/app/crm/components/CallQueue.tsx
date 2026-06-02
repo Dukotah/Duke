@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Phone, Mail, Flame, Zap, Globe, ChevronRight, RefreshCw, Star, PhoneCall } from "lucide-react";
 import DailyGoals from "./DailyGoals";
+import MetricsCards from "./MetricsCards";
 import FollowUpBanner from "./FollowUpBanner";
 
 interface Lead {
@@ -192,6 +193,8 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
       </div>
 
       <DailyGoals />
+
+      <MetricsCards />
 
       <FollowUpBanner />
 
