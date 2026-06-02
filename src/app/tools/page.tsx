@@ -809,6 +809,7 @@ export default function ToolsPage() {
   const hasResultsB = Object.values(checksB).some(c => c.status !== "idle");
   const isCompare = mode === "compare" && hasResultsB;
 
+export default function ToolsIndexPage() {
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
       <Nav />
@@ -1080,8 +1081,22 @@ export default function ToolsPage() {
                   <p className="text-white font-bold text-xs mb-1">{item.label}</p>
                   <p className="text-zinc-500 text-[11px] leading-relaxed">{item.desc}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+              <div className="flex items-center gap-1.5 text-orange-400 text-sm font-semibold flex-shrink-0 group-hover:gap-2.5 transition-all pt-1">
+                {tool.cta} <ArrowRight size={14} />
+              </div>
+            </Link>
+          ))}
+
+          <div className="mt-8 rounded-2xl p-8 text-center border border-zinc-800 bg-zinc-900">
+            <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-3">Need the full picture?</p>
+            <h2 className="text-white text-xl font-black mb-3">Talk to a human</h2>
+            <p className="text-zinc-400 text-sm mb-5 max-w-md mx-auto">
+              These tools find the issues. We fix them. Free 30-minute consultation — no obligation, no sales pitch.
+            </p>
+            <a href="/schedule" className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
+              Book a Free Call
+            </a>
           </div>
         </div>
       )}
