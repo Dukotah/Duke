@@ -124,8 +124,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-xs text-[#3F3F46]/40 uppercase tracking-widest" style={{ fontFamily: "var(--font-heading)" }}>Email</p>
-                  <a href="mailto:duke@copperbaytech.com" className="text-sm font-medium text-[#18181B] hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
-                    duke@copperbaytech.com
+                  <a href="mailto:contact@copperbaytech.com" className="text-sm font-medium text-[#18181B] hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
+                    contact@copperbaytech.com
                   </a>
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function Contact() {
                   </p>
                   <p className="text-red-600 text-sm" style={{ fontFamily: "var(--font-body)" }}>
                     Please email{" "}
-                    <a href="mailto:duke@copperbaytech.com" className="underline font-medium">duke@copperbaytech.com</a>
+                    <a href="mailto:contact@copperbaytech.com" className="underline font-medium">contact@copperbaytech.com</a>
                     {" "}or call{" "}
                     <a href="tel:+17072396725" className="underline font-medium">(707) 239-6725</a>
                   </p>

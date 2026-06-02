@@ -11,7 +11,7 @@ export default function Footer() {
     description: "IT consulting, web development, and cybersecurity for Sonoma County businesses.",
     url: "https://copperbaytech.com",
     telephone: "+17072396725",
-    email: "duke@copperbaytech.com",
+    email: "contact@copperbaytech.com",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Petaluma",
@@ -114,9 +114,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:duke@copperbaytech.com" className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
+                <a href="mailto:contact@copperbaytech.com" className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
                   <Mail size={15} className="mt-0.5 shrink-0 text-[#F97316]" />
-                  duke@copperbaytech.com
+                  contact@copperbaytech.com
                 </a>
               </li>
               <li className="flex items-start gap-1 text-sm text-white/55" style={{ fontFamily: "var(--font-heading)" }}>

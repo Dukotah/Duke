@@ -16,12 +16,12 @@ function lead(partial: Partial<OutreachLead> & { id: string }): OutreachLead {
 
 describe("isValidEmail", () => {
   it("accepts well-formed addresses", () => {
-    expect(isValidEmail("duke@copperbaytech.com")).toBe(true);
+    expect(isValidEmail("contact@copperbaytech.com")).toBe(true);
     expect(isValidEmail("a.b+tag@sub.example.co")).toBe(true);
   });
 
   it("trims surrounding whitespace before checking", () => {
-    expect(isValidEmail("  duke@copperbaytech.com  ")).toBe(true);
+    expect(isValidEmail("  contact@copperbaytech.com  ")).toBe(true);
   });
 
   it("rejects malformed addresses", () => {
