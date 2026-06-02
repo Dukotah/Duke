@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 import { addActivity, getLeadState, setLeadState, getSuppressedEmails } from "@/lib/db";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
-import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
+import { OUTREACH_FROM, OUTREACH_REPLY_TO, MAILING_ADDRESS } from "@/config/site";
 import {
   type OutreachLead,
   canDeliver as canDeliverGate,
@@ -29,7 +29,8 @@ const MAX_PER_REQUEST = 50;
 // A cold domain that suddenly blasts hundreds of emails looks like spam.
 const MAX_PER_DAY = resolveDailyCap(process.env.OUTREACH_DAILY_CAP);
 const FOLLOW_UP_DAYS = 3;
-const SENDER = OUTREACH_FROM;
+const SENDER = OUTREACH_FROM;       // send-only subdomain address
+const REPLY_TO = OUTREACH_REPLY_TO; // real monitored inbox on the main domain
 
 function addDays(days: number): string {
   const d = new Date();
@@ -182,7 +183,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           from: `${fromName} via Copper Bay Tech <${SENDER}>`,
-          reply_to: SENDER,
+          reply_to: REPLY_TO,
           to: [lead.email],
           subject: personalizedSubject,
           text: personalizedBody + buildFooter(unsubUrl),
