@@ -45,12 +45,10 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. SPF — anti-spoofing
-    let spfRecord = "";
     try {
       const txt = await dns.resolveTxt(rootDomain);
       const spf = txt.flat().find(r => r.startsWith("v=spf1"));
       if (spf) {
-        spfRecord = spf;
         const hasFail = spf.includes("-all");
         const hasSoftFail = spf.includes("~all");
         checks.push({
