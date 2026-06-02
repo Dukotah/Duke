@@ -135,12 +135,12 @@ export default function WebDesignSonomaCounty() {
         <section className="py-24 bg-[#FAFAF9]">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What's included</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What&apos;s included</p>
               <h2 className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What every site gets.
               </h2>
               <p className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto" style={{ fontFamily: "var(--font-body)" }}>
-                These aren't upsells — they're table stakes. Every Copper Bay Tech site ships with all of this.
+                These aren&apos;t upsells — they&apos;re table stakes. Every Copper Bay Tech site ships with all of this.
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

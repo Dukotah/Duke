@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Globe, Server, ShieldCheck, ArrowRight } from "lucide-react";
+import { track } from "@/lib/analytics";
 
 // Concrete "starting at" anchors so visitors can self-qualify on price before
 // they ever fill out the form. Numbers mirror the /pricing page tiers — keep
@@ -77,6 +78,7 @@ export default function PricingTeaser() {
               >
                 <Link
                   href={a.href}
+                  onClick={() => track("cta_pricing", { service: a.label })}
                   className={`group flex h-full flex-col rounded-2xl border p-7 outline-none transition-all duration-200 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 ${
                     a.featured
                       ? "border-[#F97316]/40 bg-white shadow-lg shadow-[#F97316]/[0.08]"
@@ -137,6 +139,7 @@ export default function PricingTeaser() {
         >
           <Link
             href="/pricing"
+            onClick={() => track("cta_pricing", { service: "all" })}
             className="inline-flex items-center gap-2 rounded-md bg-[#18181B] px-7 py-3 text-sm font-semibold text-white outline-none transition-colors hover:bg-[#0d0d0f] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2"
             style={{ fontFamily: "var(--font-heading)" }}
           >

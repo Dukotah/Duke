@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Phone, Mail, Flame, Zap, Globe, ChevronRight, RefreshCw, Star, PhoneCall } from "lucide-react";
+import { Phone, Mail, Flame, Zap, ChevronRight, RefreshCw, Star, PhoneCall } from "lucide-react";
 import DailyGoals from "./DailyGoals";
 import MetricsCards from "./MetricsCards";
 import FollowUpBanner from "./FollowUpBanner";
@@ -57,7 +57,11 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
     setLoading(false);
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { load(); }, [load]);
+
+  // Capture "now" once per mount so the render path stays pure (no Date.now() during render).
+  const [now] = useState(() => Date.now());
 
   // Sort priority:
   // 0: never called (fresh)
@@ -65,7 +69,6 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
   // 2: stale (called > 7 days ago, not closed)
   // 3: recently called
   // 4: everything else
-  const today = new Date().toISOString().slice(0, 10);
 
   function isStale(state: LeadState | undefined): boolean {
     if (!state?.lastContacted) return false;
@@ -74,7 +77,7 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
     // lastContacted is stored as locale string (e.g. "Jun 1, 2025"), try to parse it
     const lastDate = new Date(state.lastContacted);
     if (isNaN(lastDate.getTime())) return false;
-    const diffMs = Date.now() - lastDate.getTime();
+    const diffMs = now - lastDate.getTime();
     return diffMs > 7 * 24 * 60 * 60 * 1000;
   }
 
@@ -82,7 +85,7 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
     if (!state?.lastContacted) return 0;
     const lastDate = new Date(state.lastContacted);
     if (isNaN(lastDate.getTime())) return 0;
-    return Math.floor((Date.now() - lastDate.getTime()) / (24 * 60 * 60 * 1000));
+    return Math.floor((now - lastDate.getTime()) / (24 * 60 * 60 * 1000));
   }
 
   function getPriority(lead: Lead): number {

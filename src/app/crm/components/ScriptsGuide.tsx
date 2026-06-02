@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, ChevronDown, ChevronRight, DollarSign, Globe, Wrench, Shield, Search, RefreshCw } from "lucide-react";
+import { Copy, Check, ChevronDown, ChevronRight, Globe, Wrench, Shield, Search, RefreshCw } from "lucide-react";
 
 function CopyBlock({ text }: { text: string }) {
   const [ok, setOk] = useState(false);
   const H = { fontFamily: "var(--font-heading)" };
   return (
     <div className="relative bg-[#111113] rounded-xl border border-white/[0.06] p-4 group">
-      <p className="text-sm text-white/80 leading-relaxed italic pr-8" style={H}>"{text}"</p>
+      <p className="text-sm text-white/80 leading-relaxed italic pr-8" style={H}>&ldquo;{text}&rdquo;</p>
       <button onClick={() => { navigator.clipboard.writeText(text); setOk(true); setTimeout(() => setOk(false), 2000); }}
         className="absolute top-3 right-3 p-1.5 rounded-md text-white/20 hover:text-white/60 hover:bg-white/5 transition-colors">
         {ok ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
@@ -142,7 +142,7 @@ export default function ScriptsGuide() {
       <div>
         <div className="mb-4">
           <h2 className="text-base font-bold text-white" style={H}>What We Sell</h2>
-          <p className="text-xs text-white/40 mt-0.5" style={H}>Tap any service to see the pitch and who it's for.</p>
+          <p className="text-xs text-white/40 mt-0.5" style={H}>Tap any service to see the pitch and who it&apos;s for.</p>
         </div>
         <div className="space-y-2">
           {SERVICES.map((svc, i) => {
@@ -187,7 +187,7 @@ export default function ScriptsGuide() {
       <div>
         <div className="mb-4">
           <h2 className="text-base font-bold text-white" style={H}>When They Push Back</h2>
-          <p className="text-xs text-white/40 mt-0.5" style={H}>Tap the objection to see what to say. These aren't scripts — make them your own.</p>
+          <p className="text-xs text-white/40 mt-0.5" style={H}>Tap the objection to see what to say. These aren&apos;t scripts — make them your own.</p>
         </div>
         <div className="space-y-2">
           {OBJECTIONS.map((o) => <Accordion key={o.q} question={o.q} answer={o.a} />)}

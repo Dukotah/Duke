@@ -126,7 +126,7 @@ export default function ITSupportSonomaCounty() {
         <section className="py-24 bg-[#FAFAF9]">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What's covered</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What&apos;s covered</p>
               <h2 className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Everything your business actually needs.
               </h2>

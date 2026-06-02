@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Phone, Mail, Clock, CalendarDays } from "lucide-react";
 import { CALENDLY_URL } from "@/config/site";
+import { track } from "@/lib/analytics";
 
 type FormData = {
   name: string;
@@ -35,6 +36,7 @@ export default function Contact() {
         body: JSON.stringify(data),
       });
       if (res.ok) {
+        track("contact_form_submit");
         router.push("/thank-you");
       } else {
         setStatus("error");

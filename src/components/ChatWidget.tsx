@@ -27,7 +27,7 @@ export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(BOT_INTROS);
   const [input, setInput] = useState("");
-  const [sent, setSent] = useState(false);
+  const [_sent, setSent] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"chat" | "collect" | "done">("chat");

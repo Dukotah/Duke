@@ -196,7 +196,7 @@ export default function BlogPage() {
                 className="text-white/60 text-sm mb-6 max-w-md mx-auto"
                 style={{ fontFamily: "var(--font-body)" }}
               >
-                Free 30-minute consultation. We'll tell you exactly where you stand and what matters most for your business.
+                Free 30-minute consultation. We&apos;ll tell you exactly where you stand and what matters most for your business.
               </p>
               <Link
                 href="/#contact"

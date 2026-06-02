@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { MapPin, ShieldCheck, Code2 } from "lucide-react";
-import Image from "next/image";
 
 const highlights = [
   { icon: MapPin, text: "Based in Sonoma County — we show up in person when it matters" },

@@ -158,7 +158,7 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
           {sub.pitch && (
             <div className="mt-2 pt-2 border-t border-white/[0.06]">
               <p className="text-xs text-white/40 uppercase tracking-wider mb-1" style={H}>Pitch</p>
-              <p className="text-xs text-white/50 italic" style={H}>"{sub.pitch}"</p>
+              <p className="text-xs text-white/50 italic" style={H}>&ldquo;{sub.pitch}&rdquo;</p>
             </div>
           )}
         </div>
@@ -182,7 +182,7 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
                 placeholder="e.g. 2500" min="0" step="50"
                 className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
                 style={H} />
-              {dealValue && <p className="text-xs text-green-400/70 mt-1" style={H}>Commission auto-calculated at rep's rate</p>}
+              {dealValue && <p className="text-xs text-green-400/70 mt-1" style={H}>Commission auto-calculated at rep&apos;s rate</p>}
             </div>
           )}
           <button type="submit" disabled={loading}
@@ -466,6 +466,7 @@ function BroadcastPanel() {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { loadBroadcasts(); }, [loadBroadcasts]);
 
   async function sendBroadcast() {
@@ -735,6 +736,7 @@ function EmailTab() {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { load(); }, [load]);
 
   async function reAllow(email: string) {
@@ -882,6 +884,7 @@ function SetupTab() {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { load(); }, [load]);
 
   if (loading) {
@@ -995,6 +998,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
     setLoading(false);
   }, [subFilter]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { load(); }, [load]);
 
   // Check setup health once on mount so we can nudge if required items are missing.
