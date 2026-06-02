@@ -3,10 +3,12 @@ import Hero from "@/components/Hero";
 import SocialProof from "@/components/SocialProof";
 import Problem from "@/components/Problem";
 import Services from "@/components/Services";
+import Testimonials from "@/components/Testimonials";
 import HowItWorks from "@/components/HowItWorks";
 import ITQuiz from "@/components/ITQuiz";
 import CaseStudies from "@/components/CaseStudies";
 import PricingEstimator from "@/components/PricingEstimator";
+import PricingTeaser from "@/components/PricingTeaser";
 import ToolsTeaser from "@/components/ToolsTeaser";
 import FAQ from "@/components/FAQ";
 import About from "@/components/About";
@@ -26,10 +28,12 @@ export default function Home() {
         <SocialProof />
         <Problem />
         <Services />
+        <Testimonials />
         <HowItWorks />
         <ITQuiz />
         <CaseStudies />
         <PricingEstimator />
+        <PricingTeaser />
         <ToolsTeaser />
         <FAQ />
         <About />
