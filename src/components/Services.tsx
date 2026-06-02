@@ -1,7 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Globe, Server, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { Globe, Server, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
+
+const aiHighlights = [
+  "Answers every call & chat 24/7",
+  "Replies to leads in seconds",
+  "Books appointments for you",
+  "Handles the busywork",
+];
 
 const tiers = [
   {
@@ -147,6 +155,74 @@ export default function Services() {
             </motion.div>
           ))}
         </div>
+
+        {/* Featured: AI Integration */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="relative mt-6 overflow-hidden rounded-xl bg-[#18181B] p-8 md:p-10 shadow-xl ring-1 ring-[#F97316]/30"
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-[#F97316]/70 to-transparent"
+          />
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-xl">
+              <span
+                className="inline-flex items-center gap-1.5 mb-4 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] text-[#F97316]"
+                style={{ backgroundColor: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.3)", fontFamily: "var(--font-heading)" }}
+              >
+                <Sparkles size={12} /> New · AI Integration
+              </span>
+              <h3
+                className="text-2xl md:text-3xl font-bold text-white mb-3 leading-snug"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Put AI to work — an employee that never clocks out.
+              </h3>
+              <p
+                className="text-white/65 leading-relaxed mb-5"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Practical AI, built for your shop and supported locally. It answers the phone, replies to
+                leads instantly, and clears the busywork — no hype, no hiring. Works as a standalone setup
+                or an add-on to your IT plan.
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                {aiHighlights.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-2 text-sm text-white/80"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[#F97316]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex flex-col gap-3 lg:items-end lg:flex-shrink-0">
+              <Link
+                href="/ai-integration-small-business"
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] transition-colors hover:bg-[#ea6c0a]"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Explore AI for your business
+                <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href="/tools/missed-call-calculator"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-md text-sm font-semibold text-white/80 transition-colors hover:text-white"
+                style={{ border: "1px solid rgba(255,255,255,0.2)", fontFamily: "var(--font-heading)" }}
+              >
+                What are missed calls costing you?
+              </Link>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -43,6 +43,7 @@ export default function Footer() {
     { label: "IT Support — Windsor", href: "/it-support-windsor" },
     { label: "IT Support — Healdsburg", href: "/it-support-healdsburg" },
     { label: "Cybersecurity for Small Business", href: "/cybersecurity-small-business" },
+    { label: "AI for Small Business", href: "/ai-integration-small-business" },
     { label: "Our Work", href: "/work" },
   ];
 

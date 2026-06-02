@@ -107,6 +107,30 @@ const tiers = [
     cta: "Book an Audit",
     ctaHref: "/#contact",
   },
+  {
+    icon: Sparkles,
+    label: "AI Integration",
+    tagline: "An employee that never clocks out.",
+    price: "$1,500 – $4,000",
+    priceNote: "One-time build + from $200/mo",
+    href: "/ai-integration-small-business",
+    includes: [
+      "AI receptionist for calls & website chat",
+      "Instant lead response & missed-call text-back",
+      "Automated review requests & replies",
+      "Quote & routine-email drafting",
+      "Knowledge assistant trained on your business",
+      "Connected to the tools you already use",
+      "Tested before it ever talks to a customer",
+      "Monitoring & tuning included",
+    ],
+    addons: [
+      { label: "Monthly plan (AI usage + tuning)", price: "from $200/mo" },
+      { label: "Extra automations / integrations", price: "Quoted separately" },
+    ],
+    cta: "Book a Free AI Call",
+    ctaHref: "/#contact",
+  },
 ];
 
 const guarantees = [
@@ -206,13 +230,13 @@ export default function Pricing() {
         {/* Pricing cards */}
         <section className="relative -mt-16 pb-24">
           <div className="mx-auto max-w-6xl px-6">
-            <div className="grid items-stretch gap-6 lg:grid-cols-3">
+            <div className="grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
               {tiers.map((t) => (
                 <div
                   key={t.label}
                   className={`group relative flex flex-col rounded-3xl p-8 transition-all duration-300 ${
                     t.featured
-                      ? "bg-[#18181B] text-white shadow-[0_30px_60px_-15px_rgba(24,24,27,0.45)] ring-1 ring-[#F97316]/40 lg:-mt-4 lg:mb-4 lg:scale-[1.03]"
+                      ? "bg-[#18181B] text-white shadow-[0_30px_60px_-15px_rgba(24,24,27,0.45)] ring-1 ring-[#F97316]/40 xl:-mt-4 xl:mb-4 xl:scale-[1.03]"
                       : "border border-[#18181B]/[0.07] bg-white shadow-[0_10px_30px_-12px_rgba(24,24,27,0.12)] hover:-translate-y-1 hover:shadow-[0_24px_48px_-16px_rgba(24,24,27,0.2)]"
                   }`}
                 >

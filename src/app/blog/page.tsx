@@ -21,6 +21,15 @@ type Post = {
 
 const posts: Post[] = [
   {
+    slug: "how-ai-helps-sonoma-county-small-businesses",
+    tag: "AI & Automation",
+    title: "How AI Actually Helps a Sonoma County Small Business (2026)",
+    excerpt:
+      "No hype, no doom — just the practical ways small businesses use AI in 2026: answer every call, reply to leads in seconds, automate reviews, and clear the busywork. What works, what to skip, and where to start.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
+  {
     slug: "small-business-cybersecurity-threats-sonoma-county",
     tag: "Cybersecurity",
     title: "The 5 Cybersecurity Threats Most Likely to Hit a Sonoma County Small Business in 2026",

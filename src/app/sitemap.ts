@@ -12,6 +12,7 @@ const blogPosts: Array<{ slug: string; lastModified: string; priority: number }>
   { slug: "managed-it-support-vs-break-fix-sonoma-county", lastModified: "2026-05-01", priority: 0.7 },
   { slug: "hipaa-security-checklist-sonoma-county-healthcare", lastModified: "2026-05-01", priority: 0.7 },
   { slug: "small-business-cybersecurity-threats-sonoma-county", lastModified: "2026-06-01", priority: 0.7 },
+  { slug: "how-ai-helps-sonoma-county-small-businesses", lastModified: "2026-06-02", priority: 0.7 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -23,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/web-design-sonoma-county`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/it-support-sonoma-county`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/cybersecurity-small-business`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/ai-integration-small-business`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/web-design-santa-rosa`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/web-design-petaluma`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/web-design-rohnert-park`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
@@ -31,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/it-support-windsor`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/it-support-healdsburg`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/tools`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/tools/missed-call-calculator`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/work`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/audit`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
