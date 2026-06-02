@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { serviceSchema, faqSchema } from "@/components/JsonLd";
 import { ArrowRight, ShieldCheck, Lock, Eye, AlertTriangle, FileText, RefreshCw } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -19,23 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Service",
+const schema = serviceSchema({
   name: "Cybersecurity Audits & Hardening",
-  provider: {
-    "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
-    telephone: "+17072396725",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Petaluma",
-      addressRegion: "CA",
-    },
-  },
-  areaServed: "Sonoma County, CA",
   description: "Cybersecurity audits, vulnerability assessments, and security hardening for small businesses.",
-};
+  url: "https://copperbaytech.com/cybersecurity-small-business",
+  areaServed: "Sonoma County, CA",
+});
 
 const services = [
   { icon: Eye, label: "Security audit", body: "Full scan of your network, devices, and accounts. We document every vulnerability and prioritize them by actual risk." },
@@ -79,13 +69,13 @@ const faqs = [
 export default function CybersecuritySmallBusiness() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <JsonLd schema={[schema, faqSchema(faqs)]} />
       <Nav />
       <main>
         {/* Hero */}
         <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-[#18181B] pt-16">
-          <div className="absolute inset-0 opacity-10">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <div className="absolute inset-0 opacity-10" aria-hidden="true">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
               <defs>
                 <pattern id="topo3" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
                   <path d="M0 40 Q20 20 40 40 Q60 60 80 40" fill="none" stroke="#F97316" strokeWidth="0.8" />

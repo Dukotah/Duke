@@ -6,7 +6,7 @@ import {
   Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail, Globe,
   Flame, Zap, ArrowUpDown, X, Download, LogOut, LayoutGrid,
   BookOpen, DollarSign, List, ChevronDown, Check,
-  AlertCircle, Copy, Plus,
+  AlertCircle, Copy, Plus, CalendarClock,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
@@ -81,10 +81,10 @@ function LeaderboardPeek({ userId }: { userId: string }) {
   const medals = ["🥇", "🥈", "🥉"];
 
   return (
-    <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-4 mt-4" style={H}>
+    <div className="crm-surface rounded-2xl p-4 mt-4" style={H}>
       <div className="flex items-center gap-2 mb-3">
         <span className="text-base">🏆</span>
-        <h3 className="text-sm font-bold text-white">This Month's Rankings</h3>
+        <h3 className="text-sm font-bold text-white tracking-tight">This Month's Rankings</h3>
         {myEntry && (
           <span className="ml-auto text-xs text-[#F97316] font-semibold">
             You're #{myEntry.rank}
@@ -121,10 +121,12 @@ function LeaderboardPeek({ userId }: { userId: string }) {
 }
 
 const CallQueue = dynamic(() => import("./components/CallQueue"), { ssr: false });
+const CallReminders = dynamic(() => import("./components/CallReminders"), { ssr: false });
 const Pipeline = dynamic(() => import("./components/Pipeline"), { ssr: false });
 const ScriptsGuide = dynamic(() => import("./components/ScriptsGuide"), { ssr: false });
 const EarningsView = dynamic(() => import("./components/Earnings"), { ssr: false });
 const BulkOutreach = dynamic(() => import("./components/BulkOutreach"), { ssr: false });
+const OutreachTemplates = dynamic(() => import("./components/OutreachTemplates"), { ssr: false });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -140,6 +142,7 @@ interface LeadState {
   status: "new" | "contacted" | "follow_up" | "not_interested" | "won";
   stage: string; notes: string; lastContacted?: string;
   submittedAt?: string; callCount?: number; lastOutcome?: string;
+  followUpDate?: string;
 }
 
 interface Submission {
@@ -160,11 +163,12 @@ interface LeadsResponse {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-type Tab = "queue" | "pipeline" | "leads" | "scripts" | "earnings";
+type Tab = "queue" | "reminders" | "pipeline" | "leads" | "scripts" | "earnings";
 type NavKey = Tab | "email";
 
 const TABS: { key: NavKey; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: "queue", label: "Queue", icon: Phone },
+  { key: "reminders", label: "Follow-ups", icon: CalendarClock },
   { key: "pipeline", label: "Pipeline", icon: LayoutGrid },
   { key: "leads", label: "Leads", icon: List },
   { key: "email", label: "Email", icon: Mail },
@@ -261,7 +265,7 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, city, niche…"
-            className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+            className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 focus:ring-2 focus:ring-[#F97316]/15 transition-all"
             style={H} />
           {q && <button onClick={() => setQ("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"><X size={13} /></button>}
         </div>
@@ -350,39 +354,59 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
 
       {/* List */}
       {error ? (
-        <div className="flex items-center justify-center gap-2 py-16 text-red-400/80 text-sm"><AlertCircle size={16} />{error}</div>
+        <div className="flex flex-col items-center justify-center gap-3 py-16 crm-surface rounded-2xl text-center">
+          <AlertCircle size={22} className="text-red-400/80" />
+          <p className="text-sm text-white/60" style={H}>{error}</p>
+          <button onClick={() => fetch_()} className="text-xs font-semibold text-[#F97316] hover:text-[#F97316]/80 transition-colors" style={H}>Try again</button>
+        </div>
       ) : loading ? (
-        <div className="flex flex-col items-center gap-3 py-16">
-          <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+        <div className="space-y-1.5">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 px-4 py-3.5 crm-surface rounded-2xl animate-pulse">
+              <div className="flex-1 space-y-2">
+                <div className="h-3.5 w-2/5 rounded-full bg-white/[0.08]" />
+                <div className="h-2.5 w-3/5 rounded-full bg-white/[0.05]" />
+                <div className="h-1.5 w-16 rounded-full bg-white/[0.05]" />
+              </div>
+              <div className="h-3.5 w-3.5 rounded-full bg-white/[0.05]" />
+            </div>
+          ))}
         </div>
       ) : (
         <div className="space-y-1.5">
           {data?.leads.map((lead) => {
             const state = states[lead.id];
             return (
-              <div key={lead.id} onClick={() => onSelectLead(lead)}
-                className="flex items-center gap-3 px-4 py-3.5 bg-[#1C1C1F] border border-white/[0.06] rounded-2xl cursor-pointer hover:border-[#F97316]/20 hover:bg-[#F97316]/5 transition-all active:scale-[0.99] group">
+              <div key={lead.id} onClick={() => onSelectLead(lead)} role="button" tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelectLead(lead); } }}
+                className="crm-surface crm-surface-hover flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-pointer active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/40">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-bold text-white truncate" style={H}>{lead.name}</p>
+                    <p className="text-sm font-bold text-white truncate group-hover:text-[#F97316] transition-colors" style={H}>{lead.name}</p>
                     {lead.tier === "A" && <Flame size={11} className="text-orange-400 shrink-0" />}
                     {lead.tier === "B" && <Zap size={11} className="text-yellow-400 shrink-0" />}
                   </div>
-                  <p className="text-xs text-white/35 mt-0.5" style={H}>{lead.city} · {lead.category.replace(/_/g, " ")}</p>
-                  <div className="flex items-center gap-3 mt-1.5">
+                  <p className="text-xs text-white/40 mt-0.5 capitalize" style={H}>{lead.city} · {lead.category.replace(/_/g, " ")}</p>
+                  <div className="flex items-center gap-3 mt-2">
                     <ScoreBar score={lead.outreach_score} />
                     {state && <StatusBadge stage={state.stage} status={state.status} />}
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                  {lead.phone && <span className="text-xs text-white/30 hidden sm:flex items-center gap-1" style={H}><Phone size={9} />{lead.phone}</span>}
+                  {lead.phone && <span className="text-xs text-white/35 hidden sm:flex items-center gap-1 tabular-nums" style={H}><Phone size={9} />{lead.phone}</span>}
                   {lead.email && <span className="text-xs text-white/25 hidden sm:flex items-center gap-1" style={H}><Mail size={9} />email</span>}
-                  <ChevronRight size={14} className="text-white/20 group-hover:text-[#F97316]/50 transition-colors" />
+                  <ChevronRight size={15} className="text-white/20 group-hover:text-[#F97316] group-hover:translate-x-0.5 transition-all" />
                 </div>
               </div>
             );
           })}
-          {data?.leads.length === 0 && <p className="text-center py-12 text-sm text-white/25" style={H}>No leads match your filters.</p>}
+          {data?.leads.length === 0 && (
+            <div className="flex flex-col items-center justify-center gap-2 py-14 crm-surface rounded-2xl text-center px-6">
+              <Search size={22} className="text-white/20" />
+              <p className="text-sm font-semibold text-white/50" style={H}>No leads match your filters</p>
+              <p className="text-xs text-white/30" style={H}>Try clearing a filter or widening your territory.</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -390,11 +414,11 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
       {data && totalPages > 1 && (
         <div className="flex items-center justify-between pt-2">
           <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
-            className="text-sm text-white/40 hover:text-white disabled:opacity-20 transition-colors px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20"
+            className="text-sm font-medium text-white/50 hover:text-white disabled:opacity-20 disabled:hover:text-white/50 transition-colors px-3.5 py-2 rounded-xl border border-white/10 hover:border-white/25 hover:bg-white/[0.04]"
             style={H}>← Prev</button>
-          <span className="text-xs text-white/30" style={H}>{page} / {totalPages}</span>
+          <span className="text-xs font-medium text-white/35 tabular-nums" style={H}>{page} / {totalPages}</span>
           <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
-            className="text-sm text-white/40 hover:text-white disabled:opacity-20 transition-colors px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20"
+            className="text-sm font-medium text-white/50 hover:text-white disabled:opacity-20 disabled:hover:text-white/50 transition-colors px-3.5 py-2 rounded-xl border border-white/10 hover:border-white/25 hover:bg-white/[0.04]"
             style={H}>Next →</button>
         </div>
       )}
@@ -416,6 +440,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   const [queueRefreshKey, setQueueRefreshKey] = useState(0);
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const [showBulkEmail, setShowBulkEmail] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   // Load all state + submissions once
   useEffect(() => {
@@ -483,6 +508,12 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
 
   const pendingCount = submissions.filter((s) => s.status === "pending").length;
   const interestedCount = Object.values(states).filter((s) => s.stage === "interested").length;
+  // Due follow-ups — mirrors the /api/crm/reminders filter so the tab badge
+  // matches the Follow-ups view without an extra fetch.
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const dueCount = Object.values(states).filter(
+    (s) => s.followUpDate && !["lost", "won", "submitted"].includes(s.stage) && s.followUpDate <= todayISO
+  ).length;
 
   return (
     <>
@@ -509,44 +540,51 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           onSubmitted={refreshSubs} />
       )}
       {showBulkEmail && <BulkOutreach repName={userName} onClose={() => setShowBulkEmail(false)} />}
+      {showTemplates && (
+        <OutreachTemplates
+          repName={userName}
+          onClose={() => setShowTemplates(false)}
+          onBulkSend={() => { setShowTemplates(false); setShowBulkEmail(true); }}
+        />
+      )}
 
-      <div className="min-h-screen bg-[#111113] flex flex-col" style={H}>
+      <div className="min-h-screen crm-backdrop flex flex-col text-white/80" style={H}>
 
         {/* Top bar */}
-        <header className="border-b border-white/[0.06] bg-[#111113] sticky top-0 z-30 shrink-0">
-          <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-base font-bold text-white tracking-tight">Copper Bay<span style={{ color: "#F97316" }}>Tech</span></span>
-              <span className="hidden sm:inline text-xs text-white/25 font-medium">/ Sales</span>
+        <header className="border-b border-white/[0.06] crm-chrome sticky top-0 z-30 shrink-0">
+          <div className="max-w-3xl mx-auto px-4 h-15 py-2.5 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="text-[17px] font-bold text-white tracking-tight">Copper Bay<span className="text-[#F97316]">Tech</span></span>
+              <span className="hidden sm:inline-flex items-center text-[11px] uppercase tracking-[0.14em] text-white/30 font-semibold border-l border-white/10 pl-2.5">Sales</span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-2.5">
               {interestedCount > 0 && (
                 <button onClick={() => setTab("pipeline")}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2.5 py-1 rounded-full"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/25 px-2.5 py-1.5 rounded-full hover:bg-[#F97316]/15 transition-colors"
                   style={H}>
                   🔥 {interestedCount} interested
                 </button>
               )}
               {role === "admin" && (
                 <button onClick={() => router.push("/crm/admin")}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-full transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 px-2.5 py-1.5 rounded-full transition-colors"
                   style={H} title="Admin dashboard — analytics, leaderboard, revenue">
                   <LayoutGrid size={12} /><span className="hidden sm:inline">Dashboard</span>
                 </button>
               )}
-              <div className="hidden sm:flex items-center gap-1.5">
-                <div className="w-6 h-6 rounded-full bg-[#F97316]/20 flex items-center justify-center text-xs font-bold text-[#F97316]" style={H}>
+              <div className="hidden sm:flex items-center gap-2 pl-1">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#F97316]/30 to-[#F97316]/10 ring-1 ring-[#F97316]/30 flex items-center justify-center text-xs font-bold text-[#F97316]" style={H}>
                   {userName.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-xs text-white/50" style={H}>{userName}</span>
+                <span className="text-xs font-medium text-white/55" style={H}>{userName}</span>
               </div>
-              <button onClick={handleLogout} className="text-xs text-white/25 hover:text-white/50 transition-colors" style={H}>Sign out</button>
+              <button onClick={handleLogout} className="text-xs font-medium text-white/30 hover:text-white/60 transition-colors ml-0.5" style={H}>Sign out</button>
             </div>
           </div>
         </header>
 
         {/* Main content */}
-        <div className="flex-1 max-w-3xl mx-auto w-full px-4 pt-5 pb-24 overflow-y-auto">
+        <div key={tab} className="crm-rise flex-1 max-w-3xl mx-auto w-full px-4 pt-5 pb-28 overflow-y-auto">
           <BroadcastBanners />
           {tab === "queue" && (
             <CallQueue
@@ -555,6 +593,14 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               onSelectLead={(l) => setSelectedLead(l as Lead)}
               onRefresh={refreshSubs}
               onDialerStart={(l) => setActiveLead(l as Lead)}
+            />
+          )}
+          {tab === "reminders" && (
+            <CallReminders
+              states={states}
+              allLeads={allLeads}
+              onSelectLead={(l) => setSelectedLead(l as Lead)}
+              onUpdateState={updateState}
             />
           )}
           {tab === "pipeline" && (
@@ -574,31 +620,34 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
 
         {/* FAB — add lead */}
         <button onClick={() => setShowAddLead(true)}
-          className="fixed bottom-20 right-4 z-30 w-[52px] h-[52px] rounded-full flex items-center justify-center shadow-xl transition-transform active:scale-95 hover:brightness-110"
-          style={{ backgroundColor: "#F97316" }}
+          className="crm-glow-brand fixed bottom-[88px] right-4 z-30 w-[54px] h-[54px] rounded-full flex items-center justify-center bg-[#F97316] transition-all duration-200 active:scale-95 hover:brightness-110 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e0e10]"
           aria-label="Add lead">
-          <Plus size={22} className="text-white" />
+          <Plus size={22} className="text-white" strokeWidth={2.4} />
         </button>
 
         {/* Bottom tab bar — always visible */}
-        <nav className="fixed bottom-0 left-0 right-0 z-30 bg-[#111113]/95 backdrop-blur border-t border-white/[0.07] pb-safe">
+        <nav className="fixed bottom-0 left-0 right-0 z-30 crm-chrome border-t border-white/[0.07] pb-safe">
           <div className="max-w-3xl mx-auto flex">
             {TABS.map((t) => {
               const active = tab === t.key;
-              const badge = t.key === "earnings" && pendingCount > 0 ? pendingCount : null;
-              const onClick = t.key === "email" ? () => setShowBulkEmail(true) : () => setTab(t.key as Tab);
+              const badge =
+                t.key === "earnings" && pendingCount > 0 ? pendingCount :
+                t.key === "reminders" && dueCount > 0 ? dueCount : null;
+              const onClick = t.key === "email" ? () => setShowTemplates(true) : () => setTab(t.key as Tab);
               return (
-                <button key={t.key} onClick={onClick}
-                  className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors relative ${active ? "text-[#F97316]" : "text-white/30 hover:text-white/60"}`}
+                <button key={t.key} onClick={onClick} aria-current={active ? "page" : undefined}
+                  className={`flex-1 flex flex-col items-center gap-1 py-2.5 transition-colors relative focus-visible:outline-none ${active ? "text-[#F97316]" : "text-white/35 hover:text-white/70"}`}
                   style={H}>
-                  <t.icon size={20} />
-                  <span className="text-[10px] font-semibold">{t.label}</span>
+                  {active && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#F97316] rounded-full shadow-[0_0_10px_rgba(249,115,22,0.7)]" />}
+                  <div className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all ${active ? "bg-[#F97316]/12" : ""}`}>
+                    <t.icon size={19} />
+                  </div>
+                  <span className="text-[10px] font-semibold tracking-wide -mt-0.5">{t.label}</span>
                   {badge && (
-                    <span className="absolute top-2 right-1/4 bg-[#F97316] text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                    <span className="absolute top-1.5 right-[28%] bg-[#F97316] text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center ring-2 ring-[#0e0e10]">
                       {badge}
                     </span>
                   )}
-                  {active && <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-[#F97316] rounded-full" />}
                 </button>
               );
             })}

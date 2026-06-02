@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { serviceSchema } from "@/components/JsonLd";
 import { ArrowRight, Check } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -19,19 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Service",
+const schema = serviceSchema({
   name: "Web Design Santa Rosa",
-  provider: {
-    "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
-    telephone: "+17072396725",
-    address: { "@type": "PostalAddress", addressLocality: "Petaluma", addressRegion: "CA" },
-  },
-  areaServed: { "@type": "City", name: "Santa Rosa", containedInPlace: { "@type": "State", name: "California" } },
   description: "Custom website design for Santa Rosa small businesses.",
-};
+  url: "https://copperbaytech.com/web-design-santa-rosa",
+  areaServed: { "@type": "City", name: "Santa Rosa", containedInPlace: { "@type": "State", name: "California" } },
+});
 
 const includes = [
   "Custom-coded — no Squarespace, no Wix, no WordPress themes",
@@ -58,13 +52,13 @@ const industries = [
 export default function WebDesignSantaRosa() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <JsonLd schema={schema} />
       <Nav />
       <main>
         {/* Hero */}
         <section className="relative min-h-[65vh] flex items-center justify-center overflow-hidden bg-[#18181B] pt-16">
-          <div className="absolute inset-0 opacity-10">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <div className="absolute inset-0 opacity-10" aria-hidden="true">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
               <defs>
                 <pattern id="topo-sr" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
                   <path d="M0 40 Q20 20 40 40 Q60 60 80 40" fill="none" stroke="#F97316" strokeWidth="0.8" />

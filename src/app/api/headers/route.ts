@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
     }
 
-    let headers: Record<string, string> = {};
+    const headers: Record<string, string> = {};
     let finalUrl = normalizedUrl;
     let httpsRedirect = false;
 

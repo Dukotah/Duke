@@ -7,6 +7,7 @@ import {
   Phone, Mail, Globe, Flame, Zap, CheckCircle2, Eye, Trash2,
   TrendingUp, BarChart2, Megaphone, Trophy, AlertTriangle,
 } from "lucide-react";
+import SuppressionTab from "./SuppressionTab";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -363,10 +364,10 @@ function RevenueTab() {
           { label: "All-Time Revenue", val: `$${data.allTime.revenue.toLocaleString()}`, sub: `${data.allTime.deals} deals total`, color: "text-white" },
           { label: "Commissions Owed", val: `$${data.thisMonth.commissions.toFixed(2)}`, sub: "this month", color: "text-amber-400" },
         ].map(({ label, val, sub, color }) => (
-          <div key={label} className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-6">
-            <p className="text-xs text-white/40 uppercase tracking-wider mb-2" style={H}>{label}</p>
-            <p className={`text-3xl font-bold tabular-nums ${color}`} style={H}>{val}</p>
-            <p className="text-xs text-white/30 mt-1" style={H}>{sub}</p>
+          <div key={label} className="crm-surface rounded-2xl p-6">
+            <p className="text-[11px] font-semibold text-white/40 uppercase tracking-wider mb-2.5" style={H}>{label}</p>
+            <p className={`text-[32px] leading-none font-bold tabular-nums tracking-tight ${color}`} style={H}>{val}</p>
+            <p className="text-xs text-white/30 mt-2" style={H}>{sub}</p>
           </div>
         ))}
       </div>
@@ -971,7 +972,7 @@ function SetupTab() {
 
 export default function AdminDashboard({ adminName }: { adminName: string }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "setup">("submissions");
+  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "suppression" | "setup">("submissions");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [reps, setReps] = useState<RepWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1045,19 +1046,19 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
       {showCreate && <CreateRepModal onClose={() => setShowCreate(false)} onCreated={load} />}
       {resolveSub && <ResolveModal sub={resolveSub} onClose={() => setResolveSub(null)} onResolved={load} />}
 
-      <div className="min-h-screen bg-[#111113]" style={H}>
+      <div className="min-h-screen crm-backdrop text-white/80" style={H}>
         {/* Header */}
-        <header className="border-b border-white/[0.06] bg-[#111113]/95 backdrop-blur sticky top-0 z-40">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <header className="border-b border-white/[0.06] crm-chrome sticky top-0 z-40">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-15 py-2.5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-lg font-bold tracking-tight text-white">Copper Bay<span style={{ color: "#F97316" }}>Tech</span></span>
-              <span className="text-xs text-white/20 hidden sm:inline">/ Admin — {adminName}</span>
+              <span className="text-[19px] font-bold tracking-tight text-white">Copper Bay<span className="text-[#F97316]">Tech</span></span>
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.14em] font-semibold text-white/30 border-l border-white/10 pl-3">Admin <span className="text-white/45 normal-case tracking-normal">· {adminName}</span></span>
             </div>
-            <div className="flex items-center gap-3">
-              <a href="/crm" className="text-xs text-white/40 hover:text-white/70 transition-colors flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
+              <a href="/crm" className="text-xs font-medium text-white/45 hover:text-white bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 rounded-full px-2.5 py-1.5 transition-colors flex items-center gap-1.5">
                 <Eye size={12} />View as rep
               </a>
-              <button onClick={handleLogout} className="inline-flex items-center gap-1.5 text-xs text-white/35 hover:text-white/60 transition-colors">
+              <button onClick={handleLogout} className="inline-flex items-center gap-1.5 text-xs font-medium text-white/35 hover:text-white/70 transition-colors px-2.5 py-1.5">
                 <LogOut size={13} />Sign out
               </button>
             </div>
@@ -1067,18 +1068,18 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
         <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 space-y-5">
 
           {/* Overview stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {[
-              { label: "Sales Reps", val: reps.length, color: "text-white", icon: <Users size={14} /> },
-              { label: "Pending Review", val: pending.length, color: "text-[#F97316]", icon: <Send size={14} /> },
-              { label: "Pending Payout", val: `$${totalPendingPayout.toFixed(2)}`, color: "text-amber-400", icon: <DollarSign size={14} /> },
-              { label: "Total Submissions", val: submissions.length, color: "text-white/70", icon: <CheckCircle2 size={14} /> },
+              { label: "Sales Reps", val: reps.length, color: "text-white", icon: <Users size={15} /> },
+              { label: "Pending Review", val: pending.length, color: "text-[#F97316]", icon: <Send size={15} /> },
+              { label: "Pending Payout", val: `$${totalPendingPayout.toFixed(2)}`, color: "text-amber-400", icon: <DollarSign size={15} /> },
+              { label: "Total Submissions", val: submissions.length, color: "text-white/70", icon: <CheckCircle2 size={15} /> },
             ].map(({ label, val, color, icon }) => (
-              <div key={label} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] px-4 py-4">
-                <div className={`flex items-center gap-2 text-xs text-white/40 mb-2`} style={H}>
+              <div key={label} className="crm-surface rounded-2xl px-4 py-4">
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-white/40 mb-2.5" style={H}>
                   <span className={color}>{icon}</span>{label}
                 </div>
-                <p className={`text-2xl font-bold tabular-nums ${color}`} style={H}>{val}</p>
+                <p className={`text-[28px] leading-none font-bold tabular-nums tracking-tight ${color}`} style={H}>{val}</p>
               </div>
             ))}
           </div>
@@ -1112,20 +1113,22 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               { key: "territories", label: "Territories", count: 0 },
               { key: "reps", label: "Sales Reps", count: reps.length },
               { key: "email", label: "Email", count: 0 },
+              { key: "suppression", label: "Suppression", count: 0 },
               { key: "leaderboard", label: "Leaderboard", count: 0 },
               { key: "revenue", label: "Revenue", count: 0 },
               { key: "setup", label: "Setup", count: setupLeft ?? 0 },
             ].map(({ key, label, count }) => (
-              <button key={key} onClick={() => setTab(key as typeof tab)}
-                className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-                  tab === key ? "border-[#F97316] text-[#F97316]" : "border-transparent text-white/40 hover:text-white/70"
+              <button key={key} onClick={() => setTab(key as typeof tab)} aria-current={tab === key ? "page" : undefined}
+                className={`relative px-4 py-3 text-sm font-semibold transition-colors flex items-center gap-2 whitespace-nowrap focus-visible:outline-none ${
+                  tab === key ? "text-[#F97316]" : "text-white/40 hover:text-white/75"
                 }`} style={H}>
                 {label}
                 {count > 0 && (
-                  <span className={`text-xs rounded-full px-2 py-0.5 font-bold ${tab === key ? "bg-[#F97316] text-white" : "bg-white/10 text-white/50"}`}>
+                  <span className={`text-[11px] rounded-full px-2 py-0.5 font-bold transition-colors ${tab === key ? "bg-[#F97316] text-white" : "bg-white/10 text-white/50"}`}>
                     {count}
                   </span>
                 )}
+                {tab === key && <span className="absolute bottom-[-1px] left-2 right-2 h-0.5 bg-[#F97316] rounded-full shadow-[0_0_10px_rgba(249,115,22,0.6)]" />}
               </button>
             ))}
           </div>
@@ -1155,7 +1158,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               ) : (
                 <div className="space-y-2">
                   {submissions.map((sub) => (
-                    <div key={sub.id} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-5">
+                    <div key={sub.id} className="crm-surface rounded-2xl p-5">
                       <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -1249,7 +1252,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {reps.map((rep) => (
-                    <div key={rep.id} className={`bg-[#1C1C1F] rounded-xl border p-5 space-y-4 ${rep.active ? "border-white/[0.06]" : "border-white/[0.03] opacity-50"}`}>
+                    <div key={rep.id} className={`crm-surface crm-surface-hover rounded-2xl p-5 space-y-4 ${rep.active ? "" : "opacity-50"}`}>
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-bold text-white" style={H}>{rep.name}</p>
@@ -1294,6 +1297,8 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
 
           {/* Leaderboard tab */}
           {tab === "email" && <EmailTab />}
+
+          {tab === "suppression" && <SuppressionTab />}
 
           {tab === "setup" && <SetupTab />}
 
