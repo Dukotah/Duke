@@ -92,7 +92,7 @@ export default function Nav() {
         {/* CTA */}
         <Link
           href="/#contact"
-          className="hidden md:inline-flex items-center gap-1.5 px-5 py-2 rounded-md text-sm font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:translate-y-0 active:scale-[0.98]"
+          className="group hidden md:inline-flex items-center gap-1.5 px-5 py-2 rounded-md text-sm font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:translate-y-0 active:scale-[0.98]"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           Free Consultation
@@ -117,6 +117,8 @@ export default function Nav() {
       {/* Mobile Drawer */}
       <div
         id="mobile-menu"
+        aria-hidden={!open}
+        inert={!open}
         className={`md:hidden overflow-hidden border-t transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none ${
           open ? "max-h-[28rem] opacity-100 border-[#18181B]/10" : "max-h-0 opacity-0 border-transparent"
         }`}
@@ -131,6 +133,7 @@ export default function Nav() {
               ref={i === 0 ? firstLinkRef : undefined}
               href={l.href}
               onClick={() => setOpen(false)}
+              tabIndex={open ? 0 : -1}
               className="group flex items-center justify-between py-3 text-base font-medium text-[#3F3F46] border-b border-[#18181B]/[0.06] rounded-md px-1 outline-none transition-colors duration-200 hover:text-[#18181B] focus-visible:ring-2 focus-visible:ring-[#F97316]"
               style={{ fontFamily: "var(--font-heading)" }}
             >
@@ -144,6 +147,7 @@ export default function Nav() {
           <Link
             href="/#contact"
             onClick={() => setOpen(false)}
+            tabIndex={open ? 0 : -1}
             className="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:scale-[0.98]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
