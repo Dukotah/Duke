@@ -7,6 +7,7 @@ import Testimonials from "@/components/Testimonials";
 import HowItWorks from "@/components/HowItWorks";
 import ITQuiz from "@/components/ITQuiz";
 import CaseStudies from "@/components/CaseStudies";
+import Portfolio from "@/components/Portfolio";
 import PricingEstimator from "@/components/PricingEstimator";
 import PricingTeaser from "@/components/PricingTeaser";
 import ToolsTeaser from "@/components/ToolsTeaser";
@@ -32,6 +33,7 @@ export default function Home() {
         <HowItWorks />
         <ITQuiz />
         <CaseStudies />
+        <Portfolio />
         <PricingEstimator />
         <PricingTeaser />
         <ToolsTeaser />
