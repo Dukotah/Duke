@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { escapeHtml } from "@/lib/html";
 import { isValidEmail } from "@/lib/validation";
+import { EMAIL, NOREPLY_EMAIL, PHONE, LOCATION, SERVICE_AREA } from "@/config/site";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,8 +35,8 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "Copper Bay Tech <noreply@copperbaytech.com>",
-          to: ["duke@copperbaytech.com"],
+          from: `Copper Bay Tech <${NOREPLY_EMAIL}>`,
+          to: [EMAIL],
           reply_to: email,
           subject: `New lead capture — ${displayContext}`,
           html: `
@@ -51,16 +52,16 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "Duke @ Copper Bay Tech <duke@copperbaytech.com>",
+          from: `Duke @ Copper Bay Tech <${EMAIL}>`,
           to: [email],
           subject: "Your results from Copper Bay Tech",
           html: `
             <p>Hi ${safe.displayName},</p>
             <p>Thanks for using the ${safe.context} — I'll follow up personally if there's anything I can help with.</p>
-            <p>In the meantime, if you have questions or want to talk through what you found, feel free to reply to this email or call/text me at (707) 239-6725.</p>
-            <p>— Duke<br>Copper Bay Tech<br>Petaluma, CA</p>
+            <p>In the meantime, if you have questions or want to talk through what you found, feel free to reply to this email or call/text me at ${PHONE}.</p>
+            <p>— Duke<br>Copper Bay Tech<br>${LOCATION}</p>
             <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
-            <p style="font-size:12px;color:#999;">Copper Bay Tech · Serving Sonoma County · copperbaytech.com</p>
+            <p style="font-size:12px;color:#999;">Copper Bay Tech · Serving ${SERVICE_AREA} · copperbaytech.com</p>
           `,
         }),
       }),

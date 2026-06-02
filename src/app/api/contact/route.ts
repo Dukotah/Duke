@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { escapeHtml } from "@/lib/html";
 import { isValidEmail } from "@/lib/validation";
+import { EMAIL, NOREPLY_EMAIL, PHONE, LOCATION, SERVICE_AREA } from "@/config/site";
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,8 +40,8 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "Copper Bay Tech <noreply@copperbaytech.com>",
-          to: ["duke@copperbaytech.com"],
+          from: `Copper Bay Tech <${NOREPLY_EMAIL}>`,
+          to: [EMAIL],
           reply_to: email,
           subject: `New inquiry from ${safe.name} — ${safe.business}`,
           html: `
@@ -59,16 +60,16 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "Duke @ Copper Bay Tech <duke@copperbaytech.com>",
+          from: `Duke @ Copper Bay Tech <${EMAIL}>`,
           to: [email],
           subject: "Got your message — Copper Bay Tech",
           html: `
             <p>Hi ${safe.name},</p>
             <p>Thanks for reaching out — I got your message and will be back to you within one business day.</p>
-            <p>If anything's urgent, feel free to call or text me directly at <strong>(707) 239-6725</strong>.</p>
-            <p>Talk soon,<br>Duke<br>Copper Bay Tech · Petaluma, CA</p>
+            <p>If anything's urgent, feel free to call or text me directly at <strong>${PHONE}</strong>.</p>
+            <p>Talk soon,<br>Duke<br>Copper Bay Tech · ${LOCATION}</p>
             <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
-            <p style="font-size:12px;color:#999;">Copper Bay Tech · Sonoma County IT & Web · copperbaytech.com</p>
+            <p style="font-size:12px;color:#999;">Copper Bay Tech · ${SERVICE_AREA} IT & Web · copperbaytech.com</p>
           `,
         }),
       }),
