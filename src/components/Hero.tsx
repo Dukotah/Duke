@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CALENDLY_URL } from "@/config/site";
+import { CALENDLY_URL, PHONE, PHONE_HREF } from "@/config/site";
 
 const trustSignals = [
   "Custom websites",
@@ -105,6 +105,21 @@ export default function Hero() {
               Send a Message
             </a>
           </div>
+
+          {/* Lowest-friction conversion for local buyers: tap to call. */}
+          <p
+            className="mt-5 text-sm text-white/55"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
+            or call{" "}
+            <a
+              href={PHONE_HREF}
+              className="font-semibold text-white underline-offset-4 transition-colors hover:text-[#F97316] hover:underline focus-visible:outline-none focus-visible:underline"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              {PHONE}
+            </a>
+          </p>
 
           {/* Above-the-fold trust signals */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">

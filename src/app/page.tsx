@@ -13,6 +13,7 @@ import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
+import StickyCTA from "@/components/StickyCTA";
 import JsonLd, { localBusinessSchema } from "@/components/JsonLd";
 
 export default function Home() {
@@ -35,7 +36,10 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      {/* Spacer so the fixed mobile action bar never covers footer content. */}
+      <div className="h-16 md:hidden" aria-hidden="true" />
       <ChatWidget />
+      <StickyCTA />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin, ArrowUpRight } from "lucide-react";
 
 export default function Footer() {
@@ -61,10 +62,17 @@ export default function Footer() {
           <div className="lg:pr-4">
             <Link
               href="/"
-              className="inline-block text-2xl font-bold rounded-md outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+              className="inline-flex items-center gap-2.5 text-2xl font-bold rounded-md outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Copper Bay<span className="text-[#F97316]">Tech</span>
+              <Image
+                src="/logos/logo-icon.png"
+                alt=""
+                width={36}
+                height={36}
+                className="h-9 w-9 rounded-lg"
+              />
+              <span>Copper Bay<span className="text-[#F97316]">Tech</span></span>
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-white/55 max-w-xs text-pretty" style={{ fontFamily: "var(--font-body)" }}>
               Custom-built technology for Sonoma County businesses. Websites, IT support, and cybersecurity — done right.
