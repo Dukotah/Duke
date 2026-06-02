@@ -1,25 +1,25 @@
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import SocialProof from "@/components/SocialProof";
-import Problem from "@/components/Problem";
 import Services from "@/components/Services";
-import Testimonials from "@/components/Testimonials";
 import HowItWorks from "@/components/HowItWorks";
-import ITQuiz from "@/components/ITQuiz";
-import Comparison from "@/components/Comparison";
-import CaseStudies from "@/components/CaseStudies";
-import Portfolio from "@/components/Portfolio";
-import PricingEstimator from "@/components/PricingEstimator";
-import PricingTeaser from "@/components/PricingTeaser";
 import ToolsTeaser from "@/components/ToolsTeaser";
-import FAQ from "@/components/FAQ";
-import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import StickyCTA from "@/components/StickyCTA";
 import JsonLd, { localBusinessSchema } from "@/components/JsonLd";
 
+/**
+ * Minimal home: a focused funnel only. Supporting content lives on dedicated
+ * pages so the site has depth (good for SEO) instead of one endless scroll.
+ *   About        -> /about
+ *   FAQ          -> /faq
+ *   IT quiz      -> /it-health-check
+ *   Pricing tools, comparison -> /pricing
+ *   Testimonials, portfolio    -> /work
+ * Keep this list short. New sections almost always belong on a sub-page.
+ */
 export default function Home() {
   return (
     <>
@@ -28,19 +28,9 @@ export default function Home() {
       <main>
         <Hero />
         <SocialProof />
-        <Problem />
         <Services />
-        <Testimonials />
         <HowItWorks />
-        <Comparison />
-        <ITQuiz />
-        <CaseStudies />
-        <Portfolio />
-        <PricingEstimator />
-        <PricingTeaser />
         <ToolsTeaser />
-        <FAQ />
-        <About />
         <Contact />
       </main>
       <Footer />

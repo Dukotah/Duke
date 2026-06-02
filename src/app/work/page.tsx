@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import Portfolio from "@/components/Portfolio";
+import Testimonials from "@/components/Testimonials";
 import { ArrowRight, Globe, ShieldCheck, Cloud } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -226,6 +228,8 @@ export default function Work() {
             </div>
           </div>
         </section>
+        <Portfolio />
+        <Testimonials />
       </main>
       <Footer />
     </>
