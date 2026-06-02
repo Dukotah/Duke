@@ -55,15 +55,15 @@ export default function LoginPage() {
   const busy = submitting || !!quickLoading;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#111113] p-6">
-      <div className="w-full max-w-xs">
+    <div className="min-h-screen flex items-center justify-center crm-backdrop p-6">
+      <div className="w-full max-w-xs crm-rise">
 
         {/* Logo */}
         <div className="text-center mb-10">
-          <p className="text-2xl font-bold tracking-tight text-white" style={H}>
-            Copper Bay<span style={{ color: "#F97316" }}>Tech</span>
+          <p className="text-[28px] font-bold tracking-tight text-white" style={H}>
+            Copper Bay<span className="text-[#F97316]">Tech</span>
           </p>
-          <p className="text-sm text-white/30 mt-1" style={H}>Sales CRM</p>
+          <p className="text-sm font-medium text-white/35 mt-1.5 tracking-wide" style={H}>Sales CRM</p>
         </div>
 
         {/* Sign-in form */}
@@ -98,8 +98,8 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={busy || !email || !password}
-            className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all active:scale-[0.98] disabled:opacity-40"
-            style={{ backgroundColor: "#F97316", ...H }}
+            className="crm-glow-brand w-full py-3.5 rounded-xl text-sm font-bold text-white bg-[#F97316] transition-all active:scale-[0.98] hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e0e10]"
+            style={H}
           >
             {submitting ? "Signing in…" : "Sign in"}
           </button>
