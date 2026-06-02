@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+
+const blogSchema = blogPostingSchema({
+  title: "Managed IT Support vs. Break-Fix: Which Is Right for Your Business?",
+  description:
+    "Break-fix IT feels cheaper until something breaks at the worst possible moment. Here's how to decide which model makes sense for your Sonoma County business.",
+  url: "https://copperbaytech.com/blog/managed-it-support-vs-break-fix-sonoma-county",
+  datePublished: "2026-05-01",
+});
 
 export const metadata: Metadata = {
   title: "Managed IT Support vs Break-Fix: Which Is Right for Your Business? | Copper Bay Tech",
@@ -15,6 +24,7 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogSchema} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

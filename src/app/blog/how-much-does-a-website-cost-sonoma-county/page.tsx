@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+
+const blogSchema = blogPostingSchema({
+  title: "How Much Does a Website Cost in Sonoma County? (2026)",
+  description:
+    "Real pricing for small business websites in Sonoma County. What you should expect to pay, what drives costs up, and how to avoid getting ripped off.",
+  url: "https://copperbaytech.com/blog/how-much-does-a-website-cost-sonoma-county",
+  datePublished: "2026-05-01",
+});
 
 export const metadata: Metadata = {
   title: "How Much Does a Website Cost in Sonoma County? (2026) | Copper Bay Tech",
@@ -15,6 +24,7 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogSchema} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

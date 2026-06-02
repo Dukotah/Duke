@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { serviceSchema, faqSchema } from "@/components/JsonLd";
 import { ArrowRight, CheckCircle2, Clock, Star, Zap, Search, Smartphone } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -20,24 +21,13 @@ export const metadata: Metadata = {
   },
 };
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Service",
+const schema = serviceSchema({
   name: "Web Design & Development",
-  provider: {
-    "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
-    telephone: "+17072396725",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Petaluma",
-      addressRegion: "CA",
-    },
-  },
-  areaServed: "Sonoma County, CA",
   description:
     "Custom-coded business websites for Sonoma County small businesses. No templates, no page builders.",
-};
+  url: "https://copperbaytech.com/web-design-sonoma-county",
+  areaServed: "Sonoma County, CA",
+});
 
 const deliverables = [
   { icon: Zap, label: "Fast load times", body: "Custom-coded in Next.js — no bloated page builders. Most sites score 90+ on Google PageSpeed." },
@@ -81,7 +71,7 @@ const faqs = [
 export default function WebDesignSonomaCounty() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <JsonLd schema={[schema, faqSchema(faqs)]} />
       <Nav />
       <main>
         {/* Hero */}

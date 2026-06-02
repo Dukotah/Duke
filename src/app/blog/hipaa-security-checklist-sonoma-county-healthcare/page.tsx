@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
+
+const blogSchema = blogPostingSchema({
+  title: "HIPAA Security Checklist for Sonoma County Healthcare Practices",
+  description:
+    "A practical HIPAA technical security checklist for small healthcare practices in Sonoma County. What you actually need — and what most practices are missing.",
+  url: "https://copperbaytech.com/blog/hipaa-security-checklist-sonoma-county-healthcare",
+  datePublished: "2026-05-01",
+});
 
 export const metadata: Metadata = {
   title: "HIPAA Security Checklist for Sonoma County Healthcare Practices | Copper Bay Tech",
@@ -65,6 +74,7 @@ const checks = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogSchema} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">
