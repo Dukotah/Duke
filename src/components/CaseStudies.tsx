@@ -18,14 +18,38 @@ type Case = {
   metrics: { label: string; value: string }[];
 };
 
+/**
+ * ⚠️ ILLUSTRATIVE SAMPLE CASE STUDIES — NOT VERIFIED CLIENT RESULTS.
+ *
+ * These entries are representative examples written to show the *kind* of work
+ * and outcomes we deliver. They are NOT real, named-client engagements and the
+ * quotes are NOT real customer endorsements. Attributions use role +
+ * business-type + town (no invented personal or business names) and every card
+ * carries a visible "Representative example" marker.
+ *
+ * Before this goes live in production you MUST replace each entry with a real,
+ * client-APPROVED case study and quote. Publishing fabricated endorsements or
+ * specific results as if they were genuine violates the FTC's rule on
+ * fake/AI-generated reviews (16 CFR Part 465) and California's
+ * unfair-competition / false-advertising laws.
+ *
+ * To make these real:
+ *   1. Document an actual engagement (situation / what we did / outcome).
+ *   2. Get the client's written approval to publish their quote + attribution.
+ *   3. Replace the copy below and flip SHOW_SAMPLE_MARKER to `false`.
+ */
+
+// Flip to `false` once every case below is a real, client-approved engagement.
+const SHOW_SAMPLE_MARKER = true;
+
 const cases: Case[] = [
   {
     tag: "Web Development",
-    client: "Petaluma Home Staging Co.",
+    client: "Home staging business — Petaluma",
     title: "From invisible to booked out — a full website rebuild",
     icon: Globe,
     situation:
-      "Maria ran a thriving home staging business but her website was an embarrassment. It took 8 seconds to load on mobile, half the contact form submissions went straight to spam, and the design hadn't been touched since 2018. She was losing leads before they ever got to talk to her.",
+      "A thriving home staging business was held back by an embarrassing website. It took 8 seconds to load on mobile, half the contact form submissions went straight to spam, and the design hadn't been touched since 2018 — leads were lost before they ever got in touch.",
     what: [
       "Rebuilt the site from scratch — custom-coded in Next.js, no page builders",
       "Implemented proper spam filtering and tested form delivery end-to-end",
@@ -33,11 +57,11 @@ const cases: Case[] = [
       "Set up Google Business Profile and local SEO targeting Petaluma and surrounding areas",
     ],
     outcome:
-      "The new site went live in 11 days. Within 6 weeks, Maria had received 8 new inquiries through the site — more than her previous site had generated in a year. The staging business was fully booked the following quarter.",
+      "In an engagement like this, a new site can go live in around 11 days and start surfacing inquiries within weeks — often more than a slow, outdated site generated in a year.",
     quote:
-      "Before Copper Bay Tech, our website was embarrassingly slow and half the contact form submissions were going to spam. They rebuilt everything in two weeks — we've already gotten three new inquiries through the site.",
-    author: "Maria T.",
-    role: "Owner, Petaluma Home Staging Co.",
+      "Our website was embarrassingly slow and half the contact form submissions were going to spam. They rebuilt everything in two weeks — and we started getting new inquiries through the site.",
+    author: "Owner, home-staging business",
+    role: "Petaluma, Sonoma County",
     metrics: [
       { label: "Load time", value: "8s → 1.4s" },
       { label: "New inquiries in 6 weeks", value: "8" },
@@ -46,11 +70,11 @@ const cases: Case[] = [
   },
   {
     tag: "Cybersecurity",
-    client: "Santa Rosa Insurance Group",
+    client: "Insurance practice — Santa Rosa",
     title: "Security audit finds two critical vulnerabilities — fixed same day",
     icon: ShieldCheck,
     situation:
-      "James had no real sense of his firm's security posture. The router was years old, nobody knew the firmware version, and staff were using shared passwords for key business tools. They handled sensitive client financial data and hadn't had a security review since setup.",
+      "A firm handling sensitive client financial data had no real sense of its security posture. The router was years old, nobody knew the firmware version, and staff were sharing passwords for key business tools — with no security review since setup.",
     what: [
       "Ran a full network security audit — scanned ports, checked firmware versions, reviewed access controls",
       "Found two open ports that should have been closed and firmware that was 4 years out of date",
@@ -59,11 +83,11 @@ const cases: Case[] = [
       "Provided a written security summary and remediation log for their records",
     ],
     outcome:
-      "The critical issues were resolved within hours of discovery. James now has a documented security baseline and a simple quarterly checklist to maintain it. No more flying blind.",
+      "In an engagement like this, critical issues are typically resolved within hours of discovery, leaving the business with a documented security baseline and a simple quarterly checklist to maintain it.",
     quote:
       "I had no idea how exposed we were until they ran a security audit. They found two open ports and outdated firmware on our router that we'd had for years. Fixed it same day, no drama.",
-    author: "James R.",
-    role: "Principal, Santa Rosa Insurance Group",
+    author: "Principal, insurance practice",
+    role: "Santa Rosa, Sonoma County",
     metrics: [
       { label: "Vulnerabilities found", value: "2 critical" },
       { label: "Time to fix", value: "Same day" },
@@ -72,11 +96,11 @@ const cases: Case[] = [
   },
   {
     tag: "IT Support & Cloud",
-    client: "Sebastopol Family Dental",
+    client: "Dental practice — Sebastopol",
     title: "Full office cloud migration — zero downtime, staff up and running in a day",
     icon: Cloud,
     situation:
-      "Sandra managed an office of 12 staff running everything off a local server that was aging out. They were worried about data loss, downtime during a migration, and staff not adapting to a new system during a busy patient schedule.",
+      "A 12-person office was running everything off a local server that was aging out. The main worries: data loss, downtime during a migration, and staff struggling to adapt to a new system in the middle of a busy patient schedule.",
     what: [
       "Audited existing data, software, and workflows before touching anything",
       "Migrated file storage, calendaring, and communication to Google Workspace",
@@ -85,11 +109,11 @@ const cases: Case[] = [
       "Set up automated backups with monthly restore tests built into the retainer",
     ],
     outcome:
-      "Migration completed over a weekend. Monday morning, all 12 staff logged in without issue. The old server has been decommissioned. Sandra now has predictable monthly IT costs and a direct line when anything comes up.",
+      "In an engagement like this, the migration can be completed over a weekend with staff logging in Monday without issue — leaving the business with predictable monthly IT costs and a direct line when anything comes up.",
     quote:
-      "We moved our whole office to the cloud and it was seamless. Duke handled everything — setup, staff training, the works. Our team was up and running in a day.",
-    author: "Sandra K.",
-    role: "Office Manager, Sebastopol Family Dental",
+      "We moved our whole office to the cloud and it was seamless. They handled everything — setup, staff training, the works. Our team was up and running in a day.",
+    author: "Office manager, dental practice",
+    role: "Sebastopol, Sonoma County",
     metrics: [
       { label: "Staff trained", value: "12 people" },
       { label: "Downtime", value: "Zero" },
@@ -129,9 +153,18 @@ export default function CaseStudies() {
               className="text-[#3F3F46]/60 max-w-xs text-sm leading-relaxed"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Real engagements with Sonoma County businesses. Click any case to read the full story.
+              Representative examples of the work we do for Sonoma County businesses. Click any case to read the full story.
             </p>
           </div>
+          {SHOW_SAMPLE_MARKER && (
+            <p
+              className="mt-4 max-w-xl text-xs text-[#3F3F46]/40"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              Illustrative samples shown during launch — replaced with real,
+              client-approved case studies before going live.
+            </p>
+          )}
         </motion.div>
 
         <div className="space-y-4">
@@ -145,8 +178,16 @@ export default function CaseStudies() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="rounded-2xl border border-[#18181B]/10 overflow-hidden"
+                className="relative rounded-2xl border border-[#18181B]/10 overflow-hidden"
               >
+                {SHOW_SAMPLE_MARKER && (
+                  <span
+                    className="absolute right-4 top-3 z-10 rounded-full bg-[#18181B]/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#3F3F46]/45"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    Representative example
+                  </span>
+                )}
                 {/* Summary row */}
                 <button
                   onClick={() => setExpanded(isOpen ? null : i)}
