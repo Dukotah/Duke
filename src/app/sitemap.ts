@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/web-design-sonoma-county`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/it-support-sonoma-county`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/cybersecurity-small-business`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/ai-integration-small-business`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/web-design-santa-rosa`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/web-design-petaluma`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/web-design-rohnert-park`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
