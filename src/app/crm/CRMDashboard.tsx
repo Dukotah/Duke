@@ -569,6 +569,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           {tab === "reminders" && (
             <CallReminders
               states={states}
+              allLeads={allLeads}
               onSelectLead={(l) => setSelectedLead(l as Lead)}
               onUpdateState={updateState}
             />

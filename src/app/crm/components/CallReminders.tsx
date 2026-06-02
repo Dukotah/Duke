@@ -29,6 +29,7 @@ interface DueItem {
 
 interface Props {
   states: Record<string, LeadState>;
+  allLeads: Lead[];
   onSelectLead: (lead: Lead) => void;
   onUpdateState: (leadId: string, patch: Partial<LeadState>) => void;
 }
@@ -59,7 +60,7 @@ function dueLabel(delta: number): { text: string; tone: string } {
   return { text: "Due today", tone: "text-amber-400 bg-amber-400/10 border-amber-400/20" };
 }
 
-export default function CallReminders({ states, onSelectLead, onUpdateState }: Props) {
+export default function CallReminders({ states, allLeads, onSelectLead, onUpdateState }: Props) {
   const [due, setDue] = useState<DueItem[] | null>(null);
   const [leadMap, setLeadMap] = useState<Record<string, Lead>>({});
   const [loading, setLoading] = useState(true);
@@ -80,14 +81,23 @@ export default function CallReminders({ states, onSelectLead, onUpdateState }: P
       const items: DueItem[] = Array.isArray(data.dueToday) ? data.dueToday : [];
       setDue(items);
 
-      // Resolve lead details for the due reminders. The leads endpoint has no
-      // by-id lookup, so pull a broad scored set and index it by id — same
-      // approach the Call Queue uses to hydrate its cards.
+      // Resolve lead details for the due reminders. Start from the leads the
+      // parent already loaded (allLeads) — this covers most due ids without a
+      // network round-trip and isn't capped by the leads endpoint's limit.
       if (items.length) {
-        const lr = await fetch("/api/crm/leads?limit=100&sortBy=outreach_score&allTerritories=1");
-        const ld = await lr.json();
         const map: Record<string, Lead> = {};
-        for (const l of (ld.leads ?? []) as Lead[]) map[l.id] = l;
+        for (const l of allLeads) map[l.id] = l;
+
+        // Fall back to the scored leads feed only for ids we couldn't resolve
+        // locally (e.g. leads outside the parent's current set).
+        const missing = items.some((it) => !map[it.leadId]);
+        if (missing) {
+          const lr = await fetch("/api/crm/leads?limit=100&sortBy=outreach_score&allTerritories=1");
+          const ld = await lr.json();
+          for (const l of (ld.leads ?? []) as Lead[]) {
+            if (!map[l.id]) map[l.id] = l;
+          }
+        }
         setLeadMap(map);
       } else {
         setLeadMap({});
@@ -97,7 +107,7 @@ export default function CallReminders({ states, onSelectLead, onUpdateState }: P
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [allLeads]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -113,13 +123,22 @@ export default function CallReminders({ states, onSelectLead, onUpdateState }: P
     setBusy(leadId);
     const now = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     const newCount = (states[leadId]?.callCount ?? 0) + 1;
+    // Most dispositions clear the reminder. But "call_back" and "interested"
+    // both want to stay in the queue — reschedule a near follow-up instead of
+    // wiping it (mirrors LeadPanel.logOutcome opening a follow-up picker).
+    let followUpDate = "";
+    if (d.key === "call_back" || d.key === "interested") {
+      const fu = new Date();
+      fu.setDate(fu.getDate() + (d.key === "call_back" ? 2 : 3));
+      followUpDate = fu.toISOString().slice(0, 10);
+    }
     onUpdateState(leadId, {
       status: d.status,
       stage: d.stage,
       lastContacted: now,
       lastOutcome: d.key,
       callCount: newCount,
-      followUpDate: "",
+      followUpDate,
     });
     try {
       await fetch("/api/crm/activity", {
