@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface Metric {
   value: string;
@@ -77,15 +79,15 @@ function ScoreCircle({ score }: { score: number }) {
 function MetricCard({ metric, abbr }: { metric: Metric; abbr: string }) {
   const color = scoreColor(metric.score);
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-1">
+    <div className="group bg-zinc-900/70 border border-zinc-800 rounded-xl p-4 flex flex-col gap-1 transition-colors hover:border-zinc-700">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-zinc-500 font-medium uppercase tracking-wider">{abbr}</span>
+        <span className="text-xs text-zinc-500 font-semibold uppercase tracking-wider">{abbr}</span>
         <span
-          className="w-2 h-2 rounded-full"
-          style={{ backgroundColor: color }}
+          className="w-2 h-2 rounded-full ring-2 ring-inset ring-white/5"
+          style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}66` }}
         />
       </div>
-      <div className="text-xl font-bold text-white">{metric.value}</div>
+      <div className="text-xl font-bold text-white tabular-nums">{metric.value}</div>
       <div className="text-xs text-zinc-500 truncate">{metric.title}</div>
     </div>
   );
@@ -97,14 +99,19 @@ export default function AuditResults({ data }: { data: AuditData }) {
   return (
     <div className="space-y-8">
       {/* Score + summary */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6">
+      <div className="relative overflow-hidden bg-zinc-900/70 border border-zinc-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 shadow-xl shadow-black/20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 rounded-full opacity-30 blur-3xl"
+          style={{ backgroundColor: scoreLabel(data.score).color }}
+        />
         <ScoreCircle score={data.score} />
         <div className="flex-1 text-center sm:text-left">
-          <p className="text-zinc-400 text-sm mb-1 break-all">{data.url}</p>
-          <h3 className="text-2xl font-black text-white mb-2">
+          <p className="text-zinc-500 text-xs mb-1.5 break-all font-mono">{data.url}</p>
+          <h3 className="text-2xl font-black text-white mb-2 tracking-tight">
             Performance Score: {data.score}/100
           </h3>
-          <p className="text-zinc-400 text-sm">
+          <p className="text-pretty text-zinc-400 text-sm leading-relaxed">
             {data.score >= 90
               ? "Your site is well-optimized. A few small tweaks could push it even further."
               : data.score >= 50
@@ -144,11 +151,14 @@ export default function AuditResults({ data }: { data: AuditData }) {
             {data.opportunities.map((opp, i) => (
               <div
                 key={i}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex gap-4 items-start"
+                className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-4 flex gap-4 items-start transition-colors hover:border-zinc-700"
               >
                 <div
                   className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                  style={{ backgroundColor: scoreColor(opp.score ?? null) }}
+                  style={{
+                    backgroundColor: scoreColor(opp.score ?? null),
+                    boxShadow: `0 0 8px ${scoreColor(opp.score ?? null)}66`,
+                  }}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -172,28 +182,33 @@ export default function AuditResults({ data }: { data: AuditData }) {
       {/* CTA */}
       <div
         ref={ctaRef}
-        className="rounded-2xl p-6 text-center"
+        className="relative overflow-hidden rounded-2xl p-7 text-center shadow-xl shadow-black/20"
         style={{
-          background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)",
-          border: "1px solid #F97316",
+          background: "linear-gradient(135deg, #1C1917 0%, #18181B 100%)",
+          border: "1px solid rgba(249,115,22,0.45)",
         }}
       >
-        <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-orange-500/70 to-transparent"
+        />
+        <p className="text-orange-400 text-xs font-semibold uppercase tracking-[0.18em] mb-2">
           Free Fix Consultation
         </p>
-        <h4 className="text-white text-xl font-black mb-2">
+        <h4 className="text-white text-2xl font-black mb-2 tracking-tight">
           Want us to fix this?
         </h4>
-        <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
+        <p className="text-pretty text-zinc-400 text-sm leading-relaxed mb-6 max-w-sm mx-auto">
           Copper Bay Tech can resolve most performance issues in under a week. Get a
           free 30-minute call to see exactly what we&apos;d do.
         </p>
-        <a
+        <Link
           href="/#contact"
-          className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
+          className="group inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 active:scale-[0.98] text-white font-bold px-8 py-3 rounded-full transition-all text-sm shadow-lg shadow-orange-500/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-500/30"
         >
           Get a Free Performance Review
-        </a>
+          <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+        </Link>
       </div>
     </div>
   );

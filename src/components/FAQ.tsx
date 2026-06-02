@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
+import JsonLd, { faqSchema } from "@/components/JsonLd";
 
 const faqs = [
   {
@@ -40,6 +41,7 @@ export default function FAQ() {
 
   return (
     <section id="faq" className="py-24 bg-white">
+      <JsonLd schema={faqSchema(faqs)} />
       <div className="max-w-3xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
