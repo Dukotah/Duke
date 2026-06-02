@@ -139,6 +139,7 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
           subject,
           body,
           fromName,
+          test: true,
         }),
       });
       const d = await res.json();
