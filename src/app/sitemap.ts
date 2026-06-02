@@ -11,6 +11,7 @@ const blogPosts: Array<{ slug: string; lastModified: string; priority: number }>
   { slug: "how-much-does-a-website-cost-sonoma-county", lastModified: "2026-05-01", priority: 0.7 },
   { slug: "managed-it-support-vs-break-fix-sonoma-county", lastModified: "2026-05-01", priority: 0.7 },
   { slug: "hipaa-security-checklist-sonoma-county-healthcare", lastModified: "2026-05-01", priority: 0.7 },
+  { slug: "small-business-cybersecurity-threats-sonoma-county", lastModified: "2026-06-01", priority: 0.7 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
