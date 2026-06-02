@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import BlogEmailCapture from "@/components/BlogEmailCapture";
 
 const blogSchema = blogPostingSchema({
   title: "How to Choose an IT Company in Sonoma County (Without Getting Burned)",
@@ -19,12 +20,42 @@ export const metadata: Metadata = {
     "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
 };
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "How to Choose an IT Company in Sonoma County (Without Getting Burned)",
+  description:
+    "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
+  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  datePublished: "2026-05-01",
+  url: "https://copperbaytech.com/blog/how-to-choose-an-it-company-sonoma-county",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
+    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
+    { "@type": "ListItem", position: 3, name: "How to Choose an IT Company in Sonoma County (Without Getting Burned)", item: "https://copperbaytech.com/blog/how-to-choose-an-it-company-sonoma-county" },
+  ],
+};
+
 export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
       <Nav />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link
@@ -106,6 +137,8 @@ export default function Article() {
                 </p>
               </div>
             </div>
+
+            <BlogEmailCapture />
 
             <div className="mt-12 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <Link

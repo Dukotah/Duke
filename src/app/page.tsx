@@ -25,7 +25,7 @@ export default function Home() {
     <>
       <JsonLd schema={localBusinessSchema()} />
       <Nav />
-      <main>
+      <main id="main-content">
         <Hero />
         <SocialProof />
         <Services />

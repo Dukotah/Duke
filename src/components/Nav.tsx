@@ -56,6 +56,7 @@ export default function Nav() {
           ? "bg-[#FAFAF9]/85 backdrop-blur-md border-b border-[#18181B]/10 shadow-[0_1px_2px_rgba(24,24,27,0.04),0_8px_24px_-12px_rgba(24,24,27,0.18)]"
           : "bg-transparent border-b border-transparent"
       }`}
+      role="banner"
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}

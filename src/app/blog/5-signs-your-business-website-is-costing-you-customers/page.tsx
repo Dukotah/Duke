@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import BlogEmailCapture from "@/components/BlogEmailCapture";
 
 const blogSchema = blogPostingSchema({
   title: "5 Signs Your Business Website Is Costing You Customers Right Now",
@@ -46,12 +47,42 @@ const signs = [
   },
 ];
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "5 Signs Your Business Website Is Costing You Customers Right Now",
+  description:
+    "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+  datePublished: "2026-03-01",
+  url: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
+    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
+    { "@type": "ListItem", position: 3, name: "5 Signs Your Business Website Is Costing You Customers Right Now", item: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers" },
+  ],
+};
+
 export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
       <Nav />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-8 transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
@@ -95,6 +126,8 @@ export default function Article() {
                 Run Free Website Audit <ArrowRight size={14} />
               </Link>
             </div>
+            <BlogEmailCapture />
+
             <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources
