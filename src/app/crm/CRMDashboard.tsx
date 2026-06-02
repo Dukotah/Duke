@@ -6,7 +6,7 @@ import {
   Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail, Globe,
   Flame, Zap, ArrowUpDown, X, Download, LogOut, LayoutGrid,
   BookOpen, DollarSign, List, ChevronDown, Check,
-  AlertCircle, Copy, Plus,
+  AlertCircle, Copy, Plus, CalendarClock,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
@@ -121,6 +121,7 @@ function LeaderboardPeek({ userId }: { userId: string }) {
 }
 
 const CallQueue = dynamic(() => import("./components/CallQueue"), { ssr: false });
+const CallReminders = dynamic(() => import("./components/CallReminders"), { ssr: false });
 const Pipeline = dynamic(() => import("./components/Pipeline"), { ssr: false });
 const ScriptsGuide = dynamic(() => import("./components/ScriptsGuide"), { ssr: false });
 const EarningsView = dynamic(() => import("./components/Earnings"), { ssr: false });
@@ -140,6 +141,7 @@ interface LeadState {
   status: "new" | "contacted" | "follow_up" | "not_interested" | "won";
   stage: string; notes: string; lastContacted?: string;
   submittedAt?: string; callCount?: number; lastOutcome?: string;
+  followUpDate?: string;
 }
 
 interface Submission {
@@ -160,11 +162,12 @@ interface LeadsResponse {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-type Tab = "queue" | "pipeline" | "leads" | "scripts" | "earnings";
+type Tab = "queue" | "reminders" | "pipeline" | "leads" | "scripts" | "earnings";
 type NavKey = Tab | "email";
 
 const TABS: { key: NavKey; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: "queue", label: "Queue", icon: Phone },
+  { key: "reminders", label: "Follow-ups", icon: CalendarClock },
   { key: "pipeline", label: "Pipeline", icon: LayoutGrid },
   { key: "leads", label: "Leads", icon: List },
   { key: "email", label: "Email", icon: Mail },
@@ -503,6 +506,12 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
 
   const pendingCount = submissions.filter((s) => s.status === "pending").length;
   const interestedCount = Object.values(states).filter((s) => s.stage === "interested").length;
+  // Due follow-ups — mirrors the /api/crm/reminders filter so the tab badge
+  // matches the Follow-ups view without an extra fetch.
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const dueCount = Object.values(states).filter(
+    (s) => s.followUpDate && !["lost", "won", "submitted"].includes(s.stage) && s.followUpDate <= todayISO
+  ).length;
 
   return (
     <>
@@ -577,6 +586,14 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               onDialerStart={(l) => setActiveLead(l as Lead)}
             />
           )}
+          {tab === "reminders" && (
+            <CallReminders
+              states={states}
+              allLeads={allLeads}
+              onSelectLead={(l) => setSelectedLead(l as Lead)}
+              onUpdateState={updateState}
+            />
+          )}
           {tab === "pipeline" && (
             <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
           )}
@@ -604,7 +621,9 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           <div className="max-w-3xl mx-auto flex">
             {TABS.map((t) => {
               const active = tab === t.key;
-              const badge = t.key === "earnings" && pendingCount > 0 ? pendingCount : null;
+              const badge =
+                t.key === "earnings" && pendingCount > 0 ? pendingCount :
+                t.key === "reminders" && dueCount > 0 ? dueCount : null;
               const onClick = t.key === "email" ? () => setShowBulkEmail(true) : () => setTab(t.key as Tab);
               return (
                 <button key={t.key} onClick={onClick} aria-current={active ? "page" : undefined}
