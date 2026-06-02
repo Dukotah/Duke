@@ -103,3 +103,67 @@ body {
     animation: none;
   }
 }
+
+/* ─── CRM shell surface system ──────────────────────────────────────────────
+   Dark, futuristic surfaces with layered depth, a hairline top highlight, and
+   an ambient brand glow. Used across the CRM dashboard shell (nav/header/cards). */
+
+.crm-surface {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0) 60%),
+    #1c1c1f;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 8px 24px -12px rgba(0, 0, 0, 0.6);
+}
+
+.crm-surface-hover {
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.crm-surface-hover:hover {
+  border-color: rgba(249, 115, 22, 0.28);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 16px 36px -14px rgba(249, 115, 22, 0.22);
+}
+
+/* App backdrop: deep base with a faint radial brand glow at the top */
+.crm-backdrop {
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(249, 115, 22, 0.07) 0%, rgba(249, 115, 22, 0) 55%),
+    #0e0e10;
+}
+
+/* Translucent sticky chrome (header / bottom nav) */
+.crm-chrome {
+  background: rgba(14, 14, 16, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+/* Brand-tinted glow for the FAB and primary affordances */
+.crm-glow-brand {
+  box-shadow:
+    0 6px 16px -4px rgba(249, 115, 22, 0.5),
+    0 0 0 1px rgba(249, 115, 22, 0.4) inset;
+}
+
+/* Entrance animation for mounted content */
+@keyframes crm-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.crm-rise {
+  animation: crm-rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crm-rise,
+  .crm-surface-hover { animation: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
