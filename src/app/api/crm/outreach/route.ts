@@ -3,13 +3,14 @@ import { getRedis } from "@/lib/redis";
 import { addActivity, getLeadState, setLeadState, getSuppressedEmails } from "@/lib/db";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
-
-interface OutreachLead {
-  id: string;
-  name: string;
-  email: string;
-  city: string;
-}
+import {
+  type OutreachLead,
+  canDeliver as canDeliverGate,
+  gateLeads,
+  personalize,
+  remainingDailyCapacity,
+  resolveDailyCap,
+} from "@/lib/outreach";
 
 interface OutreachBody {
   leads: OutreachLead[];
@@ -26,18 +27,9 @@ const MAX_PER_REQUEST = 50;
 // Conservative daily cap, overridable so a freshly verified domain can be
 // warmed up slowly (e.g. start at 25–50/day and ramp up over a couple weeks).
 // A cold domain that suddenly blasts hundreds of emails looks like spam.
-const MAX_PER_DAY = (() => {
-  const n = parseInt(process.env.OUTREACH_DAILY_CAP ?? "", 10);
-  return Number.isFinite(n) && n > 0 ? n : 200;
-})();
+const MAX_PER_DAY = resolveDailyCap(process.env.OUTREACH_DAILY_CAP);
 const FOLLOW_UP_DAYS = 3;
 const SENDER = OUTREACH_FROM;
-
-// Basic shape check to avoid sending to obviously malformed addresses.
-// Hard bounces are one of the strongest signals that flags a sender as spam.
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-}
 
 function addDays(days: number): string {
   const d = new Date();
@@ -85,15 +77,12 @@ export async function POST(req: NextRequest) {
 
   // Check daily limit
   const sentToday = parseInt((await redis.get(dailyKey) as string | null) ?? "0", 10);
-  // Only well-formed addresses are eligible — malformed ones would hard-bounce.
-  const leadsWithEmail = leads.filter((l) => l.email && isValidEmail(l.email));
 
-  // Never email anyone who has unsubscribed — count them as skipped.
-  const suppressed = new Set(await getSuppressedEmails());
-  const sendable = leadsWithEmail.filter((l) => !suppressed.has(l.email.toLowerCase().trim()));
-  const skipped = leads.length - sendable.length;
+  // Drop malformed addresses (they hard-bounce) and anyone who unsubscribed
+  // (never re-mail them) — both count as skipped.
+  const { sendable, skipped } = gateLeads(leads, await getSuppressedEmails());
 
-  const canSend = Math.min(sendable.length, MAX_PER_DAY - sentToday);
+  const canSend = remainingDailyCapacity(sendable.length, sentToday, MAX_PER_DAY);
   if (canSend <= 0) {
     return NextResponse.json({
       error: `Daily outreach limit of ${MAX_PER_DAY} reached`,
@@ -113,7 +102,7 @@ export async function POST(req: NextRequest) {
   // someone confirms the domain is verified and sets OUTREACH_DOMAIN_VERIFIED=true,
   // we track every email but never actually send it.
   const domainVerified = (process.env.OUTREACH_DOMAIN_VERIFIED ?? "").trim().toLowerCase() === "true";
-  const canDeliver = Boolean(apiKey) && domainVerified;
+  const canDeliver = canDeliverGate(apiKey, process.env.OUTREACH_DOMAIN_VERIFIED);
 
   // Track an email regardless of whether it was actually delivered. This keeps
   // the outreach log, the lead's timeline, and the follow-up schedule accurate
@@ -161,18 +150,9 @@ export async function POST(req: NextRequest) {
   let failed = 0;
 
   for (const lead of toSend) {
-    // Personalize body — replace {name}, {business}, {city}, {fromName}
-    const personalizedBody = emailBody
-      .replace(/\{name\}/gi, lead.name)
-      .replace(/\{business\}/gi, lead.name)
-      .replace(/\{city\}/gi, lead.city)
-      .replace(/\{fromName\}/gi, fromName);
-
-    const personalizedSubject = subject
-      .replace(/\{name\}/gi, lead.name)
-      .replace(/\{business\}/gi, lead.name)
-      .replace(/\{city\}/gi, lead.city)
-      .replace(/\{fromName\}/gi, fromName);
+    // Personalize body & subject — replace {name}, {business}, {city}, {fromName}
+    const personalizedBody = personalize(emailBody, lead, fromName);
+    const personalizedSubject = personalize(subject, lead, fromName);
 
     const sentAt = new Date().toISOString();
 
