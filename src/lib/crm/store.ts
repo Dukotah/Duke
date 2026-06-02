@@ -1,16 +1,23 @@
-// In-memory CRM store.
+// SQLite-backed CRM store.
 //
-// There is no database wired into this project yet, so leads/activities live
-// in a module-level singleton seeded on first access. It is intentionally
-// hidden behind this small interface (getLeads / updateLead / logActivity /
-// getStats) so it can be swapped for Postgres/SQLite later without touching
-// the API routes or UI.
+// Leads / activities / reps are persisted to a local SQLite database via Node's
+// built-in `node:sqlite` (synchronous), so data now survives server restarts.
+// The same small interface that the in-memory version exposed
+// (getLeads / updateLead / logActivity / getStats / …) is preserved exactly, so
+// the API routes and UI are untouched — and this file can be swapped again for
+// Postgres later by reimplementing these functions.
 //
-// A `globalThis` cache keeps the data stable across Next's dev hot-reloads.
+// The database file lives at `$CRM_DB_PATH` (default `.data/crm.db`). It is
+// created and seeded on first access. A `globalThis` cache holds the open
+// connection so Next's dev hot-reloads don't reopen/reseed it.
 
+import path from "node:path";
+import fs from "node:fs";
+import { DatabaseSync } from "node:sqlite";
 import type {
   Lead,
   Activity,
+  ActivityType,
   Disposition,
   PipelineStage,
   Rep,
@@ -19,37 +26,278 @@ import type {
 import { PIPELINE_STAGES } from "./types";
 import { buildSeedLeads, SEED_REPS } from "./seed";
 
-interface CrmDB {
-  leads: Lead[];
-  reps: Rep[];
-  seq: number;
+const DB_PATH =
+  process.env.CRM_DB_PATH ?? path.join(process.cwd(), ".data", "crm.db");
+
+const g = globalThis as unknown as { __crmSqlite?: DatabaseSync };
+
+function conn(): DatabaseSync {
+  if (!g.__crmSqlite) {
+    fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+    const db = new DatabaseSync(DB_PATH);
+    db.exec("PRAGMA journal_mode = WAL;");
+    db.exec("PRAGMA foreign_keys = ON;");
+    migrate(db);
+    seedIfEmpty(db);
+    g.__crmSqlite = db;
+  }
+  return g.__crmSqlite;
 }
 
-const g = globalThis as unknown as { __crmDb?: CrmDB };
+function migrate(db: DatabaseSync): void {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS reps (
+      id          TEXT PRIMARY KEY,
+      name        TEXT NOT NULL,
+      avatarColor TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS leads (
+      id              TEXT PRIMARY KEY,
+      business        TEXT NOT NULL,
+      contactName     TEXT,
+      phone           TEXT NOT NULL,
+      website         TEXT,
+      industry        TEXT NOT NULL,
+      city            TEXT NOT NULL,
+      state           TEXT NOT NULL,
+      signals         TEXT NOT NULL,
+      heatScore       REAL NOT NULL,
+      stage           TEXT NOT NULL,
+      ownerRepId      TEXT,
+      estValue        REAL NOT NULL,
+      source          TEXT NOT NULL,
+      callbackAt      TEXT,
+      attempts        INTEGER NOT NULL,
+      lastContactedAt TEXT,
+      createdAt       TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS activities (
+      id          TEXT PRIMARY KEY,
+      leadId      TEXT NOT NULL,
+      type        TEXT NOT NULL,
+      disposition TEXT,
+      body        TEXT,
+      durationSec INTEGER,
+      repId       TEXT,
+      createdAt   TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_activities_leadId ON activities(leadId);
+    CREATE TABLE IF NOT EXISTS meta (
+      key   TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+    INSERT OR IGNORE INTO meta (key, value) VALUES ('seq', '1');
+  `);
+}
 
-function db(): CrmDB {
-  if (!g.__crmDb) {
-    g.__crmDb = { leads: buildSeedLeads(), reps: SEED_REPS, seq: 1 };
+function seedIfEmpty(db: DatabaseSync): void {
+  const row = db.prepare("SELECT COUNT(*) AS n FROM leads").get() as { n: number };
+  if (row.n > 0) return;
+
+  const insertRep = db.prepare(
+    "INSERT INTO reps (id, name, avatarColor) VALUES (?, ?, ?)",
+  );
+  for (const rep of SEED_REPS) {
+    insertRep.run(rep.id, rep.name, rep.avatarColor);
   }
-  return g.__crmDb;
+  for (const lead of buildSeedLeads()) {
+    insertLeadRow(db, lead);
+    for (const activity of lead.activities) insertActivityRow(db, activity);
+  }
+}
+
+// node:sqlite only binds null / number / bigint / string / Uint8Array, so
+// `undefined` columns must be coerced to null on the way in.
+function nz<T>(v: T | undefined): T | null {
+  return v === undefined ? null : v;
+}
+
+function insertLeadRow(db: DatabaseSync, lead: Lead): void {
+  db.prepare(
+    `INSERT INTO leads (
+       id, business, contactName, phone, website, industry, city, state,
+       signals, heatScore, stage, ownerRepId, estValue, source, callbackAt,
+       attempts, lastContactedAt, createdAt
+     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+  ).run(
+    lead.id,
+    lead.business,
+    nz(lead.contactName),
+    lead.phone,
+    nz(lead.website),
+    lead.industry,
+    lead.city,
+    lead.state,
+    JSON.stringify(lead.signals),
+    lead.heatScore,
+    lead.stage,
+    nz(lead.ownerRepId),
+    lead.estValue,
+    lead.source,
+    nz(lead.callbackAt),
+    lead.attempts,
+    nz(lead.lastContactedAt),
+    lead.createdAt,
+  );
+}
+
+function insertActivityRow(db: DatabaseSync, a: Activity): void {
+  db.prepare(
+    `INSERT INTO activities (id, leadId, type, disposition, body, durationSec, repId, createdAt)
+     VALUES (?,?,?,?,?,?,?,?)`,
+  ).run(
+    a.id,
+    a.leadId,
+    a.type,
+    nz(a.disposition),
+    nz(a.body),
+    nz(a.durationSec),
+    nz(a.repId),
+    a.createdAt,
+  );
+}
+
+// Persist the mutable columns of an existing lead (createdAt never changes).
+function persistLead(db: DatabaseSync, lead: Lead): void {
+  db.prepare(
+    `UPDATE leads SET
+       business=?, contactName=?, phone=?, website=?, industry=?, city=?,
+       state=?, signals=?, heatScore=?, stage=?, ownerRepId=?, estValue=?,
+       source=?, callbackAt=?, attempts=?, lastContactedAt=?
+     WHERE id=?`,
+  ).run(
+    lead.business,
+    nz(lead.contactName),
+    lead.phone,
+    nz(lead.website),
+    lead.industry,
+    lead.city,
+    lead.state,
+    JSON.stringify(lead.signals),
+    lead.heatScore,
+    lead.stage,
+    nz(lead.ownerRepId),
+    lead.estValue,
+    lead.source,
+    nz(lead.callbackAt),
+    lead.attempts,
+    nz(lead.lastContactedAt),
+    lead.id,
+  );
+}
+
+// --- Row → domain mapping --------------------------------------------------
+
+interface LeadRow {
+  id: string;
+  business: string;
+  contactName: string | null;
+  phone: string;
+  website: string | null;
+  industry: string;
+  city: string;
+  state: string;
+  signals: string;
+  heatScore: number;
+  stage: string;
+  ownerRepId: string | null;
+  estValue: number;
+  source: string;
+  callbackAt: string | null;
+  attempts: number;
+  lastContactedAt: string | null;
+  createdAt: string;
+}
+
+interface ActivityRow {
+  id: string;
+  leadId: string;
+  type: string;
+  disposition: string | null;
+  body: string | null;
+  durationSec: number | null;
+  repId: string | null;
+  createdAt: string;
+}
+
+function rowToActivity(r: ActivityRow): Activity {
+  return {
+    id: r.id,
+    leadId: r.leadId,
+    type: r.type as ActivityType,
+    disposition: (r.disposition as Disposition | null) ?? undefined,
+    body: r.body ?? undefined,
+    durationSec: r.durationSec ?? undefined,
+    repId: r.repId ?? undefined,
+    createdAt: r.createdAt,
+  };
+}
+
+function rowToLead(r: LeadRow, activities: Activity[]): Lead {
+  return {
+    id: r.id,
+    business: r.business,
+    contactName: r.contactName ?? undefined,
+    phone: r.phone,
+    website: r.website ?? undefined,
+    industry: r.industry,
+    city: r.city,
+    state: r.state,
+    signals: JSON.parse(r.signals) as Lead["signals"],
+    heatScore: r.heatScore,
+    stage: r.stage as PipelineStage,
+    ownerRepId: r.ownerRepId ?? undefined,
+    estValue: r.estValue,
+    source: r.source,
+    callbackAt: r.callbackAt,
+    attempts: r.attempts,
+    lastContactedAt: r.lastContactedAt,
+    createdAt: r.createdAt,
+    activities,
+  };
+}
+
+// Load every lead with its activities attached. Two queries + an in-memory
+// group-by keeps it to O(n) regardless of lead count.
+function allLeads(): Lead[] {
+  const db = conn();
+  const leadRows = db.prepare("SELECT * FROM leads").all() as unknown as LeadRow[];
+  const actRows = db
+    .prepare("SELECT * FROM activities ORDER BY createdAt ASC, rowid ASC")
+    .all() as unknown as ActivityRow[];
+
+  const byLead = new Map<string, Activity[]>();
+  for (const a of actRows) {
+    const list = byLead.get(a.leadId);
+    if (list) list.push(rowToActivity(a));
+    else byLead.set(a.leadId, [rowToActivity(a)]);
+  }
+
+  return leadRows.map((r) => rowToLead(r, byLead.get(r.id) ?? []));
 }
 
 function nextId(prefix: string): string {
-  const d = db();
-  d.seq += 1;
-  return `${prefix}_${Date.now().toString(36)}${d.seq}`;
+  const db = conn();
+  const row = db
+    .prepare(
+      "UPDATE meta SET value = CAST(value AS INTEGER) + 1 WHERE key='seq' RETURNING value",
+    )
+    .get() as { value: string } | undefined;
+  const seq = row ? Number(row.value) : Date.now();
+  return `${prefix}_${Date.now().toString(36)}${seq}`;
 }
 
 // --- Reads -----------------------------------------------------------------
 
 export function getReps(): Rep[] {
-  return db().reps;
+  const db = conn();
+  return db.prepare("SELECT * FROM reps").all() as unknown as Rep[];
 }
 
 export function getLeads(): Lead[] {
   // Hottest first; callbacks that are due bubble up regardless of heat.
   const now = Date.now();
-  return [...db().leads].sort((a, b) => {
+  return allLeads().sort((a, b) => {
     const aDue = a.callbackAt && new Date(a.callbackAt).getTime() <= now ? 1 : 0;
     const bDue = b.callbackAt && new Date(b.callbackAt).getTime() <= now ? 1 : 0;
     if (aDue !== bDue) return bDue - aDue;
@@ -58,7 +306,17 @@ export function getLeads(): Lead[] {
 }
 
 export function getLead(id: string): Lead | undefined {
-  return db().leads.find((l) => l.id === id);
+  const db = conn();
+  const r = db.prepare("SELECT * FROM leads WHERE id = ?").get(id) as
+    | LeadRow
+    | undefined;
+  if (!r) return undefined;
+  const acts = db
+    .prepare(
+      "SELECT * FROM activities WHERE leadId = ? ORDER BY createdAt ASC, rowid ASC",
+    )
+    .all(id) as unknown as ActivityRow[];
+  return rowToLead(r, acts.map(rowToActivity));
 }
 
 // The power-dialer "next up" queue: workable stages only, hottest first,
@@ -79,6 +337,7 @@ export function updateLead(id: string, patch: Partial<Lead>): Lead | undefined {
   const lead = getLead(id);
   if (!lead) return undefined;
   Object.assign(lead, patch);
+  persistLead(conn(), lead);
   return lead;
 }
 
@@ -93,7 +352,7 @@ export function addNote(leadId: string, body: string, repId?: string): Activity 
     repId,
     createdAt: new Date().toISOString(),
   };
-  lead.activities.push(activity);
+  insertActivityRow(conn(), activity);
   return activity;
 }
 
@@ -163,6 +422,7 @@ export function logDisposition(leadId: string, input: DispositionInput): Lead | 
     repId: input.repId,
     createdAt: now,
   };
+  insertActivityRow(conn(), activity);
   lead.activities.push(activity);
 
   lead.attempts += 1;
@@ -177,6 +437,7 @@ export function logDisposition(leadId: string, input: DispositionInput): Lead | 
     lead.callbackAt = null;
   }
 
+  persistLead(conn(), lead);
   return lead;
 }
 
@@ -212,14 +473,14 @@ export function createLead(input: Partial<Lead> & { business: string; phone: str
     createdAt: now,
     activities: [],
   };
-  db().leads.push(lead);
+  insertLeadRow(conn(), lead);
   return lead;
 }
 
 // --- Aggregates ------------------------------------------------------------
 
 export function getStats(): CrmStats {
-  const leads = db().leads;
+  const leads = allLeads();
   const now = new Date();
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
@@ -287,9 +548,10 @@ export interface RepStat {
 }
 
 export function getRepStats(): RepStat[] {
-  const leads = db().leads;
+  const leads = allLeads();
+  const reps = getReps();
   const map = new Map<string, { calls: number; connects: number; booked: number }>();
-  for (const rep of db().reps) map.set(rep.id, { calls: 0, connects: 0, booked: 0 });
+  for (const rep of reps) map.set(rep.id, { calls: 0, connects: 0, booked: 0 });
 
   for (const lead of leads) {
     for (const a of lead.activities) {
@@ -302,7 +564,7 @@ export function getRepStats(): RepStat[] {
     }
   }
 
-  return db().reps.map((rep) => {
+  return reps.map((rep) => {
     const m = map.get(rep.id)!;
     return {
       rep,
