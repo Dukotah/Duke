@@ -27,3 +27,28 @@ body {
   background-color: var(--linen);
   color: var(--text);
 }
+
+/* Keyboard focus visibility — many interactive elements use inline/custom
+   styling that suppresses the default outline, so provide a consistent,
+   high-contrast focus ring for keyboard (and other non-pointer) navigation. */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

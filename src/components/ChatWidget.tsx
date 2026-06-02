@@ -118,7 +118,7 @@ export default function ChatWidget() {
                   </div>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="text-white/50 hover:text-white transition-colors">
+              <button onClick={() => setOpen(false)} aria-label="Close chat" className="text-white/50 hover:text-white transition-colors">
                 <X size={18} />
               </button>
             </div>
@@ -183,6 +183,7 @@ export default function ChatWidget() {
                   />
                   <button
                     onClick={submitContact}
+                    aria-label="Submit contact details"
                     className="px-3 py-2 bg-[#F97316] text-white rounded-lg hover:bg-[#ea6c0a] transition-colors"
                   >
                     <Send size={15} />
@@ -205,6 +206,7 @@ export default function ChatWidget() {
                 <button
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim()}
+                  aria-label="Send message"
                   className="px-3 py-2 bg-[#18181B] text-white rounded-lg hover:bg-[#111113] transition-colors disabled:opacity-40"
                 >
                   <Send size={15} />
