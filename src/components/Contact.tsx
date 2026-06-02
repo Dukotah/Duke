@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Phone, Mail, Clock, CalendarDays } from "lucide-react";
 import { CALENDLY_URL } from "@/config/site";
+import { trackLeadFormSubmit, trackCalendlyClick, trackPhoneClick } from "@/lib/analytics";
 
 type FormData = {
   name: string;
@@ -35,6 +36,11 @@ export default function Contact() {
         body: JSON.stringify(data),
       });
       if (res.ok) {
+        trackLeadFormSubmit({
+          formLocation: "contact_section",
+          service: data.service,
+          hasPhone: Boolean(data.phone?.trim()),
+        });
         router.push("/thank-you");
       } else {
         setStatus("error");
@@ -85,6 +91,7 @@ export default function Contact() {
               href={CALENDLY_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackCalendlyClick("contact_section")}
               className="inline-flex items-center gap-3 w-full px-5 py-4 rounded-xl border-2 border-[#F97316] mb-8 hover:bg-[#F97316]/5 transition-colors group"
             >
               <div className="w-10 h-10 rounded-md bg-[#F97316] flex items-center justify-center flex-shrink-0">
@@ -112,7 +119,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-xs text-[#3F3F46]/40 uppercase tracking-widest" style={{ fontFamily: "var(--font-heading)" }}>Phone / Text</p>
-                  <a href="tel:+17072396725" className="text-sm font-medium text-[#18181B] hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
+                  <a href="tel:+17072396725" onClick={() => trackPhoneClick("contact_section")} className="text-sm font-medium text-[#18181B] hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
                     (707) 239-6725
                   </a>
                 </div>

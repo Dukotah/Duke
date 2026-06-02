@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, AlertTriangle, CheckCircle, ShieldAlert, Mail } from "lucide-react";
+import { trackQuizComplete } from "@/lib/analytics";
 
 const questions = [
   {
@@ -116,6 +117,8 @@ export default function ITQuiz() {
     setSelected(null);
     if (current + 1 >= questions.length) {
       setDone(true);
+      const finalScore = newAnswers.reduce((a, b) => a + b, 0);
+      trackQuizComplete({ score: finalScore, riskTier: getResult(finalScore).label });
     } else {
       setCurrent(current + 1);
     }
