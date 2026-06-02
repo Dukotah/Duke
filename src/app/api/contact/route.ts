@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { escapeHtml } from "@/lib/html";
+import { isValidEmail } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,6 +10,19 @@ export async function POST(req: NextRequest) {
     if (!name || !business || !email || !service) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+    if (!isValidEmail(String(email))) {
+      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+
+    // Escape every user-supplied value before it lands in an HTML email body.
+    const safe = {
+      name: escapeHtml(name),
+      business: escapeHtml(business),
+      email: escapeHtml(email),
+      phone: escapeHtml(phone),
+      service: escapeHtml(service),
+      message: escapeHtml(message).replace(/\n/g, "<br>"),
+    };
 
     const apiKey = process.env.RESEND_API_KEY;
 
@@ -18,7 +33,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    const [notifyRes] = await Promise.all([
+    const [notifyRes, replyRes] = await Promise.all([
       // Notify Duke
       fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -27,15 +42,15 @@ export async function POST(req: NextRequest) {
           from: "Copper Bay Tech <noreply@copperbaytech.com>",
           to: ["duke@copperbaytech.com"],
           reply_to: email,
-          subject: `New inquiry from ${name} — ${business}`,
+          subject: `New inquiry from ${safe.name} — ${safe.business}`,
           html: `
             <h2>New Contact Form Submission</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Business:</strong> ${business}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ""}
-            <p><strong>Service:</strong> ${service}</p>
-            ${message ? `<p><strong>Message:</strong><br>${message.replace(/\n/g, "<br>")}</p>` : ""}
+            <p><strong>Name:</strong> ${safe.name}</p>
+            <p><strong>Business:</strong> ${safe.business}</p>
+            <p><strong>Email:</strong> ${safe.email}</p>
+            ${phone ? `<p><strong>Phone:</strong> ${safe.phone}</p>` : ""}
+            <p><strong>Service:</strong> ${safe.service}</p>
+            ${message ? `<p><strong>Message:</strong><br>${safe.message}</p>` : ""}
           `,
         }),
       }),
@@ -48,7 +63,7 @@ export async function POST(req: NextRequest) {
           to: [email],
           subject: "Got your message — Copper Bay Tech",
           html: `
-            <p>Hi ${name},</p>
+            <p>Hi ${safe.name},</p>
             <p>Thanks for reaching out — I got your message and will be back to you within one business day.</p>
             <p>If anything's urgent, feel free to call or text me directly at <strong>(707) 239-6725</strong>.</p>
             <p>Talk soon,<br>Duke<br>Copper Bay Tech · Petaluma, CA</p>
@@ -59,10 +74,17 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
+    // The internal notification is the critical one — if Duke never hears about
+    // the inquiry, surface a failure so the form can show an error.
     if (!notifyRes.ok) {
       const errorBody = await notifyRes.text();
-      console.error("Resend error:", notifyRes.status, errorBody);
+      console.error("Resend error (notify):", notifyRes.status, errorBody);
       return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
+    }
+    // The auto-reply is a courtesy — log if it fails but don't fail the request,
+    // since the inquiry was already received and Duke was notified.
+    if (!replyRes.ok) {
+      console.error("Resend error (auto-reply):", replyRes.status, await replyRes.text());
     }
 
     return NextResponse.json({ ok: true });

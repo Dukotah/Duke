@@ -3,6 +3,7 @@ import { getRedis } from "@/lib/redis";
 import { addActivity, getLeadState, setLeadState, getSuppressedEmails } from "@/lib/db";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
 import { OUTREACH_FROM, MAILING_ADDRESS, hasMailingAddress } from "@/config/site";
+import { isValidEmail } from "@/lib/validation";
 
 interface OutreachLead {
   id: string;
@@ -28,12 +29,6 @@ const MAX_PER_DAY = (() => {
 })();
 const FOLLOW_UP_DAYS = 3;
 const SENDER = OUTREACH_FROM;
-
-// Basic shape check to avoid sending to obviously malformed addresses.
-// Hard bounces are one of the strongest signals that flags a sender as spam.
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-}
 
 function addDays(days: number): string {
   const d = new Date();
