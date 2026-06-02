@@ -21,6 +21,15 @@ type Post = {
 
 const posts: Post[] = [
   {
+    slug: "small-business-cybersecurity-threats-sonoma-county",
+    tag: "Cybersecurity",
+    title: "The 5 Cybersecurity Threats Most Likely to Hit a Sonoma County Small Business in 2026",
+    excerpt:
+      "Phishing, ransomware, weak passwords, unpatched software, and lost laptops account for nearly every local breach we see. Here's what each one looks like — and the fixes that actually stop them.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
+  {
     slug: "how-much-does-a-website-cost-sonoma-county",
     tag: "Web Development",
     title: "How Much Does a Website Cost in Sonoma County? (2026)",
