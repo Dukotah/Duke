@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listSubmissions, resolveSubmission, markCommissionPaid, getRepStats, listUsers, getUserLeadCount, getUserById } from "@/lib/db";
+import { parseJsonBody, handleApiError } from "@/lib/api";
 
 async function sendRepNotification(
   repEmail: string,
@@ -56,56 +57,66 @@ function isAdmin(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try {
+    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const filter = req.nextUrl.searchParams.get("filter") as "pending" | "accepted" | "rejected" | null;
-  const subs = await listSubmissions(filter ?? undefined);
+    const filter = req.nextUrl.searchParams.get("filter") as "pending" | "accepted" | "rejected" | null;
+    const subs = await listSubmissions(filter ?? undefined);
 
-  // Also return per-rep stats for admin overview
-  const users = await listUsers();
-  const repStats = await Promise.all(
-    users.filter((u) => u.role === "rep").map(async (u) => ({
-      ...u,
-      stats: await getRepStats(u.id),
-      leadsWorked: await getUserLeadCount(u.id),
-    }))
-  );
+    // Also return per-rep stats for admin overview
+    const users = await listUsers();
+    const repStats = await Promise.all(
+      users.filter((u) => u.role === "rep").map(async (u) => ({
+        ...u,
+        stats: await getRepStats(u.id),
+        leadsWorked: await getUserLeadCount(u.id),
+      }))
+    );
 
-  return NextResponse.json({ submissions: subs, repStats });
+    return NextResponse.json({ submissions: subs, repStats });
+  } catch (err) {
+    return handleApiError("crm/admin/submissions GET", err);
+  }
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const { id, action, dealValue } = await req.json();
-  if (!id || !action) return NextResponse.json({ error: "id and action required" }, { status: 400 });
+  try {
+    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const parsed = await parseJsonBody<{ id?: string; action?: string; dealValue?: number }>(req);
+    if (!parsed.ok) return parsed.response;
+    const { id, action, dealValue } = parsed.data;
+    if (!id || !action) return NextResponse.json({ error: "id and action required" }, { status: 400 });
 
-  if (action === "accept" || action === "reject") {
-    const updated = await resolveSubmission(id, action === "accept" ? "accepted" : "rejected", dealValue);
+    if (action === "accept" || action === "reject") {
+      const updated = await resolveSubmission(id, action === "accept" ? "accepted" : "rejected", dealValue);
 
-    // Send email notification to the rep
-    try {
-      const rep = await getUserById(updated.userId);
-      if (rep?.email) {
-        await sendRepNotification(
-          rep.email,
-          rep.name,
-          updated.leadName,
-          updated.leadCity,
-          action,
-          updated.dealValue,
-          updated.commissionAmount
-        );
+      // Send email notification to the rep
+      try {
+        const rep = await getUserById(updated.userId);
+        if (rep?.email) {
+          await sendRepNotification(
+            rep.email,
+            rep.name,
+            updated.leadName,
+            updated.leadCity,
+            action,
+            updated.dealValue,
+            updated.commissionAmount
+          );
+        }
+      } catch (err) {
+        console.error("[CRM] Failed to send rep notification:", err);
+        // Don't fail the request
       }
-    } catch (err) {
-      console.error("[CRM] Failed to send rep notification:", err);
-      // Don't fail the request
-    }
 
-    return NextResponse.json(updated);
+      return NextResponse.json(updated);
+    }
+    if (action === "markPaid") {
+      await markCommissionPaid(id);
+      return NextResponse.json({ ok: true });
+    }
+    return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+  } catch (err) {
+    return handleApiError("crm/admin/submissions PATCH", err);
   }
-  if (action === "markPaid") {
-    await markCommissionPaid(id);
-    return NextResponse.json({ ok: true });
-  }
-  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
 }
