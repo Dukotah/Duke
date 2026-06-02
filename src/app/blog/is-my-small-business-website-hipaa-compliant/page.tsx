@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+
+const blogSchema = blogPostingSchema({
+  title: "Is My Small Business Website HIPAA Compliant? A Plain-English Checklist",
+  description:
+    "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
+  url: "https://copperbaytech.com/blog/is-my-small-business-website-hipaa-compliant",
+  datePublished: "2026-03-01",
+});
 
 export const metadata: Metadata = {
   title: "Is My Small Business Website HIPAA Compliant? | Copper Bay Tech",
@@ -21,6 +30,7 @@ const checks = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogSchema} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

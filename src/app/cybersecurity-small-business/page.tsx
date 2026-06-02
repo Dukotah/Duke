@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { serviceSchema, faqSchema } from "@/components/JsonLd";
 import { ArrowRight, ShieldCheck, Lock, Eye, AlertTriangle, FileText, RefreshCw } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -19,23 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Service",
+const schema = serviceSchema({
   name: "Cybersecurity Audits & Hardening",
-  provider: {
-    "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
-    telephone: "+17072396725",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Petaluma",
-      addressRegion: "CA",
-    },
-  },
-  areaServed: "Sonoma County, CA",
   description: "Cybersecurity audits, vulnerability assessments, and security hardening for small businesses.",
-};
+  url: "https://copperbaytech.com/cybersecurity-small-business",
+  areaServed: "Sonoma County, CA",
+});
 
 const services = [
   { icon: Eye, label: "Security audit", body: "Full scan of your network, devices, and accounts. We document every vulnerability and prioritize them by actual risk." },
@@ -79,7 +69,7 @@ const faqs = [
 export default function CybersecuritySmallBusiness() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <JsonLd schema={[schema, faqSchema(faqs)]} />
       <Nav />
       <main>
         {/* Hero */}

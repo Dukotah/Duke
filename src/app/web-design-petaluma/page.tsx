@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { serviceSchema } from "@/components/JsonLd";
 import { ArrowRight, Check } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -19,19 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Service",
+const schema = serviceSchema({
   name: "Web Design Petaluma",
-  provider: {
-    "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
-    telephone: "+17072396725",
-    address: { "@type": "PostalAddress", addressLocality: "Petaluma", addressRegion: "CA" },
-  },
-  areaServed: { "@type": "City", name: "Petaluma", containedInPlace: { "@type": "State", name: "California" } },
   description: "Custom website design for Petaluma small businesses. Based locally in Petaluma.",
-};
+  url: "https://copperbaytech.com/web-design-petaluma",
+  areaServed: { "@type": "City", name: "Petaluma", containedInPlace: { "@type": "State", name: "California" } },
+});
 
 const includes = [
   "Custom-coded — no Squarespace, no Wix, no WordPress themes",
@@ -58,7 +52,7 @@ const industries = [
 export default function WebDesignPetaluma() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <JsonLd schema={schema} />
       <Nav />
       <main>
         {/* Hero */}

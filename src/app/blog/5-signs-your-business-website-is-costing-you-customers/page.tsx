@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+
+const blogSchema = blogPostingSchema({
+  title: "5 Signs Your Business Website Is Costing You Customers Right Now",
+  description:
+    "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+  url: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers",
+  datePublished: "2026-02-01",
+});
 
 export const metadata: Metadata = {
   title: "5 Signs Your Website Is Costing You Customers | Copper Bay Tech",
@@ -40,6 +49,7 @@ const signs = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogSchema} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

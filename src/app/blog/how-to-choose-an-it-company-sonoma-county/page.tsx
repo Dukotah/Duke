@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+
+const blogSchema = blogPostingSchema({
+  title: "How to Choose an IT Company in Sonoma County (Without Getting Burned)",
+  description:
+    "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
+  url: "https://copperbaytech.com/blog/how-to-choose-an-it-company-sonoma-county",
+  datePublished: "2026-04-01",
+});
 
 export const metadata: Metadata = {
   title: "How to Choose an IT Company in Sonoma County | Copper Bay Tech",
@@ -13,6 +22,7 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogSchema} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

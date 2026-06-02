@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { serviceSchema, faqSchema } from "@/components/JsonLd";
 import { ArrowRight, Server, Wifi, Cloud, Users, ShieldCheck, Wrench } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -19,23 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Service",
+const schema = serviceSchema({
   name: "IT Support & Managed Services",
-  provider: {
-    "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
-    telephone: "+17072396725",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Petaluma",
-      addressRegion: "CA",
-    },
-  },
-  areaServed: "Sonoma County, CA",
   description: "Managed IT support for Sonoma County small businesses.",
-};
+  url: "https://copperbaytech.com/it-support-sonoma-county",
+  areaServed: "Sonoma County, CA",
+});
 
 const services = [
   { icon: Wifi, label: "Network setup & management", body: "Business-grade Wi-Fi, wired networks, guest networks, and ongoing monitoring. We set it up right the first time." },
@@ -72,7 +62,7 @@ const faqs = [
 export default function ITSupportSonomaCounty() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <JsonLd schema={[schema, faqSchema(faqs)]} />
       <Nav />
       <main>
         {/* Hero */}
