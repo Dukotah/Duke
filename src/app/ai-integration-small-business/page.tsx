@@ -125,13 +125,13 @@ export default function AiIntegrationSmallBusiness() {
               >
                 Book a Free AI Consultation <ArrowRight size={16} />
               </Link>
-              <a
-                href="tel:+17072396725"
+              <Link
+                href="/tools/missed-call-calculator"
                 className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold"
                 style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}
               >
-                Call (707) 239-6725
-              </a>
+                What are missed calls costing you?
+              </Link>
             </div>
             <p className="mt-6 text-sm text-white/40" style={{ fontFamily: "var(--font-body)" }}>
               Serving Petaluma · Santa Rosa · Sebastopol · Rohnert Park · Windsor · Healdsburg

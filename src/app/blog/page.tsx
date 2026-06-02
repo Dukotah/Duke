@@ -21,6 +21,15 @@ type Post = {
 
 const posts: Post[] = [
   {
+    slug: "how-ai-helps-sonoma-county-small-businesses",
+    tag: "AI & Automation",
+    title: "How AI Actually Helps a Sonoma County Small Business (2026)",
+    excerpt:
+      "No hype, no doom — just the practical ways small businesses use AI in 2026: answer every call, reply to leads in seconds, automate reviews, and clear the busywork. What works, what to skip, and where to start.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
+  {
     slug: "small-business-cybersecurity-threats-sonoma-county",
     tag: "Cybersecurity",
     title: "The 5 Cybersecurity Threats Most Likely to Hit a Sonoma County Small Business in 2026",
@@ -196,7 +205,7 @@ export default function BlogPage() {
                 className="text-white/60 text-sm mb-6 max-w-md mx-auto"
                 style={{ fontFamily: "var(--font-body)" }}
               >
-                Free 30-minute consultation. We'll tell you exactly where you stand and what matters most for your business.
+                Free 30-minute consultation. We&apos;ll tell you exactly where you stand and what matters most for your business.
               </p>
               <Link
                 href="/#contact"
