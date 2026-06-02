@@ -7,6 +7,7 @@ import {
   Phone, Mail, Globe, Flame, Zap, CheckCircle2, Eye, Trash2,
   TrendingUp, BarChart2, Megaphone, Trophy, AlertTriangle,
 } from "lucide-react";
+import SuppressionTab from "./SuppressionTab";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -971,7 +972,7 @@ function SetupTab() {
 
 export default function AdminDashboard({ adminName }: { adminName: string }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "setup">("submissions");
+  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "suppression" | "setup">("submissions");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [reps, setReps] = useState<RepWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1112,6 +1113,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               { key: "territories", label: "Territories", count: 0 },
               { key: "reps", label: "Sales Reps", count: reps.length },
               { key: "email", label: "Email", count: 0 },
+              { key: "suppression", label: "Suppression", count: 0 },
               { key: "leaderboard", label: "Leaderboard", count: 0 },
               { key: "revenue", label: "Revenue", count: 0 },
               { key: "setup", label: "Setup", count: setupLeft ?? 0 },
@@ -1295,6 +1297,8 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
 
           {/* Leaderboard tab */}
           {tab === "email" && <EmailTab />}
+
+          {tab === "suppression" && <SuppressionTab />}
 
           {tab === "setup" && <SetupTab />}
 
