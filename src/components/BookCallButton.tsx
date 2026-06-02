@@ -2,11 +2,14 @@
 
 import { CALENDLY_URL } from "@/config/site";
 import { CalendarDays } from "lucide-react";
+import { trackCalendlyClick } from "@/lib/analytics";
 
 type Props = {
   label?: string;
   variant?: "primary" | "outline-dark" | "outline-light";
   className?: string;
+  /** Where this button lives, for conversion analytics (e.g. "hero", "pricing"). */
+  location?: string;
 };
 
 const styles = {
@@ -15,12 +18,13 @@ const styles = {
   "outline-light": "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold transition-colors border-2 border-white/30 text-white hover:border-white/60",
 };
 
-export default function BookCallButton({ label = "Book a Free Call", variant = "primary", className = "" }: Props) {
+export default function BookCallButton({ label = "Book a Free Call", variant = "primary", className = "", location = "book_call_button" }: Props) {
   return (
     <a
       href={CALENDLY_URL}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => trackCalendlyClick(location)}
       className={`${styles[variant]} ${className}`}
       style={{ fontFamily: "var(--font-heading)" }}
     >

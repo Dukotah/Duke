@@ -11,6 +11,12 @@ const EMAIL = "contact@copperbaytech.com";
 const SITE = "https://copperbaytech.com";
 const BUSINESS_NAME = "Copper Bay Tech";
 
+// Stable @id anchors so the LocalBusiness / Organization / WebSite nodes can
+// reference one another instead of duplicating the entity. This is what helps
+// search and AI engines treat "Copper Bay Tech" as a single, well-defined brand.
+const ORG_ID = `${SITE}/#organization`;
+const LOCAL_BUSINESS_ID = `${SITE}/#localbusiness`;
+
 type Json = Record<string, unknown>;
 
 export default function JsonLd({ schema }: { schema: Json | Json[] }) {
@@ -27,17 +33,27 @@ export function localBusinessSchema(): Json {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    "@id": LOCAL_BUSINESS_ID,
     name: BUSINESS_NAME,
     description:
       "IT consulting, web development, and cybersecurity for Sonoma County businesses.",
     url: SITE,
     telephone: PHONE,
     email: EMAIL,
+    // Coarse price band (under 100 chars) — Google recommends priceRange for
+    // LocalBusiness. "$$" signals mid-market without publishing exact figures.
+    priceRange: "$$",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Petaluma",
       addressRegion: "CA",
       addressCountry: "US",
+    },
+    // Petaluma, CA — public coordinates, improves "near me" matching.
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 38.2324,
+      longitude: -122.6367,
     },
     areaServed: [
       "Petaluma",
@@ -120,6 +136,62 @@ export function faqSchema(items: { q: string; a: string }[]): Json {
       "@type": "Question",
       name: item.q,
       acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+}
+
+/**
+ * Organization — emit once, site-wide. This is the brand/publisher entity that
+ * search and AI engines use to disambiguate "Copper Bay Tech". When real social
+ * profiles exist (Google Business Profile, LinkedIn, etc.), add their URLs to
+ * `sameAs` to strengthen entity recognition.
+ */
+export function organizationSchema(): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": ORG_ID,
+    name: BUSINESS_NAME,
+    url: SITE,
+    email: EMAIL,
+    telephone: PHONE,
+    logo: `${SITE}/logos/logo-square.png`,
+    image: `${SITE}/og-image.png`,
+    description:
+      "IT support, web development, and cybersecurity for small businesses in Sonoma County, California.",
+    founder: { "@type": "Person", name: "Duke Hutcheon" },
+    areaServed: { "@type": "AdministrativeArea", name: "Sonoma County, California" },
+    // sameAs: ["https://www.linkedin.com/company/...", "https://g.page/..."],
+  };
+}
+
+/** WebSite — emit once, site-wide. Clarifies branded search and ties to the Org. */
+export function websiteSchema(): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE}/#website`,
+    url: SITE,
+    name: BUSINESS_NAME,
+    publisher: { "@id": ORG_ID },
+    inLanguage: "en-US",
+  };
+}
+
+/**
+ * BreadcrumbList — use on location and blog pages. Purely structural (no data
+ * to fabricate) and eligible for breadcrumb rich results. Omit `url` on the
+ * final (current-page) crumb, per Google's guidance.
+ */
+export function breadcrumbSchema(items: { name: string; url?: string }[]): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      ...(item.url ? { item: item.url } : {}),
     })),
   };
 }
