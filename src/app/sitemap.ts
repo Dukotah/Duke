@@ -52,6 +52,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.7,
     },
+    {
+      url: `${BASE}/blog/small-business-cybersecurity-threats-sonoma-county`,
+      lastModified: new Date("2026-06-01"),
+      changeFrequency: "yearly",
+      priority: 0.7,
+    },
     { url: `${BASE}/it-support-santa-rosa`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/it-support-petaluma`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/work`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
