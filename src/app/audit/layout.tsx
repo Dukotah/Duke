@@ -14,12 +14,21 @@ export const metadata: Metadata = {
     url: "https://copperbaytech.com/audit",
     siteName: "Copper Bay Tech",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Copper Bay Tech — Free Website Audit",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Free Website Audit | Copper Bay Tech",
     description:
       "Instant website performance audit powered by Google PageSpeed Insights. See your score and what to fix.",
+    images: ["/og-image.png"],
   },
 };
 

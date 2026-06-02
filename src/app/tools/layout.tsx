@@ -14,12 +14,21 @@ export const metadata: Metadata = {
     url: "https://copperbaytech.com/tools",
     siteName: "Copper Bay Tech",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Copper Bay Tech — Free Website Tools",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Free Website Tools | Copper Bay Tech",
     description:
       "Free instant checks for speed, SSL, DNS, security headers, broken links, and SEO schema.",
+    images: ["/og-image.png"],
   },
 };
 
