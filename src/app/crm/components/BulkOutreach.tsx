@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  X, Search, Mail, Filter, Check, Send, ChevronDown, Flame, Zap,
+  X, Search, Mail, Check, Send, ChevronDown, Flame, Zap,
   Tag, MapPin, ArrowUpDown, Save, RotateCcw, Calendar, Link,
 } from "lucide-react";
 import {
@@ -122,8 +122,11 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
     }
   }, [q, county, niche, tier, sortBy, page]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset pagination when filters change
   useEffect(() => { setPage(1); }, [q, county, niche, tier, sortBy]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved Calendly link on mount
     useEffect(() => { const saved = getCalendlyLink(); setCalendlyLink(saved); setCalendlyDraft(saved); }, []);
 
       const saveCalendlyLink = () => {

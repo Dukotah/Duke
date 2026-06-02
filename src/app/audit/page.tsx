@@ -38,6 +38,7 @@ function AuditPageInner() {
   useEffect(() => {
     const preUrl = searchParams.get("url");
     if (preUrl) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync prefilled url from query string
       setUrl(preUrl);
     }
   }, [searchParams]);

@@ -57,9 +57,9 @@ const steps: Step[] = [
 ];
 
 const baseRanges: Record<string, [number, number]> = {
-  website: [1500, 4000],
-  it: [800, 2500],
-  security: [600, 2000],
+  website: [2500, 7500],
+  it: [550, 2200],
+  security: [750, 1200],
   app: [4000, 12000],
 };
 

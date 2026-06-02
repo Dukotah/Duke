@@ -27,7 +27,7 @@ export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(BOT_INTROS);
   const [input, setInput] = useState("");
-  const [sent, setSent] = useState(false);
+  const [_sent, setSent] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"chat" | "collect" | "done">("chat");
@@ -89,7 +89,7 @@ export default function ChatWidget() {
   const unreadCount = !open && messages.length > BOT_INTROS.length ? 1 : 0;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-24 right-6 z-50 flex flex-col items-end gap-3 md:bottom-6">
       <AnimatePresence>
         {open && (
           <motion.div

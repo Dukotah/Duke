@@ -7,7 +7,7 @@
  */
 
 const PHONE = "+17072396725";
-const EMAIL = "duke@copperbaytech.com";
+const EMAIL = "contact@copperbaytech.com";
 const SITE = "https://copperbaytech.com";
 const BUSINESS_NAME = "Copper Bay Tech";
 

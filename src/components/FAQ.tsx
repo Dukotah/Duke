@@ -8,7 +8,7 @@ import JsonLd, { faqSchema } from "@/components/JsonLd";
 const faqs = [
   {
     q: "How much does a new website cost?",
-    a: "Most small business websites built with Copper Bay Tech fall in the $2,500–$4,000 range depending on complexity. You'll get a flat-fee quote upfront — no surprises. We don't do hourly billing for project work.",
+    a: "Most small business websites built with Copper Bay Tech fall in the $2,500–$4,500 range, with larger or e-commerce builds up to $7,500. You'll get a flat-fee quote upfront — no surprises. We don't do hourly billing for project work.",
   },
   {
     q: "Do I need to sign a long-term contract?",

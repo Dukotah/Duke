@@ -5,7 +5,7 @@ import {
   X, Phone, Mail, Globe, MapPin, ExternalLink, Copy, Check,
   StickyNote, Send, Star, Link, Flame, Zap,
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
-  CalendarClock, CheckCircle2, DollarSign, Activity, Lock, UserCheck, Info,
+  CalendarClock, Activity, Lock, UserCheck, Info,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
@@ -131,6 +131,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- sync notes field when the selected lead changes
   useEffect(() => { setNotes(state.notes ?? ""); prevNotes.current = state.notes ?? ""; }, [state.notes]);
 
   const postActivity = (body: Record<string, unknown>) => {
@@ -156,6 +157,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       .catch(() => {});
     // Fallback: read from cookie via document if available
     const match = document.cookie.match(/crm_user_id=([^;]+)/);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fallback read of user id from cookie on mount
     if (match) setCurrentUserId(decodeURIComponent(match[1]));
   }, [lead.id]);
 
@@ -430,7 +432,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             <div className="px-5 py-4 border-b border-white/[0.06]">
               <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Your Opening Line</p>
               <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-4 relative">
-                <p className="text-sm text-white/85 leading-relaxed italic" style={H}>"{fullPitch}"</p>
+                <p className="text-sm text-white/85 leading-relaxed italic" style={H}>&ldquo;{fullPitch}&rdquo;</p>
                 <button onClick={() => navigator.clipboard.writeText(fullPitch)}
                   className="absolute top-3 right-3 p-1.5 rounded-md text-white/20 hover:text-white/60 hover:bg-white/5 transition-colors">
                   <Copy size={12} />

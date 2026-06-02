@@ -63,6 +63,7 @@ export default function ActivityTimeline({ leadId }: { leadId: string }) {
   const H = { fontFamily: "var(--font-heading)" };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- show loading state while fetching on leadId change
     setLoading(true);
     fetch(`/api/crm/activity?leadId=${encodeURIComponent(leadId)}`)
       .then((r) => r.json())

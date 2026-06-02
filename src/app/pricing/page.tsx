@@ -24,13 +24,17 @@ const tiers = [
     icon: Globe,
     label: "Web Design",
     tagline: "Your digital front door, done right.",
-    price: "$2,500 – $4,500",
-    priceNote: "One-time flat fee",
+    price: "$2,500 – $7,500",
+    priceNote: "One-time, by scope",
     href: "/web-design-sonoma-county",
+    tiers: [
+      { label: "Starter · up to 5 pages", price: "$2,500" },
+      { label: "Business · up to 10 pages", price: "$4,500" },
+      { label: "Premium · 10–20 pages, e-commerce", price: "$7,500+" },
+    ],
     includes: [
       "Custom-coded in Next.js — no templates",
       "Mobile-first, 90+ PageSpeed score",
-      "Up to 8 pages (home, about, services, contact + more)",
       "Contact form with spam filtering",
       "Local SEO setup & schema markup",
       "Google Business Profile configuration",
@@ -39,7 +43,7 @@ const tiers = [
     ],
     addons: [
       { label: "E-commerce / booking integration", price: "+ $500–$1,500" },
-      { label: "Monthly maintenance retainer", price: "$75/mo" },
+      { label: "Monthly maintenance retainer", price: "$95/mo" },
     ],
     cta: "Get a Quote",
     ctaHref: "/#contact",
@@ -48,10 +52,15 @@ const tiers = [
     icon: Server,
     label: "IT Support",
     tagline: "IT that just works, every day.",
-    price: "$400 – $900",
-    priceNote: "Per month, flat fee",
+    price: "$550 – $2,200",
+    priceNote: "Per month, flat fee by team size",
     href: "/it-support-sonoma-county",
     featured: true,
+    tiers: [
+      { label: "1–5 users", price: "$550/mo" },
+      { label: "6–10 users", price: "$1,200/mo" },
+      { label: "11–20 users", price: "$2,200/mo" },
+    ],
     includes: [
       "Direct line — no ticket queue",
       "Network setup & management",
@@ -63,7 +72,8 @@ const tiers = [
       "No long-term contract",
     ],
     addons: [
-      { label: "Security audit (one-time)", price: "+ $400–$800" },
+      { label: "Security audit (one-time)", price: "+ $750" },
+      { label: "Cloud migration (per user)", price: "+ $75–$150" },
       { label: "Process automation build-out", price: "Quoted separately" },
     ],
     cta: "Get a Quote",
@@ -73,9 +83,13 @@ const tiers = [
     icon: ShieldCheck,
     label: "Cybersecurity",
     tagline: "Find the gaps before attackers do.",
-    price: "$400 – $800",
+    price: "$750 – $1,200",
     priceNote: "One-time audit fee",
     href: "/cybersecurity-small-business",
+    tiers: [
+      { label: "Audit with IT support plan", price: "$750" },
+      { label: "Standalone audit", price: "$1,200" },
+    ],
     includes: [
       "Full network & device scan",
       "Open port & firmware audit",
@@ -87,8 +101,8 @@ const tiers = [
       "HIPAA / PCI baseline mapping (if applicable)",
     ],
     addons: [
-      { label: "Ongoing monthly monitoring", price: "+ $150/mo" },
-      { label: "Incident response plan document", price: "+ $300" },
+      { label: "Ongoing monthly monitoring", price: "+ $200/mo" },
+      { label: "Incident response plan document", price: "+ $400" },
     ],
     cta: "Book an Audit",
     ctaHref: "/#contact",
@@ -272,6 +286,27 @@ export default function Pricing() {
                     >
                       {t.priceNote}
                     </p>
+
+                    {t.tiers && t.tiers.length > 0 && (
+                      <div className={`mt-5 space-y-2 border-t pt-4 ${t.featured ? "border-white/10" : "border-[#18181B]/[0.08]"}`}>
+                        {t.tiers.map((tier) => (
+                          <div key={tier.label} className="flex items-baseline justify-between gap-3">
+                            <span
+                              className={`text-[13px] ${t.featured ? "text-white/70" : "text-[#3F3F46]/75"}`}
+                              style={{ fontFamily: "var(--font-body)" }}
+                            >
+                              {tier.label}
+                            </span>
+                            <span
+                              className={`whitespace-nowrap text-[13px] font-semibold ${t.featured ? "text-white" : "text-[#18181B]"}`}
+                              style={{ fontFamily: "var(--font-heading)" }}
+                            >
+                              {tier.price}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <ul className="mb-7 flex-1 space-y-3">

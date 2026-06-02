@@ -97,7 +97,7 @@ export default function ITSupportSantaRosa() {
           <div className="max-w-5xl mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-16 items-start">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What's included</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What&apos;s included</p>
                 <h2 className="text-4xl font-bold text-[#18181B] mb-6" style={{ fontFamily: "var(--font-heading)" }}>What Santa Rosa businesses get.</h2>
                 <ul className="space-y-3">
                   {includes.map((item) => (

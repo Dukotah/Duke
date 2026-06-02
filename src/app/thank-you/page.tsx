@@ -86,8 +86,8 @@ export default function ThankYou() {
 
             <p className="mt-10 text-xs text-white/30" style={{ fontFamily: "var(--font-body)" }}>
               Can&apos;t wait? Email directly at{" "}
-              <a href="mailto:duke@copperbaytech.com" className="underline hover:text-white/50 transition-colors">
-                duke@copperbaytech.com
+              <a href="mailto:contact@copperbaytech.com" className="underline hover:text-white/50 transition-colors">
+                contact@copperbaytech.com
               </a>
             </p>
           </div>

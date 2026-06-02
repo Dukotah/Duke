@@ -69,7 +69,7 @@ export default function Article() {
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6">
             <p className="text-lg text-[#3F3F46]/70 mb-10 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-              Most business owners don't realize their website is a problem until a customer mentions it — or worse, they never find out because the visitor just left. Here are five things to check right now, no technical knowledge required.
+              Most business owners don&apos;t realize their website is a problem until a customer mentions it — or worse, they never find out because the visitor just left. Here are five things to check right now, no technical knowledge required.
             </p>
             <div className="space-y-8">
               {signs.map((s) => (

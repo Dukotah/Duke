@@ -5,7 +5,7 @@ export const CALENDLY_URL = "https://calendly.com/copperbaytech/free-consultatio
 export const SITE_URL = "https://copperbaytech.com";
 export const PHONE = "(707) 239-6725";
 export const PHONE_HREF = "tel:+17072396725";
-export const EMAIL = "duke@copperbaytech.com";
+export const EMAIL = "contact@copperbaytech.com";
 
 // The address outreach is sent from. Must be a verified domain in Resend.
 export const OUTREACH_FROM = "contact@copperbaytech.com";

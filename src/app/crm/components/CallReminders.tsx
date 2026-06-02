@@ -109,6 +109,7 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
     }
   }, [allLeads]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { load(); }, [load]);
 
   // Clearing a reminder = wiping the followUpDate on the lead state.

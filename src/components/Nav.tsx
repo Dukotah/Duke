@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Phone } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { PHONE, PHONE_HREF } from "@/config/site";
+import { track } from "@/lib/analytics";
 
 const links = [
   { label: "Services", href: "/#services" },
@@ -60,6 +63,14 @@ export default function Nav() {
           className="group flex items-center gap-2 rounded-md outline-none transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:scale-[0.98]"
           aria-label="Copper Bay Tech — home"
         >
+          <Image
+            src="/logos/logo-icon.png"
+            alt=""
+            width={32}
+            height={32}
+            priority
+            className="h-8 w-8 rounded-lg"
+          />
           <span
             className={`text-xl font-bold tracking-tight transition-colors duration-300 ${
               solid ? "text-[#18181B]" : "text-white"
@@ -89,15 +100,32 @@ export default function Nav() {
           ))}
         </nav>
 
-        {/* CTA */}
-        <Link
-          href="/#contact"
-          className="group hidden md:inline-flex items-center gap-1.5 px-5 py-2 rounded-md text-sm font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:translate-y-0 active:scale-[0.98]"
-          style={{ fontFamily: "var(--font-heading)" }}
-        >
-          Free Consultation
-          <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
-        </Link>
+        {/* Desktop actions: tap-to-call + primary CTA */}
+        <div className="hidden md:flex items-center gap-2">
+          <a
+            href={PHONE_HREF}
+            onClick={() => track("cta_call_phone", { location: "nav" })}
+            className={`group inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-semibold outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 ${
+              solid
+                ? "text-[#18181B] hover:bg-[#18181B]/[0.04] focus-visible:ring-offset-[#FAFAF9]"
+                : "text-white hover:bg-white/10 focus-visible:ring-offset-transparent"
+            }`}
+            style={{ fontFamily: "var(--font-heading)" }}
+            aria-label={`Call Copper Bay Tech at ${PHONE}`}
+          >
+            <Phone size={15} className="text-[#F97316]" />
+            {PHONE}
+          </a>
+          <Link
+            href="/#contact"
+            onClick={() => track("cta_consultation", { location: "nav" })}
+            className="group inline-flex items-center gap-1.5 px-5 py-2 rounded-md text-sm font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:translate-y-0 active:scale-[0.98]"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Free Consultation
+            <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+          </Link>
+        </div>
 
         {/* Mobile toggle */}
         <button
@@ -144,11 +172,21 @@ export default function Nav() {
               />
             </Link>
           ))}
+          <a
+            href={PHONE_HREF}
+            onClick={() => { track("cta_call_phone", { location: "nav" }); setOpen(false); }}
+            tabIndex={open ? 0 : -1}
+            className="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-[#18181B] border border-[#18181B]/15 bg-white outline-none transition-colors duration-200 hover:bg-[#18181B]/[0.04] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:scale-[0.98]"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            <Phone size={16} className="text-[#F97316]" />
+            {PHONE}
+          </a>
           <Link
             href="/#contact"
-            onClick={() => setOpen(false)}
+            onClick={() => { track("cta_consultation", { location: "nav" }); setOpen(false); }}
             tabIndex={open ? 0 : -1}
-            className="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:scale-[0.98]"
+            className="mt-3 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:scale-[0.98]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Free Consultation
