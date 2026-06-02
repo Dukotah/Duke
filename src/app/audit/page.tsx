@@ -33,6 +33,9 @@ function AuditPageInner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AuditData | null>(null);
+  const [pendingData, setPendingData] = useState<AuditData | null>(null);
+  const [email, setEmail] = useState("");
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,6 +53,7 @@ function AuditPageInner() {
     setLoading(true);
     setError(null);
     setData(null);
+    setPendingData(null);
 
     try {
       const res = await fetch("/api/audit", {
@@ -63,15 +67,41 @@ function AuditPageInner() {
       if (!res.ok) {
         setError(json.error || "Audit failed. Please try again.");
       } else {
-        setData(json);
-        setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 100);
+        setPendingData(json);
       }
     } catch {
       setError("Network error — please check your connection and try again.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  function handleSkipEmail() {
+    setData(pendingData);
+    setPendingData(null);
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  }
+
+  async function handleEmailSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setEmailSubmitting(true);
+    try {
+      await fetch("/api/audit-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), url, auditData: pendingData }),
+      });
+    } catch {
+      // fire-and-forget — don't block the user on email capture errors
+    } finally {
+      setEmailSubmitting(false);
+      setData(pendingData);
+      setPendingData(null);
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
     }
   }
 
@@ -195,6 +225,46 @@ function AuditPageInner() {
               <Loader2 size={15} className="animate-spin text-orange-400" />
               Running PageSpeed analysis — this takes about 15 seconds…
             </p>
+          </div>
+        </section>
+      )}
+
+      {/* Email gate */}
+      {pendingData && !data && (
+        <section className="px-6 pb-24">
+          <div className="max-w-md mx-auto text-center">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+              <div className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">📊</span>
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">Your results are ready</h2>
+              <p className="text-zinc-400 text-sm mb-6">
+                Drop your email and we&apos;ll send you a copy — plus tips on how to fix the top issues we found.
+              </p>
+              <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@yourbusiness.com"
+                  className="bg-zinc-800 border border-zinc-700 rounded-full px-5 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm"
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={emailSubmitting}
+                  className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white font-bold px-7 py-3 rounded-full transition-colors text-sm"
+                >
+                  {emailSubmitting ? "One sec…" : "Send my results"}
+                </button>
+              </form>
+              <button
+                onClick={handleSkipEmail}
+                className="mt-3 text-xs text-zinc-500 hover:text-zinc-400 transition-colors"
+              >
+                No thanks, just show me the results
+              </button>
+            </div>
           </div>
         </section>
       )}
