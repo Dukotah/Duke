@@ -34,11 +34,11 @@ export default function Post() {
       <div className="prose-content space-y-6 text-[#3F3F46] leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
         <p className="text-lg text-[#3F3F46]/80">
-          Here's a number that should make you uncomfortable: <strong className="text-[#18181B]">53% of mobile visitors abandon a site that takes more than 3 seconds to load.</strong> More than half. Gone before they even see what you offer.
+          Here&apos;s a number that should make you uncomfortable: <strong className="text-[#18181B]">53% of mobile visitors abandon a site that takes more than 3 seconds to load.</strong> More than half. Gone before they even see what you offer.
         </p>
 
         <p>
-          For a restaurant in Petaluma or a contractor in Santa Rosa, that's not an abstract statistic — that's a customer who found you on Google, clicked your link, waited two seconds, and went to your competitor instead.
+          For a restaurant in Petaluma or a contractor in Santa Rosa, that&apos;s not an abstract statistic — that&apos;s a customer who found you on Google, clicked your link, waited two seconds, and went to your competitor instead.
         </p>
 
         <h2 className="text-xl font-bold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
@@ -48,11 +48,11 @@ export default function Post() {
           Since 2021, Google uses something called <strong>Core Web Vitals</strong> as a direct ranking factor. These are speed and user experience metrics — how fast your page loads, how quickly it becomes usable, how much the layout shifts around while loading.
         </p>
         <p>
-          If your site scores poorly, Google pushes you down in local search results. That means when someone in Rohnert Park searches "plumber near me," a faster competitor shows up above you — even if you've been in business for 20 years and they just opened.
+          If your site scores poorly, Google pushes you down in local search results. That means when someone in Rohnert Park searches &quot;plumber near me,&quot; a faster competitor shows up above you — even if you&apos;ve been in business for 20 years and they just opened.
         </p>
 
         <h2 className="text-xl font-bold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
-          What's usually causing it
+          What&apos;s usually causing it
         </h2>
         <p>
           After auditing dozens of Sonoma County business websites, I see the same problems over and over:
@@ -62,24 +62,24 @@ export default function Post() {
           <li><strong>Cheap shared hosting</strong> — many local businesses are on $5/month hosting plans where their site shares a server with thousands of others. When that server is busy, your site slows to a crawl.</li>
           <li><strong>Page builders and templates</strong> — Wix, GoDaddy, and even some WordPress themes load enormous amounts of code that visitors never use. A custom-built site loads only what it needs.</li>
           <li><strong>No caching</strong> — every visit to your site rebuilds the page from scratch instead of serving a stored version. This is a simple fix that makes a dramatic difference.</li>
-          <li><strong>Third-party scripts</strong> — live chat widgets, booking plugins, social media feeds — each one adds load time. Most aren't worth what they cost in speed.</li>
+          <li><strong>Third-party scripts</strong> — live chat widgets, booking plugins, social media feeds — each one adds load time. Most aren&apos;t worth what they cost in speed.</li>
         </ul>
 
         <h2 className="text-xl font-bold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           How to check your own site right now
         </h2>
         <p>
-          Go to <strong>copperbaytech.com/audit</strong> and enter your URL. You'll get a free Google PageSpeed score in about 15 seconds — the same score Google uses to rank your site. Anything below 50 is actively hurting your visibility.
+          Go to <strong>copperbaytech.com/audit</strong> and enter your URL. You&apos;ll get a free Google PageSpeed score in about 15 seconds — the same score Google uses to rank your site. Anything below 50 is actively hurting your visibility.
         </p>
         <p>
-          You can also use Google's own tool at <strong>pagespeed.web.dev</strong> for more detail.
+          You can also use Google&apos;s own tool at <strong>pagespeed.web.dev</strong> for more detail.
         </p>
 
         <h2 className="text-xl font-bold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           What a real fix looks like
         </h2>
         <p>
-          Depending on what's causing your slow score, the fix ranges from a few hours of optimization work to a full rebuild. Here's a rough guide:
+          Depending on what&apos;s causing your slow score, the fix ranges from a few hours of optimization work to a full rebuild. Here&apos;s a rough guide:
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li><strong>Score 70–89:</strong> Usually fixable with image compression, caching, and removing unused scripts. A few hours of work.</li>
@@ -89,10 +89,10 @@ export default function Post() {
 
         <div className="bg-[#FAFAF9] border border-[#18181B]/8 rounded-xl p-6 mt-10">
           <p className="font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-            Want to know exactly what's holding your site back?
+            Want to know exactly what&apos;s holding your site back?
           </p>
           <p className="text-sm text-[#3F3F46]/60 mb-4">
-            I offer a free 15-minute call where I'll walk through your audit results and tell you honestly what I'd recommend — whether that's a quick fix, a bigger project, or nothing at all.
+            I offer a free 15-minute call where I&apos;ll walk through your audit results and tell you honestly what I&apos;d recommend — whether that&apos;s a quick fix, a bigger project, or nothing at all.
           </p>
           <Link
             href="/#contact"

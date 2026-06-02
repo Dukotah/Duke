@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { Check, Clock, Calendar, ArrowRight, ArrowLeft } from "lucide-react";
@@ -358,9 +359,9 @@ export default function SchedulePage() {
                   <span className="text-white font-semibold">{selectedService?.duration}</span>
                 </div>
               </div>
-              <a href="/" className="inline-block mt-4 text-orange-400 text-sm hover:text-orange-300 transition-colors font-semibold">
+              <Link href="/" className="inline-block mt-4 text-orange-400 text-sm hover:text-orange-300 transition-colors font-semibold">
                 ← Back to home
-              </a>
+              </Link>
             </div>
           )}
         </div>

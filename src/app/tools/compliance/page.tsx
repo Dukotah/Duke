@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import type { ComplianceData, ComplianceIssue } from "@/app/api/compliance/route";
@@ -246,12 +247,12 @@ export default function CompliancePage() {
               <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
                 Copper Bay Tech can remediate ADA accessibility issues and help prepare your site for HIPAA compliance review. Get a free consultation.
               </p>
-              <a
+              <Link
                 href="/#contact"
                 className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
               >
                 Get a Free Consultation
-              </a>
+              </Link>
             </div>
           </div>
         </section>

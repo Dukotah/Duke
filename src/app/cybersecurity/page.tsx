@@ -106,7 +106,7 @@ export default function CybersecurityPage() {
               className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Protect what you've built
+              Protect what you&apos;ve built
               <br />
               <span style={{ color: "#F97316" }}>before something breaks it.</span>
             </h1>
@@ -114,7 +114,7 @@ export default function CybersecurityPage() {
               className="text-white/60 text-lg max-w-2xl mb-8"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Most small businesses don't think about security until they're in crisis. A Copper Bay Tech security audit identifies your real risks, explains them in plain English, and gives you a prioritized fix list — not a 40-page report you'll never read.
+              Most small businesses don&apos;t think about security until they&apos;re in crisis. A Copper Bay Tech security audit identifies your real risks, explains them in plain English, and gives you a prioritized fix list — not a 40-page report you&apos;ll never read.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
@@ -139,7 +139,7 @@ export default function CybersecurityPage() {
         <section className="py-16 bg-white">
           <div className="max-w-4xl mx-auto px-6">
             <h2 className="text-3xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
-              What you're actually up against
+              What you&apos;re actually up against
             </h2>
             <div className="grid sm:grid-cols-2 gap-6">
               {threats.map((t) => (
@@ -179,10 +179,10 @@ export default function CybersecurityPage() {
         <section className="py-20 bg-[#18181B]">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Don't wait for a breach to find out where you're exposed.
+              Don&apos;t wait for a breach to find out where you&apos;re exposed.
             </h2>
             <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
-              Book a free 15-minute call. We'll ask a few questions and tell you whether a full audit makes sense for your situation — no pressure.
+              Book a free 15-minute call. We&apos;ll ask a few questions and tell you whether a full audit makes sense for your situation — no pressure.
             </p>
             <Link
               href="/#contact"

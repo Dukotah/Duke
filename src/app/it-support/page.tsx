@@ -198,10 +198,10 @@ export default function ITSupportPage() {
         <section className="py-20 bg-[#18181B]">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Stop putting up with IT that doesn't work.
+              Stop putting up with IT that doesn&apos;t work.
             </h2>
             <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
-              Free 30-minute IT assessment. We'll review your current setup and tell you exactly what we'd fix and what it would cost.
+              Free 30-minute IT assessment. We&apos;ll review your current setup and tell you exactly what we&apos;d fix and what it would cost.
             </p>
             <Link
               href="/#contact"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { Eye, EyeOff, ShieldCheck, ShieldAlert, Shield } from "lucide-react";
@@ -127,7 +128,7 @@ export default function PasswordPage() {
             Check if your password has appeared in known data breaches — without sending it anywhere. Strength analysis is instant and local.
           </p>
           <p className="text-zinc-500 text-xs">
-            Breach check uses <a href="https://haveibeenpwned.com/Passwords" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300">Have I Been Pwned</a>'s k-anonymity API — your actual password never leaves your browser.
+            Breach check uses <a href="https://haveibeenpwned.com/Passwords" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300">Have I Been Pwned</a>&apos;s k-anonymity API — your actual password never leaves your browser.
           </p>
         </div>
       </section>
@@ -275,9 +276,9 @@ export default function PasswordPage() {
           <div className="rounded-2xl p-6 text-center border border-zinc-800 bg-zinc-900">
             <p className="text-white font-bold mb-2">Need help securing your business accounts?</p>
             <p className="text-zinc-400 text-sm mb-4">We set up password managers, MFA, and SSO for Sonoma County businesses. One afternoon — done.</p>
-            <a href="/#contact" className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
+            <Link href="/#contact" className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
               Talk to Us
-            </a>
+            </Link>
           </div>
         </div>
       </section>

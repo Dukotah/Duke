@@ -78,7 +78,7 @@ export default function CybersecurityPage() {
           >
             43% of cyberattacks target small businesses — and 60% of those businesses close within
             six months of a breach. Most North Bay small businesses are running on outdated
-            passwords, unpatched software, and zero employee training. That's not bad luck. That's
+            passwords, unpatched software, and zero employee training. That&apos;s not bad luck. That&apos;s
             an open door.
           </p>
           <div className="flex flex-wrap gap-4">
@@ -113,7 +113,7 @@ export default function CybersecurityPage() {
             className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Cybercriminals don't discriminate by size. They run automated scans looking for any
+            Cybercriminals don&apos;t discriminate by size. They run automated scans looking for any
             easy target — and small businesses are easier targets than enterprises because they
             typically have fewer defenses.
           </p>
@@ -168,7 +168,7 @@ export default function CybersecurityPage() {
             className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            No enterprise contracts. No 200-page compliance reports you won't read. Practical
+            No enterprise contracts. No 200-page compliance reports you won&apos;t read. Practical
             security that actually gets implemented by real small business teams.
           </p>
           <div className="grid md:grid-cols-2 gap-6">

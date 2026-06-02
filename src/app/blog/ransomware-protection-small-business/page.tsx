@@ -106,10 +106,10 @@ export default function Article() {
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
             <p className="text-lg text-[#3F3F46]/70 mb-6 leading-relaxed">
-              Small businesses now account for more than half of all ransomware attacks. The reason is simple: you're a softer target than an enterprise, and you're more likely to pay because you can't afford weeks of downtime. The average ransom paid by a small business is $36,000. The average total cost of recovery — including downtime, lost data, and remediation — is closer to $200,000.
+              Small businesses now account for more than half of all ransomware attacks. The reason is simple: you&apos;re a softer target than an enterprise, and you&apos;re more likely to pay because you can&apos;t afford weeks of downtime. The average ransom paid by a small business is $36,000. The average total cost of recovery — including downtime, lost data, and remediation — is closer to $200,000.
             </p>
             <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
-              The good news: most ransomware attacks are preventable with a handful of basic measures. Here's what actually works, ranked by impact.
+              The good news: most ransomware attacks are preventable with a handful of basic measures. Here&apos;s what actually works, ranked by impact.
             </p>
 
             <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
@@ -138,7 +138,7 @@ export default function Article() {
             </div>
 
             <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              What doesn't work (on its own)
+              What doesn&apos;t work (on its own)
             </h2>
             <div className="space-y-3 mb-10">
               {[
@@ -157,10 +157,10 @@ export default function Article() {
             </div>
 
             <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Where to start if you're starting from zero
+              Where to start if you&apos;re starting from zero
             </h2>
             <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
-              Don't try to implement everything at once. In order of priority: verify your backups, turn on MFA for email and cloud storage, and schedule a 30-minute phishing awareness session with your staff. Those three things dramatically reduce your risk at minimal cost.
+              Don&apos;t try to implement everything at once. In order of priority: verify your backups, turn on MFA for email and cloud storage, and schedule a 30-minute phishing awareness session with your staff. Those three things dramatically reduce your risk at minimal cost.
             </p>
             <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
               A professional security audit will identify your specific gaps and give you a prioritized list. For most small businesses in Sonoma County, a basic audit runs $600–$1,200 and takes less than a week.
@@ -169,7 +169,7 @@ export default function Article() {
             <div className="mt-10 p-6 rounded-2xl bg-[#18181B] text-white">
               <p className="text-sm font-semibold mb-2 text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>One question to ask yourself</p>
               <p className="text-sm text-white/70">
-                If ransomware hit your business tomorrow and encrypted everything — how long would it take to recover, and what would it cost? If you don't have a clear answer, that's the gap to close.
+                If ransomware hit your business tomorrow and encrypted everything — how long would it take to recover, and what would it cost? If you don&apos;t have a clear answer, that&apos;s the gap to close.
               </p>
             </div>
 

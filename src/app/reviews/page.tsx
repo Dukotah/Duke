@@ -144,7 +144,7 @@ export default function ReviewsPage() {
               <span style={{ color: "#F97316" }}>Real businesses.</span>
             </h1>
             <p className="text-white/60 text-lg max-w-2xl mx-auto mb-6" style={{ fontFamily: "var(--font-body)" }}>
-              Sonoma County business owners trust Copper Bay Tech for IT support, cybersecurity, and web development. Here's what they have to say.
+              Sonoma County business owners trust Copper Bay Tech for IT support, cybersecurity, and web development. Here&apos;s what they have to say.
             </p>
             <div className="flex items-center justify-center gap-3">
               <div className="flex gap-1">

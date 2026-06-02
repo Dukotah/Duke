@@ -5,7 +5,7 @@
  * Run:    npx vitest run
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { validateAuditUrl, BLOCKED_REASONS } from "../lib/validate-url";
 import { escapeHtml } from "../lib/escape-html";
 

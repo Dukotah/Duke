@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { Star } from "lucide-react";
@@ -151,18 +152,18 @@ export default function TestimonialsPage() {
               Free 30-minute consultation. No sales pitch — just a real conversation about your business and what we can actually help with.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a
+              <Link
                 href="/schedule"
                 className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
               >
                 Book a Free Call
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/#contact"
                 className="inline-block bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
               >
                 Send a Message
-              </a>
+              </Link>
             </div>
           </div>
         </div>

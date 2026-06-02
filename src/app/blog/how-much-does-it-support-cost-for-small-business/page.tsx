@@ -94,7 +94,7 @@ export default function Article() {
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
             <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
-              "What does IT support cost?" is one of the most Googled questions by small business owners — and one of the hardest to answer honestly. The range is enormous, and vendors aren't exactly incentivized to give you a straight number upfront. Here's a plain-English breakdown.
+              &quot;What does IT support cost?&quot; is one of the most Googled questions by small business owners — and one of the hardest to answer honestly. The range is enormous, and vendors aren&apos;t exactly incentivized to give you a straight number upfront. Here&apos;s a plain-English breakdown.
             </p>
 
             <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
@@ -145,13 +145,13 @@ export default function Article() {
               How to figure out what you actually need
             </h2>
             <p className="mb-6 text-[#3F3F46]/70">
-              Start with a free consultation. Any reputable IT firm should be able to assess your situation, tell you what they'd recommend, and give you a flat price — all in a 30-minute call. If the first call is all pitch and no information, that's a sign.
+              Start with a free consultation. Any reputable IT firm should be able to assess your situation, tell you what they&apos;d recommend, and give you a flat price — all in a 30-minute call. If the first call is all pitch and no information, that&apos;s a sign.
             </p>
 
             <div className="mt-10 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
               <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>The bottom line</p>
               <p className="text-sm text-[#3F3F46]/60">
-                Most small businesses in Sonoma County can get solid IT support for $250–$750/month. Anything more than that should come with clear justification. Anything less and you should ask what's not included.
+                Most small businesses in Sonoma County can get solid IT support for $250–$750/month. Anything more than that should come with clear justification. Anything less and you should ask what&apos;s not included.
               </p>
             </div>
 

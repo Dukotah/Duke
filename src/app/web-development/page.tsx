@@ -182,7 +182,7 @@ export default function WebDevelopmentPage() {
               Transparent, flat-fee pricing
             </h2>
             <p className="text-[#3F3F46]/60 mb-8 max-w-xl" style={{ fontFamily: "var(--font-body)" }}>
-              You'll get a fixed price before we start. No hourly billing, no scope creep surprises.
+              You&apos;ll get a fixed price before we start. No hourly billing, no scope creep surprises.
             </p>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
@@ -234,7 +234,7 @@ export default function WebDevelopmentPage() {
               Ready for a website that actually works?
             </h2>
             <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
-              Free 30-minute consultation. We'll review your current site, tell you what we'd build, and give you a flat-fee quote — no obligation.
+              Free 30-minute consultation. We&apos;ll review your current site, tell you what we&apos;d build, and give you a flat-fee quote — no obligation.
             </p>
             <Link
               href="/#contact"

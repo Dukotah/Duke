@@ -172,7 +172,7 @@ export default function CityPage({
               className="text-white/60 mb-8"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Free 30-minute call. We'll tell you exactly what we'd recommend and what it would cost. No fluff.
+              Free 30-minute call. We&apos;ll tell you exactly what we&apos;d recommend and what it would cost. No fluff.
             </p>
             <Link
               href="/#contact"

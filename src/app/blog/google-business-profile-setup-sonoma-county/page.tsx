@@ -105,7 +105,7 @@ export default function Article() {
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
             <p className="text-lg text-[#3F3F46]/70 mb-6 leading-relaxed">
-              If a Petaluma resident searches "plumber near me" or "wine tasting in Healdsburg," the first thing they see is the Google Map Pack — three local businesses displayed with ratings, hours, and directions. Getting into that pack is one of the highest-ROI things a local business can do. Your Google Business Profile (GBP) is how you get there.
+              If a Petaluma resident searches &quot;plumber near me&quot; or &quot;wine tasting in Healdsburg,&quot; the first thing they see is the Google Map Pack — three local businesses displayed with ratings, hours, and directions. Getting into that pack is one of the highest-ROI things a local business can do. Your Google Business Profile (GBP) is how you get there.
             </p>
             <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
               Most businesses either haven&apos;t claimed their profile, or they have a half-complete listing sitting there making them look unprofessional. Here&apos;s how to do it right.

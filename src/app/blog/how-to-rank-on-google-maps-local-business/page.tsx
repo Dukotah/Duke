@@ -104,7 +104,7 @@ export default function Article() {
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
             <p className="text-lg text-[#3F3F46]/70 mb-6 leading-relaxed">
-              When someone in Santa Rosa searches "accountant near me," they don&apos;t scroll through ten blue links — they click one of the three businesses in the Map Pack. That map pack is where local search is won or lost, and most small businesses have no idea why they&apos;re not in it.
+              When someone in Santa Rosa searches &quot;accountant near me,&quot; they don&apos;t scroll through ten blue links — they click one of the three businesses in the Map Pack. That map pack is where local search is won or lost, and most small businesses have no idea why they&apos;re not in it.
             </p>
             <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
               Here&apos;s how Google decides which businesses to show — and exactly what you can do to move up.

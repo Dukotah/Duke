@@ -197,7 +197,7 @@ export default function Article() {
             </div>
 
             <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Migration doesn't have to be painful
+              Migration doesn&apos;t have to be painful
             </h2>
             <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
               Whichever direction you choose, migrating email, files, and user accounts from your old setup is the hardest part. Migrating from Gmail to Outlook (or vice versa) involves more nuance than most guides let on — especially if you have years of email history, shared drives, or calendars to preserve. Getting it wrong means lost data or days of disruption. Getting it right means you&apos;re up and running in a day.

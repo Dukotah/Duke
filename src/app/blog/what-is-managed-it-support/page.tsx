@@ -37,7 +37,7 @@ export default function Article() {
             <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
               <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
-                Most small businesses run IT the same way they handle a leaky pipe: ignore it until it becomes a crisis, then call someone to fix it and pay whatever it costs. There's a better way — and it's predictable, proactive, and often cheaper in the long run.
+                Most small businesses run IT the same way they handle a leaky pipe: ignore it until it becomes a crisis, then call someone to fix it and pay whatever it costs. There&apos;s a better way — and it&apos;s predictable, proactive, and often cheaper in the long run.
               </p>
 
               <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
@@ -47,10 +47,10 @@ export default function Article() {
                 Break/fix is exactly what it sounds like. Something breaks, you call someone, they fix it, you pay an hourly rate. No ongoing relationship, no monitoring, no proactive work. It feels low-commitment — you only pay when you need something.
               </p>
               <p className="mb-6">
-                The problem is the math. Hourly IT rates typically run $125–$250/hour. When a server goes down or ransomware hits, you're not looking at one hour — you're looking at a day or more of emergency work at premium rates, plus the cost of downtime itself. For a business doing $500,000 a year in revenue, a single day of downtime can cost $2,000–$5,000 in lost productivity and sales, before you've paid a single dollar to the IT company.
+                The problem is the math. Hourly IT rates typically run $125–$250/hour. When a server goes down or ransomware hits, you&apos;re not looking at one hour — you&apos;re looking at a day or more of emergency work at premium rates, plus the cost of downtime itself. For a business doing $500,000 a year in revenue, a single day of downtime can cost $2,000–$5,000 in lost productivity and sales, before you&apos;ve paid a single dollar to the IT company.
               </p>
               <p className="mb-6">
-                Break/fix also has a subtle misalignment of incentives. The IT company makes more money when things break more often. That's not a great foundation for a long-term relationship.
+                Break/fix also has a subtle misalignment of incentives. The IT company makes more money when things break more often. That&apos;s not a great foundation for a long-term relationship.
               </p>
 
               <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
@@ -77,11 +77,11 @@ export default function Article() {
                 That sounds significant — until you compare it to a single bad month of break/fix. One ransomware incident, one failed server, one data recovery situation can easily cost $5,000–$20,000. The math changes quickly.
               </p>
               <p className="mb-6">
-                It's also worth noting that the flat-fee model makes budgeting much easier. You know exactly what IT costs every month, rather than getting surprise invoices that blow your budget.
+                It&apos;s also worth noting that the flat-fee model makes budgeting much easier. You know exactly what IT costs every month, rather than getting surprise invoices that blow your budget.
               </p>
 
               <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-                Who managed IT is (and isn't) right for
+                Who managed IT is (and isn&apos;t) right for
               </h2>
               <p className="mb-6">
                 Managed IT makes the most sense when:
@@ -90,11 +90,11 @@ export default function Article() {
                 <li>You have 5+ employees relying on computers to work</li>
                 <li>Downtime would meaningfully hurt your business</li>
                 <li>You handle customer data, financial records, or health information</li>
-                <li>You don't have (or want to have) an internal IT person</li>
-                <li>You're tired of unpredictable IT bills</li>
+                <li>You don&apos;t have (or want to have) an internal IT person</li>
+                <li>You&apos;re tired of unpredictable IT bills</li>
               </ul>
               <p className="mb-6">
-                If you're a solo operator with a laptop and a G Suite account, break/fix or even self-managed IT is probably fine. But once you have a team, shared files, a server or cloud infrastructure, and customer data — the risk profile changes and managed support starts to pay for itself.
+                If you&apos;re a solo operator with a laptop and a G Suite account, break/fix or even self-managed IT is probably fine. But once you have a team, shared files, a server or cloud infrastructure, and customer data — the risk profile changes and managed support starts to pay for itself.
               </p>
 
               <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
@@ -104,8 +104,8 @@ export default function Article() {
                 Not all managed IT providers are the same. Ask prospective partners:
               </p>
               <ul className="mb-6 space-y-2 list-disc pl-5">
-                <li>What's included in the flat fee — and what costs extra?</li>
-                <li>What's the response time guarantee for different issue types?</li>
+                <li>What&apos;s included in the flat fee — and what costs extra?</li>
+                <li>What&apos;s the response time guarantee for different issue types?</li>
                 <li>Do you have local staff who can come on-site if needed?</li>
                 <li>How do you handle security incidents?</li>
                 <li>What does the onboarding process look like?</li>

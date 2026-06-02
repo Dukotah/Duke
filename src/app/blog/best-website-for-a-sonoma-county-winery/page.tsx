@@ -84,10 +84,10 @@ export default function Article() {
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
             <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
-              For most Sonoma County wineries, the website is the first — and sometimes only — impression a potential visitor gets before deciding whether to show up. And yet, most winery websites are slow, hard to navigate on a phone, and missing basic things like a functional reservation system or an address that's easy to find.
+              For most Sonoma County wineries, the website is the first — and sometimes only — impression a potential visitor gets before deciding whether to show up. And yet, most winery websites are slow, hard to navigate on a phone, and missing basic things like a functional reservation system or an address that&apos;s easy to find.
             </p>
             <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
-              Here's what actually moves the needle for tasting room visits, wine club signups, and DTC sales.
+              Here&apos;s what actually moves the needle for tasting room visits, wine club signups, and DTC sales.
             </p>
 
             <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
@@ -118,7 +118,7 @@ export default function Article() {
               What does a winery website actually cost?
             </h2>
             <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
-              A professionally built winery site with reservations, an online shop, events calendar, and local SEO typically runs <strong className="text-[#18181B]">$4,000–$7,000</strong>. That's a fraction of what a single slow weekend costs in missed tasting room revenue.
+              A professionally built winery site with reservations, an online shop, events calendar, and local SEO typically runs <strong className="text-[#18181B]">$4,000–$7,000</strong>. That&apos;s a fraction of what a single slow weekend costs in missed tasting room revenue.
             </p>
             <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
               Template builders like Squarespace and Wix are an option, but they come with real tradeoffs: slow performance, limited reservation integrations, and little control over local SEO. For a winery doing meaningful volume, a custom-built site pays for itself quickly.
@@ -127,7 +127,7 @@ export default function Article() {
             <div className="mt-10 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
               <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>Quick self-check</p>
               <p className="text-sm text-[#3F3F46]/60">
-                Pull out your phone and Google "wine tasting [your city]." Does your winery appear? Click your website. Does it load in under 3 seconds? Is your reservation link immediately visible? If any of those are a no — there's room to grow.
+                Pull out your phone and Google &quot;wine tasting [your city].&quot; Does your winery appear? Click your website. Does it load in under 3 seconds? Is your reservation link immediately visible? If any of those are a no — there&apos;s room to grow.
               </p>
             </div>
 

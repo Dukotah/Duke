@@ -1,13 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-
-interface AuditScore {
-  score: number;
-  label: string;
-}
 
 interface CompareResult {
   url: string;
@@ -285,12 +281,12 @@ export default function ComparePage() {
               <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
                 Copper Bay Tech specializes in rapidly improving site scores for Sonoma County businesses. Free 30-min consultation.
               </p>
-              <a
+              <Link
                 href="/#contact"
                 className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
               >
                 Get a Free Review
-              </a>
+              </Link>
             </div>
           </div>
         </section>

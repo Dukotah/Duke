@@ -59,10 +59,10 @@ export default function PetalumaHomeStaging() {
             <section>
               <h2 className="text-white text-2xl font-bold mb-4">The Situation</h2>
               <p className="mb-4">
-                Maria had been running her home staging business in Petaluma for four years. Word of mouth was good — but her website was working against her. The site had been built in 2018 on a cheap website builder, the design hadn't been touched since, and it was loading in over 8 seconds on mobile.
+                Maria had been running her home staging business in Petaluma for four years. Word of mouth was good — but her website was working against her. The site had been built in 2018 on a cheap website builder, the design hadn&apos;t been touched since, and it was loading in over 8 seconds on mobile.
               </p>
               <p className="mb-4">
-                That alone was enough to lose most visitors before they saw a single photo. But there was another problem she didn't even know about: her contact form was dumping submissions straight to spam. She'd later find out she'd missed at least a dozen inquiries that year.
+                That alone was enough to lose most visitors before they saw a single photo. But there was another problem she didn&apos;t even know about: her contact form was dumping submissions straight to spam. She&apos;d later find out she&apos;d missed at least a dozen inquiries that year.
               </p>
               <p>
                 She came to us wanting a redesign. What she got was a complete rebuild — designed to perform, not just look good.

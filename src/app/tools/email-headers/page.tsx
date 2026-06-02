@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
@@ -364,9 +365,9 @@ export default function EmailHeadersPage() {
               <div className="rounded-2xl p-6 text-center border border-zinc-800 bg-zinc-900">
                 <p className="text-white font-bold mb-2">Concerned about email security?</p>
                 <p className="text-zinc-400 text-sm mb-4">Copper Bay Tech can audit your email authentication setup and implement SPF, DKIM, and DMARC properly for your domain.</p>
-                <a href="/#contact" className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
+                <Link href="/#contact" className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
                   Talk to Us
-                </a>
+                </Link>
               </div>
             </div>
           )}

@@ -37,7 +37,7 @@ export default function Article() {
             <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
               <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
-                Nearly every small business owner thinks they have backups. Many of them are wrong — and they find out at the worst possible time. Here's how to do it correctly so that if something goes wrong, recovery is measured in hours, not weeks.
+                Nearly every small business owner thinks they have backups. Many of them are wrong — and they find out at the worst possible time. Here&apos;s how to do it correctly so that if something goes wrong, recovery is measured in hours, not weeks.
               </p>
 
               <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
@@ -47,9 +47,9 @@ export default function Article() {
                 The most common failures we see:
               </p>
               <ul className="mb-6 space-y-2 list-disc pl-5">
-                <li><strong>Syncing isn't the same as backing up.</strong> If your files are in Dropbox or Google Drive and you get ransomware, the encrypted versions sync and overwrite your backups. Cloud sync is not a backup.</li>
-                <li><strong>The backup ran once and was never checked again.</strong> Backup jobs fail silently. Hard drives fail. Credentials expire. Without monitoring, you can go months thinking you're protected when you aren't.</li>
-                <li><strong>Everything is on the same network.</strong> An external drive plugged into your computer that's always on is vulnerable to the same ransomware that hits your main drive. A backup isn't useful if it gets encrypted too.</li>
+                <li><strong>Syncing isn&apos;t the same as backing up.</strong> If your files are in Dropbox or Google Drive and you get ransomware, the encrypted versions sync and overwrite your backups. Cloud sync is not a backup.</li>
+                <li><strong>The backup ran once and was never checked again.</strong> Backup jobs fail silently. Hard drives fail. Credentials expire. Without monitoring, you can go months thinking you&apos;re protected when you aren&apos;t.</li>
+                <li><strong>Everything is on the same network.</strong> An external drive plugged into your computer that&apos;s always on is vulnerable to the same ransomware that hits your main drive. A backup isn&apos;t useful if it gets encrypted too.</li>
                 <li><strong>Nobody has ever tested a restore.</strong> A backup is only as good as your ability to actually restore from it. Many businesses have never tried — until the day they have to.</li>
               </ul>
 
@@ -57,25 +57,25 @@ export default function Article() {
                 The 3-2-1 rule: the standard that works
               </h2>
               <p className="mb-6">
-                The 3-2-1 backup rule is the industry standard for a reason. It's simple and it addresses the most common failure modes:
+                The 3-2-1 backup rule is the industry standard for a reason. It&apos;s simple and it addresses the most common failure modes:
               </p>
               <ul className="mb-6 space-y-2 list-disc pl-5">
                 <li><strong>3 copies of your data.</strong> The original plus two backups.</li>
                 <li><strong>2 different storage types.</strong> For example, local external drive plus cloud storage. Relying on one medium (all cloud, all local) is a single point of failure.</li>
-                <li><strong>1 copy offsite.</strong> If there's a fire, flood, or theft at your location, your local backup is gone along with your primary data. A cloud copy or offsite drive survives physical disasters.</li>
+                <li><strong>1 copy offsite.</strong> If there&apos;s a fire, flood, or theft at your location, your local backup is gone along with your primary data. A cloud copy or offsite drive survives physical disasters.</li>
               </ul>
               <p className="mb-6">
-                For most small businesses, this translates to: automated daily backups to cloud storage (offsite copy) plus a local external drive backup for faster restores. That's it.
+                For most small businesses, this translates to: automated daily backups to cloud storage (offsite copy) plus a local external drive backup for faster restores. That&apos;s it.
               </p>
 
               <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Cloud vs. local backup — you need both
               </h2>
               <p className="mb-6">
-                <strong>Cloud backup</strong> (Backblaze, Acronis, Veeam, Wasabi) continuously backs up your files to remote servers. It protects against local disasters and ransomware (assuming versioning is enabled and there's a delay before encrypted versions overwrite clean ones). Restoration can be slow for large datasets — downloading terabytes takes time — but for most small businesses, the data volume is manageable.
+                <strong>Cloud backup</strong> (Backblaze, Acronis, Veeam, Wasabi) continuously backs up your files to remote servers. It protects against local disasters and ransomware (assuming versioning is enabled and there&apos;s a delay before encrypted versions overwrite clean ones). Restoration can be slow for large datasets — downloading terabytes takes time — but for most small businesses, the data volume is manageable.
               </p>
               <p className="mb-6">
-                <strong>Local backup</strong> to a network-attached storage (NAS) drive or an external drive that's disconnected after each backup gives you fast restoration for day-to-day failures. A local restore from an external drive is far faster than downloading from the cloud.
+                <strong>Local backup</strong> to a network-attached storage (NAS) drive or an external drive that&apos;s disconnected after each backup gives you fast restoration for day-to-day failures. A local restore from an external drive is far faster than downloading from the cloud.
               </p>
               <p className="mb-6">
                 The combination of both gives you speed (local) and disaster protection (cloud). Choosing one or the other means accepting a gap.
@@ -92,9 +92,9 @@ export default function Article() {
               </p>
               <ul className="mb-6 space-y-2 list-disc pl-5">
                 <li><strong>Enable versioning.</strong> Your backup solution should keep multiple versions of files (30+ days), not just the most recent copy. This means you can roll back to a clean version before the infection.</li>
-                <li><strong>Use immutable backups.</strong> Some cloud backup solutions offer "immutable" storage, where backups cannot be modified or deleted for a set period — even by an admin account. This is specifically designed to defeat ransomware.</li>
+                <li><strong>Use immutable backups.</strong> Some cloud backup solutions offer &quot;immutable&quot; storage, where backups cannot be modified or deleted for a set period — even by an admin account. This is specifically designed to defeat ransomware.</li>
                 <li><strong>Disconnect local drives.</strong> Drives that are always connected and always on can be reached by ransomware. A drive you connect weekly and then disconnect is much harder to compromise.</li>
-                <li><strong>Don't let backups run under admin credentials.</strong> Use a dedicated, limited backup account so that compromised credentials can't reach your backup systems.</li>
+                <li><strong>Don&apos;t let backups run under admin credentials.</strong> Use a dedicated, limited backup account so that compromised credentials can&apos;t reach your backup systems.</li>
               </ul>
 
               <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
@@ -115,7 +115,7 @@ export default function Article() {
                   The bottom line
                 </p>
                 <p className="text-sm text-[#3F3F46]/60">
-                  Follow the 3-2-1 rule, enable versioning, keep one copy offsite, and test a restore every year. Set up automated daily backups to cloud storage and you've covered the overwhelming majority of failure scenarios.
+                  Follow the 3-2-1 rule, enable versioning, keep one copy offsite, and test a restore every year. Set up automated daily backups to cloud storage and you&apos;ve covered the overwhelming majority of failure scenarios.
                 </p>
               </div>
             </div>

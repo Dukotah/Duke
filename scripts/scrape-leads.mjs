@@ -44,11 +44,11 @@ const USE_ALL   = SOURCES.includes("all");
 const MAX       = parseInt(getArg("max") ?? "25", 10);
 const ENRICH    = hasFlag("enrich");
 
-const use = (s) => USE_ALL || SOURCES.includes(s);
+const hasSource = (s) => USE_ALL || SOURCES.includes(s);
 
 console.log("\n🚀 Copper Bay Tech — Lead Scraper");
 console.log("─".repeat(45));
-if (!use("osm") && !use("santarosa")) {
+if (!hasSource("osm") && !hasSource("santarosa")) {
   console.log(`   Category : ${CATEGORY}`);
   console.log(`   City     : ${CITY}, CA`);
 }
@@ -479,24 +479,24 @@ async function main() {
   };
 
   // Bulk sources (no category filter)
-  if (use("osm"))        await run("OSM", () => scrapeOSM());
-  if (use("santarosa"))  await run("Santa Rosa", () => scrapeSantaRosaOpenData());
+  if (hasSource("osm"))        await run("OSM", () => scrapeOSM());
+  if (hasSource("santarosa"))  await run("Santa Rosa", () => scrapeSantaRosaOpenData());
 
   // Category-based sources
-  const cities = use("osm") || use("santarosa")
+  const cities = hasSource("osm") || hasSource("santarosa")
     ? ["Petaluma", "Santa Rosa", "Sebastopol", "Rohnert Park", "Cotati", "Windsor", "Healdsburg", "Sonoma"]
     : [CITY];
 
-  const categories = use("osm") || use("santarosa")
+  const categories = hasSource("osm") || hasSource("santarosa")
     ? [CATEGORY]
     : [CATEGORY];
 
   for (const city of cities) {
     for (const category of categories) {
-      if (use("google"))      await run("Google Maps",   () => scrapeGoogleMaps(category, city));
-      if (use("yelp"))        await run("Yelp",          () => scrapeYelp(category, city));
-      if (use("yellowpages")) await run("Yellow Pages",  () => scrapeYellowPages(category, city));
-      if (use("bbb"))         await run("BBB",           () => scrapeBBB(category, city));
+      if (hasSource("google"))      await run("Google Maps",   () => scrapeGoogleMaps(category, city));
+      if (hasSource("yelp"))        await run("Yelp",          () => scrapeYelp(category, city));
+      if (hasSource("yellowpages")) await run("Yellow Pages",  () => scrapeYellowPages(category, city));
+      if (hasSource("bbb"))         await run("BBB",           () => scrapeBBB(category, city));
       if (cities.length > 1) await sleep(1500);
     }
   }

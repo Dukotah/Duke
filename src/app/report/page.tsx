@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
@@ -599,10 +600,12 @@ function ReportPageInner() {
   // Fire when url param is present
   useEffect(() => {
     if (urlParam) {
+      // runAll kicks off an async audit (external fetches); the synchronous
+      // setState calls are the intended loading-state sync, not a render loop.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       runAll(urlParam);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlParam]);
+  }, [urlParam, runAll]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -764,12 +767,12 @@ function ReportPageInner() {
                 <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
                   Copper Bay Tech can resolve most issues in under a week. Book a free 30-minute call.
                 </p>
-                <a
+                <Link
                   href="/#contact"
                   className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
                 >
                   Book a Free Call
-                </a>
+                </Link>
               </div>
             )}
           </div>
