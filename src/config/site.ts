@@ -10,6 +10,11 @@ export const EMAIL = "duke@copperbaytech.com";
 // The address outreach is sent from. Must be a verified domain in Resend.
 export const OUTREACH_FROM = "contact@copperbaytech.com";
 
-// CAN-SPAM requires a real physical postal address in every marketing email.
-// ⚠️ Update this with your actual street address or registered P.O. Box.
-export const MAILING_ADDRESS = "Copper Bay Tech, Petaluma, CA 94952";
+// CAN-SPAM requires a real physical postal address in every *marketing* email.
+// A digital agency doesn't need a street office — just a deliverable postal
+// address (a P.O. Box or virtual mailbox). Set it via the MAILING_ADDRESS env
+// var in your host so it can change without a code deploy. Until it's set, live
+// cold outreach stays gated (see the guard in src/app/api/crm/outreach/route.ts)
+// so no non-compliant mail can go out.
+export const MAILING_ADDRESS = (process.env.MAILING_ADDRESS ?? "").trim();
+export const hasMailingAddress = MAILING_ADDRESS.length > 0;

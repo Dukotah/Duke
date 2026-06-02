@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 import { addActivity, getLeadState, setLeadState, getSuppressedEmails } from "@/lib/db";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
-import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
+import { OUTREACH_FROM, MAILING_ADDRESS, hasMailingAddress } from "@/config/site";
 
 interface OutreachLead {
   id: string;
@@ -42,10 +42,12 @@ function addDays(days: number): string {
 }
 
 // CAN-SPAM compliant footer + a plain-text opt-out link recipients can click.
+// The postal address is only appended when configured — but live delivery is
+// also gated on it (see canDeliver below), so a real send always carries one.
 function buildFooter(unsubUrl: string): string {
-  return `\n\n\nYou're receiving this because we work with local businesses in your area.` +
-    `\nNot interested? Unsubscribe here: ${unsubUrl}` +
-    `\n${MAILING_ADDRESS}`;
+  const base = `\n\n\nYou're receiving this because we work with local businesses in your area.` +
+    `\nNot interested? Unsubscribe here: ${unsubUrl}`;
+  return hasMailingAddress ? `${base}\n${MAILING_ADDRESS}` : base;
 }
 
 export async function POST(req: NextRequest) {
@@ -108,7 +110,9 @@ export async function POST(req: NextRequest) {
   // someone confirms the domain is verified and sets OUTREACH_DOMAIN_VERIFIED=true,
   // we track every email but never actually send it.
   const domainVerified = (process.env.OUTREACH_DOMAIN_VERIFIED ?? "").trim().toLowerCase() === "true";
-  const canDeliver = Boolean(apiKey) && domainVerified;
+  // A real send must always carry a postal address (CAN-SPAM). Without one we
+  // stay in track-only mode rather than ship a non-compliant marketing email.
+  const canDeliver = Boolean(apiKey) && domainVerified && hasMailingAddress;
 
   // Track an email regardless of whether it was actually delivered. This keeps
   // the outreach log, the lead's timeline, and the follow-up schedule accurate
@@ -170,7 +174,11 @@ export async function POST(req: NextRequest) {
     if (!canDeliver) {
       // Track-only mode. Either no Resend key, or the domain isn't verified yet —
       // in both cases we deliberately don't send, to protect domain reputation.
-      const reason = !apiKey ? "no RESEND_API_KEY" : "domain not verified (set OUTREACH_DOMAIN_VERIFIED=true once verified)";
+      const reason = !apiKey
+        ? "no RESEND_API_KEY"
+        : !domainVerified
+        ? "domain not verified (set OUTREACH_DOMAIN_VERIFIED=true once verified)"
+        : "no MAILING_ADDRESS set (CAN-SPAM requires a postal address — a P.O. Box or virtual mailbox works)";
       console.log(`[Outreach] Track-only (${reason}) — ${lead.email}: ${personalizedSubject}`);
       try {
         await track(lead, personalizedSubject, sentAt, false);
