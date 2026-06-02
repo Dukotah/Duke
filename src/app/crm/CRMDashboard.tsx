@@ -126,6 +126,7 @@ const Pipeline = dynamic(() => import("./components/Pipeline"), { ssr: false });
 const ScriptsGuide = dynamic(() => import("./components/ScriptsGuide"), { ssr: false });
 const EarningsView = dynamic(() => import("./components/Earnings"), { ssr: false });
 const BulkOutreach = dynamic(() => import("./components/BulkOutreach"), { ssr: false });
+const OutreachTemplates = dynamic(() => import("./components/OutreachTemplates"), { ssr: false });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -439,6 +440,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   const [queueRefreshKey, setQueueRefreshKey] = useState(0);
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const [showBulkEmail, setShowBulkEmail] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   // Load all state + submissions once
   useEffect(() => {
@@ -538,6 +540,13 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           onSubmitted={refreshSubs} />
       )}
       {showBulkEmail && <BulkOutreach repName={userName} onClose={() => setShowBulkEmail(false)} />}
+      {showTemplates && (
+        <OutreachTemplates
+          repName={userName}
+          onClose={() => setShowTemplates(false)}
+          onBulkSend={() => { setShowTemplates(false); setShowBulkEmail(true); }}
+        />
+      )}
 
       <div className="min-h-screen crm-backdrop flex flex-col text-white/80" style={H}>
 
@@ -624,7 +633,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               const badge =
                 t.key === "earnings" && pendingCount > 0 ? pendingCount :
                 t.key === "reminders" && dueCount > 0 ? dueCount : null;
-              const onClick = t.key === "email" ? () => setShowBulkEmail(true) : () => setTab(t.key as Tab);
+              const onClick = t.key === "email" ? () => setShowTemplates(true) : () => setTab(t.key as Tab);
               return (
                 <button key={t.key} onClick={onClick} aria-current={active ? "page" : undefined}
                   className={`flex-1 flex flex-col items-center gap-1 py-2.5 transition-colors relative focus-visible:outline-none ${active ? "text-[#F97316]" : "text-white/35 hover:text-white/70"}`}

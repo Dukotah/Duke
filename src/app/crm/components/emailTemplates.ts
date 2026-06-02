@@ -67,6 +67,8 @@ Copper Bay Tech`,
 ];
 
 const STORAGE_KEY = "cbt_email_templates_v1";
+// Rep-authored templates (separate from edits to the built-in defaults).
+const CUSTOM_KEY = "cbt_email_templates_custom_v1";
 
 type Overrides = Record<string, { subject: string; body: string }>;
 
@@ -79,12 +81,79 @@ function readOverrides(): Overrides {
   }
 }
 
-// Returns the templates with any saved rep edits merged in.
+function readCustom(): EmailTemplate[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = JSON.parse(localStorage.getItem(CUSTOM_KEY) ?? "[]") as unknown;
+    if (!Array.isArray(raw)) return [];
+    // Defensive: only keep entries that look like templates.
+    return raw.filter(
+      (t): t is EmailTemplate =>
+        !!t && typeof t === "object" &&
+        typeof (t as EmailTemplate).key === "string" &&
+        typeof (t as EmailTemplate).label === "string"
+    );
+  } catch {
+    return [];
+  }
+}
+
+function writeCustom(list: EmailTemplate[]): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(CUSTOM_KEY, JSON.stringify(list));
+}
+
+// The free-form "custom" scratch template always sorts last so the more
+// useful rep-authored templates surface above it.
+function isScratch(t: EmailTemplate): boolean {
+  return t.key === "custom";
+}
+
+// Returns the built-in templates (with rep edits merged in) followed by any
+// rep-authored custom templates. The "custom" scratch entry stays last.
 export function loadTemplates(): EmailTemplate[] {
   const overrides = readOverrides();
-  return DEFAULT_TEMPLATES.map((t) =>
+  const defaults = DEFAULT_TEMPLATES.map((t) =>
     overrides[t.key] ? { ...t, ...overrides[t.key] } : { ...t }
   );
+  const custom = readCustom();
+  const scratch = defaults.filter(isScratch);
+  const builtIns = defaults.filter((t) => !isScratch(t));
+  return [...builtIns, ...custom, ...scratch];
+}
+
+// True for rep-authored templates that can be renamed/deleted, as opposed to
+// the built-in defaults (which can only be edited and reset).
+export function isCustomTemplate(key: string): boolean {
+  return readCustom().some((t) => t.key === key);
+}
+
+// Creates a new rep-authored template and persists it. Returns its key.
+export function createCustomTemplate(label: string, subject: string, body: string): EmailTemplate {
+  const tmpl: EmailTemplate = {
+    key: `custom_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
+    label: label.trim() || "Untitled",
+    subject,
+    body,
+  };
+  const list = readCustom();
+  writeCustom([...list, tmpl]);
+  return tmpl;
+}
+
+// Updates a rep-authored template in place. No-op for built-in defaults
+// (use saveTemplateOverride for those).
+export function updateCustomTemplate(key: string, patch: Partial<Omit<EmailTemplate, "key">>): void {
+  const list = readCustom();
+  const next = list.map((t) =>
+    t.key === key ? { ...t, ...patch, label: (patch.label ?? t.label).trim() || t.label } : t
+  );
+  writeCustom(next);
+}
+
+// Permanently removes a rep-authored template.
+export function deleteCustomTemplate(key: string): void {
+  writeCustom(readCustom().filter((t) => t.key !== key));
 }
 
 export function saveTemplateOverride(key: string, subject: string, body: string): void {

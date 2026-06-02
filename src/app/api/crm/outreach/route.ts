@@ -16,6 +16,10 @@ interface OutreachBody {
   subject: string;
   body: string;
   fromName: string;
+  // When set, this is a test send: deliver/practice exactly as usual but skip
+  // all persistence (tracking, lead state, activity) and don't consume the
+  // daily sending budget — so a test never mutates CRM data or warm-up cap.
+  test?: boolean;
 }
 
 const MAX_PER_REQUEST = 50;
@@ -63,6 +67,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { leads, subject, body: emailBody, fromName } = body;
+  const isTest = body.test === true;
 
   if (!leads || !Array.isArray(leads) || leads.length === 0) {
     return NextResponse.json({ error: "leads array is required" }, { status: 400 });
@@ -114,6 +119,10 @@ export async function POST(req: NextRequest) {
   // the outreach log, the lead's timeline, and the follow-up schedule accurate
   // even while the delivery integration (Resend) is still being set up.
   async function track(lead: OutreachLead, personalizedSubject: string, sentAt: string, delivered: boolean) {
+    // Test sends never persist: no outreach log, no lead-state mutation, no
+    // activity entry. The delivery-vs-practice path still runs as usual.
+    if (isTest) return;
+
     const logEntry = JSON.stringify({
       leadId: lead.id,
       leadName: lead.name,
@@ -228,9 +237,12 @@ export async function POST(req: NextRequest) {
   }
 
   // Only actual deliveries count toward the warm-up cap — track-only emails
-  // send nothing, so they shouldn't consume the daily sending budget.
-  const newTotal = sentToday + delivered;
-  await redis.set(dailyKey, String(newTotal), { ex: 90000 });
+  // send nothing, so they shouldn't consume the daily sending budget. Test
+  // sends never consume the budget either, even when delivered live.
+  if (!isTest) {
+    const newTotal = sentToday + delivered;
+    await redis.set(dailyKey, String(newTotal), { ex: 90000 });
+  }
 
   return NextResponse.json({ sent, delivered, failed, skipped, domainVerified });
 }
