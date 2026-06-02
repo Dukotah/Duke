@@ -1,5 +1,7 @@
 import tls from "node:tls";
 import { NextRequest, NextResponse } from "next/server";
+import { validateAuditUrl } from "@/lib/validate-url";
+import { rateLimit } from "@/lib/rate-limit";
 
 interface SSLResult {
   valid: boolean;
@@ -18,17 +20,23 @@ function checkSSL(hostname: string): Promise<SSLResult> {
       { servername: hostname, rejectUnauthorized: false },
       () => {
         const cert = socket.getPeerCertificate();
+        // socket.authorized is false for self-signed / expired / wrong-hostname certs
+        const authorized = socket.authorized;
         socket.destroy();
+
         if (!cert || !cert.valid_to) {
-          reject(new Error("No certificate"));
+          reject(new Error("No certificate returned"));
           return;
         }
+
         const expiresAt = new Date(cert.valid_to);
         const daysUntilExpiry = Math.floor(
           (expiresAt.getTime() - Date.now()) / 86400000
         );
+
         resolve({
-          valid: socket.authorized || true,
+          // Use the actual socket.authorized value — do NOT OR with true
+          valid: authorized,
           daysUntilExpiry,
           expiresAt: expiresAt.toISOString(),
           issuer: (Array.isArray(cert.issuer?.O) ? cert.issuer.O[0] : cert.issuer?.O) ?? "Unknown",
@@ -36,38 +44,30 @@ function checkSSL(hostname: string): Promise<SSLResult> {
         });
       }
     );
+
     socket.setTimeout(8000, () => {
       socket.destroy();
-      reject(new Error("Timeout"));
+      reject(new Error("Connection timed out"));
     });
     socket.on("error", reject);
   });
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, { limit: 10, windowMs: 60_000 });
+  if (!rl.ok) {
+    return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
+  }
+
   try {
     const { url } = await req.json();
 
-    if (!url || typeof url !== "string") {
-      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+    const validated = validateAuditUrl(url);
+    if (!validated.ok) {
+      return NextResponse.json({ error: validated.reason }, { status: 400 });
     }
 
-    let normalizedUrl = url.trim();
-    if (
-      !normalizedUrl.startsWith("http://") &&
-      !normalizedUrl.startsWith("https://")
-    ) {
-      normalizedUrl = "https://" + normalizedUrl;
-    }
-
-    let parsed: URL;
-    try {
-      parsed = new URL(normalizedUrl);
-    } catch {
-      return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
-    }
-
-    const hostname = parsed.hostname;
+    const hostname = new URL(validated.url).hostname;
 
     try {
       const result = await checkSSL(hostname);

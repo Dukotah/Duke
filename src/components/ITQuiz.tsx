@@ -68,6 +68,7 @@ type Result = {
   color: string;
   icon: typeof AlertTriangle;
   cta: string;
+  recommendations: string[];
 };
 
 function getResult(score: number): Result {
@@ -78,6 +79,13 @@ function getResult(score: number): Result {
       color: "#DC2626",
       icon: AlertTriangle,
       cta: "Get a Security Assessment",
+      recommendations: [
+        "Implement a centralized password manager immediately",
+        "Schedule a firewall and network security review",
+        "Set up automated offsite backups with tested restore procedures",
+        "Create a formal employee offboarding checklist",
+        "Enable automatic software and OS updates",
+      ],
     };
   } else if (score >= 6) {
     return {
@@ -86,6 +94,12 @@ function getResult(score: number): Result {
       color: "#F97316",
       icon: ShieldAlert,
       cta: "Talk to Us — No Obligation",
+      recommendations: [
+        "Audit password practices and enforce a manager company-wide",
+        "Review router/firewall settings and update firmware",
+        "Test your backup restore process — don't assume it works",
+        "Tighten your employee offboarding process",
+      ],
     };
   } else {
     return {
@@ -94,9 +108,17 @@ function getResult(score: number): Result {
       color: "#16A34A",
       icon: CheckCircle,
       cta: "See How We Can Help Further",
+      recommendations: [
+        "Consider a periodic third-party security audit to stay ahead",
+        "Review your website performance and lead generation metrics",
+        "Explore automation opportunities to reduce manual overhead",
+        "Document your current IT setup for continuity planning",
+      ],
     };
   }
 }
+
+type QuizStep = "quiz" | "capture" | "revealed";
 
 export default function ITQuiz() {
   const [current, setCurrent] = useState(0);
@@ -161,30 +183,21 @@ export default function ITQuiz() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
             Free Self-Assessment
           </p>
-          <h2
-            className="text-4xl font-bold text-white mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
+          <h2 className="text-4xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
             How exposed is your business?
           </h2>
-          <p
-            className="text-white/60 text-lg"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
+          <p className="text-white/60 text-lg" style={{ fontFamily: "var(--font-body)" }}>
             6 questions. 2 minutes. Find out where you actually stand.
           </p>
         </motion.div>
 
         <div className="bg-[#1F1F23] rounded-2xl border border-white/10 overflow-hidden">
-          {!done ? (
+          {/* ── Quiz questions ── */}
+          {step === "quiz" && (
             <>
-              {/* Progress bar */}
               <div className="h-1 bg-white/10">
                 <motion.div
                   className="h-full bg-[#F97316]"
@@ -193,17 +206,12 @@ export default function ITQuiz() {
                   transition={{ duration: 0.3 }}
                 />
               </div>
-
               <div className="p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <span
-                    className="text-xs font-semibold uppercase tracking-widest text-white/40"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
+                  <span className="text-xs font-semibold uppercase tracking-widest text-white/40" style={{ fontFamily: "var(--font-heading)" }}>
                     Question {current + 1} of {questions.length}
                   </span>
                 </div>
-
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={current}
@@ -212,13 +220,9 @@ export default function ITQuiz() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <h3
-                      className="text-xl font-bold text-white mb-6"
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
+                    <h3 className="text-xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-heading)" }}>
                       {questions[current].q}
                     </h3>
-
                     <div className="space-y-3">
                       {questions[current].options.map((opt, i) => (
                         <button
@@ -237,7 +241,6 @@ export default function ITQuiz() {
                     </div>
                   </motion.div>
                 </AnimatePresence>
-
                 <div className="mt-8 flex justify-end">
                   <button
                     onClick={handleNext}
@@ -251,7 +254,10 @@ export default function ITQuiz() {
                 </div>
               </div>
             </>
-          ) : (
+          )}
+
+          {/* ── Email capture gate ── */}
+          {step === "capture" && (
             <motion.div
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -264,23 +270,14 @@ export default function ITQuiz() {
               >
                 <ResultIcon size={28} color={result.color} />
               </div>
-              <p
-                className="text-xs font-semibold uppercase tracking-widest mb-2"
-                style={{ color: result.color, fontFamily: "var(--font-heading)" }}
-              >
-                Your Result
+              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: result.color, fontFamily: "var(--font-heading)" }}>
+                Assessment Complete
               </p>
-              <h3
-                className="text-3xl font-bold text-white mb-4"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {result.label}
+              <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                Your result is ready
               </h3>
-              <p
-                className="text-white/60 text-sm leading-relaxed mb-8 max-w-md mx-auto"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                {result.description}
+              <p className="text-white/50 text-sm mb-8 max-w-sm mx-auto" style={{ fontFamily: "var(--font-body)" }}>
+                Enter your email and we&apos;ll show your full risk report — plus a personalized action plan sent to your inbox.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
                 <a

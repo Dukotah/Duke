@@ -86,6 +86,17 @@ interface SchemaData {
   url: string;
 }
 
+interface ADAIssue {
+  label: string;
+  severity: "pass" | "warning" | "error";
+  detail: string;
+}
+
+interface ADAData {
+  score: number;
+  issues: ADAIssue[];
+}
+
 type CheckState<T> = { status: "idle" } | { status: "loading" } | { status: "done"; data: T } | { status: "error"; message: string };
 
 type AllChecks = {
@@ -631,7 +642,58 @@ function SchemaResults({ state }: { state: CheckState<SchemaData> }) {
   );
 }
 
+function ADAResults({ state }: { state: CheckState<ADAData> }) {
+  const sevIcon = (s: ADAIssue["severity"]) => s === "pass" ? "✓" : s === "warning" ? "⚠" : "✗";
+  const sevColor = (s: ADAIssue["severity"]) => s === "pass" ? "text-green-400" : s === "warning" ? "text-orange-400" : "text-red-400";
+  const sevBg = (s: ADAIssue["severity"]) => s === "pass" ? "bg-green-500/10" : s === "warning" ? "bg-orange-500/10" : "bg-red-500/10";
+
+  return (
+    <SectionCard title="ADA / WCAG Compliance" icon="♿" status={state.status}>
+      {state.status === "loading" && (
+        <div className="space-y-2 py-2">
+          <div className="h-3 bg-zinc-800 rounded animate-pulse w-4/5" />
+          <p className="text-zinc-500 text-xs">Checking accessibility signals…</p>
+        </div>
+      )}
+      {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
+      {state.status === "done" && (() => {
+        const d = state.data;
+        const passes = d.issues.filter(i => i.severity === "pass").length;
+        const warnings = d.issues.filter(i => i.severity === "warning").length;
+        const errors = d.issues.filter(i => i.severity === "error").length;
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <span className="text-5xl font-black" style={{ color: scoreColor(d.score) }}>{d.score}</span>
+              <div className="space-y-0.5">
+                <p className="text-zinc-400 text-xs"><span className="text-green-400 font-semibold">{passes}</span> passed</p>
+                <p className="text-zinc-400 text-xs"><span className="text-orange-400 font-semibold">{warnings}</span> warnings</p>
+                <p className="text-zinc-400 text-xs"><span className="text-red-400 font-semibold">{errors}</span> errors</p>
+              </div>
+            </div>
+            <div className="space-y-0 rounded-xl overflow-hidden border border-zinc-800">
+              {d.issues.map((issue, i) => (
+                <div key={i} className={`flex items-start gap-3 px-4 py-3 ${i < d.issues.length - 1 ? "border-b border-zinc-800" : ""} bg-[#18181B]`}>
+                  <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${sevBg(issue.severity)} ${sevColor(issue.severity)}`}>
+                    {sevIcon(issue.severity)}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-white text-xs font-semibold">{issue.label}</p>
+                    <p className="text-zinc-500 text-xs mt-0.5 break-words">{issue.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+    </SectionCard>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
+
+interface EmailReportState { status: "idle" | "loading" | "done" | "error" }
 
 type AllChecks = {
   speed:   CheckState<SpeedData>;
@@ -1070,6 +1132,7 @@ export default function ToolsIndexPage() {
                 { icon: "📧", label: "DNS & Email", desc: "SPF, DMARC, DKIM, MX records" },
                 { icon: "🔗", label: "Links", desc: "404s and redirect chains" },
                 { icon: "📱", label: "Mobile", desc: "Responsiveness & accessibility" },
+                { icon: "♿", label: "ADA", desc: "WCAG compliance signals" },
               ].map(item => (
                 <div
                   key={item.label}

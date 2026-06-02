@@ -13,7 +13,8 @@ const links = [
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
   { label: "Resources", href: "/blog" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Tools", href: "/tools" },
+  { label: "About", href: "/#about" },
 ];
 
 export default function Nav() {
@@ -184,6 +185,14 @@ export default function Nav() {
             <Phone size={16} className="text-[#F97316]" />
             {PHONE}
           </a>
+          <Link
+            href="/assessment"
+            onClick={() => setOpen(false)}
+            className="text-sm font-medium text-[#F97316]"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Free Assessment →
+          </Link>
           <Link
             href="/#contact"
             onClick={() => { track("cta_consultation", { location: "nav" }); setOpen(false); }}

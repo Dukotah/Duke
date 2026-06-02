@@ -78,7 +78,7 @@ export default function Contact() {
               className="text-[#3F3F46]/60 leading-relaxed mb-8"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Tell us what you&apos;re working with. We&apos;ll give you an honest assessment
+              Book a free 30-minute call and we&apos;ll give you an honest assessment
               and a clear path forward — no fluff, no pressure.
             </p>
 
@@ -145,7 +145,7 @@ export default function Contact() {
             </div>
           </motion.div>
 
-          {/* Right: Form */}
+          {/* Right: Tab switcher + content */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -164,6 +164,14 @@ export default function Contact() {
                   <input id="contact-business" {...register("business", { required: true })} placeholder="Acme Co." className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.business ? "true" : undefined} aria-describedby={errors.business ? "contact-business-error" : undefined} />
                   {errors.business && <p id="contact-business-error" className="text-red-500 text-xs mt-1">Required</p>}
                 </div>
+                <iframe
+                  src={CALENDLY_URL}
+                  width="100%"
+                  height="540"
+                  frameBorder="0"
+                  title="Book a free call with Copper Bay Tech"
+                  className="block"
+                />
               </div>
 
               <div className="grid sm:grid-cols-2 gap-5">
