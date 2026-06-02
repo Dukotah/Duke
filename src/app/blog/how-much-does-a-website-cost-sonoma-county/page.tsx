@@ -47,11 +47,11 @@ export default function Article() {
             <div className="prose prose-zinc max-w-none" style={{ fontFamily: "var(--font-body)" }}>
 
               <p className="text-lg text-[#3F3F46]/70 leading-relaxed mb-8">
-                The honest answer is: it depends — but that's a cop-out, and you deserve better. Here's what website projects actually cost in Sonoma County in 2026, broken down by who's building it and what you're getting.
+                The honest answer is: it depends — but that&apos;s a cop-out, and you deserve better. Here&apos;s what website projects actually cost in Sonoma County in 2026, broken down by who&apos;s building it and what you&apos;re getting.
               </p>
 
               <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-                The four tiers you'll encounter
+                The four tiers you&apos;ll encounter
               </h2>
 
               <div className="space-y-6 mb-10">
@@ -134,12 +134,12 @@ export default function Article() {
                 Most small business websites we build fall between <strong>$2,500 and $4,500</strong> flat. That includes custom design and code (no templates), mobile-first build, local SEO setup, Google Business Profile configuration, contact form with spam filtering, and hosting setup.
               </p>
               <p className="text-[#3F3F46]/70 leading-relaxed mb-8">
-                You get a specific quote before any work starts. If you go ahead, that number doesn't change.
+                You get a specific quote before any work starts. If you go ahead, that number doesn&apos;t change.
               </p>
 
               <div className="bg-[#18181B] rounded-xl p-6 text-center">
                 <p className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Want an exact number for your project?</p>
-                <p className="text-white/60 text-sm mb-5" style={{ fontFamily: "var(--font-body)" }}>Free 30-minute call. We'll look at what you need and give you a flat-fee quote.</p>
+                <p className="text-white/60 text-sm mb-5" style={{ fontFamily: "var(--font-body)" }}>Free 30-minute call. We&apos;ll look at what you need and give you a flat-fee quote.</p>
                 <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                   Get a Quote <ArrowRight size={14} />
                 </Link>

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CALENDLY_URL, PHONE, PHONE_HREF } from "@/config/site";
+import { track } from "@/lib/analytics";
 
 const trustSignals = [
   "Custom websites",
@@ -84,6 +85,7 @@ export default function Hero() {
               href={CALENDLY_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track("cta_book_call", { location: "hero" })}
               className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#F97316] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#F97316]/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#ea6c0a] hover:shadow-xl hover:shadow-[#F97316]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B] sm:w-auto"
               style={{ fontFamily: "var(--font-heading)" }}
             >
@@ -99,6 +101,7 @@ export default function Hero() {
             </a>
             <a
               href="#contact"
+              onClick={() => track("cta_message", { location: "hero" })}
               className="inline-flex w-full items-center justify-center rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B] sm:w-auto"
               style={{ fontFamily: "var(--font-heading)" }}
             >
@@ -114,6 +117,7 @@ export default function Hero() {
             or call{" "}
             <a
               href={PHONE_HREF}
+              onClick={() => track("cta_call_phone", { location: "hero" })}
               className="font-semibold text-white underline-offset-4 transition-colors hover:text-[#F97316] hover:underline focus-visible:outline-none focus-visible:underline"
               style={{ fontFamily: "var(--font-heading)" }}
             >

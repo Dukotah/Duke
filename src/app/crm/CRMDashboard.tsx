@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail, Globe,
-  Flame, Zap, ArrowUpDown, X, Download, LogOut, LayoutGrid,
-  BookOpen, DollarSign, List, ChevronDown, Check,
-  AlertCircle, Copy, Plus, CalendarClock,
+  Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail,
+  Flame, Zap, ArrowUpDown, X, LayoutGrid,
+  BookOpen, DollarSign, List,
+  AlertCircle, Plus, CalendarClock,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
@@ -84,10 +84,10 @@ function LeaderboardPeek({ userId }: { userId: string }) {
     <div className="crm-surface rounded-2xl p-4 mt-4" style={H}>
       <div className="flex items-center gap-2 mb-3">
         <span className="text-base">🏆</span>
-        <h3 className="text-sm font-bold text-white tracking-tight">This Month's Rankings</h3>
+        <h3 className="text-sm font-bold text-white tracking-tight">This Month&apos;s Rankings</h3>
         {myEntry && (
           <span className="ml-auto text-xs text-[#F97316] font-semibold">
-            You're #{myEntry.rank}
+            You&apos;re #{myEntry.rank}
           </span>
         )}
       </div>
@@ -250,7 +250,9 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
     finally { setLoading(false); }
   }, [q, county, niche, tier, hasEmail, sortBy, page, allTerritories]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { fetch_(); }, [fetch_]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset pagination when filters change
   useEffect(() => { setPage(1); }, [q, county, niche, tier, hasEmail, sortBy, allTerritories]);
 
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;

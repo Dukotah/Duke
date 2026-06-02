@@ -34,6 +34,7 @@ export default function CallTimer({ lead, onOutcome, onDismiss }: Props) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset timer when a new call starts
     setSeconds(0);
     intervalRef.current = setInterval(() => {
       setSeconds((s) => s + 1);

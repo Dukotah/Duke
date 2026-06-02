@@ -3,7 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
   title: "HIPAA Security Checklist for Sonoma County Healthcare Practices",
