@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Info } from "lucide-react";
-import { trackEstimatorComplete } from "@/lib/analytics";
 
 type Option = { label: string; value: string; modifier: number; note?: string };
 
@@ -102,11 +101,6 @@ export default function PricingEstimator() {
     if (!canNext) return;
     if (current + 1 >= steps.length) {
       setDone(true);
-      const [low, high] = computeEstimate();
-      trackEstimatorComplete({
-        service: (answers.type || ["website"])[0],
-        range: `$${low.toLocaleString()}–$${high.toLocaleString()}`,
-      });
     } else {
       setCurrent(current + 1);
     }

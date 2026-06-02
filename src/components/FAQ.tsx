@@ -36,16 +36,6 @@ const faqs = [
   },
 ];
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.q,
-    acceptedAnswer: { "@type": "Answer", text: faq.a },
-  })),
-};
-
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
@@ -94,8 +84,6 @@ export default function FAQ() {
                 onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex items-center justify-between px-6 py-5 text-left bg-[#FAFAF9] hover:bg-[#F4F4F2] transition-colors"
                 aria-expanded={open === i}
-                aria-controls={`faq-panel-${i}`}
-                id={`faq-button-${i}`}
               >
                 <span
                   className="text-base font-semibold text-[#18181B] pr-4"
@@ -103,7 +91,7 @@ export default function FAQ() {
                 >
                   {faq.q}
                 </span>
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#18181B]/8 flex items-center justify-center" aria-hidden="true">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#18181B]/8 flex items-center justify-center">
                   {open === i ? (
                     <Minus size={12} color="#18181B" />
                   ) : (
@@ -114,9 +102,6 @@ export default function FAQ() {
               <AnimatePresence initial={false}>
                 {open === i && (
                   <motion.div
-                    id={`faq-panel-${i}`}
-                    role="region"
-                    aria-labelledby={`faq-button-${i}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}

@@ -16,27 +16,6 @@ const blogSchema = blogPostingSchema({
 export const metadata: Metadata = {
   title: "Is My Small Business Website HIPAA Compliant? | Copper Bay Tech",
   description: "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
-  alternates: {
-    canonical: "/blog/is-my-small-business-website-hipaa-compliant",
-  },
-  openGraph: {
-    title: "Is My Small Business Website HIPAA Compliant? | Copper Bay Tech",
-    description: "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
-    type: "article",
-    publishedTime: "2026-04-01",
-    authors: ["Copper Bay Tech"],
-  },
-};
-
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Is My Small Business Website HIPAA Compliant? A Plain-English Checklist",
-  description: "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
-  datePublished: "2026-04-01",
-  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  url: "https://copperbaytech.com/blog/is-my-small-business-website-hipaa-compliant",
 };
 
 const checks = [
@@ -48,42 +27,12 @@ const checks = [
   { item: "Privacy policy covers health data handling", what: "Your privacy policy should specifically address when health info is collected, how it is stored, and who can access it." },
 ];
 
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Is My Small Business Website HIPAA Compliant? A Plain-English Checklist",
-  description:
-    "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
-  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  datePublished: "2026-04-01",
-  url: "https://copperbaytech.com/blog/is-my-small-business-website-hipaa-compliant",
-};
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
-    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
-    { "@type": "ListItem", position: 3, name: "Is My Small Business Website HIPAA Compliant? A Plain-English Checklist", item: "https://copperbaytech.com/blog/is-my-small-business-website-hipaa-compliant" },
-  ],
-};
-
 export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
       <Nav />
       <main>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-8 transition-colors" style={{ fontFamily: "var(--font-heading)" }}>

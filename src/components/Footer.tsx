@@ -17,7 +17,6 @@ export default function Footer() {
       "@type": "PostalAddress",
       addressLocality: "Petaluma",
       addressRegion: "CA",
-      postalCode: "94952",
       addressCountry: "US",
     },
     areaServed: ["Petaluma","Santa Rosa","Sebastopol","Rohnert Park","Sonoma","Bodega Bay","Cotati","Windsor","Healdsburg"],
@@ -96,15 +95,6 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <a
-                  href="/pricing"
-                  className="text-sm text-white/50 hover:text-white transition-colors"
-                  style={{ fontFamily: "var(--font-heading)" }}
-                >
-                  Pricing
-                </a>
-              </li>
             </ul>
           </div>
 

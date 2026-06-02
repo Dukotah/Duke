@@ -99,10 +99,8 @@ These are built in as of the latest deploy — no action needed:
   show their native "Unsubscribe" button. This is now *required* by Gmail/Yahoo
   for bulk senders and is a strong positive signal.
 - **Visible opt-out + mailing address** in the email footer (CAN-SPAM
-  compliance). ⚠️ Set the `MAILING_ADDRESS` env var to a deliverable postal
-  address — a P.O. Box or virtual mailbox is fine (no street office needed).
-  Until it's set, live cold outreach stays gated, so no non-compliant mail can
-  go out.
+  compliance). ⚠️ Update `MAILING_ADDRESS` in `src/config/site.ts` with your
+  real street address or P.O. Box.
 - **Suppression list.** Anyone who unsubscribes is recorded and **automatically
   skipped** on every future send (bulk or single). They're counted as "skipped"
   in the send summary.

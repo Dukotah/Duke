@@ -7,20 +7,13 @@ import Image from "next/image";
 import { PHONE, PHONE_HREF } from "@/config/site";
 import { track } from "@/lib/analytics";
 
-const services = [
-  { label: "Web Development", href: "/services/web-development", desc: "Fast, custom-coded websites" },
-  { label: "IT Support & Networking", href: "/services/it-support", desc: "Managed support that just works" },
-  { label: "Cybersecurity", href: "/services/cybersecurity", desc: "Audits & network security" },
-];
-
 const links = [
   { label: "Services", href: "/#services" },
   { label: "Pricing", href: "/pricing" },
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
   { label: "Resources", href: "/blog" },
-  { label: "Tools", href: "/tools" },
-  { label: "About", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Nav() {
@@ -63,7 +56,6 @@ export default function Nav() {
           ? "bg-[#FAFAF9]/85 backdrop-blur-md border-b border-[#18181B]/10 shadow-[0_1px_2px_rgba(24,24,27,0.04),0_8px_24px_-12px_rgba(24,24,27,0.18)]"
           : "bg-transparent border-b border-transparent"
       }`}
-      role="banner"
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
@@ -191,14 +183,6 @@ export default function Nav() {
             <Phone size={16} className="text-[#F97316]" />
             {PHONE}
           </a>
-          <Link
-            href="/assessment"
-            onClick={() => setOpen(false)}
-            className="text-sm font-medium text-[#F97316]"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Free Assessment →
-          </Link>
           <Link
             href="/#contact"
             onClick={() => { track("cta_consultation", { location: "nav" }); setOpen(false); }}

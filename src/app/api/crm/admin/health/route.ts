@@ -26,7 +26,6 @@ export async function GET(req: NextRequest) {
 
   const hasResend = set(process.env.RESEND_API_KEY);
   const domainVerified = (process.env.OUTREACH_DOMAIN_VERIFIED ?? "").trim().toLowerCase() === "true";
-  const hasMailingAddress = set(process.env.MAILING_ADDRESS);
 
   const checks = [
     {
@@ -62,18 +61,12 @@ export async function GET(req: NextRequest) {
       id: "email",
       label: "Email delivery",
       required: false,
-      ok: hasResend && domainVerified && hasMailingAddress,
-      vars: [
-        !hasResend && "RESEND_API_KEY",
-        !domainVerified && "OUTREACH_DOMAIN_VERIFIED",
-        !hasMailingAddress && "MAILING_ADDRESS",
-      ].filter(Boolean) as string[],
+      ok: hasResend && domainVerified,
+      vars: hasResend ? ["OUTREACH_DOMAIN_VERIFIED"] : ["RESEND_API_KEY", "OUTREACH_DOMAIN_VERIFIED"],
       okText: "Outreach emails are sent for real from your verified domain.",
-      problem: !hasResend
-        ? "Running in safe practice mode — emails are tracked on lead timelines but not delivered. Add a Resend key, verify your sending domain, set a MAILING_ADDRESS (CAN-SPAM needs a postal address — a P.O. Box or virtual mailbox is fine), then set OUTREACH_DOMAIN_VERIFIED=true to send for real."
-        : !domainVerified
+      problem: hasResend
         ? "A Resend key is set, but real sending is locked until your domain is verified. Verify the sending domain in Resend (add its SPF/DKIM/DMARC DNS records), then set OUTREACH_DOMAIN_VERIFIED=true. Until then emails are tracked but not sent — this is deliberate, to keep your domain from being flagged as spam."
-        : "Almost there — Resend and domain verification are set, but live outreach stays gated until MAILING_ADDRESS is set. CAN-SPAM requires a real postal address in every marketing email; a P.O. Box or virtual mailbox works (no street office needed).",
+        : "Running in safe practice mode — emails are tracked on lead timelines but not delivered. Add a Resend key, verify your sending domain, then set OUTREACH_DOMAIN_VERIFIED=true to send for real.",
     },
     {
       id: "audit",

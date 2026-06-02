@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Lora } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-import JsonLd, { organizationSchema, websiteSchema } from "@/components/JsonLd";
-import MobileCTABar from "@/components/MobileCTABar";
 
 const dmSans = DM_Sans({
     variable: "--font-heading",
@@ -87,13 +83,7 @@ export default function RootLayout({
 }>) {
     return (
           <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
-                  <body className="min-h-full flex flex-col">
-                    <JsonLd schema={[organizationSchema(), websiteSchema()]} />
-                    {children}
-                    <MobileCTABar />
-                    <Analytics />
-                    <SpeedInsights />
-                  </body>
+                  <body className="min-h-full flex flex-col">{children}</body>
           </html>
         );
 }

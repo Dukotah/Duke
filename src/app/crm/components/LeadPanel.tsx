@@ -443,9 +443,6 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
               )}
             </div>
 
-            {/* Lead intelligence: heat score, problem breakdown, tailored script + email, objections */}
-            <LeadIntel lead={lead} repName={repName ?? "me"} />
-
             {/* Contact info */}
             <div className="px-5 py-4 border-b border-white/[0.06]">
               <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Contact Info</p>

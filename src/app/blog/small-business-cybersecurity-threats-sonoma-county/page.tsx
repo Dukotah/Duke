@@ -2,17 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-
-const blogSchema = blogPostingSchema({
-  title:
-    "The 5 Cybersecurity Threats Most Likely to Hit a Sonoma County Small Business in 2026",
-  description:
-    "The five cyber threats most likely to hit a Sonoma County small business this year — phishing, ransomware, weak passwords, unpatched software, and lost devices — plus what actually stops them.",
-  url: "https://copperbaytech.com/blog/small-business-cybersecurity-threats-sonoma-county",
-  datePublished: "2026-06-01",
-});
 
 export const metadata: Metadata = {
   title: "Small Business Cybersecurity Threats in Sonoma County (2026) | Copper Bay Tech",
@@ -29,7 +19,6 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
-      <JsonLd schema={blogSchema} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

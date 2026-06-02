@@ -5,13 +5,12 @@ import Link from "next/link";
 import { Globe, Loader2, ArrowRight, ShieldCheck, CheckCircle2, Mail } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import ITQuiz from "@/components/ITQuiz";
-import PricingEstimator from "@/components/PricingEstimator";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface SpeedData {
-  url: string; score: number;
+  url: string;
+  score: number;
   metrics: {
     fcp: { value: string; score: number | null; title: string };
     lcp: { value: string; score: number | null; title: string };
@@ -22,21 +21,50 @@ interface SpeedData {
   };
   opportunities: { title?: string; displayValue?: string; score?: number | null }[];
 }
-interface SSLData { valid: boolean; daysUntilExpiry: number; expiresAt: string; issuer: string; hostname: string; error?: string; }
-interface SEOIssue { label: string; severity: "pass" | "warning" | "error"; detail: string; }
-interface SEOData { url: string; score: number; issues: SEOIssue[]; }
-interface LinkItem { url: string; status: number; text: string; }
-interface LinksData { total: number; broken: LinkItem[]; redirects: Array<LinkItem & { to: string }>; ok: number; }
-interface MobileData { mobileScore: number; accessibilityScore: number; seoScore: number; bestPracticesScore: number; viewport: boolean; textSizeOk: boolean; tapTargetsOk: boolean; }
-interface HeaderCheck { header: string; present: boolean; value: string; severity: "pass" | "warning" | "error"; detail: string; }
-interface HeadersData { score: number; checks: HeaderCheck[]; url: string; }
-interface DNSCheck { label: string; severity: "pass" | "warning" | "error"; detail: string; }
-interface DNSRecord { type: string; value: string; }
-interface DNSData { hostname: string; score: number; records: DNSRecord[]; checks: DNSCheck[]; }
-interface TechItem { name: string; category: string; confidence: "high" | "medium" | "low"; }
-interface TechData { url: string; detected: TechItem[]; categories: string[]; count: number; }
-interface CrawlCheck { label: string; severity: "pass" | "warning" | "error"; detail: string; }
-interface CrawlData { url: string; score: number; checks: CrawlCheck[]; }
+
+interface SSLData {
+  valid: boolean;
+  daysUntilExpiry: number;
+  expiresAt: string;
+  issuer: string;
+  hostname: string;
+  error?: string;
+}
+
+interface SEOIssue {
+  label: string;
+  severity: "pass" | "warning" | "error";
+  detail: string;
+}
+
+interface SEOData {
+  url: string;
+  score: number;
+  issues: SEOIssue[];
+}
+
+interface LinkItem {
+  url: string;
+  status: number;
+  text: string;
+}
+
+interface LinksData {
+  total: number;
+  broken: LinkItem[];
+  redirects: Array<LinkItem & { to: string }>;
+  ok: number;
+}
+
+interface MobileData {
+  mobileScore: number;
+  accessibilityScore: number;
+  seoScore: number;
+  bestPracticesScore: number;
+  viewport: boolean;
+  textSizeOk: boolean;
+  tapTargetsOk: boolean;
+}
 
 interface HeaderCheck {
   name: string;
@@ -86,76 +114,21 @@ interface SchemaData {
   url: string;
 }
 
-interface ADAIssue {
-  label: string;
-  severity: "pass" | "warning" | "error";
-  detail: string;
-}
-
-interface ADAData {
-  score: number;
-  issues: ADAIssue[];
-}
-
-type CheckState<T> =
-  | { status: "idle" }
-  | { status: "loading" }
-  | { status: "done"; data: T }
-  | { status: "error"; message: string };
-
-type AllChecks = {
-  speed: CheckState<SpeedData>;
-  ssl:   CheckState<SSLData>;
-  seo:   CheckState<SEOData>;
-  links: CheckState<LinksData>;
-  mobile: CheckState<MobileData>;
-};
-
-type AllChecks = {
-  speed: CheckState<SpeedData>;   ssl: CheckState<SSLData>;
-  seo: CheckState<SEOData>;       links: CheckState<LinksData>;
-  mobile: CheckState<MobileData>; headers: CheckState<HeadersData>;
-  dns: CheckState<DNSData>;       tech: CheckState<TechData>;
-  crawl: CheckState<CrawlData>;
-};
-
-const idle: AllChecks = {
-  speed: { status: "idle" }, ssl: { status: "idle" }, seo: { status: "idle" },
-  links: { status: "idle" }, mobile: { status: "idle" }, headers: { status: "idle" },
-  dns: { status: "idle" }, tech: { status: "idle" }, crawl: { status: "idle" },
-};
+type CheckState<T> = { status: "idle" } | { status: "loading" } | { status: "done"; data: T } | { status: "error"; message: string };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function scoreColor(s: number) { return s >= 90 ? "#22C55E" : s >= 50 ? "#F97316" : "#EF4444"; }
-function metricDotColor(s: number | null) {
-  if (s === null) return "#71717A"; return s >= 0.9 ? "#22C55E" : s >= 0.5 ? "#F97316" : "#EF4444";
-}
-function sevIcon(s: "pass"|"warning"|"error") { return s==="pass"?"✓":s==="warning"?"⚠":"✗"; }
-function sevColor(s: "pass"|"warning"|"error") { return s==="pass"?"text-green-400":s==="warning"?"text-orange-400":"text-red-400"; }
-function sevBg(s: "pass"|"warning"|"error") { return s==="pass"?"bg-green-500/10":s==="warning"?"bg-orange-500/10":"bg-red-500/10"; }
-function letterGrade(score: number) {
-  if (score >= 90) return { grade: "A", label: "Excellent", color: "#22C55E" };
-  if (score >= 75) return { grade: "B", label: "Good", color: "#84CC16" };
-  if (score >= 60) return { grade: "C", label: "Average", color: "#F97316" };
-  if (score >= 45) return { grade: "D", label: "Poor", color: "#EF4444" };
-  return { grade: "F", label: "Critical", color: "#DC2626" };
+function scoreColor(score: number) {
+  if (score >= 90) return "#22C55E";
+  if (score >= 50) return "#F97316";
+  return "#EF4444";
 }
 
-function extractScore(checks: AllChecks): number | null {
-  const scores: number[] = [];
-  if (checks.speed.status === "done") scores.push(checks.speed.data.score);
-  if (checks.ssl.status === "done") scores.push(checks.ssl.data.valid && !checks.ssl.data.error ? 100 : 20);
-  if (checks.seo.status === "done") scores.push(checks.seo.data.score);
-  if (checks.links.status === "done") {
-    const d = checks.links.data;
-    scores.push(d.total === 0 ? 100 : Math.max(0, 100 - d.broken.length * 25));
-  }
-  if (checks.mobile.status === "done") scores.push(checks.mobile.data.mobileScore);
-  if (checks.headers.status === "done") scores.push(checks.headers.data.score);
-  if (checks.dns.status === "done") scores.push(checks.dns.data.score);
-  if (checks.crawl.status === "done") scores.push(checks.crawl.data.score);
-  return scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+function metricDotColor(score: number | null) {
+  if (score === null) return "#71717A";
+  if (score >= 0.9) return "#22C55E";
+  if (score >= 0.5) return "#F97316";
+  return "#EF4444";
 }
 
 function statusColor(s: "pass" | "warn" | "fail") {
@@ -169,15 +142,23 @@ function statusIcon(s: "pass" | "warn" | "fail") {
 }
 
 function ScoreCircle({ score, label, size = 110 }: { score: number; label: string; size?: number }) {
-  const r = size * 0.42; const circ = 2 * Math.PI * r;
-  const offset = circ - (score / 100) * circ; const color = scoreColor(score);
+  const r = size * 0.42;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (score / 100) * circ;
+  const color = scoreColor(score);
   return (
     <div className="flex flex-col items-center gap-1">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#27272A" strokeWidth={size*0.08} />
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={size*0.08}
-          strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
-          transform={`rotate(-90 ${size/2} ${size/2})`} />
+        <circle
+          cx={size/2} cy={size/2} r={r}
+          fill="none" stroke={color}
+          strokeWidth={size*0.08}
+          strokeDasharray={circ}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${size/2} ${size/2})`}
+        />
         <text x={size/2} y={size/2} textAnchor="middle" dominantBaseline="central"
           fill={color} fontSize={size*0.22} fontWeight="bold">{score}</text>
       </svg>
@@ -186,10 +167,11 @@ function ScoreCircle({ score, label, size = 110 }: { score: number; label: strin
   );
 }
 
-// ── Section card ──────────────────────────────────────────────────────────────
-
 function SectionCard({ title, icon, status, children }: {
-  title: string; icon: string; status: "idle"|"loading"|"done"|"error"; children?: React.ReactNode;
+  title: string;
+  icon: string;
+  status: "idle" | "loading" | "done" | "error";
+  children?: React.ReactNode;
 }) {
   return (
     <div className="cbt-rise group bg-zinc-900/70 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg shadow-black/10 transition-colors hover:border-zinc-700">
@@ -249,90 +231,6 @@ function CheckList({ checks }: { checks: Array<{ label: string; status: "pass" |
   );
 }
 
-function CheckList({ checks }: { checks: Array<{ label: string; severity: "pass"|"warning"|"error"; detail: string }> }) {
-  return (
-    <div className="space-y-0 rounded-xl overflow-hidden border border-zinc-800">
-      {checks.map((c, i) => (
-        <div key={i} className={`flex items-start gap-3 px-4 py-3 bg-[#18181B] ${i < checks.length - 1 ? "border-b border-zinc-800" : ""}`}>
-          <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${sevBg(c.severity)} ${sevColor(c.severity)}`}>
-            {sevIcon(c.severity)}
-          </span>
-          <div className="min-w-0">
-            <p className="text-white text-xs font-semibold">{c.label}</p>
-            <p className="text-zinc-500 text-xs mt-0.5 break-words">{c.detail}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ── Overall summary card ──────────────────────────────────────────────────────
-
-function SummaryCard({ checks, url, label }: { checks: AllChecks; url: string; label?: string }) {
-  const score = extractScore(checks);
-  const { critical, warnings } = countIssues(checks);
-  const total = Object.values(checks).filter(c => c.status === "done" || c.status === "error").length;
-  const running = Object.values(checks).some(c => c.status === "loading");
-
-  if (score === null && !running) return null;
-
-  const lg = score !== null ? letterGrade(score) : null;
-
-  return (
-    <div className="rounded-2xl overflow-hidden border border-zinc-700 bg-gradient-to-br from-zinc-900 to-zinc-950">
-      {label && (
-        <div className="px-5 py-2.5 bg-zinc-800/60 border-b border-zinc-700">
-          <p className="text-zinc-400 text-xs font-semibold truncate">{label}</p>
-        </div>
-      )}
-      <div className="px-5 py-5 flex items-center gap-5">
-        {lg ? (
-          <div className="flex-shrink-0 w-20 h-20 rounded-2xl flex items-center justify-center text-5xl font-black border-2"
-            style={{ borderColor: lg.color, color: lg.color, background: `${lg.color}15` }}>
-            {lg.grade}
-          </div>
-        ) : (
-          <div className="flex-shrink-0 w-20 h-20 rounded-2xl flex items-center justify-center border-2 border-zinc-700">
-            <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
-        <div className="flex-1 min-w-0">
-          {lg && <p className="text-white font-black text-xl mb-0.5">{lg.label}</p>}
-          <p className="text-zinc-400 text-xs truncate mb-2">{url}</p>
-          <div className="flex flex-wrap gap-2">
-            {score !== null && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300">
-                Score: {score}/100
-              </span>
-            )}
-            {critical > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
-                {critical} critical issue{critical !== 1 ? "s" : ""}
-              </span>
-            )}
-            {warnings > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                {warnings} warning{warnings !== 1 ? "s" : ""}
-              </span>
-            )}
-            {total > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-500">
-                {total}/9 checks complete
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-      {running && (
-        <div className="h-1 bg-zinc-800">
-          <div className="h-full bg-orange-500 animate-pulse" style={{ width: `${(total / 9) * 100}%`, transition: "width 0.5s" }} />
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ── Result sections ───────────────────────────────────────────────────────────
 
 function SpeedResults({ state }: { state: CheckState<SpeedData> }) {
@@ -341,13 +239,16 @@ function SpeedResults({ state }: { state: CheckState<SpeedData> }) {
       {state.status === "loading" && <LoadingRows />}
       {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
       {state.status === "done" && (() => {
-        const d = state.data; const color = scoreColor(d.score);
+        const d = state.data;
+        const color = scoreColor(d.score);
         return (
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <span className="text-5xl font-black tabular-nums tracking-tight leading-none" style={{ color, filter: `drop-shadow(0 0 18px ${color}40)` }}>{d.score}</span>
               <div>
-                <p className="text-white font-semibold text-sm">{d.score >= 90 ? "Fast" : d.score >= 50 ? "Needs Work" : "Slow"}</p>
+                <p className="text-white font-semibold text-sm">
+                  {d.score >= 90 ? "Fast" : d.score >= 50 ? "Needs Work" : "Slow"}
+                </p>
                 <p className="text-zinc-500 text-xs">Performance score / 100</p>
               </div>
             </div>
@@ -377,7 +278,6 @@ function SpeedResults({ state }: { state: CheckState<SpeedData> }) {
                 ))}
               </div>
             )}
-            <ImpactBanner checkKey="speed" score={d.score} />
           </div>
         );
       })()}
@@ -391,14 +291,23 @@ function SSLResults({ state }: { state: CheckState<SSLData> }) {
       {state.status === "loading" && <LoadingRows />}
       {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
       {state.status === "done" && (() => {
-        const d = state.data; const ok = d.valid && !d.error;
-        const expiryColor = !d.error ? (d.daysUntilExpiry < 0 ? "text-red-400" : d.daysUntilExpiry < 30 ? "text-orange-400" : "text-green-400") : "text-zinc-400";
+        const d = state.data;
+        const ok = d.valid && !d.error;
+        const expiryColor = !d.error
+          ? d.daysUntilExpiry < 0 ? "text-red-400"
+          : d.daysUntilExpiry < 30 ? "text-orange-400"
+          : "text-green-400"
+          : "text-zinc-400";
         return (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <span className={`text-2xl w-10 h-10 rounded-full flex items-center justify-center ${ok ? "bg-green-500/10" : "bg-red-500/10"}`}>{ok?"✓":"✗"}</span>
+              <span className={`text-2xl w-10 h-10 rounded-full flex items-center justify-center ${ok ? "bg-green-500/10" : "bg-red-500/10"}`}>
+                {ok ? "✓" : "✗"}
+              </span>
               <div>
-                <p className={`font-bold text-sm ${ok ? "text-green-400" : "text-red-400"}`}>{ok ? "Certificate Valid" : "SSL Issue Detected"}</p>
+                <p className={`font-bold text-sm ${ok ? "text-green-400" : "text-red-400"}`}>
+                  {ok ? "Certificate Valid" : "SSL Issue Detected"}
+                </p>
                 <p className="text-zinc-500 text-xs">{d.hostname}</p>
               </div>
             </div>
@@ -421,7 +330,6 @@ function SSLResults({ state }: { state: CheckState<SSLData> }) {
               </div>
             )}
             {d.error && <p className="text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{d.error}</p>}
-            <ImpactBanner checkKey="ssl" score={ok ? 100 : 0} />
           </div>
         );
       })()}
@@ -430,24 +338,42 @@ function SSLResults({ state }: { state: CheckState<SSLData> }) {
 }
 
 function SEOResults({ state }: { state: CheckState<SEOData> }) {
+  const sevIcon = (s: SEOIssue["severity"]) => s === "pass" ? "✓" : s === "warning" ? "⚠" : "✗";
+  const sevColor = (s: SEOIssue["severity"]) => s === "pass" ? "text-green-400" : s === "warning" ? "text-orange-400" : "text-red-400";
+  const sevBg = (s: SEOIssue["severity"]) => s === "pass" ? "bg-green-500/10" : s === "warning" ? "bg-orange-500/10" : "bg-red-500/10";
+
   return (
     <SectionCard title="SEO Health" icon="🔍" status={state.status}>
       {state.status === "loading" && <LoadingRows />}
       {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
       {state.status === "done" && (() => {
         const d = state.data;
+        const passes = d.issues.filter(i => i.severity === "pass").length;
+        const warnings = d.issues.filter(i => i.severity === "warning").length;
+        const errors = d.issues.filter(i => i.severity === "error").length;
         return (
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <span className="text-5xl font-black tabular-nums tracking-tight leading-none" style={{ color: scoreColor(d.score), filter: `drop-shadow(0 0 18px ${scoreColor(d.score)}40)` }}>{d.score}</span>
               <div className="space-y-0.5">
-                <p className="text-zinc-400 text-xs"><span className="text-green-400 font-semibold">{d.issues.filter(i=>i.severity==="pass").length}</span> passed</p>
-                <p className="text-zinc-400 text-xs"><span className="text-orange-400 font-semibold">{d.issues.filter(i=>i.severity==="warning").length}</span> warnings</p>
-                <p className="text-zinc-400 text-xs"><span className="text-red-400 font-semibold">{d.issues.filter(i=>i.severity==="error").length}</span> errors</p>
+                <p className="text-zinc-400 text-xs"><span className="text-green-400 font-semibold">{passes}</span> passed</p>
+                <p className="text-zinc-400 text-xs"><span className="text-orange-400 font-semibold">{warnings}</span> warnings</p>
+                <p className="text-zinc-400 text-xs"><span className="text-red-400 font-semibold">{errors}</span> errors</p>
               </div>
             </div>
-            <CheckList checks={d.issues} />
-            <ImpactBanner checkKey="seo" score={d.score} />
+            <div className="space-y-0 rounded-xl overflow-hidden border border-zinc-800">
+              {d.issues.map((issue, i) => (
+                <div key={i} className={`flex items-start gap-3 px-4 py-3 ${i < d.issues.length - 1 ? "border-b border-zinc-800" : ""} bg-[#18181B]`}>
+                  <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${sevBg(issue.severity)} ${sevColor(issue.severity)}`}>
+                    {sevIcon(issue.severity)}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-white text-xs font-semibold">{issue.label}</p>
+                    <p className="text-zinc-500 text-xs mt-0.5 break-words">{issue.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         );
       })()}
@@ -467,7 +393,6 @@ function LinksResults({ state }: { state: CheckState<LinksData> }) {
       {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
       {state.status === "done" && (() => {
         const d = state.data;
-        const linkScore = d.total === 0 ? 100 : Math.max(0, 100 - d.broken.length * 25);
         return (
           <div className="space-y-4">
             <div className="grid grid-cols-4 gap-2">
@@ -484,7 +409,9 @@ function LinksResults({ state }: { state: CheckState<LinksData> }) {
               ))}
             </div>
             {d.broken.length === 0 && d.redirects.length === 0 && (
-              <p className="text-green-400 text-sm text-center bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3">All {d.total} links working correctly.</p>
+              <p className="text-green-400 text-sm text-center bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3">
+                All {d.total} links are working correctly.
+              </p>
             )}
             {d.broken.length > 0 && (
               <div className="space-y-1">
@@ -512,7 +439,6 @@ function LinksResults({ state }: { state: CheckState<LinksData> }) {
                 ))}
               </div>
             )}
-            <ImpactBanner checkKey="links" score={linkScore} />
           </div>
         );
       })()}
@@ -532,7 +458,11 @@ function MobileResults({ state }: { state: CheckState<MobileData> }) {
       {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
       {state.status === "done" && (() => {
         const d = state.data;
-        const check = (ok: boolean) => ({ icon: ok?"✓":"✗", color: ok?"text-green-400":"text-red-400", bg: ok?"bg-green-500/10":"bg-red-500/10" });
+        const check = (ok: boolean) => ({
+          icon: ok ? "✓" : "✗",
+          color: ok ? "text-green-400" : "text-red-400",
+          bg: ok ? "bg-green-500/10" : "bg-red-500/10",
+        });
         return (
           <div className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -542,17 +472,22 @@ function MobileResults({ state }: { state: CheckState<MobileData> }) {
               <ScoreCircle score={d.bestPracticesScore} label="Best Practices" size={90} />
             </div>
             <div className="space-y-0 rounded-xl overflow-hidden border border-zinc-800">
-              {[{label:"Viewport configured",ok:d.viewport},{label:"Text size legible",ok:d.textSizeOk},{label:"Tap targets sized correctly",ok:d.tapTargetsOk}].map((c,i)=>{
-                const s=check(c.ok);
+              {[
+                { label: "Viewport configured", ok: d.viewport },
+                { label: "Text size legible", ok: d.textSizeOk },
+                { label: "Tap targets sized correctly", ok: d.tapTargetsOk },
+              ].map((c, i) => {
+                const s = check(c.ok);
                 return (
-                  <div key={i} className={`flex items-center gap-3 px-4 py-3 bg-[#18181B] ${i<2?"border-b border-zinc-800":""}`}>
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${s.bg} ${s.color}`}>{s.icon}</span>
+                  <div key={i} className={`flex items-center gap-3 px-4 py-3 bg-[#18181B] ${i < 2 ? "border-b border-zinc-800" : ""}`}>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${s.bg} ${s.color}`}>
+                      {s.icon}
+                    </span>
                     <p className="text-white text-xs font-semibold">{c.label}</p>
                   </div>
                 );
               })}
             </div>
-            <ImpactBanner checkKey="mobile" score={d.mobileScore} />
           </div>
         );
       })()}
@@ -654,58 +589,7 @@ function SchemaResults({ state }: { state: CheckState<SchemaData> }) {
   );
 }
 
-function ADAResults({ state }: { state: CheckState<ADAData> }) {
-  const sevIcon = (s: ADAIssue["severity"]) => s === "pass" ? "✓" : s === "warning" ? "⚠" : "✗";
-  const sevColor = (s: ADAIssue["severity"]) => s === "pass" ? "text-green-400" : s === "warning" ? "text-orange-400" : "text-red-400";
-  const sevBg = (s: ADAIssue["severity"]) => s === "pass" ? "bg-green-500/10" : s === "warning" ? "bg-orange-500/10" : "bg-red-500/10";
-
-  return (
-    <SectionCard title="ADA / WCAG Compliance" icon="♿" status={state.status}>
-      {state.status === "loading" && (
-        <div className="space-y-2 py-2">
-          <div className="h-3 bg-zinc-800 rounded animate-pulse w-4/5" />
-          <p className="text-zinc-500 text-xs">Checking accessibility signals…</p>
-        </div>
-      )}
-      {state.status === "error" && <p className="text-red-400 text-sm">{state.message}</p>}
-      {state.status === "done" && (() => {
-        const d = state.data;
-        const passes = d.issues.filter(i => i.severity === "pass").length;
-        const warnings = d.issues.filter(i => i.severity === "warning").length;
-        const errors = d.issues.filter(i => i.severity === "error").length;
-        return (
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <span className="text-5xl font-black" style={{ color: scoreColor(d.score) }}>{d.score}</span>
-              <div className="space-y-0.5">
-                <p className="text-zinc-400 text-xs"><span className="text-green-400 font-semibold">{passes}</span> passed</p>
-                <p className="text-zinc-400 text-xs"><span className="text-orange-400 font-semibold">{warnings}</span> warnings</p>
-                <p className="text-zinc-400 text-xs"><span className="text-red-400 font-semibold">{errors}</span> errors</p>
-              </div>
-            </div>
-            <div className="space-y-0 rounded-xl overflow-hidden border border-zinc-800">
-              {d.issues.map((issue, i) => (
-                <div key={i} className={`flex items-start gap-3 px-4 py-3 ${i < d.issues.length - 1 ? "border-b border-zinc-800" : ""} bg-[#18181B]`}>
-                  <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${sevBg(issue.severity)} ${sevColor(issue.severity)}`}>
-                    {sevIcon(issue.severity)}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-white text-xs font-semibold">{issue.label}</p>
-                    <p className="text-zinc-500 text-xs mt-0.5 break-words">{issue.detail}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
-    </SectionCard>
-  );
-}
-
 // ── Main Page ─────────────────────────────────────────────────────────────────
-
-interface EmailReportState { status: "idle" | "loading" | "done" | "error" }
 
 type AllChecks = {
   speed:   CheckState<SpeedData>;
@@ -735,10 +619,6 @@ function normalizeUrl(url: string) {
   return u;
 }
 
-function extractDomain(url: string) {
-  try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return url; }
-}
-
 async function runCheck<T>(endpoint: string, url: string): Promise<T> {
   const res = await fetch(endpoint, {
     method: "POST",
@@ -750,928 +630,9 @@ async function runCheck<T>(endpoint: string, url: string): Promise<T> {
   return json as T;
 }
 
-/** Compute composite score 0–100 from all available checks */
-function computeComposite(checks: AllChecks): number | null {
-  const speed  = checks.speed.status  === "done" ? checks.speed.data.score   : null;
-  const seo    = checks.seo.status    === "done" ? checks.seo.data.score      : null;
-  const mobile = checks.mobile.status === "done" ? checks.mobile.data.mobileScore : null;
-  const ssl    = checks.ssl.status    === "done"
-    ? (checks.ssl.data.valid && !checks.ssl.data.error ? 100 : 0)
-    : null;
-  const links  = checks.links.status  === "done"
-    ? Math.max(0, 100 - checks.links.data.broken.length * 10)
-    : null;
-
-  // Need at least performance to show score
-  if (speed === null) return null;
-
-  const weights: Array<[number | null, number]> = [
-    [speed,  0.40],
-    [seo,    0.25],
-    [mobile, 0.20],
-    [ssl,    0.10],
-    [links,  0.05],
-  ];
-
-  let totalWeight = 0;
-  let weightedSum = 0;
-  for (const [val, w] of weights) {
-    if (val !== null) {
-      weightedSum += val * w;
-      totalWeight += w;
-    }
-  }
-  if (totalWeight === 0) return null;
-  return Math.round(weightedSum / totalWeight);
-}
-
-// ── Small reusable UI pieces ──────────────────────────────────────────────────
-
-function ScoreRing({ score, size = 120 }: { score: number; size?: number }) {
-  const r = size * 0.41;
-  const circ = 2 * Math.PI * r;
-  const offset = circ - (score / 100) * circ;
-  const color = scoreColor(score);
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-label={`Score: ${score}`}>
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#27272A" strokeWidth={size * 0.09} />
-      <circle
-        cx={size/2} cy={size/2} r={r}
-        fill="none" stroke={color}
-        strokeWidth={size * 0.09}
-        strokeDasharray={circ}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        transform={`rotate(-90 ${size/2} ${size/2})`}
-      />
-      <text x={size/2} y={size/2 - 4} textAnchor="middle" dominantBaseline="central"
-        fill={color} fontSize={size * 0.28} fontWeight="bold">{score}</text>
-      <text x={size/2} y={size/2 + size * 0.19} textAnchor="middle" dominantBaseline="central"
-        fill="#71717A" fontSize={size * 0.1}>/100</text>
-    </svg>
-  );
-}
-
-function SmallScoreRing({ score, label }: { score: number; label: string }) {
-  const r = 30;
-  const circ = 2 * Math.PI * r;
-  const offset = circ - (score / 100) * circ;
-  const color = scoreColor(score);
-  return (
-    <div className="flex flex-col items-center gap-1">
-      <svg width={72} height={72} viewBox="0 0 72 72">
-        <circle cx={36} cy={36} r={r} fill="none" stroke="#27272A" strokeWidth={7} />
-        <circle cx={36} cy={36} r={r} fill="none" stroke={color}
-          strokeWidth={7} strokeDasharray={circ} strokeDashoffset={offset}
-          strokeLinecap="round" transform="rotate(-90 36 36)" />
-        <text x={36} y={36} textAnchor="middle" dominantBaseline="central"
-          fill={color} fontSize={15} fontWeight="bold">{score}</text>
-      </svg>
-      <span className="text-[10px] text-zinc-400 text-center leading-tight">{label}</span>
-    </div>
-  );
-}
-
-function StatusDot({ ok }: { ok: boolean }) {
-  return (
-    <span
-      className={`inline-block w-2.5 h-2.5 rounded-full flex-shrink-0 ${ok ? "bg-green-500" : "bg-red-500"}`}
-    />
-  );
-}
-
-function SeverityBadge({ severity }: { severity: SEOIssue["severity"] }) {
-  const map = {
-    pass:    { bg: "bg-green-500/10",  text: "text-green-400",  icon: "✓" },
-    warning: { bg: "bg-orange-500/10", text: "text-orange-400", icon: "!" },
-    error:   { bg: "bg-red-500/10",    text: "text-red-400",    icon: "✗" },
-  };
-  const s = map[severity];
-  return (
-    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black flex-shrink-0 mt-0.5 ${s.bg} ${s.text}`}>
-      {s.icon}
-    </span>
-  );
-}
-
-function LoadingSkeleton({ rows = 4 }: { rows?: number }) {
-  return (
-    <div className="space-y-3 py-1">
-      {[...Array(rows)].map((_, i) => (
-        <div key={i} className="h-3 bg-zinc-800 rounded-full animate-pulse" style={{ width: `${50 + (i * 15) % 45}%` }} />
-      ))}
-    </div>
-  );
-}
-
-function PanelCard({ id, title, icon, statusBadge, children }: {
-  id?: string;
-  title: string;
-  icon: string;
-  statusBadge?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div id={id} className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden print:border-zinc-300 print:bg-white print:rounded-lg">
-      <div className="flex items-center gap-3 px-5 py-3.5 border-b border-zinc-800 print:border-zinc-200">
-        <span className="text-lg">{icon}</span>
-        <h3 className="text-white font-bold text-sm flex-1 print:text-zinc-900">{title}</h3>
-        {statusBadge}
-      </div>
-      <div className="p-5">{children}</div>
-    </div>
-  );
-}
-
-// ── Business impact callout ───────────────────────────────────────────────────
-
-function ImpactCallout({ stat, source }: { stat: string; source: string }) {
-  return (
-    <div className="mt-3 bg-orange-500/5 border border-orange-500/20 rounded-xl px-4 py-3 flex gap-3 items-start print:bg-orange-50 print:border-orange-200">
-      <span className="text-orange-400 text-base flex-shrink-0 mt-0.5">📊</span>
-      <p className="text-orange-300 text-xs leading-relaxed print:text-orange-700">
-        <span className="font-semibold">Industry benchmark: </span>
-        {stat}{" "}
-        <span className="text-orange-500/70 text-[10px]">({source})</span>
-      </p>
-    </div>
-  );
-}
-
-// ── KPI Summary Tile ──────────────────────────────────────────────────────────
-
-function KpiTile({ label, icon, state, score, status, href }: {
-  label: string;
-  icon: string;
-  state: "idle" | "loading" | "done" | "error";
-  score?: number | null;
-  status?: "pass" | "fail" | null;
-  href: string;
-}) {
-  const content = () => {
-    if (state === "loading") return <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto" />;
-    if (state === "error")   return <span className="text-red-400 text-lg font-black">!</span>;
-    if (state === "idle")    return <span className="text-zinc-600 text-xs">—</span>;
-    if (score !== undefined && score !== null) {
-      return <span className="text-xl font-black" style={{ color: scoreColor(score) }}>{score}</span>;
-    }
-    if (status !== null && status !== undefined) {
-      return <StatusDot ok={status === "pass"} />;
-    }
-    return null;
-  };
-
-  return (
-    <a
-      href={href}
-      className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center flex flex-col items-center gap-1.5 hover:border-orange-500/40 transition-colors cursor-pointer no-underline print:border-zinc-200"
-    >
-      <span className="text-base">{icon}</span>
-      <div className="min-h-[1.75rem] flex items-center justify-center">{content()}</div>
-      <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wide">{label}</span>
-    </a>
-  );
-}
-
-// ── Dashboard Sections ────────────────────────────────────────────────────────
-
-function PerformancePanel({ state }: { state: CheckState<SpeedData> }) {
-  const statusBadge = state.status === "loading"
-    ? <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-    : state.status === "done"
-    ? <span className="text-green-400 text-xs font-semibold">Done</span>
-    : state.status === "error"
-    ? <span className="text-red-400 text-xs font-semibold">Failed</span>
-    : null;
-
-  return (
-    <PanelCard id="section-speed" title="Speed & Performance" icon="⚡" statusBadge={statusBadge}>
-      {state.status === "idle"   && <p className="text-zinc-500 text-sm">Run a scan to see results.</p>}
-      {state.status === "loading" && <LoadingSkeleton rows={5} />}
-      {state.status === "error"  && <p className="text-red-400 text-sm">{state.message}</p>}
-      {state.status === "done" && (() => {
-        const d = state.data;
-        const isGood = d.score >= 90;
-        const isBad  = d.score < 50;
-        return (
-          <div className="space-y-5">
-            {/* Score + screenshot */}
-            <div className="flex items-start gap-4 flex-wrap">
-              <div className="flex items-center gap-4">
-                <ScoreRing score={d.score} size={100} />
-                <div>
-                  <p className="text-white font-black text-lg" style={{ color: scoreColor(d.score) }}>
-                    {scoreLabel(d.score)}
-                  </p>
-                  <p className="text-zinc-500 text-xs">Google PageSpeed (mobile)</p>
-                  {isGood && <p className="text-green-400 text-xs mt-1 font-medium">Fast load — keeps visitors engaged</p>}
-                  {isBad  && <p className="text-red-400 text-xs mt-1 font-medium">Visitors are likely bouncing</p>}
-                </div>
-              </div>
-              {d.screenshotUrl && (
-                <div className="ml-auto flex-shrink-0">
-                  <p className="text-zinc-500 text-[10px] mb-1 uppercase tracking-wide">Site Screenshot</p>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={d.screenshotUrl}
-                    alt="Site screenshot captured by Lighthouse"
-                    className="w-24 h-auto rounded-lg border border-zinc-700 object-cover"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Core Web Vitals grid */}
-            <div>
-              <p className="text-zinc-500 text-[10px] font-semibold uppercase tracking-wider mb-2">Core Web Vitals</p>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                {(["fcp","lcp","tbt","cls","si","tti"] as const).map(k => {
-                  const m = d.metrics[k];
-                  const titles: Record<string, string> = {
-                    fcp: "First Contentful Paint",
-                    lcp: "Largest Contentful Paint",
-                    tbt: "Total Blocking Time",
-                    cls: "Cumulative Layout Shift",
-                    si:  "Speed Index",
-                    tti: "Time to Interactive",
-                  };
-                  return (
-                    <div key={k} className="bg-[#18181B] rounded-lg p-2.5 print:bg-zinc-50 print:border print:border-zinc-200">
-                      <div className="flex items-center gap-1 mb-1">
-                        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: metricDotColor(m.score) }} />
-                        <span className="text-zinc-500 text-[9px] uppercase tracking-wider">{k.toUpperCase()}</span>
-                      </div>
-                      <p className="text-white font-bold text-sm leading-tight">{m.value}</p>
-                      <p className="text-zinc-600 text-[9px] mt-0.5 leading-tight">{titles[k]}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Opportunities */}
-            {d.opportunities.length > 0 && (
-              <div>
-                <p className="text-zinc-500 text-[10px] font-semibold uppercase tracking-wider mb-2">Top Opportunities to Fix</p>
-                <div className="space-y-0 rounded-xl overflow-hidden border border-zinc-800 print:border-zinc-200">
-                  {d.opportunities.slice(0, 4).map((o, i) => (
-                    <div key={i} className={`flex items-center gap-3 px-4 py-3 bg-[#18181B] print:bg-white ${i < d.opportunities.length - 1 ? "border-b border-zinc-800 print:border-zinc-200" : ""}`}>
-                      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: metricDotColor(o.score ?? null) }} />
-                      <span className="text-zinc-300 text-xs flex-1 print:text-zinc-700">{o.title}</span>
-                      {o.displayValue && <span className="text-orange-400 text-xs font-mono">{o.displayValue}</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Business impact */}
-            {isBad && (
-              <ImpactCallout
-                stat="A 1-second delay in page load time can reduce conversions by ~7%, and 53% of mobile visitors abandon a page that takes longer than 3 seconds to load."
-                source="Google / Akamai research"
-              />
-            )}
-            {!isGood && !isBad && (
-              <ImpactCallout
-                stat="Pages that load in 1–3 seconds see 3× better engagement than those taking 5+ seconds. Even a half-second improvement can lift conversions."
-                source="Google benchmarks"
-              />
-            )}
-
-            {/* What CBT fixes */}
-            {!isGood && (
-              <div className="bg-[#18181B] rounded-xl px-4 py-3 border-l-2 border-orange-500 print:bg-orange-50">
-                <p className="text-orange-400 text-xs font-bold uppercase tracking-wide mb-1">What a new Copper Bay Tech site delivers</p>
-                <ul className="text-zinc-400 text-xs space-y-0.5 print:text-zinc-600">
-                  <li>• Modern Next.js / static delivery — 90+ scores standard</li>
-                  <li>• Optimized images, lazy loading, minimal JavaScript</li>
-                  <li>• Global CDN so pages load fast everywhere</li>
-                </ul>
-              </div>
-            )}
-          </div>
-        );
-      })()}
-    </PanelCard>
-  );
-}
-
-function SecurityPanel({ state }: { state: CheckState<SSLData> }) {
-  const statusBadge = state.status === "loading"
-    ? <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-    : state.status === "done"
-    ? <span className="text-green-400 text-xs font-semibold">Done</span>
-    : state.status === "error"
-    ? <span className="text-red-400 text-xs font-semibold">Failed</span>
-    : null;
-
-  return (
-    <PanelCard id="section-ssl" title="Security & SSL Certificate" icon="🔒" statusBadge={statusBadge}>
-      {state.status === "idle"    && <p className="text-zinc-500 text-sm">Run a scan to see results.</p>}
-      {state.status === "loading" && <LoadingSkeleton rows={3} />}
-      {state.status === "error"   && <p className="text-red-400 text-sm">{state.message}</p>}
-      {state.status === "done" && (() => {
-        const d = state.data;
-        const ok = d.valid && !d.error;
-        const expiryUrgent = !d.error && d.daysUntilExpiry < 30;
-        const expired      = !d.error && d.daysUntilExpiry < 0;
-        return (
-          <div className="space-y-4">
-            {/* Status row */}
-            <div className="flex items-center gap-3">
-              <span className={`text-xl w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${ok ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"}`}>
-                {ok ? "✓" : "✗"}
-              </span>
-              <div>
-                <p className={`font-bold text-sm ${ok ? "text-green-400" : "text-red-400"}`}>
-                  {ok ? "Certificate Valid & Active" : expired ? "Certificate EXPIRED" : "SSL Issue Detected"}
-                </p>
-                <p className="text-zinc-500 text-xs">{d.hostname}</p>
-              </div>
-            </div>
-
-            {!d.error && (
-              <div className="grid grid-cols-3 gap-2">
-                <div className={`rounded-lg p-3 ${expired ? "bg-red-500/10" : expiryUrgent ? "bg-orange-500/10" : "bg-[#18181B]"} print:bg-zinc-50`}>
-                  <p className="text-zinc-500 text-[10px] mb-1">Expires In</p>
-                  <p className={`text-xl font-black ${expired ? "text-red-400" : expiryUrgent ? "text-orange-400" : "text-green-400"}`}>
-                    {d.daysUntilExpiry}d
-                  </p>
-                </div>
-                <div className="bg-[#18181B] rounded-lg p-3 print:bg-zinc-50">
-                  <p className="text-zinc-500 text-[10px] mb-1">Expires</p>
-                  <p className="text-white text-xs font-semibold">
-                    {new Date(d.expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" })}
-                  </p>
-                </div>
-                <div className="bg-[#18181B] rounded-lg p-3 print:bg-zinc-50">
-                  <p className="text-zinc-500 text-[10px] mb-1">Issuer</p>
-                  <p className="text-white text-xs font-semibold truncate">{d.issuer || "Unknown"}</p>
-                </div>
-              </div>
-            )}
-
-            {d.error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
-                <p className="text-red-400 text-xs">{d.error}</p>
-              </div>
-            )}
-
-            {/* Business context */}
-            {!ok && (
-              <ImpactCallout
-                stat="Browsers display 'Not Secure' warnings for sites without valid SSL — over 80% of users leave immediately when they see this warning."
-                source="Google/GlobalSign research"
-              />
-            )}
-            {expiryUrgent && !expired && (
-              <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl px-4 py-3">
-                <p className="text-orange-400 text-xs font-semibold">Certificate expires in {d.daysUntilExpiry} days — renewal needed soon.</p>
-              </div>
-            )}
-
-            {/* Plain-English explanation */}
-            <div className="bg-[#18181B] rounded-xl px-4 py-3 border-l-2 border-zinc-700 print:bg-zinc-50 print:border-zinc-300">
-              <p className="text-zinc-400 text-xs leading-relaxed print:text-zinc-600">
-                {ok
-                  ? "Your SSL certificate is active — visitors see the padlock and their data is encrypted. This is a baseline requirement for Google rankings and customer trust."
-                  : "Without a valid SSL certificate, Google Chrome and other browsers warn visitors your site is unsafe. This kills conversions and can harm search rankings."
-                }
-              </p>
-            </div>
-          </div>
-        );
-      })()}
-    </PanelCard>
-  );
-}
-
-function SEOPanel({ state }: { state: CheckState<SEOData> }) {
-  const statusBadge = state.status === "loading"
-    ? <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-    : state.status === "done"
-    ? <span className="text-green-400 text-xs font-semibold">Done</span>
-    : state.status === "error"
-    ? <span className="text-red-400 text-xs font-semibold">Failed</span>
-    : null;
-
-  return (
-    <PanelCard id="section-seo" title="SEO Health" icon="🔍" statusBadge={statusBadge}>
-      {state.status === "idle"    && <p className="text-zinc-500 text-sm">Run a scan to see results.</p>}
-      {state.status === "loading" && <LoadingSkeleton rows={6} />}
-      {state.status === "error"   && <p className="text-red-400 text-sm">{state.message}</p>}
-      {state.status === "done" && (() => {
-        const d = state.data;
-        const errors   = d.issues.filter(i => i.severity === "error").length;
-        const warnings = d.issues.filter(i => i.severity === "warning").length;
-        const passes   = d.issues.filter(i => i.severity === "pass").length;
-        const hasProblems = errors > 0 || warnings > 0;
-        return (
-          <div className="space-y-4">
-            {/* Score + summary counts */}
-            <div className="flex items-center gap-5 flex-wrap">
-              <ScoreRing score={d.score} size={90} />
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500" />
-                  <span className="text-zinc-400 text-xs"><span className="text-white font-bold">{passes}</span> checks passed</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-orange-500" />
-                  <span className="text-zinc-400 text-xs"><span className="text-white font-bold">{warnings}</span> warnings</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-red-500" />
-                  <span className="text-zinc-400 text-xs"><span className="text-white font-bold">{errors}</span> errors</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Issue list */}
-            <div className="rounded-xl overflow-hidden border border-zinc-800 print:border-zinc-200">
-              {d.issues.map((issue, i) => (
-                <div key={i} className={`flex items-start gap-3 px-4 py-3 bg-[#18181B] print:bg-white ${i < d.issues.length - 1 ? "border-b border-zinc-800 print:border-zinc-200" : ""}`}>
-                  <SeverityBadge severity={issue.severity} />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-white text-xs font-semibold print:text-zinc-900">{issue.label}</p>
-                    <p className="text-zinc-500 text-xs mt-0.5 break-words print:text-zinc-600">{issue.detail}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Business impact */}
-            {hasProblems && (
-              <ImpactCallout
-                stat="75% of users never scroll past the first page of Google results. Missing title tags, meta descriptions, and H1s directly reduce your search visibility."
-                source="HubSpot / Moz"
-              />
-            )}
-
-            {/* Plain-English explanation */}
-            <div className="bg-[#18181B] rounded-xl px-4 py-3 border-l-2 border-zinc-700 print:bg-zinc-50 print:border-zinc-300">
-              <p className="text-zinc-400 text-xs leading-relaxed print:text-zinc-600">
-                These tags are what Google reads to understand and rank your pages.
-                {hasProblems
-                  ? " The issues above are preventing this site from appearing in relevant searches — that's potential customers you're invisible to."
-                  : " Your on-page SEO foundations are solid — a great base for content and ranking."
-                }
-              </p>
-            </div>
-
-            {hasProblems && (
-              <div className="bg-[#18181B] rounded-xl px-4 py-3 border-l-2 border-orange-500 print:bg-orange-50">
-                <p className="text-orange-400 text-xs font-bold uppercase tracking-wide mb-1">What Copper Bay Tech builds in from day one</p>
-                <ul className="text-zinc-400 text-xs space-y-0.5 print:text-zinc-600">
-                  <li>• Every page gets a unique, optimized title and meta description</li>
-                  <li>• Proper heading structure (H1 → H2 → H3) on every page</li>
-                  <li>• Open Graph tags for clean social media previews</li>
-                  <li>• Auto-generated sitemap and robots.txt</li>
-                </ul>
-              </div>
-            )}
-          </div>
-        );
-      })()}
-    </PanelCard>
-  );
-}
-
-function LinksPanel({ state }: { state: CheckState<LinksData> }) {
-  const statusBadge = state.status === "loading"
-    ? <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-    : state.status === "done"
-    ? <span className="text-green-400 text-xs font-semibold">Done</span>
-    : state.status === "error"
-    ? <span className="text-red-400 text-xs font-semibold">Failed</span>
-    : null;
-
-  return (
-    <PanelCard id="section-links" title="Link Health" icon="🔗" statusBadge={statusBadge}>
-      {state.status === "idle"    && <p className="text-zinc-500 text-sm">Run a scan to see results.</p>}
-      {state.status === "loading" && (
-        <div className="space-y-3 py-1">
-          <LoadingSkeleton rows={2} />
-          <p className="text-zinc-600 text-xs">Crawling links — may take up to 30 seconds…</p>
-        </div>
-      )}
-      {state.status === "error"   && <p className="text-red-400 text-sm">{state.message}</p>}
-      {state.status === "done" && (() => {
-        const d = state.data;
-        const allOk = d.broken.length === 0 && d.redirects.length === 0;
-        return (
-          <div className="space-y-4">
-            {/* Stats row */}
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { label: "Total",     value: d.total,             color: "text-white" },
-                { label: "Working",   value: d.ok,                color: "text-green-400" },
-                { label: "Broken",    value: d.broken.length,     color: "text-red-400" },
-                { label: "Redirects", value: d.redirects.length,  color: "text-orange-400" },
-              ].map(s => (
-                <div key={s.label} className="bg-[#18181B] rounded-xl p-3 text-center print:bg-zinc-50 print:border print:border-zinc-200">
-                  <p className={`text-xl font-black ${s.color}`}>{s.value}</p>
-                  <p className="text-zinc-500 text-[10px] mt-0.5">{s.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {allOk && (
-              <div className="bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3 text-center print:bg-green-50 print:border-green-200">
-                <p className="text-green-400 text-sm font-semibold print:text-green-700">All {d.total} links are working correctly ✓</p>
-              </div>
-            )}
-
-            {d.broken.length > 0 && (
-              <div>
-                <p className="text-red-400 text-[10px] font-semibold uppercase tracking-wider mb-2">
-                  Broken Links ({d.broken.length})
-                </p>
-                <div className="space-y-1">
-                  {d.broken.map((link, i) => (
-                    <div key={i} className="flex items-start gap-2 bg-[#18181B] rounded-lg px-3 py-2 print:bg-zinc-50">
-                      <span className="bg-red-500/10 text-red-400 text-[9px] font-black px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5">
-                        {link.status === 0 ? "ERR" : link.status}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-zinc-300 text-xs break-all print:text-zinc-700">{link.url}</p>
-                        {link.text && link.text !== link.url && (
-                          <p className="text-zinc-600 text-[10px]">Link text: "{link.text.slice(0, 60)}"</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {d.redirects.length > 0 && (
-              <div>
-                <p className="text-orange-400 text-[10px] font-semibold uppercase tracking-wider mb-2">
-                  Redirects ({d.redirects.length})
-                </p>
-                <div className="space-y-1">
-                  {d.redirects.map((link, i) => (
-                    <div key={i} className="flex items-start gap-2 bg-[#18181B] rounded-lg px-3 py-2 print:bg-zinc-50">
-                      <span className="bg-orange-500/10 text-orange-400 text-[9px] font-black px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5">
-                        {link.status}
-                      </span>
-                      <p className="text-zinc-300 text-xs break-all print:text-zinc-700">{link.url}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Business impact */}
-            {d.broken.length > 0 && (
-              <>
-                <ImpactCallout
-                  stat="404 errors signal to Google that your site is poorly maintained — this can reduce your rankings. Broken links also frustrate visitors and destroy trust."
-                  source="Google Search Central / Nielsen Norman"
-                />
-                <div className="bg-[#18181B] rounded-xl px-4 py-3 border-l-2 border-orange-500 print:bg-orange-50">
-                  <p className="text-orange-400 text-xs font-bold uppercase tracking-wide mb-1">What Copper Bay Tech delivers</p>
-                  <ul className="text-zinc-400 text-xs space-y-0.5 print:text-zinc-600">
-                    <li>• All links verified before launch — zero broken links at go-live</li>
-                    <li>• Proper 301 redirects for any moved or removed content</li>
-                    <li>• Custom 404 page to keep lost visitors on your site</li>
-                  </ul>
-                </div>
-              </>
-            )}
-          </div>
-        );
-      })()}
-    </PanelCard>
-  );
-}
-
-function MobilePanel({ state }: { state: CheckState<MobileData> }) {
-  const statusBadge = state.status === "loading"
-    ? <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-    : state.status === "done"
-    ? <span className="text-green-400 text-xs font-semibold">Done</span>
-    : state.status === "error"
-    ? <span className="text-red-400 text-xs font-semibold">Failed</span>
-    : null;
-
-  return (
-    <PanelCard id="section-mobile" title="Mobile & Accessibility" icon="📱" statusBadge={statusBadge}>
-      {state.status === "idle"    && <p className="text-zinc-500 text-sm">Run a scan to see results.</p>}
-      {state.status === "loading" && (
-        <div className="space-y-3 py-1">
-          <LoadingSkeleton rows={4} />
-          <p className="text-zinc-600 text-xs">Running mobile analysis…</p>
-        </div>
-      )}
-      {state.status === "error"   && <p className="text-red-400 text-sm">{state.message}</p>}
-      {state.status === "done" && (() => {
-        const d = state.data;
-        const mobileIssues = !d.viewport || !d.textSizeOk || !d.tapTargetsOk;
-        const checks = [
-          { label: "Viewport configured",    ok: d.viewport,      detail: "Required for correct display on phones" },
-          { label: "Text size legible",       ok: d.textSizeOk,    detail: "Font size ≥ 16px so text is readable" },
-          { label: "Tap targets sized correctly", ok: d.tapTargetsOk, detail: "Buttons ≥ 48×48px for touch usability" },
-        ];
-        return (
-          <div className="space-y-4">
-            {/* Score circles */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <SmallScoreRing score={d.mobileScore}        label="Mobile" />
-              <SmallScoreRing score={d.accessibilityScore} label="Accessibility" />
-              <SmallScoreRing score={d.seoScore}           label="SEO (mobile)" />
-              <SmallScoreRing score={d.bestPracticesScore} label="Best Practices" />
-            </div>
-
-            {/* Check list */}
-            <div className="rounded-xl overflow-hidden border border-zinc-800 print:border-zinc-200">
-              {checks.map((c, i) => (
-                <div key={i} className={`flex items-start gap-3 px-4 py-3 bg-[#18181B] print:bg-white ${i < checks.length - 1 ? "border-b border-zinc-800 print:border-zinc-200" : ""}`}>
-                  <StatusDot ok={c.ok} />
-                  <div>
-                    <p className="text-white text-xs font-semibold print:text-zinc-900">{c.label}</p>
-                    <p className="text-zinc-500 text-xs mt-0.5 print:text-zinc-600">{c.detail}</p>
-                  </div>
-                  <span className={`ml-auto text-xs font-bold ${c.ok ? "text-green-400" : "text-red-400"}`}>
-                    {c.ok ? "Pass" : "Fail"}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Business impact */}
-            {mobileIssues && (
-              <ImpactCallout
-                stat="Over 63% of all web traffic comes from mobile devices. Google uses mobile performance as its primary ranking signal (mobile-first indexing)."
-                source="Statcounter / Google Search Central"
-              />
-            )}
-
-            <div className="bg-[#18181B] rounded-xl px-4 py-3 border-l-2 border-zinc-700 print:bg-zinc-50 print:border-zinc-300">
-              <p className="text-zinc-400 text-xs leading-relaxed print:text-zinc-600">
-                {mobileIssues
-                  ? "Mobile issues here mean a poor experience for the majority of your visitors — and Google is watching. These problems can depress both traffic and conversions."
-                  : "Good mobile fundamentals. Your site meets baseline standards for phone display and usability."
-                }
-              </p>
-            </div>
-
-            {mobileIssues && (
-              <div className="bg-[#18181B] rounded-xl px-4 py-3 border-l-2 border-orange-500 print:bg-orange-50">
-                <p className="text-orange-400 text-xs font-bold uppercase tracking-wide mb-1">Built mobile-first at Copper Bay Tech</p>
-                <ul className="text-zinc-400 text-xs space-y-0.5 print:text-zinc-600">
-                  <li>• Every site we build passes mobile tests before launch</li>
-                  <li>• Accessibility standards baked in (WCAG AA)</li>
-                  <li>• Touch-optimized navigation and button sizing</li>
-                </ul>
-              </div>
-            )}
-          </div>
-        );
-      })()}
-    </PanelCard>
-  );
-}
-
-// ── Composite Score Header ────────────────────────────────────────────────────
-
-function CompositeScoreHeader({ score, domain, date }: { score: number | null; domain: string; date: string }) {
-  const grade = score !== null ? scoreGrade(score) : "—";
-  const label = score !== null ? scoreLabel(score) : "Scanning…";
-  const color = score !== null ? scoreColor(score) : "#71717A";
-
-  return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden print:border-zinc-300 print:rounded-lg">
-      {/* Report header bar */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-800 bg-[#18181B] print:border-zinc-200 print:bg-zinc-50">
-        <div className="flex items-center gap-2">
-          <span className="text-white font-black text-base tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
-            Copper Bay<span className="text-orange-500">Tech</span>
-          </span>
-          <span className="text-zinc-700 text-xs hidden sm:inline">|</span>
-          <span className="text-zinc-500 text-xs hidden sm:inline">Website Health Report</span>
-        </div>
-        <div className="text-right">
-          <p className="text-zinc-400 text-xs">{domain}</p>
-          <p className="text-zinc-600 text-[10px]">{date}</p>
-        </div>
-      </div>
-
-      {/* Score body */}
-      <div className="p-5 flex flex-col sm:flex-row items-center gap-6">
-        {/* Big grade circle */}
-        <div className="flex-shrink-0 text-center">
-          <div
-            className="w-28 h-28 rounded-full border-4 flex items-center justify-center"
-            style={{ borderColor: color }}
-          >
-            <span className="text-5xl font-black" style={{ color }}>{grade}</span>
-          </div>
-          <p className="text-zinc-500 text-xs mt-2">Overall Grade</p>
-        </div>
-
-        {/* Composite ring + text */}
-        <div className="flex items-center gap-5">
-          {score !== null
-            ? <ScoreRing score={score} size={110} />
-            : (
-              <div className="w-[110px] h-[110px] rounded-full border-[10px] border-zinc-800 flex items-center justify-center animate-pulse">
-                <span className="text-zinc-600 text-sm">…</span>
-              </div>
-            )
-          }
-          <div>
-            <p className="text-white font-black text-2xl leading-tight" style={{ color }}>{label}</p>
-            <p className="text-zinc-500 text-sm mt-1">Composite health score</p>
-            <p className="text-zinc-600 text-xs mt-2 max-w-xs leading-relaxed">
-              Weighted average of Performance (40%), SEO (25%), Mobile (20%), Security (10%), Links (5%).
-            </p>
-          </div>
-        </div>
-
-        {/* Print button — hidden in print */}
-        <div className="sm:ml-auto print:hidden">
-          <button
-            onClick={() => window.print()}
-            className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors"
-          >
-            🖨 Print / Save PDF
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── KPI Row ───────────────────────────────────────────────────────────────────
-
-function KpiRow({ checks }: { checks: AllChecks }) {
-  const speedScore  = checks.speed.status  === "done" ? checks.speed.data.score  : null;
-  const seoScore    = checks.seo.status    === "done" ? checks.seo.data.score    : null;
-  const mobileScore = checks.mobile.status === "done" ? checks.mobile.data.mobileScore : null;
-  const sslPass     = checks.ssl.status    === "done"
-    ? (checks.ssl.data.valid && !checks.ssl.data.error ? "pass" : "fail") as "pass" | "fail"
-    : null;
-  const linksScore  = checks.links.status  === "done"
-    ? Math.max(0, 100 - checks.links.data.broken.length * 10)
-    : null;
-
-  return (
-    <div className="grid grid-cols-5 gap-2">
-      <KpiTile label="Performance" icon="⚡" state={checks.speed.status}  score={speedScore}  href="#section-speed"  />
-      <KpiTile label="SEO"         icon="🔍" state={checks.seo.status}    score={seoScore}    href="#section-seo"    />
-      <KpiTile label="Security"    icon="🔒" state={checks.ssl.status}    status={sslPass}    href="#section-ssl"    />
-      <KpiTile label="Mobile"      icon="📱" state={checks.mobile.status} score={mobileScore} href="#section-mobile" />
-      <KpiTile label="Links"       icon="🔗" state={checks.links.status}  score={linksScore}  href="#section-links"  />
-    </div>
-  );
-}
-
-// ── CTA Panel ────────────────────────────────────────────────────────────────
-
-function CtaPanel({ checks }: { checks: AllChecks }) {
-  const issues: string[] = [];
-
-  if (checks.speed.status === "done" && checks.speed.data.score < 90)
-    issues.push("slow load times");
-  if (checks.seo.status === "done" && checks.seo.data.score < 90)
-    issues.push("SEO gaps");
-  if (checks.ssl.status === "done" && (!checks.ssl.data.valid || checks.ssl.data.error))
-    issues.push("SSL/security issues");
-  if (checks.mobile.status === "done" && checks.mobile.data.mobileScore < 80)
-    issues.push("mobile experience");
-  if (checks.links.status === "done" && checks.links.data.broken.length > 0)
-    issues.push("broken links");
-
-  return (
-    <div
-      className="rounded-2xl p-6 sm:p-8 print:border-zinc-300 print:bg-white print:rounded-lg"
-      style={{ border: "1.5px solid #F97316", background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}
-    >
-      <div className="flex flex-col sm:flex-row gap-8 items-start">
-        <div className="flex-1">
-          <p className="text-orange-400 text-xs font-bold uppercase tracking-widest mb-2 print:text-orange-600">
-            What We&apos;d Fix — Free Consultation
-          </p>
-          <h4 className="text-white text-2xl font-black mb-3 leading-tight print:text-zinc-900">
-            {issues.length > 0
-              ? `Your site has ${issues.length} area${issues.length > 1 ? "s" : ""} we can improve.`
-              : "Your site is in great shape — let's keep it that way."
-            }
-          </h4>
-          <p className="text-zinc-400 text-sm mb-4 max-w-md leading-relaxed print:text-zinc-600">
-            Copper Bay Tech builds fast, secure, mobile-first websites for Sonoma County businesses.
-            We can resolve most of these issues in under a week — and build you a site that converts visitors into customers.
-          </p>
-
-          {issues.length > 0 && (
-            <ul className="space-y-2 mb-5">
-              {issues.map((issue, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm text-zinc-300 print:text-zinc-700">
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0" />
-                  We fix <span className="text-white font-semibold">{issue}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <div className="flex flex-wrap gap-3 items-center">
-            <Link
-              href="/#contact"
-              className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-7 py-3 rounded-full transition-colors text-sm"
-            >
-              Get a Free Review
-            </Link>
-            <a
-              href="tel:+17072396725"
-              className="text-zinc-400 hover:text-white text-sm transition-colors print:text-zinc-600"
-            >
-              📞 (707) 239-6725
-            </a>
-          </div>
-        </div>
-
-        <div className="flex-shrink-0 bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 print:bg-zinc-50 print:border-zinc-200">
-          <p className="text-orange-400 text-xs font-bold uppercase tracking-wider mb-3 print:text-orange-600">What you get</p>
-          <ul className="space-y-2.5">
-            {[
-              "90+ performance score — guaranteed",
-              "Mobile-first, fully responsive design",
-              "SEO-optimized from day one",
-              "SSL + security best practices",
-              "No broken links, no redirects",
-              "Local Sonoma County support",
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-zinc-300 print:text-zinc-700">
-                <span className="text-green-400 font-bold flex-shrink-0">✓</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <div className="mt-4 pt-4 border-t border-zinc-800 print:border-zinc-200">
-            <p className="text-zinc-600 text-[10px] print:text-zinc-500">
-              duke@copperbaytech.com · copperbaytech.com
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Empty / Idle State ────────────────────────────────────────────────────────
-
-function IdleState() {
-  return (
-    <div className="max-w-4xl mx-auto px-6 pb-24">
-      <h2 className="text-center text-xs font-semibold text-zinc-600 uppercase tracking-widest mb-6">
-        What This Report Includes
-      </h2>
-      <div className="grid sm:grid-cols-5 gap-3 mb-8">
-        {[
-          { icon: "⚡", label: "Speed Score",     desc: "Google PageSpeed + 6 Core Web Vital metrics" },
-          { icon: "🔒", label: "SSL Security",     desc: "Certificate validity, expiry & issuer" },
-          { icon: "🔍", label: "SEO Audit",        desc: "Title, meta, H1, OG tags, robots & canonical" },
-          { icon: "🔗", label: "Link Health",      desc: "404 errors & redirect chains on your pages" },
-          { icon: "📱", label: "Mobile & A11y",    desc: "Viewport, tap targets & accessibility score" },
-        ].map(item => (
-          <div key={item.label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-            <div className="text-2xl mb-2">{item.icon}</div>
-            <p className="text-white font-bold text-xs mb-1">{item.label}</p>
-            <p className="text-zinc-500 text-[11px] leading-relaxed">{item.desc}</p>
-          </div>
-        ))}
-      </div>
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 text-center">
-        <p className="text-zinc-400 text-sm max-w-lg mx-auto leading-relaxed">
-          Enter any URL above to generate a full health report — no signup, no limits.
-          Results appear as each check completes. Powered by{" "}
-          <span className="text-white font-medium">Google PageSpeed Insights</span>,
-          live SSL inspection, and HTML analysis.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ── Main Page ─────────────────────────────────────────────────────────────────
-
-const idle: AllChecks = {
-  speed:  { status: "idle" },
-  ssl:    { status: "idle" },
-  seo:    { status: "idle" },
-  links:  { status: "idle" },
-  mobile: { status: "idle" },
-};
-
 export default function ToolsPage() {
-  const [mode, setMode] = useState<"single"|"compare">("single");
   const [inputUrl, setInputUrl] = useState("");
-  const [inputUrlB, setInputUrlB] = useState("");
   const [checks, setChecks] = useState<AllChecks>(idle);
-  const [checksB, setChecksB] = useState<AllChecks>(idle);
   const [running, setRunning] = useState(false);
   const [auditedUrl, setAuditedUrl] = useState("");
   const [captureEmail, setCaptureEmail] = useState("");
@@ -1693,56 +654,15 @@ export default function ToolsPage() {
     setCaptureStatus("done");
   };
 
-  // Auto-run when ?url= is in the query string (from a shared link)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const preUrl = params.get("url");
-    if (!preUrl) return;
-    const url = normalizeUrl(preUrl);
-    setInputUrl(preUrl);
-    setAuditedUrl(url);
-    setRunning(true);
-    setLinkCopied(false);
-    runAllChecks(url, setCheckA, c => setChecks(c)).then(() => setRunning(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function setCheckA<K extends keyof AllChecks>(key: K, state: AllChecks[K]) {
+  function setCheck<K extends keyof AllChecks>(key: K, state: AllChecks[K]) {
     setChecks(prev => ({ ...prev, [key]: state }));
   }
-  function setCheckB<K extends keyof AllChecks>(key: K, state: AllChecks[K]) {
-    setChecksB(prev => ({ ...prev, [key]: state }));
-  }
-
-  const runAllChecks = useCallback(async (url: string, setter: typeof setCheckA, setChecksFull: (c: AllChecks) => void) => {
-    const run = async <K extends keyof AllChecks, T>(key: K, endpoint: string, cast: (d: T) => AllChecks[K]) => {
-      try {
-        const data = await runCheck<T>(endpoint, url);
-        setter(key, cast(data));
-      } catch (err) {
-        setter(key, { status: "error", message: err instanceof Error ? err.message : "Check failed" } as AllChecks[K]);
-      }
-    };
-    setChecksFull(loadingState);
-    await Promise.all([
-      run<"speed",   SpeedData  >("speed",   "/api/audit",   d=>({status:"done",data:d})),
-      run<"ssl",     SSLData    >("ssl",     "/api/ssl",     d=>({status:"done",data:d})),
-      run<"seo",     SEOData    >("seo",     "/api/seo",     d=>({status:"done",data:d})),
-      run<"links",   LinksData  >("links",   "/api/links",   d=>({status:"done",data:d})),
-      run<"mobile",  MobileData >("mobile",  "/api/mobile",  d=>({status:"done",data:d})),
-      run<"headers", HeadersData>("headers", "/api/headers", d=>({status:"done",data:d})),
-      run<"dns",     DNSData    >("dns",     "/api/dns",     d=>({status:"done",data:d})),
-      run<"tech",    TechData   >("tech",    "/api/tech",    d=>({status:"done",data:d})),
-      run<"crawl",   CrawlData  >("crawl",   "/api/crawl",   d=>({status:"done",data:d})),
-    ]);
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!inputUrl.trim() || running) return;
     const url = normalizeUrl(inputUrl);
     setAuditedUrl(url);
-    setScanDate(new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
     setRunning(true);
     setChecks({
       speed:   { status: "loading" },
@@ -1756,7 +676,9 @@ export default function ToolsPage() {
     });
 
     const run = async <K extends keyof AllChecks, T>(
-      key: K, endpoint: string, cast: (d: T) => AllChecks[K]
+      key: K,
+      endpoint: string,
+      cast: (d: T) => AllChecks[K]
     ) => {
       try {
         const data = await runCheck<T>(endpoint, url);
@@ -1777,43 +699,14 @@ export default function ToolsPage() {
       run<"schema",  SchemaData >("schema",  "/api/schema",  d => ({ status: "done", data: d })),
     ]);
 
-    if (mode === "compare" && inputUrlB.trim()) {
-      const urlB = normalizeUrl(inputUrlB);
-      setAuditedUrlB(urlB);
-      await Promise.all([
-        runAllChecks(url, setCheckA, c => setChecks(c)),
-        runAllChecks(urlB, setCheckB, c => setChecksB(c)),
-      ]);
-    } else {
-      await runAllChecks(url, setCheckA, c => setChecks(c));
-    }
     setRunning(false);
   }
 
-  function copyReportLink() {
-    const link = `${window.location.origin}/tools?url=${encodeURIComponent(auditedUrl)}`;
-    navigator.clipboard.writeText(link).then(() => {
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 3000);
-    });
-  }
-
   const hasResults = Object.values(checks).some(c => c.status !== "idle");
-  const hasResultsB = Object.values(checksB).some(c => c.status !== "idle");
-  const isCompare = mode === "compare" && hasResultsB;
 
-export default function ToolsIndexPage() {
   return (
-    <>
-      {/* Print-only styles */}
-      <style>{`
-        @media print {
-          body { background: white !important; color: #18181B !important; }
-          .print\\:hidden { display: none !important; }
-          nav, footer { display: none !important; }
-          * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        }
-      `}</style>
+    <div className="min-h-screen bg-[#18181B] text-white">
+      <Nav />
 
       {/* Hero */}
       <section className="relative overflow-hidden pt-32 pb-12 px-6 text-center">
@@ -1891,39 +784,14 @@ export default function ToolsIndexPage() {
             </button>
           </form>
 
-        <div className="max-w-3xl mx-auto">
-          <form id="audit-form" onSubmit={handleSubmit} className="space-y-3">
-            <div className={`flex flex-col ${mode === "compare" ? "sm:flex-row" : "sm:flex-row"} gap-3`}>
-              <input type="text" value={inputUrl} onChange={e => setInputUrl(e.target.value)}
-                placeholder={mode === "compare" ? "Site A — yoursite.com" : "yourwebsite.com"}
-                disabled={running}
-                className="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm" />
-              {mode === "compare" && (
-                <input type="text" value={inputUrlB} onChange={e => setInputUrlB(e.target.value)}
-                  placeholder="Site B — competitor.com" disabled={running}
-                  className="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm" />
-              )}
-              {mode === "single" && (
-                <button type="submit" disabled={running || !inputUrl.trim()}
-                  className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-7 py-3.5 rounded-full transition-colors text-sm whitespace-nowrap">
-                  {running ? "Analyzing…" : "Run Full Audit"}
-                </button>
-              )}
-            </div>
-            {mode === "compare" && (
-              <div className="flex justify-center">
-                <button type="submit" disabled={running || !inputUrl.trim()}
-                  className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-10 py-3.5 rounded-full transition-colors text-sm whitespace-nowrap">
-                  {running ? "Analyzing Both Sites…" : "Compare Sites"}
-                </button>
-              </div>
-            )}
-          </form>
           {running && (
             <p className="flex items-center justify-center gap-2 text-zinc-500 text-xs mt-4">
               <Loader2 size={12} className="animate-spin text-orange-400" />
               Running 8 checks in parallel — results appear as each one completes
             </p>
+          )}
+        </div>
+      </section>
 
       {/* Results */}
       {hasResults && (
@@ -1949,37 +817,6 @@ export default function ToolsIndexPage() {
               <MobileResults  state={checks.mobile}  />
             </div>
 
-            {/* Summary / comparison header */}
-            {isCompare ? (
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <SummaryCard checks={checks} url={auditedUrl} label="Site A" />
-                  <SummaryCard checks={checksB} url={auditedUrlB} label="Site B" />
-                </div>
-                {/* Tab selector */}
-                <div className="flex gap-2">
-                  {(["A","B"] as const).map(tab => (
-                    <button key={tab} onClick={() => setCompareTab(tab)}
-                      className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-colors ${compareTab === tab ? "bg-orange-500 text-white" : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white"}`}>
-                      View Site {tab} Details
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <SummaryCard checks={checks} url={auditedUrl} />
-            )}
-
-            {/* Detail results */}
-            {isCompare ? (
-              compareTab === "A"
-                ? <ResultsColumn checks={checks} />
-                : <ResultsColumn checks={checksB} />
-            ) : (
-              <ResultsColumn checks={checks} />
-            )}
-
-            {/* Share + CTA */}
             {!running && (
               <>
                 {/* Email capture */}
@@ -2049,10 +886,11 @@ export default function ToolsIndexPage() {
             )}
           </div>
         </section>
+      )}
 
-      {/* What gets checked — idle state */}
+      {/* What you get — only when idle */}
       {!hasResults && (
-        <div className="px-6 pb-16">
+        <section className="px-6 pb-24">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-center text-xs font-semibold text-zinc-500 uppercase tracking-[0.2em] mb-6">
               What Gets Checked
@@ -2067,7 +905,6 @@ export default function ToolsIndexPage() {
                 { icon: "📧", label: "DNS & Email", desc: "SPF, DMARC, DKIM, MX records" },
                 { icon: "🔗", label: "Links", desc: "404s and redirect chains" },
                 { icon: "📱", label: "Mobile", desc: "Responsiveness & accessibility" },
-                { icon: "♿", label: "ADA", desc: "WCAG compliance signals" },
               ].map(item => (
                 <div
                   key={item.label}
@@ -2079,31 +916,11 @@ export default function ToolsIndexPage() {
                   <p className="text-white font-bold text-xs mb-1">{item.label}</p>
                   <p className="text-zinc-500 text-[11px] leading-relaxed">{item.desc}</p>
                 </div>
-              </div>
-              <div className="flex items-center gap-1.5 text-orange-400 text-sm font-semibold flex-shrink-0 group-hover:gap-2.5 transition-all pt-1">
-                {tool.cta} <ArrowRight size={14} />
-              </div>
-            </Link>
-          ))}
-
-          <div className="mt-8 rounded-2xl p-8 text-center border border-zinc-800 bg-zinc-900">
-            <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-3">Need the full picture?</p>
-            <h2 className="text-white text-xl font-black mb-3">Talk to a human</h2>
-            <p className="text-zinc-400 text-sm mb-5 max-w-md mx-auto">
-              These tools find the issues. We fix them. Free 30-minute consultation — no obligation, no sales pitch.
-            </p>
-            <a href="/schedule" className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
-              Book a Free Call
-            </a>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
       )}
-
-      {/* ── Cybersecurity Risk Quiz ──────────────────────────────────────────── */}
-      <section id="security-quiz" className="scroll-mt-24"><ITQuiz /></section>
-
-      {/* ── Project Cost Estimator ───────────────────────────────────────────── */}
-      <section id="pricing-estimator" className="scroll-mt-24"><PricingEstimator /></section>
 
       <Footer />
     </div>

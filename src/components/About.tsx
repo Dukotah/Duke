@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MapPin, ShieldCheck, Code2, User } from "lucide-react";
-import Image from "next/image";
+import { MapPin, ShieldCheck, Code2 } from "lucide-react";
 
 const highlights = [
   { icon: MapPin, text: "Based in Sonoma County — we show up in person when it matters" },
@@ -21,22 +20,11 @@ export default function About() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            {/* Photo */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full bg-[#18181B]/8 border-2 border-[#18181B]/10 flex items-center justify-center overflow-hidden flex-shrink-0">
-                {/* Replace with: <Image src="/duke.jpg" alt="Duke" width={64} height={64} className="object-cover w-full h-full" /> */}
-                <User size={28} className="text-[#18181B]/30" />
-              </div>
-              <div>
-                <p className="font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>Duke</p>
-                <p className="text-sm text-[#3F3F46]/50" style={{ fontFamily: "var(--font-body)" }}>Founder, Copper Bay Tech · Petaluma, CA</p>
-              </div>
-            </div>
             <p
               className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              About CopperBayTech
+              About Copper Bay Tech
             </p>
             <h2
               className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"

@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateAuditUrl } from "@/lib/validate-url";
-import { rateLimit } from "@/lib/rate-limit";
-import { fetchHtml } from "@/lib/fetch-html";
 
 interface SEOIssue {
   label: string;
@@ -50,23 +47,34 @@ function extractRobots(html: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(req, { limit: 10, windowMs: 60_000 });
-  if (!rl.ok) {
-    return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
-  }
-
   try {
     const { url } = await req.json();
 
-    const validated = validateAuditUrl(url);
-    if (!validated.ok) {
-      return NextResponse.json({ error: validated.reason }, { status: 400 });
+    if (!url || typeof url !== "string") {
+      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
     }
-    const normalizedUrl = validated.url;
+
+    let normalizedUrl = url.trim();
+    if (!normalizedUrl.startsWith("http://") && !normalizedUrl.startsWith("https://")) {
+      normalizedUrl = "https://" + normalizedUrl;
+    }
+
+    try {
+      new URL(normalizedUrl);
+    } catch {
+      return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
+    }
 
     let html: string;
     try {
-      html = await fetchHtml(normalizedUrl);
+      const res = await fetch(normalizedUrl, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        },
+        signal: AbortSignal.timeout(10000),
+      });
+      html = await res.text();
     } catch {
       return NextResponse.json({ error: "Failed to fetch URL" }, { status: 502 });
     }

@@ -2,8 +2,6 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import SocialProof from "@/components/SocialProof";
 import Services from "@/components/Services";
-import Stats from "@/components/Stats";
-import Industries from "@/components/Industries";
 import HowItWorks from "@/components/HowItWorks";
 import ToolsTeaser from "@/components/ToolsTeaser";
 import Contact from "@/components/Contact";
@@ -27,12 +25,10 @@ export default function Home() {
     <>
       <JsonLd schema={localBusinessSchema()} />
       <Nav />
-      <main id="main-content">
+      <main>
         <Hero />
         <SocialProof />
         <Services />
-        <Stats />
-        <Industries />
         <HowItWorks />
         <ToolsTeaser />
         <Contact />

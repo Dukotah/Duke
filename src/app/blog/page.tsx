@@ -75,48 +75,12 @@ const posts: Post[] = [
     date: "April 2026",
   },
   {
-    slug: "winery-cybersecurity-sonoma-county",
-    tag: "Cybersecurity",
-    title: "Why Sonoma County Wineries Are a Cybersecurity Target (And What to Do About It)",
-    excerpt:
-      "Wine club member data, tasting room POS systems, and supplier email relationships make Sonoma County wineries attractive targets. Here's what to do about it.",
-    readTime: "6 min read",
-    date: "April 2026",
-  },
-  {
-    slug: "signs-you-need-a-new-website",
-    tag: "Web Development",
-    title: "7 Signs It's Time for a New Business Website (Not Just a Refresh)",
-    excerpt:
-      "Some website problems can be patched. Others mean it's time to start over. Here are the seven signs your current site is actively holding your business back.",
-    readTime: "6 min read",
-    date: "April 2026",
-  },
-  {
     slug: "is-my-small-business-website-hipaa-compliant",
     tag: "Cybersecurity",
     title: "Is My Small Business Website HIPAA Compliant? A Plain-English Checklist",
     excerpt:
       "If your business handles any patient or health information — even just appointment scheduling — HIPAA applies to your website. Here's what that actually means.",
     readTime: "6 min read",
-    date: "March 2026",
-  },
-  {
-    slug: "google-business-profile-tips-local-business",
-    tag: "Web Development",
-    title: "Google Business Profile Tips That Actually Get You Found Locally",
-    excerpt:
-      "Most local businesses leave their Google Business Profile half-filled. Here's exactly what to complete — and what to do weekly — to show up when customers are searching nearby.",
-    readTime: "6 min read",
-    date: "March 2026",
-  },
-  {
-    slug: "restaurant-technology-guide-sonoma-county",
-    tag: "IT Support",
-    title: "The Small Restaurant Owner's Guide to Technology in Sonoma County",
-    excerpt:
-      "POS systems, WiFi setup, online ordering, review management, and data backup — a practical technology guide written for Sonoma County restaurant owners.",
-    readTime: "7 min read",
     date: "March 2026",
   },
   {
@@ -127,33 +91,6 @@ const posts: Post[] = [
       "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here's how to diagnose them in under 10 minutes — no technical knowledge required.",
     readTime: "4 min read",
     date: "February 2026",
-  },
-  {
-    slug: "what-is-managed-it-support",
-    tag: "IT Support",
-    title: "What Is Managed IT Support — and Does Your Business Need It?",
-    excerpt:
-      "Break/fix IT is reactive and unpredictable. Managed IT support is proactive and flat-fee. Here's how the two compare — and how to know which model is right for your business.",
-    readTime: "6 min read",
-    date: "February 2026",
-  },
-  {
-    slug: "do-small-businesses-need-cybersecurity",
-    tag: "Cybersecurity",
-    title: "Do Small Businesses Really Need Cybersecurity? (Yes, Here's Why)",
-    excerpt:
-      "\"We're too small to be a target\" is the most dangerous sentence in small business IT. Here's what the data actually shows — and the steps that make the biggest difference.",
-    readTime: "6 min read",
-    date: "February 2026",
-  },
-  {
-    slug: "how-much-does-a-website-cost-for-a-small-business",
-    tag: "Web Development",
-    title: "How Much Does a Website Cost for a Small Business in 2026?",
-    excerpt:
-      "DIY, freelancer, or agency? We break down real website costs, what drives the price up, and why the cheapest option almost always costs the most in the long run.",
-    readTime: "7 min read",
-    date: "January 2026",
   },
 ];
 
