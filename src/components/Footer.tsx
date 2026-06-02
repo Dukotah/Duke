@@ -35,9 +35,12 @@ export default function Footer() {
     { label: "Web Design — Sonoma County", href: "/web-design-sonoma-county" },
     { label: "Web Design — Santa Rosa", href: "/web-design-santa-rosa" },
     { label: "Web Design — Petaluma", href: "/web-design-petaluma" },
+    { label: "Web Design — Rohnert Park", href: "/web-design-rohnert-park" },
     { label: "IT Support — Sonoma County", href: "/it-support-sonoma-county" },
     { label: "IT Support — Santa Rosa", href: "/it-support-santa-rosa" },
     { label: "IT Support — Petaluma", href: "/it-support-petaluma" },
+    { label: "IT Support — Windsor", href: "/it-support-windsor" },
+    { label: "IT Support — Healdsburg", href: "/it-support-healdsburg" },
     { label: "Cybersecurity for Small Business", href: "/cybersecurity-small-business" },
     { label: "Our Work", href: "/work" },
   ];
