@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Why Every Small Business Needs Multi-Factor Authentication (And How to Set It Up) | Copper Bay Tech",
@@ -43,6 +44,8 @@ const breadcrumbSchema = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "Why Every Small Business Needs Multi-Factor Authentication (And How to Set It Up)", description: "95% of account takeovers rely on stolen passwords alone. MFA stops them. Here's what it is, why it matters, and how to turn it on in under 10 minutes.", url: "https://copperbaytech.com/blog/why-your-business-needs-mfa", datePublished: "2026-06-18" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Why Your Business Needs MFA" }])} />
       <Nav />
       <main>
         <script

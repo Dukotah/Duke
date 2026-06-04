@@ -1,9 +1,5 @@
-"use client";
-
-import { useState } from "react";
-import Link from "next/link";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
+import type { Metadata } from "next";
+import CompareClient from "./CompareClient";
 
 interface CompareResult {
   url: string;

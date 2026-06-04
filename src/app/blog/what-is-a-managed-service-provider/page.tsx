@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One? | Copper Bay Tech",
@@ -43,6 +44,8 @@ const breadcrumbSchema = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One?", description: "MSP, break-fix, in-house IT — what's the difference, when does each make sense, and what should a small business in Sonoma County actually expect to pay?", url: "https://copperbaytech.com/blog/what-is-a-managed-service-provider", datePublished: "2026-06-12" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "What Is a Managed Service Provider" }])} />
       <Nav />
       <main>
         <script
