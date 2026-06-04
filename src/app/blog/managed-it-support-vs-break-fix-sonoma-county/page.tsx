@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
+import JsonLd, { blogPostingSchema, faqSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
@@ -25,6 +25,12 @@ export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
+      <JsonLd schema={faqSchema([
+        { q: "What is managed IT support?", a: "Managed IT support is a flat-fee service where a provider handles your technology proactively — monitoring, maintenance, and help desk — instead of only showing up when something breaks." },
+        { q: "Is managed IT or break-fix better for small businesses?", a: "Managed IT is better for most businesses with 5+ employees or critical systems. Break-fix works for very small operations with low tech dependency. The key difference is predictable costs vs. unpredictable emergency bills." },
+        { q: "How much does managed IT support cost in Sonoma County?", a: "Managed IT support in Sonoma County typically costs $75–$150 per user per month, depending on the scope of services. Copper Bay Tech offers flat monthly retainers with no long-term contracts." },
+        { q: "What does a managed IT provider actually do?", a: "A managed IT provider handles network monitoring, workstation support, software updates, cloud migrations, security, staff onboarding, and acts as your on-call tech resource — all for a predictable monthly fee." },
+      ])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">
@@ -162,6 +168,43 @@ export default function Article() {
                 </Link>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-[#FAFAF9]">
+          <div className="max-w-2xl mx-auto px-6">
+            <h2 className="text-2xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-4">
+              {[
+                { q: "What is managed IT support?", a: "Managed IT support is a flat-fee service where a provider handles your technology proactively — monitoring, maintenance, and help desk — instead of only showing up when something breaks." },
+                { q: "Is managed IT or break-fix better for small businesses?", a: "Managed IT is better for most businesses with 5+ employees or critical systems. Break-fix works for very small operations with low tech dependency. The key difference is predictable costs vs. unpredictable emergency bills." },
+                { q: "How much does managed IT support cost in Sonoma County?", a: "Managed IT support in Sonoma County typically costs $75–$150 per user per month, depending on the scope of services. Copper Bay Tech offers flat monthly retainers with no long-term contracts." },
+                { q: "What does a managed IT provider actually do?", a: "A managed IT provider handles network monitoring, workstation support, software updates, cloud migrations, security, staff onboarding, and acts as your on-call tech resource — all for a predictable monthly fee." },
+              ].map((item) => (
+                <div key={item.q} className="border border-[#18181B]/10 rounded-xl p-6 bg-white">
+                  <p className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                    <span className="text-[#F97316] mr-2">Q.</span>{item.q}
+                  </p>
+                  <p className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-[#18181B]">
+          <div className="max-w-2xl mx-auto px-6 text-center">
+            <h2 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              Thinking about switching to managed IT support?
+            </h2>
+            <p className="text-white/60 mb-8 max-w-lg mx-auto" style={{ fontFamily: "var(--font-body)" }}>
+              Flat monthly fee, no surprises, direct access to a real person. See what managed IT looks like for a Sonoma County small business.
+            </p>
+            <Link href="/it-support-sonoma-county" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              See IT Support Options <ArrowRight size={14} />
+            </Link>
           </div>
         </section>
       </main>

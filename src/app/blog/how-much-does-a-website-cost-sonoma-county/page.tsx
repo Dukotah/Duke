@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
+import JsonLd, { blogPostingSchema, faqSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
@@ -25,6 +25,12 @@ export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
+      <JsonLd schema={faqSchema([
+        { q: "How much does a website cost in Sonoma County?", a: "Custom-coded small business websites in Sonoma County typically run $2,500–$8,000 for a professional build. DIY builders like Squarespace cost $20–$40/month but require your time. Agencies can run $10,000+. Copper Bay Tech builds custom sites starting at a flat upfront fee with no monthly platform cost." },
+        { q: "What's included in a small business website?", a: "A complete small business website should include custom design, mobile-first development, local SEO setup, Google Business Profile integration, a contact form, SSL, and at least 30 days of post-launch support. Ongoing hosting and maintenance are typically billed separately." },
+        { q: "How long does it take to build a small business website?", a: "A custom small business website typically takes 2–4 weeks from kickoff to launch. Copper Bay Tech targets 2–3 weeks for most projects." },
+        { q: "Should I use Squarespace or a custom-coded website?", a: "Squarespace is fine for very simple sites. Custom-coded sites load faster, rank better in Google, and are built specifically for your business — no platform lock-in. For most Sonoma County businesses trying to win local search, custom is worth the investment." },
+      ])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">
@@ -145,6 +151,43 @@ export default function Article() {
                 </Link>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-[#FAFAF9]">
+          <div className="max-w-2xl mx-auto px-6">
+            <h2 className="text-2xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-4">
+              {[
+                { q: "How much does a website cost in Sonoma County?", a: "Custom-coded small business websites in Sonoma County typically run $2,500–$8,000 for a professional build. DIY builders like Squarespace cost $20–$40/month but require your time. Agencies can run $10,000+. Copper Bay Tech builds custom sites starting at a flat upfront fee with no monthly platform cost." },
+                { q: "What's included in a small business website?", a: "A complete small business website should include custom design, mobile-first development, local SEO setup, Google Business Profile integration, a contact form, SSL, and at least 30 days of post-launch support. Ongoing hosting and maintenance are typically billed separately." },
+                { q: "How long does it take to build a small business website?", a: "A custom small business website typically takes 2–4 weeks from kickoff to launch. Copper Bay Tech targets 2–3 weeks for most projects." },
+                { q: "Should I use Squarespace or a custom-coded website?", a: "Squarespace is fine for very simple sites. Custom-coded sites load faster, rank better in Google, and are built specifically for your business — no platform lock-in. For most Sonoma County businesses trying to win local search, custom is worth the investment." },
+              ].map((item) => (
+                <div key={item.q} className="border border-[#18181B]/10 rounded-xl p-6 bg-white">
+                  <p className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                    <span className="text-[#F97316] mr-2">Q.</span>{item.q}
+                  </p>
+                  <p className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-[#18181B]">
+          <div className="max-w-2xl mx-auto px-6 text-center">
+            <h2 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              Need a website quote for your Sonoma County business?
+            </h2>
+            <p className="text-white/60 mb-8 max-w-lg mx-auto" style={{ fontFamily: "var(--font-body)" }}>
+              We build custom-coded sites starting at a flat fee — no surprises. Get a free consultation.
+            </p>
+            <Link href="/web-design-sonoma-county" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              See Web Design Pricing <ArrowRight size={14} />
+            </Link>
           </div>
         </section>
       </main>
