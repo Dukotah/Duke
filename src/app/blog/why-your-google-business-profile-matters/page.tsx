@@ -2,6 +2,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
   title: "Why Your Google Business Profile Is the Most Important Page You Don't Own | Copper Bay Tech",
@@ -11,6 +12,8 @@ export const metadata = {
 export default function GoogleBusinessProfilePost() {
   return (
     <div className="min-h-screen bg-white">
+      <JsonLd schema={blogPostingSchema({ title: "Why Your Google Business Profile Is the Most Important Page You Don't Own", description: "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search, and exactly what to fix today.", url: "https://copperbaytech.com/blog/why-your-google-business-profile-matters", datePublished: "2026-02-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Google Business Profile Matters" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">

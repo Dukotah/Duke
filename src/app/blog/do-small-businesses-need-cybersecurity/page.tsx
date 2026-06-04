@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Do Small Businesses Really Need Cybersecurity? | Copper Bay Tech",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "Do Small Businesses Really Need Cybersecurity?", description: "The myth that hackers only target large companies is costing small businesses millions. Here's the truth — and what to do about it.", url: "https://copperbaytech.com/blog/do-small-businesses-need-cybersecurity", datePublished: "2026-02-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Do Small Businesses Need Cybersecurity" }])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

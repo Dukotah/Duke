@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "7 Signs It's Time for a New Business Website (Not Just a Refresh) | Copper Bay Tech",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "7 Signs It's Time for a New Business Website (Not Just a Refresh)", description: "Some website problems can be patched. Others mean it's time to start over. Here are 7 signs your current site is holding your business back.", url: "https://copperbaytech.com/blog/signs-you-need-a-new-website", datePublished: "2026-04-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Signs You Need a New Website" }])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

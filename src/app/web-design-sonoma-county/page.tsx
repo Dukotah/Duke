@@ -4,6 +4,8 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import JsonLd, { serviceSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowRight, CheckCircle2, Clock, Star, Zap, Search, Smartphone } from "lucide-react";
+import Problem from "@/components/Problem";
+import WhyUs from "@/components/WhyUs";
 
 export const metadata: Metadata = {
   title: "Web Design Sonoma County | Custom Websites | Copper Bay Tech",
@@ -132,6 +134,8 @@ export default function WebDesignSonomaCounty() {
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAFAF9] to-transparent" />
         </section>
 
+        <Problem />
+
         {/* What you get */}
         <section className="py-24 bg-[#FAFAF9]">
           <div className="max-w-6xl mx-auto px-6">
@@ -211,6 +215,8 @@ export default function WebDesignSonomaCounty() {
             </div>
           </div>
         </section>
+
+        <WhyUs />
 
         {/* FAQ */}
         <section className="py-24 bg-[#FAFAF9]">

@@ -2,6 +2,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
   title: "Cloud vs. Local Server: What's Actually Right for Your Small Business? | Copper Bay Tech",
@@ -11,6 +12,8 @@ export const metadata = {
 export default function CloudVsLocalPost() {
   return (
     <div className="min-h-screen bg-white">
+      <JsonLd schema={blogPostingSchema({ title: "Cloud vs. Local Server: What's Actually Right for Your Small Business?", description: "Should your small business move to the cloud or keep a local server? Here's a direct comparison for businesses with 3–30 employees — including when local still makes sense.", url: "https://copperbaytech.com/blog/cloud-vs-local-server-small-business", datePublished: "2026-03-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Cloud vs Local Server" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">

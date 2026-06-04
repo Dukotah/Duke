@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "How to Back Up Your Small Business Data (The Right Way) | Copper Bay Tech",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "How to Back Up Your Small Business Data (The Right Way)", description: "Most small business backups fail when they're actually needed. The 3-2-1 rule, cloud vs. local, and how to know your backups will actually work.", url: "https://copperbaytech.com/blog/how-to-back-up-your-small-business-data", datePublished: "2026-05-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Back Up Small Business Data" }])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

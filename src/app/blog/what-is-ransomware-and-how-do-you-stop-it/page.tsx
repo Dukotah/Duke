@@ -2,6 +2,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
   title: "What Is Ransomware and How Do Small Businesses Actually Stop It? | Copper Bay Tech",
@@ -11,6 +12,8 @@ export const metadata = {
 export default function RansomwarePost() {
   return (
     <div className="min-h-screen bg-white">
+      <JsonLd schema={blogPostingSchema({ title: "What Is Ransomware and How Do Small Businesses Actually Stop It?", description: "Ransomware attacks on small businesses are up 300%. This is what it is, how it gets in, and the specific steps Sonoma County business owners can take to protect themselves.", url: "https://copperbaytech.com/blog/what-is-ransomware-and-how-do-you-stop-it", datePublished: "2026-02-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "What Is Ransomware" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">

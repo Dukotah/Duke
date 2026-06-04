@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "How Much Does a Website Cost for a Small Business in 2026? | Copper Bay Tech",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "How Much Does a Website Cost for a Small Business in 2026?", description: "DIY, freelancer, or agency? We break down real website costs for small businesses in 2026 — and explain why the cheapest option often costs the most.", url: "https://copperbaytech.com/blog/how-much-does-a-website-cost-for-a-small-business", datePublished: "2026-01-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Website Cost for Small Business" }])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "The Small Restaurant Owner's Guide to Technology in Sonoma County | Copper Bay Tech",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "The Small Restaurant Owner's Guide to Technology in Sonoma County", description: "POS systems, WiFi reliability, online ordering, and data backup — a practical technology guide for Sonoma County restaurant owners.", url: "https://copperbaytech.com/blog/restaurant-technology-guide-sonoma-county", datePublished: "2026-03-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Restaurant Technology Sonoma County" }])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

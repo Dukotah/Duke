@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Why a Slow Website Is Costing Your Sonoma County Business Customers | Copper Bay Tech",
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
 
 export default function Post() {
   return (
-    <main className="max-w-2xl mx-auto px-6 py-24">
+    <>
+      <JsonLd schema={blogPostingSchema({ title: "Why a Slow Website Is Costing Your Sonoma County Business Customers", description: "If your site takes more than 3 seconds to load, more than half your visitors are already gone. Here's what's slowing you down and how to fix it.", url: "https://copperbaytech.com/blog/why-slow-websites-hurt-sonoma-county-businesses", datePublished: "2026-05-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Slow Websites Hurt Your Business" }])} />
+      <main className="max-w-2xl mx-auto px-6 py-24">
       <Link href="/blog" className="text-sm text-[#F97316] hover:underline mb-10 inline-block" style={{ fontFamily: "var(--font-heading)" }}>
         ← All posts
       </Link>
@@ -105,5 +109,6 @@ export default function Post() {
 
       </div>
     </main>
+    </>
   );
 }

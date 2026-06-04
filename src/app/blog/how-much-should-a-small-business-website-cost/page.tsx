@@ -2,6 +2,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
   title: "How Much Should a Small Business Website Cost? (Honest Answer) | Copper Bay Tech",
@@ -11,6 +12,8 @@ export const metadata = {
 export default function WebsiteCostPost() {
   return (
     <div className="min-h-screen bg-white">
+      <JsonLd schema={blogPostingSchema({ title: "How Much Should a Small Business Website Cost? (Honest Answer)", description: "Website pricing ranges wildly — from $500 DIY to $50,000 agency builds. Here's what actually drives the cost and what Sonoma County small businesses should realistically expect to pay.", url: "https://copperbaytech.com/blog/how-much-should-a-small-business-website-cost", datePublished: "2026-04-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Small Business Website Cost" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">

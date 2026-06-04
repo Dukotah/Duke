@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Why Sonoma County Wineries Are a Cybersecurity Target | Copper Bay Tech",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "Why Sonoma County Wineries Are a Cybersecurity Target", description: "Wine club data, tasting room POS systems, and reservation platforms make Sonoma County wineries attractive targets. Here's what to do about it.", url: "https://copperbaytech.com/blog/winery-cybersecurity-sonoma-county", datePublished: "2026-04-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Winery Cybersecurity Sonoma County" }])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

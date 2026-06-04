@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Google Business Profile Tips That Actually Get You Found Locally | Copper Bay Tech",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "Google Business Profile Tips That Actually Get You Found Locally", description: "Most local businesses leave their Google Business Profile half-filled. Here's exactly what to do to show up when customers are searching nearby.", url: "https://copperbaytech.com/blog/google-business-profile-tips-local-business", datePublished: "2026-03-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Google Business Profile Tips" }])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">
