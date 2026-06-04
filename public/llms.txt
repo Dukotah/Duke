@@ -1,0 +1,55 @@
+# Copper Bay Tech
+
+> IT consulting, web development, and cybersecurity for Sonoma County small businesses. Enterprise-grade thinking without the enterprise price tag.
+
+Copper Bay Tech is a locally owned technology company based in Petaluma, California, serving small and medium-sized businesses across Sonoma County and the North Bay. We build custom-coded websites, provide managed IT support, and deliver practical cybersecurity and AI integration services — with a real person behind every project.
+
+## Services
+
+- [Web Design & Development](https://copperbaytech.com/web-design-sonoma-county): Custom-coded business websites, no templates or page builders. Mobile-first, fast-loading, with local SEO optimization and Google Business Profile setup.
+- [IT Support](https://copperbaytech.com/it-support-sonoma-county): Managed IT support, network setup and management, cloud migration, process automation, and AI agent integrations.
+- [Cybersecurity](https://copperbaytech.com/cybersecurity-small-business): Security audits and reporting, infrastructure hardening, incident response planning, and compliance baseline (PCI, HIPAA).
+- [AI Integration](https://copperbaytech.com/ai-integration-small-business): Practical AI built for local businesses — answers calls 24/7, replies to leads in seconds, books appointments, and handles repetitive busywork.
+
+## Service Areas
+
+Petaluma, Santa Rosa, Sebastopol, Rohnert Park, Sonoma, Bodega Bay, Cotati, Windsor, Healdsburg — all of Sonoma County and the North Bay, California. On-site visits available throughout the region.
+
+## Industries Served
+
+- [Healthcare](https://copperbaytech.com/industries/healthcare): HIPAA-compliant websites and IT for medical and dental practices.
+- [Wineries](https://copperbaytech.com/industries/wineries): E-commerce sites, POS integrations, and secure networks for Sonoma County wineries.
+- [Restaurants](https://copperbaytech.com/industries/restaurants): Online ordering, reservations, and IT infrastructure for food & beverage businesses.
+- [Law Firms](https://copperbaytech.com/industries/law-firms): Secure, compliant websites and IT for legal practices.
+- [Real Estate](https://copperbaytech.com/industries/real-estate): Property listing sites and CRM integrations for real estate professionals.
+
+## Free Tools & Resources
+
+- [Free Website Audit](https://copperbaytech.com/audit): Instantly check speed, SSL, SEO health, broken links, and mobile readiness.
+- [IT Health Check](https://copperbaytech.com/it-health-check): A short quiz that identifies IT risks in your small business.
+- [Missed Call Calculator](https://copperbaytech.com/tools/missed-call-calculator): Estimate what unanswered calls are costing your business.
+- [Blog](https://copperbaytech.com/blog): Practical IT and web design guides for Sonoma County business owners.
+- [Pricing](https://copperbaytech.com/pricing): Transparent, flat-fee pricing for web, IT, and security services.
+
+## Selected Blog Posts
+
+- [How AI Helps Sonoma County Small Businesses](https://copperbaytech.com/blog/how-ai-helps-sonoma-county-small-businesses)
+- [How Much Does a Website Cost in Sonoma County?](https://copperbaytech.com/blog/how-much-does-a-website-cost-sonoma-county)
+- [Managed IT Support vs. Break-Fix — Which Is Right for You?](https://copperbaytech.com/blog/managed-it-support-vs-break-fix-sonoma-county)
+- [Small Business Cybersecurity Threats in Sonoma County](https://copperbaytech.com/blog/small-business-cybersecurity-threats-sonoma-county)
+- [HIPAA Security Checklist for Sonoma County Healthcare](https://copperbaytech.com/blog/hipaa-security-checklist-sonoma-county-healthcare)
+- [How to Choose an IT Company in Sonoma County](https://copperbaytech.com/blog/how-to-choose-an-it-company-sonoma-county)
+
+## Contact
+
+- **Phone / Text:** (707) 239-6725
+- **Email:** contact@copperbaytech.com
+- **Location:** Petaluma, CA 94952
+- **Book a free 30-minute call:** https://calendly.com/copperbaytech/free-consultation
+- **Response time:** Within one business day
+
+## About
+
+- [About Copper Bay Tech](https://copperbaytech.com/about)
+- [FAQ](https://copperbaytech.com/faq)
+- [Case Studies](https://copperbaytech.com/case-studies)

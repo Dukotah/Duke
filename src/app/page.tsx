@@ -8,7 +8,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import StickyCTA from "@/components/StickyCTA";
-import JsonLd, { localBusinessSchema } from "@/components/JsonLd";
+import JsonLd, { localBusinessSchema, organizationSchema } from "@/components/JsonLd";
 
 /**
  * Minimal home: a focused funnel only. Supporting content lives on dedicated
@@ -24,6 +24,7 @@ export default function Home() {
   return (
     <>
       <JsonLd schema={localBusinessSchema()} />
+      <JsonLd schema={organizationSchema()} />
       <Nav />
       <main>
         <Hero />

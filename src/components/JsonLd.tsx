@@ -123,3 +123,75 @@ export function faqSchema(items: { q: string; a: string }[]): Json {
     })),
   };
 }
+
+/**
+ * Organization — emit once on the home page for AI knowledge-graph recognition.
+ * Fill in real sameAs URLs once social/directory profiles are live.
+ */
+export function organizationSchema(): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: BUSINESS_NAME,
+    url: SITE,
+    logo: `${SITE}/logos/logo-horizontal.png`,
+    telephone: PHONE,
+    email: EMAIL,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Petaluma",
+      addressRegion: "CA",
+      postalCode: "94952",
+      addressCountry: "US",
+    },
+    areaServed: {
+      "@type": "GeoCircle",
+      geoMidpoint: {
+        "@type": "GeoCoordinates",
+        latitude: 38.2324,
+        longitude: -122.6367,
+      },
+      geoRadius: "80000",
+    },
+    // Update sameAs with real profile URLs once accounts are confirmed live.
+    sameAs: [
+      "https://www.linkedin.com/company/copper-bay-tech",
+      "https://www.facebook.com/copperbaytech",
+      "https://www.yelp.com/biz/copper-bay-tech-petaluma",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: PHONE,
+      contactType: "customer service",
+      areaServed: "US-CA",
+      availableLanguage: "English",
+    },
+  };
+}
+
+/**
+ * AggregateRating — add to the home page once you have real Google / Yelp
+ * review data. Replace ratingValue, reviewCount, and bestRating with actuals.
+ *
+ * Example usage in page.tsx:
+ *   <JsonLd schema={aggregateRatingSchema({ ratingValue: 5.0, reviewCount: 14 })} />
+ */
+export function aggregateRatingSchema(opts: {
+  ratingValue: number;
+  reviewCount: number;
+  bestRating?: number;
+}): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: BUSINESS_NAME,
+    url: SITE,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: opts.ratingValue,
+      reviewCount: opts.reviewCount,
+      bestRating: opts.bestRating ?? 5,
+      worstRating: 1,
+    },
+  };
+}
