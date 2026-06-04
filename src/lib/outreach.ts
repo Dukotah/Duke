@@ -7,6 +7,7 @@ export interface OutreachLead {
   name: string;
   email: string;
   city: string;
+  demoUrl?: string;
 }
 
 // Basic shape check to avoid sending to obviously malformed addresses.
@@ -82,15 +83,16 @@ export function canDeliver(
 }
 
 // Personalize a subject or body template with the lead's details. Placeholders
-// are case-insensitive: {name}, {business}, {city}, {fromName}.
+// are case-insensitive: {name}, {business}, {city}, {fromName}, {demoUrl}.
 export function personalize(
   template: string,
-  lead: Pick<OutreachLead, "name" | "city">,
+  lead: Pick<OutreachLead, "name" | "city" | "demoUrl">,
   fromName: string,
 ): string {
   return template
     .replace(/\{name\}/gi, lead.name)
     .replace(/\{business\}/gi, lead.name)
     .replace(/\{city\}/gi, lead.city)
-    .replace(/\{fromName\}/gi, fromName);
+    .replace(/\{fromName\}/gi, fromName)
+    .replace(/\{demoUrl\}/gi, lead.demoUrl ?? "");
 }

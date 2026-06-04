@@ -22,6 +22,7 @@ interface Lead {
   state: string;
   tier: string;
   outreach_score: number;
+  demoUrl?: string | null;
 }
 
 interface LeadsResponse {
@@ -202,7 +203,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const previewEmail = () => {
     if (selectedLeads.length === 0) return { subject: "", body: "" };
     const lead = selectedLeads[0];
-    const vars = { name: lead.name, business: lead.name, city: lead.city, fromName };
+    const vars = { name: lead.name, business: lead.name, city: lead.city, fromName, demoUrl: lead.demoUrl ?? undefined };
     return { subject: personalize(subject, vars), body: personalize(body, vars) };
   };
 
@@ -215,6 +216,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
         name: l.name,
         email: l.email,
         city: l.city,
+        ...(l.demoUrl ? { demoUrl: l.demoUrl as string } : {}),
       }));
             const finalBody = calendlyLink ? body + "\n\nBook a free 15-minute call: " + calendlyLink : body;
       const res = await fetch("/api/crm/outreach", {
@@ -378,6 +380,9 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                           <p className="text-sm font-bold text-white truncate" style={H}>{lead.name}</p>
                           {lead.tier === "A" && <Flame size={10} className="text-orange-400 shrink-0" />}
                           {lead.tier === "B" && <Zap size={10} className="text-yellow-400 shrink-0" />}
+                          {lead.demoUrl && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300 shrink-0" style={H}>DEMO</span>
+                          )}
                         </div>
                         <p className="text-xs text-white/35 mt-0.5 truncate" style={H}>
                           {lead.city} · {lead.category.replace(/_/g, " ")}
@@ -465,7 +470,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="Subject — use {name}, {business}, {city}"
+              placeholder="Subject — use {name}, {business}, {city}, {demoUrl}"
               className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50"
               style={H}
             />
@@ -488,7 +493,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                 </div>
               )}
             </div>
-            <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
+            <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}, {"{demoUrl}"}</p>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}

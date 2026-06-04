@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCustomLeads, getAllClaims, getTerritory } from "@/lib/db";
+import { getDemoUrlsForLeads } from "@/lib/demo";
 
 const CSV_URL =
   "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/claude/lead-data-sourcing-eyOeN/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
@@ -242,7 +243,16 @@ export async function GET(req: NextRequest) {
     const claims = await getAllClaims();
     const claimMap: Record<string, { userId: string; repName: string }> = {};
     for (const c of claims) claimMap[c.leadId] = { userId: c.userId, repName: c.repName };
-    const leads = pageLeads.map((l) => ({ ...l, claimedBy: claimMap[l.id] ?? null }));
+
+    // Merge demo tracking URLs (one Redis mget call for the page)
+    const leadIds = pageLeads.map((l) => l.id);
+    const demoUrls = await getDemoUrlsForLeads(leadIds).catch(() => ({} as Record<string, string>));
+
+    const leads = pageLeads.map((l) => ({
+      ...l,
+      claimedBy: claimMap[l.id] ?? null,
+      demoUrl: demoUrls[l.id] ?? null,
+    }));
 
     const counties = [...new Set(all.map((l) => l.county).filter(Boolean))].sort();
     const niches = [...new Set(all.map((l) => l.category).filter(Boolean))].sort();

@@ -10,8 +10,26 @@ export interface EmailTemplate {
 }
 
 // Written to sound like a real person wrote them: plain words, no em dashes,
-// no hyphenated phrases. Variables: {name} {business} {city} {fromName}
+// no hyphenated phrases. Variables: {name} {business} {city} {fromName} {demoUrl}
 export const DEFAULT_TEMPLATES: EmailTemplate[] = [
+  {
+    key: "demo_ready",
+    label: "🚀 Demo Site Ready",
+    subject: "I built a free website for {business}",
+    body: `Hi {name},
+
+I went ahead and built a free custom website for {business} so you could actually see what it would look like before we talked. No pitch, no invoice.
+
+Take a look: {demoUrl}
+
+It's mobile-friendly, loads fast, and is set up to turn visitors into calls. I just need about 10 minutes to walk you through it and hand it off.
+
+Worth a quick call this week?
+
+Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
   {
     key: "no_website",
     label: "🔥 No Website",
@@ -179,6 +197,7 @@ export interface PersonalizeVars {
   business?: string;
   city?: string;
   fromName?: string;
+  demoUrl?: string;
 }
 
 export function personalize(text: string, vars: PersonalizeVars): string {
@@ -186,5 +205,6 @@ export function personalize(text: string, vars: PersonalizeVars): string {
     .replace(/\{name\}/gi, vars.name ?? "")
     .replace(/\{business\}/gi, vars.business ?? "")
     .replace(/\{city\}/gi, vars.city ?? "")
-    .replace(/\{fromName\}/gi, vars.fromName ?? "");
+    .replace(/\{fromName\}/gi, vars.fromName ?? "")
+    .replace(/\{demoUrl\}/gi, vars.demoUrl ?? "");
 }
