@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd, { blogPostingSchema, faqSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+
+const blogSchema = blogPostingSchema({
+  title: "What Is Managed IT Support — and Does Your Business Need It?",
+  description:
+    "Break/fix IT is reactive and unpredictable. Managed IT support is proactive and flat-fee. Here's how to know which model is right for your business.",
+  url: "https://copperbaytech.com/blog/what-is-managed-it-support",
+  datePublished: "2026-02-01",
+});
 
 export const metadata: Metadata = {
   title: "What Is Managed IT Support — and Does Your Business Need It? | Copper Bay Tech",
@@ -13,6 +22,13 @@ export const metadata: Metadata = {
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogSchema} />
+      <JsonLd schema={faqSchema([
+        { q: "What does managed IT support include?", a: "Managed IT support typically includes network monitoring and management, workstation support, cloud services management, security updates, and a helpdesk for staff. The exact scope varies by provider." },
+        { q: "How is managed IT support different from calling an IT person when something breaks?", a: "Break-fix IT is reactive — you call when something goes wrong and pay hourly. Managed IT support is proactive — your provider monitors your systems, catches issues early, and handles routine maintenance for a flat monthly fee." },
+        { q: "Is managed IT support worth it for a small business?", a: "For businesses that rely on their technology daily (most do), managed IT pays for itself by preventing costly downtime, data loss, and security incidents. It also replaces unpredictable hourly bills with a predictable monthly cost." },
+        { q: "How much does managed IT support cost per month?", a: "Most managed IT providers charge $75–$150 per user per month. A 5-person office might pay $500–$750/month for full managed IT support, compared to $150–$300/hour for emergency break-fix calls." },
+      ])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">
@@ -131,6 +147,43 @@ export default function Article() {
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-[#FAFAF9]">
+          <div className="max-w-2xl mx-auto px-6">
+            <h2 className="text-2xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-4">
+              {[
+                { q: "What does managed IT support include?", a: "Managed IT support typically includes network monitoring and management, workstation support, cloud services management, security updates, and a helpdesk for staff. The exact scope varies by provider." },
+                { q: "How is managed IT support different from calling an IT person when something breaks?", a: "Break-fix IT is reactive — you call when something goes wrong and pay hourly. Managed IT support is proactive — your provider monitors your systems, catches issues early, and handles routine maintenance for a flat monthly fee." },
+                { q: "Is managed IT support worth it for a small business?", a: "For businesses that rely on their technology daily (most do), managed IT pays for itself by preventing costly downtime, data loss, and security incidents. It also replaces unpredictable hourly bills with a predictable monthly cost." },
+                { q: "How much does managed IT support cost per month?", a: "Most managed IT providers charge $75–$150 per user per month. A 5-person office might pay $500–$750/month for full managed IT support, compared to $150–$300/hour for emergency break-fix calls." },
+              ].map((item) => (
+                <div key={item.q} className="border border-[#18181B]/10 rounded-xl p-6 bg-white">
+                  <p className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                    <span className="text-[#F97316] mr-2">Q.</span>{item.q}
+                  </p>
+                  <p className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-[#18181B]">
+          <div className="max-w-2xl mx-auto px-6 text-center">
+            <h2 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              Interested in managed IT support for your business?
+            </h2>
+            <p className="text-white/60 mb-8 max-w-lg mx-auto" style={{ fontFamily: "var(--font-body)" }}>
+              We offer flat-fee, month-to-month IT support for Sonoma County small businesses. No contracts, no ticket queues.
+            </p>
+            <Link href="/it-support-sonoma-county" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              See How It Works <ArrowRight size={14} />
+            </Link>
           </div>
         </section>
       </main>
