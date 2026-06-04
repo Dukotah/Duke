@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyUnsubToken } from "@/lib/unsubscribe";
 import { suppressEmail } from "@/lib/db";
-
-function secret(): string {
-  return process.env.SESSION_SECRET ?? "dev-secret-change-in-production";
-}
+import { getSessionSecret } from "@/lib/session";
 
 async function processToken(token: string | null): Promise<string | null> {
   if (!token) return null;
-  const email = await verifyUnsubToken(token, secret());
+  const email = await verifyUnsubToken(token, getSessionSecret());
   if (!email) return null;
   await suppressEmail(email);
   return email;

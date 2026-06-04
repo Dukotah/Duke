@@ -15,28 +15,6 @@ export const metadata: Metadata = {
   },
 };
 
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Ransomware Protection for Small Business: What Actually Works",
-  description:
-    "Small businesses are the #1 ransomware target. Here's what actually protects you — and what's a waste of money — explained without the technical jargon.",
-  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  datePublished: "2026-05-25",
-  url: "https://copperbaytech.com/blog/ransomware-protection-small-business",
-};
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
-    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
-    { "@type": "ListItem", position: 3, name: "Ransomware Protection for Small Business: What Actually Works", item: "https://copperbaytech.com/blog/ransomware-protection-small-business" },
-  ],
-};
-
 const protections = [
   {
     rank: "01",
@@ -83,14 +61,6 @@ export default function Article() {
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Ransomware Protection Small Business" }])} />
       <Nav />
       <main>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition-colors mb-8" style={{ fontFamily: "var(--font-heading)" }}>

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import SocialProof from "@/components/SocialProof";
@@ -22,6 +23,10 @@ import JsonLd, { localBusinessSchema, organizationSchema, websiteSchema } from "
  *   Testimonials, portfolio    -> /work
  * Keep this list short. New sections almost always belong on a sub-page.
  */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default function Home() {
   return (
     <>

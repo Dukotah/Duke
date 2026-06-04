@@ -200,7 +200,7 @@ export default function Portfolio() {
           className="mt-12 text-center"
         >
           <a
-            href="#contact"
+            href="/#contact"
             className="inline-flex items-center gap-2 rounded-md bg-[#F97316] px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#ea6c0a]"
             style={{ fontFamily: "var(--font-heading)" }}
           >

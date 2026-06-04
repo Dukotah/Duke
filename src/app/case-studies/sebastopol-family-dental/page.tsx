@@ -8,7 +8,7 @@ export const metadata = {
   description: "How we migrated a 12-person dental office from a local server to Google Workspace over a single weekend — zero downtime, staff up and running Monday morning.",
 };
 
-export default function SebastopoFamilyDental() {
+export default function SebastopolFamilyDental() {
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
       <Nav />
@@ -18,6 +18,10 @@ export default function SebastopoFamilyDental() {
           <Link href="/case-studies" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-sm mb-8">
             <ArrowLeft size={14} /> All Case Studies
           </Link>
+
+          <p className="mb-8 rounded-lg border border-zinc-700 bg-zinc-900/60 px-4 py-2.5 text-xs text-zinc-400">
+            Representative example — illustrates a typical engagement and the kind of results we aim for, not a documented result for a specific named client.
+          </p>
 
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">

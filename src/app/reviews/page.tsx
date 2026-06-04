@@ -7,22 +7,14 @@ import { Star, ArrowRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Client Reviews | Copper Bay Tech — Sonoma County IT & Web",
   description:
-    "Read what Sonoma County business owners say about Copper Bay Tech. 5-star IT support and web development reviews from local clients across Petaluma, Santa Rosa, Healdsburg, and more.",
+    "Sample reviews illustrating the kind of IT support, web development, and cybersecurity work Copper Bay Tech does for Sonoma County small businesses.",
 };
 
-const aggregateRatingJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: "Copper Bay Tech",
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "5.0",
-    reviewCount: "14",
-    bestRating: "5",
-    worstRating: "1",
-  },
-};
-
+// NOTE: These are illustrative sample reviews, not verified client testimonials.
+// We intentionally do NOT emit AggregateRating / Review schema.org markup here —
+// doing so for unverified reviews violates Google's structured-data guidelines and
+// FTC endorsement rules. Add real Review schema only once backed by genuine,
+// publicly verifiable reviews (e.g. a Google Business Profile).
 const reviews = [
   {
     name: "Maria Santos",
@@ -82,25 +74,6 @@ const reviews = [
   },
 ];
 
-const reviewsJsonLd = reviews.map((r) => ({
-  "@context": "https://schema.org",
-  "@type": "Review",
-  author: {
-    "@type": "Person",
-    name: r.name,
-  },
-  reviewBody: r.quote,
-  reviewRating: {
-    "@type": "Rating",
-    ratingValue: "5",
-    bestRating: "5",
-  },
-  itemReviewed: {
-    "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
-  },
-}));
-
 function StarRow() {
   return (
     <div className="flex gap-1">
@@ -114,17 +87,6 @@ function StarRow() {
 export default function ReviewsPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRatingJsonLd) }}
-      />
-      {reviewsJsonLd.map((r, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(r) }}
-        />
-      ))}
       <Nav />
       <main>
         {/* Hero */}
@@ -140,25 +102,15 @@ export default function ReviewsPage() {
               className="text-4xl md:text-5xl font-bold text-white mb-5 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Real results.{" "}
-              <span style={{ color: "#F97316" }}>Real businesses.</span>
+              What working with us{" "}
+              <span style={{ color: "#F97316" }}>looks like.</span>
             </h1>
             <p className="text-white/60 text-lg max-w-2xl mx-auto mb-6" style={{ fontFamily: "var(--font-body)" }}>
-              Sonoma County business owners trust Copper Bay Tech for IT support, cybersecurity, and web development. Here&apos;s what they have to say.
+              Copper Bay Tech helps Sonoma County business owners with IT support, cybersecurity, and web development. The examples below illustrate the kind of work and outcomes we aim for.
             </p>
-            <div className="flex items-center justify-center gap-3">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={20} fill="#F97316" stroke="none" />
-                ))}
-              </div>
-              <span className="text-white font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
-                5.0
-              </span>
-              <span className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                — 14 reviews
-              </span>
-            </div>
+            <p className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-white/55" style={{ fontFamily: "var(--font-body)" }}>
+              Illustrative sample feedback — not verified client reviews.
+            </p>
           </div>
         </section>
 

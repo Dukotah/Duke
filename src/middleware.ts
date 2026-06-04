@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "./lib/session";
+import { verifyToken, getSessionSecret } from "./lib/session";
 
 export async function middleware(req: NextRequest) {
       const { pathname } = req.nextUrl;
@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/api/crm/logout")) return NextResponse.next();
 
   const token = req.cookies.get("crm_session")?.value;
-  const secret = process.env.SESSION_SECRET ?? "dev-secret-change-in-production";
+  const secret = getSessionSecret();
 
   if (!token) {
           if (isApiRoute) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

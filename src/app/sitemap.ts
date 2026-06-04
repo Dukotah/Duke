@@ -80,7 +80,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/industries/restaurants`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/industries/law-firms`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/industries/real-estate`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/thank-you`, lastModified: now, changeFrequency: "never", priority: 0.1 },
+    // Services hub
+    { url: `${BASE}/services`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    // Free tools
+    { url: `${BASE}/tools/health-check`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/tools/compliance`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/tools/email-headers`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/tools/password`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    // Case study detail pages
+    { url: `${BASE}/case-studies/petaluma-home-staging`, lastModified: now, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${BASE}/case-studies/santa-rosa-insurance`, lastModified: now, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${BASE}/case-studies/sebastopol-family-dental`, lastModified: now, changeFrequency: "yearly", priority: 0.5 },
+    // City / service-area landing pages
+    ...[
+      "petaluma",
+      "santa-rosa",
+      "sebastopol",
+      "rohnert-park",
+      "sonoma",
+      "bodega-bay",
+      "cotati",
+      "windsor",
+      "healdsburg",
+      "glen-ellen",
+      "guerneville",
+      "novato",
+    ].map((city) => ({
+      url: `${BASE}/${city}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 
   const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({

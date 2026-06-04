@@ -380,7 +380,7 @@ export default function CaseStudies() {
           className="mt-10 text-center"
         >
           <a
-            href="#contact"
+            href="/#contact"
             className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >

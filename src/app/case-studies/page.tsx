@@ -10,18 +10,9 @@ export const metadata: Metadata = {
     "Real results for real Sonoma County businesses. See how Copper Bay Tech has helped local restaurants, wineries, and service businesses with IT support and web development.",
 };
 
-const ratingSchema = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: "Copper Bay Tech",
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "5.0",
-    reviewCount: "12",
-    bestRating: "5",
-  },
-};
-
+// These are representative/illustrative case studies, not documented results for
+// specific named clients. We deliberately emit no AggregateRating schema here —
+// see JsonLd.tsx and /reviews for why fabricated review markup is a liability.
 const caseStudies = [
   {
     badge: "Law Firm",
@@ -78,11 +69,6 @@ export default function CaseStudiesPage() {
     <>
       <Nav />
       <main>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(ratingSchema) }}
-        />
-
         {/* Hero */}
         <section className="pt-32 pb-20 bg-[#18181B]">
           <div className="max-w-4xl mx-auto px-6">
@@ -105,10 +91,13 @@ export default function CaseStudiesPage() {
               <span style={{ color: "#F97316" }}>Sonoma County businesses.</span>
             </h1>
             <p
-              className="text-white/60 text-lg max-w-2xl"
+              className="text-white/60 text-lg max-w-2xl mb-5"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Here&apos;s what it looks like when local businesses get their tech sorted out.
+            </p>
+            <p className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-white/55" style={{ fontFamily: "var(--font-body)" }}>
+              Representative examples illustrating typical engagements — not results for specific named clients.
             </p>
           </div>
         </section>

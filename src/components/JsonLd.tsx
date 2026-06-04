@@ -124,21 +124,18 @@ export function faqSchema(items: { q: string; a: string }[]): Json {
   };
 }
 
-/** WebSite — emit once on the home page for sitelinks search box eligibility. */
+/**
+ * WebSite — emit once on the home page. No SearchAction/potentialAction: the
+ * site has no working site-search endpoint, and declaring a Sitelinks Searchbox
+ * that 404s on `?q=` is invalid and gets ignored/flagged by Google. Add it back
+ * only once /blog (or a /search route) actually handles a query parameter.
+ */
 export function websiteSchema(): Json {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: BUSINESS_NAME,
     url: SITE,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${SITE}/blog?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 

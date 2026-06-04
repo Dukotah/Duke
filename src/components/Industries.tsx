@@ -146,7 +146,7 @@ export default function Industries() {
             almost certainly help.
           </p>
           <a
-            href="#contact"
+            href="/#contact"
             className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >

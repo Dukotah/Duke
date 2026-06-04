@@ -12,7 +12,16 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.RESEND_API_KEY;
 
     if (!apiKey) {
-      console.log("Contact form submission (no RESEND_API_KEY set):", {
+      // In development, log and succeed so the form is testable without Resend.
+      // In production, FAIL LOUDLY — returning ok here would silently swallow a
+      // real lead (the client shows "success" and the message goes nowhere).
+      if (process.env.NODE_ENV === "production") {
+        console.error("Contact form: RESEND_API_KEY is not set — cannot deliver lead.", {
+          name, business, email, service,
+        });
+        return NextResponse.json({ error: "Email delivery is not configured" }, { status: 500 });
+      }
+      console.log("Contact form submission (dev, no RESEND_API_KEY set):", {
         name, business, email, phone, service, message,
       });
       return NextResponse.json({ ok: true });

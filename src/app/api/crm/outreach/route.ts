@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 import { addActivity, getLeadState, setLeadState, getSuppressedEmails } from "@/lib/db";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
+import { getSessionSecret } from "@/lib/session";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
 import {
   type OutreachLead,
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
 
   const toSend = sendable.slice(0, canSend);
   const apiKey = process.env.RESEND_API_KEY;
-  const secret = process.env.SESSION_SECRET ?? "dev-secret-change-in-production";
+  const secret = getSessionSecret();
 
   // Real delivery is gated behind explicit domain verification. Sending from a
   // domain whose SPF/DKIM/DMARC records aren't verified in Resend is the fastest

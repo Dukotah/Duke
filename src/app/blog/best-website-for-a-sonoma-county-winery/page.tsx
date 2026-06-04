@@ -14,28 +14,6 @@ export const metadata: Metadata = {
   },
 };
 
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "What Makes a Great Website for a Sonoma County Winery?",
-  description:
-    "Tasting room visits, wine club signups, and direct-to-consumer sales all start with your website. Here's what Sonoma County wineries get wrong — and what works.",
-  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  datePublished: "2026-05-20",
-  url: "https://copperbaytech.com/blog/best-website-for-a-sonoma-county-winery",
-};
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
-    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
-    { "@type": "ListItem", position: 3, name: "What Makes a Great Website for a Sonoma County Winery?", item: "https://copperbaytech.com/blog/best-website-for-a-sonoma-county-winery" },
-  ],
-};
-
 const mustHaves = [
   "Tasting room reservation system — integrated, not a PDF form or a phone number buried in the footer",
   "Mobile-first design — most visitors searching 'wine tasting Sonoma' are on their phones, deciding on the spot",
@@ -61,14 +39,6 @@ export default function Article() {
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Best Winery Website Sonoma County" }])} />
       <Nav />
       <main>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition-colors mb-8" style={{ fontFamily: "var(--font-heading)" }}>

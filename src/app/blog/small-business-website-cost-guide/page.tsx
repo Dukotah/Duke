@@ -14,33 +14,6 @@ export const metadata: Metadata = {
   },
 };
 
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "How Much Does a Business Website Cost in 2026? A Plain-English Guide",
-  description:
-    "DIY builders, freelancers, agencies, custom dev — the honest price ranges, what drives costs up, and what you should expect to pay in Sonoma County.",
-  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  datePublished: "2026-06-15",
-  url: "https://copperbaytech.com/blog/small-business-website-cost-guide",
-};
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
-    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
-    {
-      "@type": "ListItem",
-      position: 3,
-      name: "How Much Does a Business Website Cost in 2026? A Plain-English Guide",
-      item: "https://copperbaytech.com/blog/small-business-website-cost-guide",
-    },
-  ],
-};
-
 const tiers = [
   {
     label: "DIY Website Builders",
@@ -83,15 +56,6 @@ export default function Article() {
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Business Website Cost Guide 2026" }])} />
       <Nav />
       <main>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
-
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link

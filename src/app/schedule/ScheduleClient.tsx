@@ -78,6 +78,10 @@ export default function ScheduleClient() {
       setError("Please fill in all required fields.");
       return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setError("Please enter a valid email address so we can confirm your time.");
+      return;
+    }
     setError("");
     setSubmitting(true);
 
@@ -178,11 +182,15 @@ export default function ScheduleClient() {
           {step === "datetime" && (
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <button onClick={() => setStep("service")} className="text-zinc-400 hover:text-white transition-colors">
+                <button onClick={() => setStep("service")} aria-label="Go back to service selection" className="text-zinc-400 hover:text-white transition-colors">
                   <ArrowLeft size={18} />
                 </button>
-                <h2 className="text-white font-bold text-lg">Pick a date & time</h2>
+                <h2 className="text-white font-bold text-lg">Pick a preferred date & time</h2>
               </div>
+
+              <p className="text-zinc-500 text-xs">
+                These are your <span className="text-zinc-300">preferred</span> times — we&apos;ll email you to confirm the exact slot. All times Pacific.
+              </p>
 
               {selectedService && (
                 <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3">
@@ -242,7 +250,7 @@ export default function ScheduleClient() {
           {step === "details" && (
             <div className="space-y-5">
               <div className="flex items-center gap-3 mb-2">
-                <button onClick={() => setStep("datetime")} className="text-zinc-400 hover:text-white transition-colors">
+                <button onClick={() => setStep("datetime")} aria-label="Go back to date and time" className="text-zinc-400 hover:text-white transition-colors">
                   <ArrowLeft size={18} />
                 </button>
                 <h2 className="text-white font-bold text-lg">Your details</h2>
@@ -334,14 +342,15 @@ export default function ScheduleClient() {
               <div className="w-20 h-20 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center mx-auto">
                 <Check size={36} className="text-green-400" />
               </div>
-              <h2 className="text-white text-2xl font-black">You&apos;re booked!</h2>
+              <h2 className="text-white text-2xl font-black">Request received!</h2>
               <p className="text-zinc-400 max-w-sm mx-auto text-sm leading-relaxed">
-                Your request for <span className="text-orange-400 font-semibold">{selectedService?.label}</span> on{" "}
-                <span className="text-white font-semibold">{form.date ? formatDay(form.date) : ""} at {form.time}</span> has been received.
-                We&apos;ll send a confirmation with a Zoom link to <span className="text-white">{form.email}</span> within a few hours.
+                Thanks — your request for <span className="text-orange-400 font-semibold">{selectedService?.label}</span> at your
+                preferred time of <span className="text-white font-semibold">{form.date ? formatDay(form.date) : ""}, {form.time} Pacific</span>{" "}
+                is in. We&apos;ll email <span className="text-white">{form.email}</span> within a few hours to confirm the time and send a
+                meeting link. Need it sooner? Call or text (707) 239-6725.
               </p>
               <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 text-left max-w-sm mx-auto space-y-2 mt-6">
-                <p className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">Booking Summary</p>
+                <p className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">Requested Time</p>
                 <div className="flex justify-between text-sm">
                   <span className="text-zinc-400">Service</span>
                   <span className="text-white font-semibold">{selectedService?.label}</span>

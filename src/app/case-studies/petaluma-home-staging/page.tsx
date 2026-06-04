@@ -20,6 +20,10 @@ export default function PetalumaHomeStaging() {
             <ArrowLeft size={14} /> All Case Studies
           </Link>
 
+          <p className="mb-8 rounded-lg border border-zinc-700 bg-zinc-900/60 px-4 py-2.5 text-xs text-zinc-400">
+            Representative example — illustrates a typical engagement and the kind of results we aim for, not a documented result for a specific named client.
+          </p>
+
           {/* Header */}
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">

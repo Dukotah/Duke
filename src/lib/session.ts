@@ -7,6 +7,23 @@ export interface SessionPayload {
   exp: number;
 }
 
+/**
+ * HMAC secret for signing/verifying session + unsubscribe tokens.
+ * Falls back to a well-known dev string ONLY outside production. In production a
+ * missing SESSION_SECRET is a hard error — signing tokens with a public default
+ * (this repo is open source) would make every session trivially forgeable.
+ */
+export function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "SESSION_SECRET is not set. Refusing to fall back to an insecure default in production."
+    );
+  }
+  return "dev-secret-change-in-production";
+}
+
 async function getKey(secret: string) {
   const enc = new TextEncoder();
   return crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);

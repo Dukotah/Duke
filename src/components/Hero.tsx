@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CALENDLY_URL, PHONE, PHONE_HREF } from "@/config/site";
+import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
 import { track } from "@/lib/analytics";
 
 const trustSignals = [
@@ -82,9 +82,7 @@ export default function Hero() {
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
-              href={CALENDLY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={BOOKING_URL}
               onClick={() => track("cta_book_call", { location: "hero" })}
               className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#F97316] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#F97316]/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#ea6c0a] hover:shadow-xl hover:shadow-[#F97316]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B] sm:w-auto"
               style={{ fontFamily: "var(--font-heading)" }}

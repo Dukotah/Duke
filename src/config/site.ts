@@ -1,6 +1,9 @@
-// ── Update CALENDLY_URL with your actual Calendly link ───────────────────────
-// Create a free account at calendly.com and paste the 30-min meeting link here.
-export const CALENDLY_URL = "https://calendly.com/copperbaytech/free-consultation";
+// Where every "Book a Free Call" CTA points. Currently the on-site /schedule
+// page (captures the lead via email and confirms manually). If you create a
+// real Calendly/Cal.com account, just paste that URL here and every booking
+// button across the site switches over — no other code changes needed.
+// (The old hardcoded calendly.com/copperbaytech/free-consultation link 404'd.)
+export const BOOKING_URL = "/schedule";
 
 export const SITE_URL = "https://copperbaytech.com";
 export const PHONE = "(707) 239-6725";

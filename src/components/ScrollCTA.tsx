@@ -39,7 +39,7 @@ export default function ScrollCTA() {
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <a
-                href="#contact"
+                href="/#contact"
                 onClick={() => setDismissed(true)}
                 className="inline-flex items-center gap-1.5 bg-[#F97316] hover:bg-[#ea6c0a] transition-colors text-white text-sm font-semibold px-4 py-2 rounded-xl"
                 style={{ fontFamily: "var(--font-heading)" }}

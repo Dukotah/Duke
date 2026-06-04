@@ -14,33 +14,6 @@ export const metadata: Metadata = {
   },
 };
 
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Why Every Small Business Needs Multi-Factor Authentication (And How to Set It Up)",
-  description:
-    "95% of account takeovers rely on stolen passwords alone. MFA stops them. Here's what it is, why it matters, and how to turn it on in under 10 minutes.",
-  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  datePublished: "2026-06-18",
-  url: "https://copperbaytech.com/blog/why-your-business-needs-mfa",
-};
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
-    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
-    {
-      "@type": "ListItem",
-      position: 3,
-      name: "Why Every Small Business Needs Multi-Factor Authentication (And How to Set It Up)",
-      item: "https://copperbaytech.com/blog/why-your-business-needs-mfa",
-    },
-  ],
-};
-
 export default function Article() {
   return (
     <>
@@ -48,15 +21,6 @@ export default function Article() {
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Why Your Business Needs MFA" }])} />
       <Nav />
       <main>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
-
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link

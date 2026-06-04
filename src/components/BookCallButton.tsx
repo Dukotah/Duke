@@ -1,6 +1,6 @@
 "use client";
 
-import { CALENDLY_URL } from "@/config/site";
+import { BOOKING_URL } from "@/config/site";
 import { CalendarDays } from "lucide-react";
 
 type Props = {
@@ -18,9 +18,7 @@ const styles = {
 export default function BookCallButton({ label = "Book a Free Call", variant = "primary", className = "" }: Props) {
   return (
     <a
-      href={CALENDLY_URL}
-      target="_blank"
-      rel="noopener noreferrer"
+      href={BOOKING_URL}
       className={`${styles[variant]} ${className}`}
       style={{ fontFamily: "var(--font-heading)" }}
     >

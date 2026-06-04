@@ -14,33 +14,6 @@ export const metadata: Metadata = {
   },
 };
 
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One?",
-  description:
-    "MSP, break-fix, in-house IT — what's the difference, when does each make sense, and what should a small business in Sonoma County actually expect to pay?",
-  author: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  publisher: { "@type": "Organization", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
-  datePublished: "2026-06-12",
-  url: "https://copperbaytech.com/blog/what-is-a-managed-service-provider",
-};
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
-    { "@type": "ListItem", position: 2, name: "Resources", item: "https://copperbaytech.com/blog" },
-    {
-      "@type": "ListItem",
-      position: 3,
-      name: "What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One?",
-      item: "https://copperbaytech.com/blog/what-is-a-managed-service-provider",
-    },
-  ],
-};
-
 export default function Article() {
   return (
     <>
@@ -48,15 +21,6 @@ export default function Article() {
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "What Is a Managed Service Provider" }])} />
       <Nav />
       <main>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
-
         <section className="pt-32 pb-8 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6">
             <Link

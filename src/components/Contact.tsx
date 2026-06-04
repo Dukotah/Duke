@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Phone, Mail, Clock, CalendarDays } from "lucide-react";
-import { CALENDLY_URL } from "@/config/site";
+import { BOOKING_URL } from "@/config/site";
 import { track } from "@/lib/analytics";
 
 type FormData = {
@@ -82,11 +82,9 @@ export default function Contact() {
               and a clear path forward — no fluff, no pressure.
             </p>
 
-            {/* Calendly CTA */}
+            {/* Book a call CTA → on-site /schedule */}
             <a
-              href={CALENDLY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={BOOKING_URL}
               className="inline-flex items-center gap-3 w-full px-5 py-4 rounded-xl border-2 border-[#F97316] mb-8 hover:bg-[#F97316]/5 transition-colors group"
             >
               <div className="w-10 h-10 rounded-md bg-[#F97316] flex items-center justify-center flex-shrink-0">
@@ -168,8 +166,8 @@ export default function Contact() {
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="contact-email" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Email *</label>
-                  <input id="contact-email" {...register("email", { required: true })} type="email" placeholder="jane@example.com" className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.email ? "true" : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} />
-                  {errors.email && <p id="contact-email-error" className="text-red-500 text-xs mt-1">Required</p>}
+                  <input id="contact-email" {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })} type="email" placeholder="jane@example.com" className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.email ? "true" : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} />
+                  {errors.email && <p id="contact-email-error" className="text-red-500 text-xs mt-1">{errors.email.type === "pattern" ? "Enter a valid email" : "Required"}</p>}
                 </div>
                 <div>
                   <label htmlFor="contact-phone" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Phone (optional)</label>

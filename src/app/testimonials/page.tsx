@@ -118,11 +118,12 @@ export default function TestimonialsPage() {
             <span className="text-orange-400">Businesses Say</span>
           </h1>
           <p className="text-zinc-400 text-lg max-w-xl mx-auto">
-            Real feedback from real clients — restaurants, dental offices, law firms, insurance agencies, and more across the North Bay.
+            Sample stories illustrating the kind of work we do for North Bay businesses — restaurants, dental offices, law firms, insurance agencies, and more.
           </p>
-          <div className="flex items-center justify-center gap-2 mt-6">
-            {[...Array(5)].map((_, i) => <Star key={i} size={18} className="text-orange-400 fill-orange-400" />)}
-            <span className="text-zinc-400 text-sm ml-2">9 reviews · all 5 stars</span>
+          <div className="mt-6">
+            <span className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-zinc-400">
+              Illustrative sample feedback — not verified client reviews.
+            </span>
           </div>
         </div>
       </section>

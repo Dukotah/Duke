@@ -36,9 +36,10 @@ export const metadata: Metadata = {
           ],
           apple: [{ url: "/apple-icon.png" }],
     },
-    alternates: {
-          canonical: "/",
-    },
+    // NOTE: no global `alternates.canonical` here. A site-wide canonical of "/"
+    // is inherited by every route that doesn't override it, telling Google every
+    // page is a duplicate of the home page. Each route sets its own canonical;
+    // the home page sets its canonical in app/page.tsx.
     openGraph: {
           title: "Copper Bay Tech | Sonoma County IT & Web Development",
           description:
