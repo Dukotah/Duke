@@ -2,9 +2,93 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import PricingEstimator from "@/components/PricingEstimator";
 import Comparison from "@/components/Comparison";
 import { ArrowRight, Globe, Server, ShieldCheck, Check, Phone, Sparkles } from "lucide-react";
+
+const pricingSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Copper Bay Tech — Service Pricing",
+  description:
+    "Transparent flat-fee pricing for web design, IT support, cybersecurity, and AI integration in Sonoma County.",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      item: {
+        "@type": "Service",
+        name: "Web Design & Development",
+        description:
+          "Custom-coded small business websites. No templates, no page builders. Mobile-first, fast-loading.",
+        url: "https://copperbaytech.com/web-design-sonoma-county",
+        provider: { "@type": "LocalBusiness", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+        areaServed: "Sonoma County, CA",
+        offers: {
+          "@type": "AggregateOffer",
+          priceCurrency: "USD",
+          lowPrice: "2500",
+          highPrice: "7500",
+          offerCount: "3",
+        },
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      item: {
+        "@type": "Service",
+        name: "Managed IT Support",
+        description:
+          "Flat monthly fee IT support for Sonoma County small businesses. Network, workstations, cloud, security.",
+        url: "https://copperbaytech.com/it-support-sonoma-county",
+        provider: { "@type": "LocalBusiness", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+        areaServed: "Sonoma County, CA",
+        offers: {
+          "@type": "AggregateOffer",
+          priceCurrency: "USD",
+          lowPrice: "550",
+          highPrice: "2200",
+          offerCount: "3",
+        },
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      item: {
+        "@type": "Service",
+        name: "Cybersecurity",
+        description:
+          "Security audits, infrastructure hardening, incident response, and compliance baseline for small businesses.",
+        url: "https://copperbaytech.com/cybersecurity-small-business",
+        provider: { "@type": "LocalBusiness", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+        areaServed: "Sonoma County, CA",
+        offers: {
+          "@type": "AggregateOffer",
+          priceCurrency: "USD",
+          lowPrice: "750",
+          highPrice: "2500",
+          offerCount: "2",
+        },
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
+      item: {
+        "@type": "Service",
+        name: "AI Integration for Small Business",
+        description:
+          "Practical AI for local businesses — answering calls 24/7, responding to leads, booking appointments.",
+        url: "https://copperbaytech.com/ai-integration-small-business",
+        provider: { "@type": "LocalBusiness", name: "Copper Bay Tech", url: "https://copperbaytech.com" },
+        areaServed: "Sonoma County, CA",
+      },
+    },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "Pricing | Web Design, IT Support & Cybersecurity | Copper Bay Tech",
@@ -167,6 +251,7 @@ const faqs = [
 export default function Pricing() {
   return (
     <>
+      <JsonLd schema={pricingSchema} />
       <Nav />
       <main className="bg-[#FAFAF9]">
         {/* Hero */}

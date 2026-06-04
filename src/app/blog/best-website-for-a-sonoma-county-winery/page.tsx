@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "What Makes a Great Website for a Sonoma County Winery? | Copper Bay Tech",
@@ -56,6 +57,8 @@ const mistakes = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "What Makes a Great Website for a Sonoma County Winery?", description: "Tasting room visits, wine club signups, and direct-to-consumer sales all start with your website. Here's what Sonoma County wineries get wrong — and what works.", url: "https://copperbaytech.com/blog/best-website-for-a-sonoma-county-winery", datePublished: "2026-05-20" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Best Winery Website Sonoma County" }])} />
       <Nav />
       <main>
         <script

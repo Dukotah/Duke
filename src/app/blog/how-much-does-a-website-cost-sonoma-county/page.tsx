@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema, faqSchema } from "@/components/JsonLd";
+import JsonLd, { blogPostingSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
@@ -25,6 +25,7 @@ export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Website Cost Sonoma County" }])} />
       <JsonLd schema={faqSchema([
         { q: "How much does a website cost in Sonoma County?", a: "Custom-coded small business websites in Sonoma County typically run $2,500–$8,000 for a professional build. DIY builders like Squarespace cost $20–$40/month but require your time. Agencies can run $10,000+. Copper Bay Tech builds custom sites starting at a flat upfront fee with no monthly platform cost." },
         { q: "What's included in a small business website?", a: "A complete small business website should include custom design, mobile-first development, local SEO setup, Google Business Profile integration, a contact form, SSL, and at least 30 days of post-launch support. Ongoing hosting and maintenance are typically billed separately." },

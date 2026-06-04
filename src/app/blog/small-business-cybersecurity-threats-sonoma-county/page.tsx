@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema, faqSchema } from "@/components/JsonLd";
+import JsonLd, { blogPostingSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
@@ -29,6 +29,7 @@ export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Cybersecurity Threats Sonoma County" }])} />
       <JsonLd schema={faqSchema([
         { q: "What are the most common cybersecurity threats for small businesses?", a: "Phishing emails, ransomware, weak or reused passwords, unpatched software, and lost or stolen devices account for the vast majority of small business breaches. All five are preventable with the right controls." },
         { q: "Do small businesses really get hacked?", a: "Yes. Over 43% of cyberattacks target small businesses, according to Verizon's Data Breach Investigations Report. Small businesses are targeted specifically because they have weaker defenses than large enterprises." },

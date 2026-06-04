@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema } from "@/components/JsonLd";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
@@ -31,6 +31,7 @@ export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Is My Website HIPAA Compliant" }])} />
       <Nav />
       <main>
         <section className="pt-32 pb-8 bg-[#18181B]">

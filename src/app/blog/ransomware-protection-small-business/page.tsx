@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight, ShieldAlert } from "lucide-react";
 import BlogEmailCapture from "@/components/BlogEmailCapture";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Ransomware Protection for Small Business: What Actually Works | Copper Bay Tech",
@@ -78,6 +79,8 @@ const protections = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "Ransomware Protection for Small Business: What Actually Works", description: "Small businesses are the #1 ransomware target. Here's what actually protects you — and what's a waste of money — explained without the technical jargon.", url: "https://copperbaytech.com/blog/ransomware-protection-small-business", datePublished: "2026-05-25" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Ransomware Protection Small Business" }])} />
       <Nav />
       <main>
         <script

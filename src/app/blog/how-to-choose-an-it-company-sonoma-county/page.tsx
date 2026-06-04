@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema, faqSchema } from "@/components/JsonLd";
+import JsonLd, { blogPostingSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
@@ -23,6 +23,7 @@ export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Choose IT Company Sonoma County" }])} />
       <JsonLd schema={faqSchema([
         { q: "How do I choose an IT company for my small business?", a: "Look for local presence, transparent flat-fee pricing, no long-term contracts, and a track record with businesses your size. Avoid companies that lock you into multi-year agreements or charge hourly for basic issues." },
         { q: "What questions should I ask an IT company before hiring them?", a: "Ask about response time guarantees, how they bill (hourly vs. flat), whether they have experience in your industry, what their onboarding process looks like, and for references from similar businesses." },

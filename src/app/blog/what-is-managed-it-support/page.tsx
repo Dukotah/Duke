@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema, faqSchema } from "@/components/JsonLd";
+import JsonLd, { blogPostingSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
@@ -23,6 +23,7 @@ export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "What Is Managed IT Support" }])} />
       <JsonLd schema={faqSchema([
         { q: "What does managed IT support include?", a: "Managed IT support typically includes network monitoring and management, workstation support, cloud services management, security updates, and a helpdesk for staff. The exact scope varies by provider." },
         { q: "How is managed IT support different from calling an IT person when something breaks?", a: "Break-fix IT is reactive — you call when something goes wrong and pay hourly. Managed IT support is proactive — your provider monitors your systems, catches issues early, and handles routine maintenance for a flat monthly fee." },

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "How to Get Your Sonoma County Business to Rank Higher on Google Maps | Copper Bay Tech",
@@ -76,6 +77,8 @@ const actions = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "How to Get Your Sonoma County Business to Rank Higher on Google Maps", description: "The 3 factors Google uses to rank local businesses on Google Maps — and the specific steps you can take to improve your ranking in Sonoma County.", url: "https://copperbaytech.com/blog/how-to-rank-on-google-maps-local-business", datePublished: "2026-06-10" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Rank Higher on Google Maps" }])} />
       <Nav />
       <main>
         <script

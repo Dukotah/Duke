@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import BlogEmailCapture from "@/components/BlogEmailCapture";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "How Much Does IT Support Cost for a Small Business? | Copper Bay Tech",
@@ -66,6 +67,8 @@ const models = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "How Much Does IT Support Cost for a Small Business?", description: "Hourly? Retainer? Break-fix? Here's what IT support actually costs for small businesses in Sonoma County — and how to avoid overpaying.", url: "https://copperbaytech.com/blog/how-much-does-it-support-cost-for-small-business", datePublished: "2026-05-15" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "IT Support Cost Small Business" }])} />
       <Nav />
       <main>
         <script

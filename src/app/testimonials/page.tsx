@@ -1,7 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { Star } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Client Testimonials | Copper Bay Tech — Sonoma County",
+  description:
+    "What Sonoma County business owners say about Copper Bay Tech. Five-star testimonials from local web design and IT support clients across Petaluma, Santa Rosa, and beyond.",
+  alternates: { canonical: "https://copperbaytech.com/testimonials" },
+  openGraph: {
+    title: "Client Testimonials | Copper Bay Tech",
+    description:
+      "What Sonoma County business owners say about Copper Bay Tech — web design, IT support, and cybersecurity.",
+    url: "https://copperbaytech.com/testimonials",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+};
 
 const testimonials = [
   {

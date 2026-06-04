@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "How to Speed Up Your Business Website (Without a Developer) | Copper Bay Tech",
@@ -86,6 +87,8 @@ const devFixes = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "How to Speed Up Your Business Website (Without a Developer)", description: "Five things you can do today without touching code — and three signs it's time to call in a developer.", url: "https://copperbaytech.com/blog/how-to-speed-up-your-business-website", datePublished: "2026-06-20" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Speed Up Your Business Website" }])} />
       <Nav />
       <main>
         <script

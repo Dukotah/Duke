@@ -15,6 +15,7 @@ export const metadata: Metadata = {
       "Common questions about pricing, timelines, and support at Copper Bay Tech.",
     url: "https://copperbaytech.com/faq",
     siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

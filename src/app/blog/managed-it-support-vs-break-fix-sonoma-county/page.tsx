@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { blogPostingSchema, faqSchema } from "@/components/JsonLd";
+import JsonLd, { blogPostingSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const blogSchema = blogPostingSchema({
@@ -25,6 +25,7 @@ export default function Article() {
   return (
     <>
       <JsonLd schema={blogSchema} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Managed IT vs Break-Fix" }])} />
       <JsonLd schema={faqSchema([
         { q: "What is managed IT support?", a: "Managed IT support is a flat-fee service where a provider handles your technology proactively — monitoring, maintenance, and help desk — instead of only showing up when something breaks." },
         { q: "Is managed IT or break-fix better for small businesses?", a: "Managed IT is better for most businesses with 5+ employees or critical systems. Break-fix works for very small operations with low tech dependency. The key difference is predictable costs vs. unpredictable emergency bills." },

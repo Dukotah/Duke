@@ -63,11 +63,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/tools`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/tools/missed-call-calculator`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/work`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/case-studies`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/testimonials`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/reviews`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/compare`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/schedule`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/it-health-check`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/audit`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    // Industry pages
+    { url: `${BASE}/industries`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/industries/healthcare`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/industries/wineries`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/industries/restaurants`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/industries/law-firms`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/industries/real-estate`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/thank-you`, lastModified: now, changeFrequency: "never", priority: 0.1 },
   ];
 

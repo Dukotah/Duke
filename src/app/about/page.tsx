@@ -15,6 +15,7 @@ export const metadata: Metadata = {
       "A Sonoma County technology partner for web design, IT support, and cybersecurity.",
     url: "https://copperbaytech.com/about",
     siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

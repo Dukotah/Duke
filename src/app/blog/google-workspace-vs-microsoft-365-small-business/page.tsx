@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Google Workspace vs Microsoft 365: Which Is Right for Your Small Business? | Copper Bay Tech",
@@ -67,6 +68,8 @@ const microsoftCons = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "Google Workspace vs Microsoft 365: Which Is Right for Your Small Business?", description: "An honest comparison of Google Workspace and Microsoft 365 for small businesses — pricing, features, and who should use which.", url: "https://copperbaytech.com/blog/google-workspace-vs-microsoft-365-small-business", datePublished: "2026-06-05" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Google Workspace vs Microsoft 365" }])} />
       <Nav />
       <main>
         <script

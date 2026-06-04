@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import BlogEmailCapture from "@/components/BlogEmailCapture";
+import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "How to Set Up and Optimize Your Google Business Profile in Sonoma County | Copper Bay Tech",
@@ -77,6 +78,8 @@ const steps = [
 export default function Article() {
   return (
     <>
+      <JsonLd schema={blogPostingSchema({ title: "How to Set Up and Optimize Your Google Business Profile in Sonoma County", description: "A step-by-step guide to claiming, verifying, and optimizing your Google Business Profile so Sonoma County customers can find you in Google Maps and local search.", url: "https://copperbaytech.com/blog/google-business-profile-setup-sonoma-county", datePublished: "2026-06-01" })} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Google Business Profile Setup Sonoma" }])} />
       <Nav />
       <main>
         <script
