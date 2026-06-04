@@ -1,4 +1,13 @@
 import Link from "next/link";
+import { Zap, Lock, Search, Link2, Smartphone } from "lucide-react";
+
+const auditFeatures = [
+  { icon: Zap, label: "Speed" },
+  { icon: Lock, label: "SSL" },
+  { icon: Search, label: "SEO" },
+  { icon: Link2, label: "Broken Links" },
+  { icon: Smartphone, label: "Mobile" },
+];
 
 export default function ToolsTeaser() {
   return (
@@ -16,10 +25,11 @@ export default function ToolsTeaser() {
           broken links, and mobile readiness — all in one report.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-3 mb-10 text-xs text-zinc-500">
-          {["⚡ Speed", "🔒 SSL", "🔍 SEO", "🔗 Broken Links", "📱 Mobile"].map(item => (
-            <span key={item} className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-full">
-              {item}
+        <div className="flex flex-wrap justify-center gap-3 mb-10 text-xs text-zinc-400">
+          {auditFeatures.map(({ icon: Icon, label }) => (
+            <span key={label} className="inline-flex items-center gap-1.5 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-full">
+              <Icon size={13} className="text-orange-400" />
+              {label}
             </span>
           ))}
         </div>

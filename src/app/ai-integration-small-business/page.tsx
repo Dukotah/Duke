@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { serviceSchema, faqSchema } from "@/components/JsonLd";
+import JsonLd, { serviceSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowRight, PhoneCall, Zap, Star, FileText, MessageCircle, RefreshCw, Search, Wrench, TrendingUp } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -81,6 +81,7 @@ export default function AiIntegrationSmallBusiness() {
   return (
     <>
       <JsonLd schema={[schema, faqSchema(faqs)]} />
+      <JsonLd schema={breadcrumbSchema([{name:"Home",url:"https://copperbaytech.com"},{name:"Services"},{name:"AI Integration"}])} />
       <Nav />
       <main>
         {/* Hero */}

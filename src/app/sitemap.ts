@@ -3,16 +3,44 @@ import { SITE_URL } from "@/config/site";
 
 const BASE = SITE_URL;
 
-// Blog posts with their publish/update dates. Keep in sync with src/app/blog/*.
 const blogPosts: Array<{ slug: string; lastModified: string; priority: number }> = [
-  { slug: "5-signs-your-business-website-is-costing-you-customers", lastModified: "2026-03-01", priority: 0.6 },
-  { slug: "how-to-choose-an-it-company-sonoma-county", lastModified: "2026-03-01", priority: 0.6 },
-  { slug: "is-my-small-business-website-hipaa-compliant", lastModified: "2026-03-01", priority: 0.6 },
-  { slug: "how-much-does-a-website-cost-sonoma-county", lastModified: "2026-05-01", priority: 0.7 },
-  { slug: "managed-it-support-vs-break-fix-sonoma-county", lastModified: "2026-05-01", priority: 0.7 },
+  // June 2026
+  { slug: "how-ai-helps-sonoma-county-small-businesses", lastModified: "2026-06-02", priority: 0.8 },
+  { slug: "small-business-cybersecurity-threats-sonoma-county", lastModified: "2026-06-01", priority: 0.8 },
+  { slug: "google-business-profile-setup-sonoma-county", lastModified: "2026-06-01", priority: 0.8 },
+  { slug: "google-workspace-vs-microsoft-365-small-business", lastModified: "2026-06-01", priority: 0.8 },
+  { slug: "how-to-rank-on-google-maps-local-business", lastModified: "2026-06-01", priority: 0.8 },
+  { slug: "how-to-speed-up-your-business-website", lastModified: "2026-06-01", priority: 0.8 },
+  { slug: "small-business-website-cost-guide", lastModified: "2026-06-01", priority: 0.8 },
+  { slug: "what-is-a-managed-service-provider", lastModified: "2026-06-01", priority: 0.8 },
+  { slug: "why-your-business-needs-mfa", lastModified: "2026-06-01", priority: 0.8 },
+  // May 2026
+  { slug: "best-website-for-a-sonoma-county-winery", lastModified: "2026-05-01", priority: 0.7 },
   { slug: "hipaa-security-checklist-sonoma-county-healthcare", lastModified: "2026-05-01", priority: 0.7 },
-  { slug: "small-business-cybersecurity-threats-sonoma-county", lastModified: "2026-06-01", priority: 0.7 },
-  { slug: "how-ai-helps-sonoma-county-small-businesses", lastModified: "2026-06-02", priority: 0.7 },
+  { slug: "how-much-does-a-website-cost-sonoma-county", lastModified: "2026-05-01", priority: 0.7 },
+  { slug: "how-much-does-it-support-cost-for-small-business", lastModified: "2026-05-01", priority: 0.7 },
+  { slug: "how-to-back-up-your-small-business-data", lastModified: "2026-05-01", priority: 0.7 },
+  { slug: "how-to-choose-an-it-company-sonoma-county", lastModified: "2026-05-01", priority: 0.7 },
+  { slug: "managed-it-support-vs-break-fix-sonoma-county", lastModified: "2026-05-01", priority: 0.7 },
+  { slug: "ransomware-protection-small-business", lastModified: "2026-05-01", priority: 0.7 },
+  { slug: "why-slow-websites-hurt-sonoma-county-businesses", lastModified: "2026-05-01", priority: 0.7 },
+  // April 2026
+  { slug: "how-much-should-a-small-business-website-cost", lastModified: "2026-04-01", priority: 0.7 },
+  { slug: "is-my-small-business-website-hipaa-compliant", lastModified: "2026-04-01", priority: 0.7 },
+  { slug: "signs-you-need-a-new-website", lastModified: "2026-04-01", priority: 0.7 },
+  { slug: "winery-cybersecurity-sonoma-county", lastModified: "2026-04-01", priority: 0.7 },
+  // March 2026
+  { slug: "5-signs-your-business-website-is-costing-you-customers", lastModified: "2026-03-01", priority: 0.6 },
+  { slug: "cloud-vs-local-server-small-business", lastModified: "2026-03-01", priority: 0.6 },
+  { slug: "google-business-profile-tips-local-business", lastModified: "2026-03-01", priority: 0.6 },
+  { slug: "restaurant-technology-guide-sonoma-county", lastModified: "2026-03-01", priority: 0.6 },
+  // Feb 2026
+  { slug: "do-small-businesses-need-cybersecurity", lastModified: "2026-02-01", priority: 0.6 },
+  { slug: "what-is-managed-it-support", lastModified: "2026-02-01", priority: 0.6 },
+  { slug: "what-is-ransomware-and-how-do-you-stop-it", lastModified: "2026-02-01", priority: 0.6 },
+  { slug: "why-your-google-business-profile-matters", lastModified: "2026-02-01", priority: 0.6 },
+  // Jan 2026
+  { slug: "how-much-does-a-website-cost-for-a-small-business", lastModified: "2026-01-01", priority: 0.6 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

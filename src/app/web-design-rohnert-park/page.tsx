@@ -55,10 +55,21 @@ const industries = [
   "Fitness & studios",
 ];
 
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
+    { "@type": "ListItem", position: 2, name: "Web Design", item: "https://copperbaytech.com/web-design-sonoma-county" },
+    { "@type": "ListItem", position: 3, name: "Web Design Rohnert Park" },
+  ],
+};
+
 export default function WebDesignRohnertPark() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <Nav />
       <main>
         {/* Hero */}

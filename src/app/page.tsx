@@ -2,13 +2,15 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import SocialProof from "@/components/SocialProof";
 import Services from "@/components/Services";
+import Stats from "@/components/Stats";
 import HowItWorks from "@/components/HowItWorks";
+import Testimonials from "@/components/Testimonials";
 import ToolsTeaser from "@/components/ToolsTeaser";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import StickyCTA from "@/components/StickyCTA";
-import JsonLd, { localBusinessSchema, organizationSchema } from "@/components/JsonLd";
+import JsonLd, { localBusinessSchema, organizationSchema, websiteSchema } from "@/components/JsonLd";
 
 /**
  * Minimal home: a focused funnel only. Supporting content lives on dedicated
@@ -25,12 +27,15 @@ export default function Home() {
     <>
       <JsonLd schema={localBusinessSchema()} />
       <JsonLd schema={organizationSchema()} />
+      <JsonLd schema={websiteSchema()} />
       <Nav />
       <main>
         <Hero />
         <SocialProof />
         <Services />
+        <Stats />
         <HowItWorks />
+        <Testimonials />
         <ToolsTeaser />
         <Contact />
       </main>

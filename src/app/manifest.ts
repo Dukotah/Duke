@@ -18,13 +18,13 @@ export default function manifest(): MetadataRoute.Manifest {
       },
       {
         src: "/logos/logo-icon.png",
-        sizes: "250x250",
+        sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
         src: "/logos/logo-square.png",
-        sizes: "500x500",
+        sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
       },

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { serviceSchema } from "@/components/JsonLd";
+import JsonLd, { serviceSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowRight, Check } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -53,6 +53,7 @@ export default function ITSupportSantaRosa() {
   return (
     <>
       <JsonLd schema={schema} />
+      <JsonLd schema={breadcrumbSchema([{name:"Home",url:"https://copperbaytech.com"},{name:"IT Support",url:"https://copperbaytech.com/it-support-sonoma-county"},{name:"IT Support Santa Rosa"}])} />
       <Nav />
       <main>
         {/* Hero */}

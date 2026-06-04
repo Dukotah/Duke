@@ -55,10 +55,21 @@ const industries = [
   "Nonprofits",
 ];
 
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://copperbaytech.com" },
+    { "@type": "ListItem", position: 2, name: "IT Support", item: "https://copperbaytech.com/it-support-sonoma-county" },
+    { "@type": "ListItem", position: 3, name: "IT Support Healdsburg" },
+  ],
+};
+
 export default function ITSupportHealdsburg() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <Nav />
       <main>
         {/* Hero */}

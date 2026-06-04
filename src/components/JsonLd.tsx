@@ -124,6 +124,43 @@ export function faqSchema(items: { q: string; a: string }[]): Json {
   };
 }
 
+/** WebSite — emit once on the home page for sitelinks search box eligibility. */
+export function websiteSchema(): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: BUSINESS_NAME,
+    url: SITE,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE}/blog?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+/**
+ * BreadcrumbList — use on service, location, and blog pages to signal hierarchy.
+ * Pass items as [{name, url}] — the last item should omit url (current page).
+ */
+export function breadcrumbSchema(
+  items: { name: string; url?: string }[]
+): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      ...(item.url ? { item: item.url } : {}),
+    })),
+  };
+}
+
 /**
  * Organization — emit once on the home page for AI knowledge-graph recognition.
  * Fill in real sameAs URLs once social/directory profiles are live.

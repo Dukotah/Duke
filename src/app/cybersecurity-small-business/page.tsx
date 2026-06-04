@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd, { serviceSchema, faqSchema } from "@/components/JsonLd";
+import JsonLd, { serviceSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowRight, ShieldCheck, Lock, Eye, AlertTriangle, FileText, RefreshCw } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -70,6 +70,7 @@ export default function CybersecuritySmallBusiness() {
   return (
     <>
       <JsonLd schema={[schema, faqSchema(faqs)]} />
+      <JsonLd schema={breadcrumbSchema([{name:"Home",url:"https://copperbaytech.com"},{name:"Services"},{name:"Cybersecurity"}])} />
       <Nav />
       <main>
         {/* Hero */}
