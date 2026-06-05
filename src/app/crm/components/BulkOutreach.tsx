@@ -99,6 +99,16 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
 
+  // Daily sending capacity (warm-up ramp): how many of today's cap are left,
+  // and whether sends go out live or are track-only until the domain is verified.
+  const [capacity, setCapacity] = useState<{ sentToday: number; dailyCap: number; remaining: number; live: boolean } | null>(null);
+  const fetchCapacity = useCallback(async () => {
+    try {
+      const res = await fetch("/api/crm/outreach");
+      if (res.ok) setCapacity(await res.json());
+    } catch { /* non-fatal — banner just stays hidden */ }
+  }, []);
+
   const fetchLeads = useCallback(async () => {
     setLoading(true);
     try {
@@ -128,6 +138,9 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   useEffect(() => { setPage(1); }, [q, county, niche, tier, sortBy]);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved Calendly link on mount
     useEffect(() => { const saved = getCalendlyLink(); setCalendlyLink(saved); setCalendlyDraft(saved); }, []);
+  // Load today's sending capacity on mount.
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
+  useEffect(() => { fetchCapacity(); }, [fetchCapacity]);
 
       const saveCalendlyLink = () => {
           const trimmed = calendlyDraft.trim();
@@ -232,6 +245,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
       }
       setResult(d);
       setStep("result");
+      fetchCapacity(); // reflect the just-consumed daily budget
     } catch {
       setSendError("Network error — please try again");
     } finally {
@@ -281,6 +295,34 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                                                                                                                                                                                                                       </div>
                                                                                                                                                                                                                               )}
                                                                                                                                                                                                                                     </div>
+
+      {/* Daily sending capacity — warm-up ramp */}
+      {capacity && (
+        <div className="px-5 py-3 border-b border-white/[0.06] shrink-0">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-semibold text-white/50 flex items-center gap-1.5" style={H}>
+              <Send size={11} className="text-[#F97316]/70" />
+              {capacity.sentToday} / {capacity.dailyCap} sent today
+            </span>
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+              capacity.live
+                ? "text-green-400 bg-green-400/10 border-green-400/20"
+                : "text-yellow-400 bg-yellow-400/10 border-yellow-400/20"
+            }`} style={H}>
+              {capacity.live ? "Live" : "Practice"}
+            </span>
+          </div>
+          <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+            <div className="h-full rounded-full bg-[#F97316] transition-all"
+              style={{ width: `${Math.min(100, capacity.dailyCap ? (capacity.sentToday / capacity.dailyCap) * 100 : 0)}%` }} />
+          </div>
+          <p className="text-[11px] text-white/35 mt-1.5" style={H}>
+            {capacity.remaining > 0
+              ? `${capacity.remaining} left in today's warm-up cap${capacity.live ? "" : " — sends are tracked only until the domain is verified"}`
+              : "Daily cap reached — more sends unlock tomorrow"}
+          </p>
+        </div>
+      )}
 
       {/* Step indicator */}
       {step !== "result" && (

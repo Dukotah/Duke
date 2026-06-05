@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
-import { buildCallScript, buildObjections } from "@/lib/crm/playbook";
+import { buildCallScript, buildObjections, bestTimeToCall } from "@/lib/crm/playbook";
 import { BOOKING_URL, SITE_URL } from "@/config/site";
 
 interface Lead {
@@ -272,6 +272,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const playbookLead = { name: lead.name, city: lead.city, category: lead.category, website: lead.website, builder: lead.builder, tier: lead.tier };
   const callScript = buildCallScript(playbookLead, repName);
   const objections = buildObjections(playbookLead);
+  const callWindow = bestTimeToCall(lead.category);
 
   // Canonical booking link: a rep's personal Calendly override if set, otherwise
   // the on-site /schedule funnel made absolute so it works in email/SMS.
@@ -351,6 +352,10 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                 {state.lastContacted && (
                   <p className="text-xs text-white/30 text-center mt-2" style={H}>Last contacted: {state.lastContacted}</p>
                 )}
+                <p className="text-xs text-white/40 text-center mt-2 flex items-center justify-center gap-1.5" style={H}>
+                  <CalendarClock size={11} className="text-[#F97316]/50 shrink-0" />
+                  <span>Best time: {callWindow}</span>
+                </p>
               </div>
             )}
 

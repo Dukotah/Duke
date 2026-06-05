@@ -45,6 +45,23 @@ function buildFooter(unsubUrl: string): string {
     `\n${MAILING_ADDRESS}`;
 }
 
+// Today's sending status for the signed-in rep, so the UI can show the warm-up
+// ramp (how many of the daily cap are left) and whether sends go out live or
+// are track-only. Read-only — never mutates the counter.
+export async function GET(req: NextRequest) {
+  const userId = req.headers.get("x-user-id");
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const redis = getRedis();
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const sentToday = parseInt((await redis.get(`outreach:${userId}:${today}`) as string | null) ?? "0", 10);
+  const dailyCap = MAX_PER_DAY;
+  const remaining = Math.max(0, dailyCap - sentToday);
+  const live = canDeliverGate(process.env.RESEND_API_KEY, process.env.OUTREACH_DOMAIN_VERIFIED);
+
+  return NextResponse.json({ sentToday, dailyCap, remaining, live });
+}
+
 export async function POST(req: NextRequest) {
   const userId: string | null = req.headers.get("x-user-id");
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

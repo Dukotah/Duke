@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCallScript, buildObjections, OBJECTIONS, topProblem, type PlaybookLead } from "./playbook";
+import { bestTimeToCall, buildCallScript, buildObjections, OBJECTIONS, topProblem, type PlaybookLead } from "./playbook";
 
 const noSite: PlaybookLead = { name: "Acme Plumbing", city: "Petaluma", category: "Plumbers", tier: "A", website: "" };
 const diy: PlaybookLead = { name: "Bay Cafe", city: "Sonoma", category: "Cafes", tier: "B", website: "baycafe.com", builder: "Wix" };
@@ -70,5 +70,20 @@ describe("playbook — objections", () => {
     expect(topProblem(noSite)).toMatch(/competitors/i);
     expect(topProblem(diy)).toMatch(/slowly|visitors/i);
     expect(topProblem(hasSite)).toMatch(/slow load|next step/i);
+  });
+});
+
+describe("playbook — best time to call", () => {
+  it("returns an industry-specific window for known categories", () => {
+    expect(bestTimeToCall("Plumbers")).toMatch(/job sites/i);
+    expect(bestTimeToCall("Restaurants")).toMatch(/lunch and dinner/i);
+    expect(bestTimeToCall("Hair Salon")).toMatch(/appointments/i);
+  });
+
+  it("falls back to a sensible default for unknown or empty categories", () => {
+    const fallback = bestTimeToCall();
+    expect(fallback).toMatch(/mid-morning/i);
+    expect(bestTimeToCall("Underwater Basket Weaving")).toBe(fallback);
+    expect(bestTimeToCall("")).toBe(fallback);
   });
 });

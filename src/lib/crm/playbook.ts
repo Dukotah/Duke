@@ -115,6 +115,29 @@ export function topProblem(lead: PlaybookLead): string {
   return "slow load times and an unclear next step are quietly costing you calls";
 }
 
+// A practical "best time to call" hint by industry, so a rep dials when the
+// owner is most likely to pick up instead of mid-rush. Heuristic, not data —
+// based on when each trade is typically off the floor and near a phone.
+const CALL_WINDOWS: { match: RegExp; when: string }[] = [
+  { match: /restaurant|cafe|coffee|bar|pub|food|bakery|deli|caterer/i, when: "Mid-afternoon (2–4pm), between the lunch and dinner rush" },
+  { match: /plumb|hvac|electric|roof|construct|contractor|landscap|paint|handyman|fence|concrete|trade/i, when: "Early (7–8am) or after 4pm — they're on job sites midday" },
+  { match: /salon|spa|barber|beauty|nail|hair|massage/i, when: "Tue–Thu late morning (10–11:30am), before afternoon appointments" },
+  { match: /dental|dentist|medical|clinic|doctor|chiro|therap|vet|health/i, when: "Early morning (8–9am) or the lunch hour (12–1pm)" },
+  { match: /law|attorney|account|cpa|insur|real estate|realtor|consult|financ|mortgage/i, when: "Mid-morning (9–11am) or mid-afternoon (2–4pm)" },
+  { match: /auto|mechanic|repair|tire|body shop|detail/i, when: "Mid-morning (10–11am), after the morning drop-offs" },
+  { match: /gym|fitness|yoga|pilates|studio|trainer/i, when: "Mid-morning (10am–12pm), between class rushes" },
+  { match: /retail|shop|store|boutique|florist|gift/i, when: "Mid-morning (10–11am), before the lunch crowd" },
+];
+
+export function bestTimeToCall(category?: string): string {
+  const c = (category ?? "").trim();
+  if (c) {
+    const hit = CALL_WINDOWS.find((w) => w.match.test(c));
+    if (hit) return hit.when;
+  }
+  return "Mid-morning (10–11am) or mid-afternoon (2–4pm) tend to be best";
+}
+
 // Objection bank with the "[their top problem]" placeholder filled in from the
 // specific lead, so a caller reads a concrete line instead of a bracketed cue.
 export function buildObjections(lead: PlaybookLead): Objection[] {
