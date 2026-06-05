@@ -99,6 +99,65 @@ export function buildCallScript(lead: PlaybookLead, repName = "me"): ScriptBlock
   ];
 }
 
+// ---- Follow-up cadence -----------------------------------------------------
+// The 4-touch email sequence that paces outreach over two weeks: an opener that
+// leads with the lead's problem, then a bump, a fresh angle, and a breakup. Each
+// step names the email template (in components/emailTemplates) that fits it, so
+// the LeadPanel can recommend exactly what to send and when. Mirrors the
+// day-0/3/7/14 cadence documented in GROWTH_PLAYBOOK.md.
+export interface CadenceTouch {
+  step: number; // 1-based touch number
+  day: number; // days after the first contact
+  templateKey: string; // matching emailTemplates key
+  label: string;
+  purpose: string;
+}
+
+// The opener template depends on whether they already have a site to critique.
+export function openerTemplateKey(lead: PlaybookLead): string {
+  return hasNoSite(lead) ? "no_website" : "diy_upgrade";
+}
+
+export function buildCadence(lead: PlaybookLead): CadenceTouch[] {
+  return [
+    { step: 1, day: 0, templateKey: openerTemplateKey(lead), label: "Opener", purpose: "Lead with their biggest problem" },
+    { step: 2, day: 3, templateKey: "follow_up", label: "Bump", purpose: "Rise back to the top of the inbox" },
+    { step: 3, day: 7, templateKey: "follow_up_angle", label: "New angle", purpose: "The competition-in-their-city angle" },
+    { step: 4, day: 14, templateKey: "follow_up_breakup", label: "Breakup", purpose: "Last note — leave the door open" },
+  ];
+}
+
+export interface CadenceSuggestion {
+  cadence: CadenceTouch[];
+  next: CadenceTouch | null; // recommended next touch, or null once the sequence is exhausted
+  due: boolean; // whether enough time has passed to send `next` now
+  daysUntilDue: number; // 0 when due/overdue; otherwise days to wait
+}
+
+// Recommend the next email in the cadence. `touchesSent` is how many outreach
+// emails have already gone out; `daysSinceLast` is whole days since the most
+// recent one (null when none yet). Pure — the panel passes in what it knows.
+// Touch N becomes due once the gap to the previous touch has elapsed, so a lead
+// contacted yesterday isn't nagged today.
+export function suggestCadence(
+  lead: PlaybookLead,
+  touchesSent: number,
+  daysSinceLast: number | null,
+): CadenceSuggestion {
+  const cadence = buildCadence(lead);
+  const idx = Math.max(0, Math.floor(touchesSent));
+  const next = idx < cadence.length ? cadence[idx] : null;
+
+  if (!next) return { cadence, next: null, due: false, daysUntilDue: 0 };
+  if (idx === 0 || daysSinceLast === null) {
+    // Nothing sent yet → the opener is due now.
+    return { cadence, next, due: true, daysUntilDue: 0 };
+  }
+  const gap = next.day - cadence[idx - 1].day;
+  const daysUntilDue = Math.max(0, gap - daysSinceLast);
+  return { cadence, next, due: daysUntilDue <= 0, daysUntilDue };
+}
+
 // Searchable objection bank so the caller never freezes mid-call. Responses
 // reference "[their top problem]" — swap in the specific issue when reading.
 export interface Objection {

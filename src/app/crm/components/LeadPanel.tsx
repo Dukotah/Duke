@@ -6,11 +6,11 @@ import {
   StickyNote, Send, Star, Link, Flame, Zap,
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
   CalendarClock, Activity, Lock, UserCheck, Info,
-  ChevronDown, ChevronRight, MessageSquare,
+  ChevronDown, ChevronRight, MessageSquare, Repeat,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
-import { buildCallScript, buildObjections, bestTimeToCall } from "@/lib/crm/playbook";
+import { buildCallScript, buildObjections, bestTimeToCall, suggestCadence } from "@/lib/crm/playbook";
 import { readBookingOverride, resolveBookingUrl } from "@/lib/booking";
 
 interface Lead {
@@ -132,6 +132,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const [showScorePopover, setShowScorePopover] = useState(false);
   const [showScript, setShowScript] = useState(false);
   const [showObjections, setShowObjections] = useState(false);
+  const [showCadence, setShowCadence] = useState(false);
   const [calOverride, setCalOverride] = useState("");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevNotes = useRef(state.notes ?? "");
@@ -274,6 +275,28 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const objections = buildObjections(playbookLead);
   const callWindow = bestTimeToCall(lead.category);
 
+  // Follow-up cadence (day 0/3/7/14). We don't track an exact per-email count, so
+  // approximate: nothing sent yet for an untouched lead, otherwise treat the
+  // opener as done and recommend the next bump. `daysSinceLast` is parsed from the
+  // last-contacted display date; the system-scheduled followUpDate, when present,
+  // gives the more accurate "when".
+  const daysSinceLast = (() => {
+    if (!state.lastContacted) return null;
+    const t = Date.parse(state.lastContacted);
+    if (!Number.isFinite(t)) return null;
+    return Math.max(0, Math.floor((Date.parse(todayISO) - t) / 86_400_000));
+  })();
+  const touchesSent = state.status === "new" && !state.lastContacted ? 0 : 1;
+  const cadence = suggestCadence(playbookLead, touchesSent, daysSinceLast);
+  const cadenceDueInDays = (() => {
+    if (state.followUpDate) {
+      const f = Date.parse(state.followUpDate);
+      if (Number.isFinite(f)) return Math.max(0, Math.ceil((f - Date.parse(todayISO)) / 86_400_000));
+    }
+    return cadence.daysUntilDue;
+  })();
+  const cadenceDueText = cadenceDueInDays <= 0 ? "due now" : `in ${cadenceDueInDays} day${cadenceDueInDays === 1 ? "" : "s"}`;
+
   // Canonical booking link: a rep's personal override if set, otherwise the
   // on-site /schedule funnel made absolute so it works in email/SMS.
   const bookingUrl = resolveBookingUrl(calOverride);
@@ -364,6 +387,41 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                   style={H}>
                   <Mail size={16} />Send Email
                 </button>
+
+                {/* Follow-up cadence: recommended next touch + the full plan */}
+                {cadence.next ? (
+                  <>
+                    <button onClick={() => setShowCadence((v) => !v)} className="w-full flex items-center justify-between group mt-3">
+                      <span className="text-xs text-white/40 flex items-center gap-1.5 group-hover:text-white/60 transition-colors" style={H}>
+                        <Repeat size={11} className="text-[#F97316]/50 shrink-0" />
+                        Next: <span className="text-white/70 font-semibold">{cadence.next.label}</span>
+                        <span className="text-white/30">· {cadenceDueText}</span>
+                      </span>
+                      {showCadence ? <ChevronDown size={13} className="text-white/30" /> : <ChevronRight size={13} className="text-white/30" />}
+                    </button>
+                    {showCadence && (
+                      <div className="mt-2.5 space-y-1.5">
+                        {cadence.cadence.map((t) => {
+                          const isNext = cadence.next?.step === t.step;
+                          return (
+                            <div key={t.step} className={`rounded-xl border px-3 py-2 ${isNext ? "border-[#F97316]/40 bg-[#F97316]/[0.07]" : "border-white/[0.06] bg-[#1C1C1F]"}`}>
+                              <p className="text-xs font-semibold text-white/80 flex items-center gap-2" style={H}>
+                                <span className="text-white/40">Day {t.day}</span>{t.label}
+                                {isNext && <span className="text-[10px] text-[#F97316] uppercase tracking-wider">recommended</span>}
+                              </p>
+                              <p className="text-xs text-white/35 mt-0.5" style={H}>{t.purpose}</p>
+                            </div>
+                          );
+                        })}
+                        <p className="text-[11px] text-white/20 leading-relaxed pt-0.5" style={H}>Timing is a guide — open Send Email and pick the matching template.</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-xs text-white/30 mt-3 flex items-center gap-1.5" style={H}>
+                    <Repeat size={11} className="shrink-0" />Full 4-touch cadence sent — time to move on or call.
+                  </p>
+                )}
               </div>
             )}
 
@@ -512,8 +570,11 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                 <div className="mt-3 space-y-2">
                   {objections.map((o) => (
                     <div key={o.trigger} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-3">
-                      <p className="text-xs font-semibold text-white/80 mb-1" style={H}>&ldquo;{o.trigger}&rdquo;</p>
-                      <p className="text-sm text-white/55 leading-relaxed" style={H}>{o.response}</p>
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <p className="text-xs font-semibold text-white/80 flex-1" style={H}>&ldquo;{o.trigger}&rdquo;</p>
+                        <CopyBtn text={o.response} />
+                      </div>
+                      <p className="text-sm text-white/55 leading-relaxed pr-1" style={H}>{o.response}</p>
                     </div>
                   ))}
                 </div>

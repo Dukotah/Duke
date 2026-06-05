@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bestTimeToCall, buildCallScript, buildObjections, OBJECTIONS, topProblem, type PlaybookLead } from "./playbook";
+import { bestTimeToCall, buildCadence, buildCallScript, buildObjections, OBJECTIONS, openerTemplateKey, suggestCadence, topProblem, type PlaybookLead } from "./playbook";
 
 const noSite: PlaybookLead = { name: "Acme Plumbing", city: "Petaluma", category: "Plumbers", tier: "A", website: "" };
 const diy: PlaybookLead = { name: "Bay Cafe", city: "Sonoma", category: "Cafes", tier: "B", website: "baycafe.com", builder: "Wix" };
@@ -70,6 +70,47 @@ describe("playbook — objections", () => {
     expect(topProblem(noSite)).toMatch(/competitors/i);
     expect(topProblem(diy)).toMatch(/slowly|visitors/i);
     expect(topProblem(hasSite)).toMatch(/slow load|next step/i);
+  });
+});
+
+describe("playbook — follow-up cadence", () => {
+  it("uses the no-site opener for tier A and the upgrade opener otherwise", () => {
+    expect(openerTemplateKey(noSite)).toBe("no_website");
+    expect(openerTemplateKey(diy)).toBe("diy_upgrade");
+    expect(openerTemplateKey(hasSite)).toBe("diy_upgrade");
+  });
+
+  it("builds the 4-touch day-0/3/7/14 sequence", () => {
+    const c = buildCadence(noSite);
+    expect(c.map((t) => t.day)).toEqual([0, 3, 7, 14]);
+    expect(c.map((t) => t.step)).toEqual([1, 2, 3, 4]);
+    expect(c.map((t) => t.templateKey)).toEqual(["no_website", "follow_up", "follow_up_angle", "follow_up_breakup"]);
+  });
+
+  it("recommends the opener, due now, when nothing has been sent", () => {
+    const s = suggestCadence(noSite, 0, null);
+    expect(s.next?.label).toBe("Opener");
+    expect(s.due).toBe(true);
+    expect(s.daysUntilDue).toBe(0);
+  });
+
+  it("holds the next touch until the gap to the prior one elapses", () => {
+    // opener sent yesterday: bump is at day 3, so wait 2 more days
+    const soon = suggestCadence(noSite, 1, 1);
+    expect(soon.next?.label).toBe("Bump");
+    expect(soon.due).toBe(false);
+    expect(soon.daysUntilDue).toBe(2);
+
+    // opener sent 3 days ago: bump is due now
+    const ready = suggestCadence(noSite, 1, 3);
+    expect(ready.due).toBe(true);
+    expect(ready.daysUntilDue).toBe(0);
+  });
+
+  it("returns no next touch once the sequence is exhausted", () => {
+    const s = suggestCadence(noSite, 4, 20);
+    expect(s.next).toBeNull();
+    expect(s.due).toBe(false);
   });
 });
 
