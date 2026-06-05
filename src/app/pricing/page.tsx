@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import JsonLd from "@/components/JsonLd";
+import JsonLd, { faqSchema } from "@/components/JsonLd";
 import PricingEstimator from "@/components/PricingEstimator";
 import Comparison from "@/components/Comparison";
 import { ArrowRight, Globe, Server, ShieldCheck, Check, Phone, Sparkles, Calculator } from "lucide-react";
+import { PRICING } from "@/config/pricing";
 
 const pricingSchema = {
   "@context": "https://schema.org",
@@ -110,8 +111,8 @@ const tiers = [
     icon: Globe,
     label: "Web Design",
     tagline: "Your digital front door, done right.",
-    price: "$2,500 – $7,500",
-    priceNote: "One-time, by scope",
+    price: PRICING.web.range,
+    priceNote: PRICING.web.note,
     href: "/web-design-sonoma-county",
     tiers: [
       { label: "Starter · up to 5 pages", price: "$2,500" },
@@ -138,8 +139,8 @@ const tiers = [
     icon: Server,
     label: "IT Support",
     tagline: "IT that just works, every day.",
-    price: "$550 – $2,200",
-    priceNote: "Per month, flat fee by team size",
+    price: PRICING.it.range,
+    priceNote: PRICING.it.note,
     href: "/it-support-sonoma-county",
     featured: true,
     tiers: [
@@ -169,8 +170,8 @@ const tiers = [
     icon: ShieldCheck,
     label: "Cybersecurity",
     tagline: "Find the gaps before attackers do.",
-    price: "$750 – $1,200",
-    priceNote: "One-time audit fee",
+    price: PRICING.cybersecurity.range,
+    priceNote: PRICING.cybersecurity.note,
     href: "/cybersecurity-small-business",
     tiers: [
       { label: "Audit with IT support plan", price: "$750" },
@@ -197,8 +198,8 @@ const tiers = [
     icon: Sparkles,
     label: "AI Integration",
     tagline: "An employee that never clocks out.",
-    price: "$1,500 – $4,000",
-    priceNote: "One-time build + from $200/mo",
+    price: PRICING.ai.range,
+    priceNote: PRICING.ai.note,
     href: "/ai-integration-small-business",
     includes: [
       "AI receptionist for calls & website chat",
@@ -252,6 +253,7 @@ export default function Pricing() {
   return (
     <>
       <JsonLd schema={pricingSchema} />
+      <JsonLd schema={faqSchema(faqs)} />
       <Nav />
       <main className="bg-[#FAFAF9]">
         {/* Hero */}

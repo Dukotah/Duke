@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { rangeLabel } from "@/config/pricing";
 
 export const metadata: Metadata = {
   title: "IT Services for Sonoma County Businesses | Copper Bay Tech",
@@ -33,7 +34,7 @@ const services = [
       "Local SEO built in from day one",
       "Flat-fee proposals, no hourly billing",
     ],
-    range: "$1,500 – $20,000+",
+    range: rangeLabel("web"),
     cta: "See web development →",
   },
   {
@@ -48,7 +49,7 @@ const services = [
       "Network monitoring and patch management",
       "New employee setup and offboarding",
     ],
-    range: "$300 – $2,500/month",
+    range: rangeLabel("it"),
     cta: "See IT support →",
   },
   {
@@ -63,7 +64,7 @@ const services = [
       "Phishing simulation and employee training",
       "HIPAA, PCI-DSS, and CCPA compliance support",
     ],
-    range: "$600 – $12,000+",
+    range: rangeLabel("cybersecurity"),
     cta: "See cybersecurity →",
   },
 ];

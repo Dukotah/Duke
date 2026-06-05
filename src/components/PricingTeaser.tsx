@@ -4,22 +4,23 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Globe, Server, ShieldCheck, ArrowRight } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { PRICING } from "@/config/pricing";
 
 // Concrete "starting at" anchors so visitors can self-qualify on price before
-// they ever fill out the form. Numbers mirror the /pricing page tiers — keep
-// them in sync if pricing changes there.
+// they ever fill out the form. Prices come from the shared @/config/pricing
+// source of truth so they can't drift from /pricing and /services.
 const anchors = [
   {
     icon: Globe,
     label: "Web Design",
-    price: "$2,500",
+    price: PRICING.web.startingAt,
     note: "one-time, custom-built",
     href: "/web-design-sonoma-county",
   },
   {
     icon: Server,
     label: "Managed IT",
-    price: "$550",
+    price: PRICING.it.startingAt,
     note: "per month, flat fee",
     href: "/it-support-sonoma-county",
     featured: true,
@@ -27,7 +28,7 @@ const anchors = [
   {
     icon: ShieldCheck,
     label: "Security Audit",
-    price: "$750",
+    price: PRICING.cybersecurity.startingAt,
     note: "one-time assessment",
     href: "/cybersecurity-small-business",
   },
