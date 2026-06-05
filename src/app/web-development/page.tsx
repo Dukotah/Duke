@@ -181,8 +181,15 @@ export default function WebDevelopmentPage() {
             >
               Transparent, flat-fee pricing
             </h2>
-            <p className="text-[#3F3F46]/60 mb-8 max-w-xl" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="text-[#3F3F46]/60 mb-4 max-w-xl" style={{ fontFamily: "var(--font-body)" }}>
               You&apos;ll get a fixed price before we start. No hourly billing, no scope creep surprises.
+            </p>
+            <p className="text-sm text-[#3F3F46]/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
+              Not sure which tier fits your project?{" "}
+              <Link href="/tools/website-cost-estimator" className="text-[#F97316] hover:underline font-medium">
+                Try our free website cost estimator
+              </Link>{" "}
+              to get a ballpark in under two minutes.
             </p>
             <div className="grid sm:grid-cols-3 gap-6">
               {[

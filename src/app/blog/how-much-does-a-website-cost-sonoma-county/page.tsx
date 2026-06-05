@@ -140,8 +140,15 @@ export default function Article() {
               <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
                 Most small business websites we build fall between <strong>$2,500 and $4,500</strong> flat. That includes custom design and code (no templates), mobile-first build, local SEO setup, Google Business Profile configuration, contact form with spam filtering, and hosting setup.
               </p>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-8">
+              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
                 You get a specific quote before any work starts. If you go ahead, that number doesn&apos;t change.
+              </p>
+              <p className="text-sm text-[#3F3F46]/60 mb-8">
+                Want to estimate your project before reaching out?{" "}
+                <Link href="/tools/website-cost-estimator" className="text-[#F97316] hover:underline font-medium">
+                  Try our free website cost estimator
+                </Link>{" "}
+                — no email required.
               </p>
 
               <div className="bg-[#18181B] rounded-xl p-6 text-center">

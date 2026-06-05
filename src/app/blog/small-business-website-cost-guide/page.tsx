@@ -216,7 +216,7 @@ export default function Article() {
                 Our pricing estimator gives you a ballpark in under 2 minutes based on what you actually need — no email required.
               </p>
               <Link
-                href="/tools"
+                href="/tools/website-cost-estimator"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >

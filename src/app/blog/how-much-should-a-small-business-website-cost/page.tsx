@@ -129,7 +129,7 @@ export default function WebsiteCostPost() {
             <p className="text-[#3F3F46]/60 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
               Our pricing estimator asks a few questions about your project and gives you a realistic ballpark — no email required.
             </p>
-            <Link href="/#pricing" className="inline-block bg-[#F97316] hover:bg-[#ea6c0a] text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
+            <Link href="/tools/website-cost-estimator" className="inline-block bg-[#F97316] hover:bg-[#ea6c0a] text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
               Try the Estimator
             </Link>
           </div>

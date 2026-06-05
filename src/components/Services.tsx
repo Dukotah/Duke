@@ -152,6 +152,16 @@ export default function Services() {
               >
                 {t.cta}
               </a>
+
+              {t.tier === "Tier 1 — Foundation" && (
+                <Link
+                  href="/tools/website-cost-estimator"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B]/70 transition-colors hover:text-[#18181B] mt-2"
+                  style={{ border: "1px solid rgba(24,24,27,0.2)", fontFamily: "var(--font-heading)" }}
+                >
+                  What should your website cost?
+                </Link>
+              )}
             </motion.div>
           ))}
         </div>
