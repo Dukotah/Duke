@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureAuditLead } from "@/lib/crm/intake";
 
 function scoreColor(score: number) {
   if (score >= 90) return "#22c55e";
@@ -25,6 +26,18 @@ export async function POST(req: NextRequest) {
   try {
     const { email, url, auditData } = await req.json();
     if (!email) return NextResponse.json({ ok: true });
+
+    // Bridge into the CRM: every captured audit becomes a scored, followable
+    // lead (deduped by email/site). Done before the email step and isolated so
+    // a CRM/Redis hiccup never breaks the visitor's report.
+    try {
+      const auditUrl: string = (auditData?.url || url || "").trim();
+      if (auditUrl) {
+        await captureAuditLead({ email, url: auditUrl, score: auditData?.score ?? 0 });
+      }
+    } catch (e) {
+      console.error("Audit→CRM bridge failed (non-fatal):", e);
+    }
 
     const apiKey = process.env.RESEND_API_KEY;
 
