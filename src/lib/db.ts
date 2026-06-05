@@ -601,6 +601,30 @@ export async function unsuppressEmail(email: string): Promise<void> {
   await redis.srem(SUPPRESS_KEY, email.toLowerCase().trim());
 }
 
+// ─── Cross-rep daily email dedup ──────────────────────────────────────────────
+// A shared, date-scoped set of every address actually emailed today, across ALL
+// reps. Two reps working the same queue must not both email the same business in
+// one day — duplicate sends look spammy and burn the lead. Keyed by YYYY-MM-DD and
+// expired after 2 days so it self-cleans.
+
+const EMAILED_TODAY_KEY = (date: string) => `outreach:emailed:${date}`;
+const EMAILED_TODAY_TTL = 172_800; // 2 days, in seconds
+
+// Addresses already emailed on `date` (YYYY-MM-DD), normalized lowercase.
+export async function getEmailedToday(date: string): Promise<string[]> {
+  const redis = getRedis();
+  const members = await redis.smembers(EMAILED_TODAY_KEY(date));
+  return (members as string[]).map((e) => e.toLowerCase());
+}
+
+// Record that `email` was emailed on `date` so other reps skip it today.
+export async function markEmailedToday(date: string, email: string): Promise<void> {
+  const redis = getRedis();
+  const key = EMAILED_TODAY_KEY(date);
+  await redis.sadd(key, email.toLowerCase().trim());
+  await redis.expire(key, EMAILED_TODAY_TTL);
+}
+
 // ─── Outreach send log (for admin email tracking) ─────────────────────────────
 // Each send is recorded under `outreach_log:<userId>`. This aggregates them.
 

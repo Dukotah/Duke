@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { addActivity, getLeadState, setLeadState, getSuppressedEmails } from "@/lib/db";
+import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday } from "@/lib/db";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
 import { getSessionSecret } from "@/lib/session";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
@@ -104,9 +104,13 @@ export async function POST(req: NextRequest) {
   const maxPerDay = dailyCapFor(today);
   const sentToday = parseInt((await redis.get(dailyKey) as string | null) ?? "0", 10);
 
-  // Drop malformed addresses (they hard-bounce) and anyone who unsubscribed
-  // (never re-mail them) — both count as skipped.
-  const { sendable, skipped } = gateLeads(leads, await getSuppressedEmails());
+  // Drop malformed addresses (they hard-bounce), anyone who unsubscribed (never
+  // re-mail them), and anyone already emailed today by ANY rep (cross-rep dedup so
+  // a shared queue doesn't double-send) — all count as skipped. Test sends bypass
+  // the daily-dedup set so they can be repeated freely.
+  const suppressed = await getSuppressedEmails();
+  const emailedToday = isTest ? [] : await getEmailedToday(today);
+  const { sendable, skipped } = gateLeads(leads, [...suppressed, ...emailedToday]);
 
   const canSend = remainingDailyCapacity(sendable.length, sentToday, maxPerDay);
   if (canSend <= 0) {
@@ -224,10 +228,12 @@ export async function POST(req: NextRequest) {
       if (res.ok) {
         sent++;
         delivered++;
-        // Close the loop: record on the lead's timeline and schedule a follow-up.
+        // Close the loop: record on the lead's timeline and schedule a follow-up,
+        // and claim the address in today's cross-rep dedup set so no one re-sends.
         // Failures here must not flip a successful send into a "failed".
         try {
           await track(lead, personalizedSubject, sentAt, true);
+          if (!isTest) await markEmailedToday(today, lead.email);
         } catch (logErr) {
           console.error(`[Outreach] Delivered to ${lead.email} but failed to log activity/follow-up:`, logErr);
         }
