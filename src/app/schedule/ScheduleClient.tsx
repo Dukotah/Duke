@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { Check, Clock, Calendar, ArrowRight, ArrowLeft } from "lucide-react";
+import { track } from "@/lib/analytics";
 
 const services = [
   { id: "website", label: "Website Design / Rebuild", icon: "🌐", duration: "45 min", desc: "Discuss your current site, goals, and what a new one would look like." },
@@ -67,6 +68,12 @@ export default function ScheduleClient() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  // Top of the booking funnel — fire once on mount so drop-off between
+  // landing here and a completed request is measurable.
+  useEffect(() => {
+    track("schedule_started");
+  }, []);
+
   const selectedService = services.find(s => s.id === form.service);
 
   function set<K extends keyof FormData>(key: K, val: FormData[K]) {
@@ -102,6 +109,8 @@ export default function ScheduleClient() {
         }),
       });
       if (!res.ok) throw new Error("Failed");
+      // Macro-conversion: a completed booking request.
+      track("schedule_booked", { service: selectedService?.label ?? "Consultation" });
       setStep("done");
     } catch {
       setError("Something went wrong. Please try again or email us directly.");
@@ -157,7 +166,7 @@ export default function ScheduleClient() {
               {services.map(s => (
                 <button
                   key={s.id}
-                  onClick={() => { set("service", s.id); setStep("datetime"); }}
+                  onClick={() => { set("service", s.id); track("schedule_service_selected", { service: s.id }); setStep("datetime"); }}
                   className={`w-full text-left rounded-2xl p-5 border transition-all ${form.service === s.id ? "border-orange-500 bg-orange-500/10" : "border-zinc-800 bg-zinc-900 hover:border-zinc-600"}`}
                 >
                   <div className="flex items-start gap-4">
@@ -238,7 +247,7 @@ export default function ScheduleClient() {
 
               <button
                 disabled={!form.date || !form.time}
-                onClick={() => setStep("details")}
+                onClick={() => { track("schedule_datetime_selected", { service: form.service, time: form.time }); setStep("details"); }}
                 className="w-full bg-orange-500 hover:bg-orange-400 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-full transition-colors text-sm"
               >
                 Continue <ArrowRight size={15} className="inline ml-1" />

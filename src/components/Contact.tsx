@@ -225,6 +225,11 @@ export default function Contact() {
               >
                 {status === "loading" ? "Sending..." : "Send Message"}
               </button>
+
+              <p className="text-xs text-[#3F3F46]/50 text-center" style={{ fontFamily: "var(--font-body)" }}>
+                We reply within one business day. No spam, no sales pressure — and
+                we never share your details.
+              </p>
             </form>
           </motion.div>
         </div>
