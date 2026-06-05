@@ -1,7 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { MapPin, ShieldCheck, Code2 } from "lucide-react";
+
+// Drop a real headshot at this /public path and the photo replaces the monogram
+// automatically — no other change needed. A real founder photo is the single
+// biggest trust lift for this section, so add one as soon as you have it.
+// e.g. FOUNDER_HEADSHOT = "/team/duke-hutcheon.jpg"
+const FOUNDER_HEADSHOT = "";
 
 const highlights = [
   { icon: MapPin, text: "Based in Sonoma County — we show up in person when it matters" },
@@ -35,16 +42,32 @@ export default function About() {
               Enterprise-grade standards.
             </h2>
 
-            {/* Headshot / Avatar */}
+            {/* Headshot / Avatar — shows a real photo when FOUNDER_HEADSHOT is set,
+                otherwise a polished monogram so the section never looks unfinished. */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-[#18181B] flex items-center justify-center border-2 border-[#F97316]/30">
-                {/* Replace with: <Image src="/duke-headshot.jpg" alt="Duke Hutcheon" fill className="object-cover" /> */}
-                <span
-                  className="text-2xl font-bold text-[#F97316]"
-                  style={{ fontFamily: "var(--font-heading)" }}
-                >
-                  D
-                </span>
+              <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[#F97316]/40 ring-offset-2 ring-offset-white">
+                {FOUNDER_HEADSHOT ? (
+                  <Image
+                    src={FOUNDER_HEADSHOT}
+                    alt="Duke Hutcheon, founder of Copper Bay Tech"
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div
+                    className="flex h-full w-full items-center justify-center"
+                    style={{ background: "linear-gradient(135deg, #27272A 0%, #18181B 100%)" }}
+                    aria-hidden="true"
+                  >
+                    <span
+                      className="text-2xl font-bold text-[#F97316]"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                      DH
+                    </span>
+                  </div>
+                )}
               </div>
               <div>
                 <p

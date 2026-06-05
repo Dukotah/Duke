@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
 import { track } from "@/lib/analytics";
 
@@ -11,6 +11,7 @@ const trustSignals = [
 ];
 
 export default function Hero() {
+  const reduceMotion = useReducedMotion();
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#18181B]">
       {/* Topographic line pattern */}
@@ -41,9 +42,12 @@ export default function Hero() {
 
       <div className="relative z-10 mx-auto max-w-5xl px-6 pt-28 pb-24 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          // Start mostly-visible (not from 0) and finish fast so the headline is
+          // legible almost immediately — a slow fade from black read as a
+          // sluggish, brownish first impression. Respect reduced-motion.
+          initial={reduceMotion ? false : { opacity: 0.7, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98] }}
+          transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
         >
           <span
             className="mb-7 inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em]"

@@ -87,6 +87,14 @@ const PROJECTS: Project[] = [
 ];
 
 export default function Portfolio() {
+  // Only render tiles backed by a real, client-approved screenshot. Until those
+  // exist, show nothing rather than a wall of empty gradient "Preview" frames —
+  // they read as unfinished and undercut credibility on a sales page. Drop an
+  // `image` onto any project (see the header note) and the section returns
+  // automatically.
+  const liveProjects = PROJECTS.filter((p) => p.image);
+  if (liveProjects.length === 0) return null;
+
   return (
     <section id="portfolio" className="py-24 bg-[#FAFAF9]">
       <div className="max-w-6xl mx-auto px-6">
@@ -119,7 +127,7 @@ export default function Portfolio() {
         </motion.div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((p, i) => {
+          {liveProjects.map((p, i) => {
             const Icon = p.icon;
             const Wrapper = p.url ? "a" : "div";
             return (
