@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Copper Bay Tech <noreply@copperbaytech.com>",
+        from: "Copper Bay Tech <contact@copperbaytech.com>",
         to: ["duke@copperbaytech.com"],
         subject: `New blog subscriber: ${email}`,
         html: `<p>New subscriber from the blog: <strong>${email}</strong></p>`,
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Copper Bay Tech <noreply@copperbaytech.com>",
+        from: "Copper Bay Tech <contact@copperbaytech.com>",
         to: [email],
         subject: "You're subscribed to Copper Bay Tech",
         html: `

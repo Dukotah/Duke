@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Copper Bay Tech <noreply@copperbaytech.com>",
+        from: "Copper Bay Tech <contact@copperbaytech.com>",
         to: ["contact@copperbaytech.com"],
         subject: `Audit lead: ${email} — score ${score} for ${url}`,
         html: `<p><strong>Email:</strong> ${email}</p><p><strong>URL:</strong> ${url}</p><p><strong>Score:</strong> ${score}/100</p>`,

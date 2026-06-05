@@ -39,7 +39,7 @@ async function sendRepNotification(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Copper Bay Tech CRM <noreply@copperbaytech.com>",
+      from: "Copper Bay Tech CRM <contact@copperbaytech.com>",
       to: [repEmail],
       subject,
       html,
