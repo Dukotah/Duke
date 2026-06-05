@@ -16,3 +16,11 @@ export const OUTREACH_FROM = "contact@copperbaytech.com";
 // CAN-SPAM requires a real physical postal address in every marketing email.
 // ⚠️ Update this with your actual street address or registered P.O. Box.
 export const MAILING_ADDRESS = "Copper Bay Tech, Petaluma, CA 94952";
+
+// Your Google Business Profile "write a review" short link. Get it from the
+// GBP dashboard ("Ask for reviews" → copy link), or build it as
+// https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID
+// When set, a "Leave a review" CTA appears on /reviews to funnel happy clients
+// to Google — the single highest-leverage thing for local map-pack ranking.
+// Leave "" until your GBP is live so we never link to a dead page.
+export const GOOGLE_REVIEW_URL = "";

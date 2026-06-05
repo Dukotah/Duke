@@ -3,19 +3,21 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { Star, ArrowRight } from "lucide-react";
+import JsonLd from "@/components/JsonLd";
+import { GOOGLE_REVIEW_URL } from "@/config/site";
+import { REAL_REVIEWS, hasRealReviews, aggregateRating, reviewsSchema } from "@/lib/reviews";
 
 export const metadata: Metadata = {
   title: "Client Reviews | Copper Bay Tech — Sonoma County IT & Web",
   description:
-    "Sample reviews illustrating the kind of IT support, web development, and cybersecurity work Copper Bay Tech does for Sonoma County small businesses.",
+    "Reviews of Copper Bay Tech's IT support, web development, and cybersecurity work for Sonoma County small businesses.",
 };
 
-// NOTE: These are illustrative sample reviews, not verified client testimonials.
-// We intentionally do NOT emit AggregateRating / Review schema.org markup here —
-// doing so for unverified reviews violates Google's structured-data guidelines and
-// FTC endorsement rules. Add real Review schema only once backed by genuine,
-// publicly verifiable reviews (e.g. a Google Business Profile).
-const reviews = [
+// Illustrative samples shown ONLY until real, client-approved reviews exist in
+// src/lib/reviews.ts (REAL_REVIEWS). Once that array is populated, the page
+// renders the real reviews instead and emits Review/AggregateRating schema.
+// We never emit rating schema for these samples — see src/lib/reviews.ts.
+const SAMPLE_REVIEWS = [
   {
     name: "Maria Santos",
     business: "Petaluma Bakery",
@@ -74,19 +76,34 @@ const reviews = [
   },
 ];
 
-function StarRow() {
+function StarRow({ rating = 5 }: { rating?: number }) {
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-1" aria-label={`${rating} out of 5 stars`}>
       {[...Array(5)].map((_, i) => (
-        <Star key={i} size={16} fill="#F97316" stroke="none" />
+        <Star
+          key={i}
+          size={16}
+          fill={i < rating ? "#F97316" : "none"}
+          stroke={i < rating ? "none" : "#F97316"}
+        />
       ))}
     </div>
   );
 }
 
 export default function ReviewsPage() {
+  const live = hasRealReviews();
+  const agg = aggregateRating();
+  const schema = reviewsSchema();
+  // Normalize to one display shape whether real or sample.
+  const displayReviews = live
+    ? REAL_REVIEWS.map((r) => ({ name: r.author, business: r.business, city: r.city, quote: r.quote, rating: r.rating }))
+    : SAMPLE_REVIEWS.map((r) => ({ ...r, rating: 5 }));
+
   return (
     <>
+      {/* Emits Review + AggregateRating only when REAL_REVIEWS is populated. */}
+      {schema && <JsonLd schema={schema} />}
       <Nav />
       <main>
         {/* Hero */}
@@ -106,11 +123,19 @@ export default function ReviewsPage() {
               <span style={{ color: "#F97316" }}>looks like.</span>
             </h1>
             <p className="text-white/60 text-lg max-w-2xl mx-auto mb-6" style={{ fontFamily: "var(--font-body)" }}>
-              Copper Bay Tech helps Sonoma County business owners with IT support, cybersecurity, and web development. The examples below illustrate the kind of work and outcomes we aim for.
+              Copper Bay Tech helps Sonoma County business owners with IT support, cybersecurity, and web development.{live ? " Here's what they say." : " The examples below illustrate the kind of work and outcomes we aim for."}
             </p>
-            <p className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-white/55" style={{ fontFamily: "var(--font-body)" }}>
-              Illustrative sample feedback — not verified client reviews.
-            </p>
+            {live && agg ? (
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-white/80" style={{ fontFamily: "var(--font-body)" }}>
+                <StarRow rating={Math.round(agg.ratingValue)} />
+                <span className="font-semibold text-white">{agg.ratingValue.toFixed(1)}</span>
+                <span className="text-white/55">· {agg.reviewCount} review{agg.reviewCount === 1 ? "" : "s"}</span>
+              </div>
+            ) : (
+              <p className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-white/55" style={{ fontFamily: "var(--font-body)" }}>
+                Illustrative sample feedback — not verified client reviews.
+              </p>
+            )}
           </div>
         </section>
 
@@ -118,12 +143,12 @@ export default function ReviewsPage() {
         <section className="py-20 bg-[#FAFAF9]">
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-6">
-              {reviews.map((review) => (
+              {displayReviews.map((review) => (
                 <div
                   key={review.name}
                   className="rounded-2xl bg-white border border-[#18181B]/10 p-7 shadow-sm flex flex-col gap-4"
                 >
-                  <StarRow />
+                  <StarRow rating={review.rating} />
                   <p
                     className="text-[#3F3F46]/80 leading-relaxed text-sm flex-1"
                     style={{ fontFamily: "var(--font-body)" }}
@@ -162,13 +187,26 @@ export default function ReviewsPage() {
             <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
               Get a free consultation and see what Copper Bay Tech can do for your Sonoma County business.
             </p>
-            <Link
-              href="/#contact"
-              className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Get a Free Consultation <ArrowRight size={15} />
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/#contact"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Get a Free Consultation <ArrowRight size={15} />
+              </Link>
+              {GOOGLE_REVIEW_URL && (
+                <a
+                  href={GOOGLE_REVIEW_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white border border-white/25 hover:border-white/50 transition-colors"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  <Star size={15} fill="currentColor" stroke="none" /> Leave us a Google review
+                </a>
+              )}
+            </div>
           </div>
         </section>
       </main>

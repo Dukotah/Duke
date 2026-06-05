@@ -11,7 +11,8 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import StickyCTA from "@/components/StickyCTA";
-import JsonLd, { localBusinessSchema, organizationSchema, websiteSchema } from "@/components/JsonLd";
+import JsonLd, { localBusinessSchema, organizationSchema, websiteSchema, aggregateRatingSchema } from "@/components/JsonLd";
+import { aggregateRating } from "@/lib/reviews";
 
 /**
  * Minimal home: a focused funnel only. Supporting content lives on dedicated
@@ -28,11 +29,15 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  // Emits star-rating schema only once real, approved reviews exist
+  // (src/lib/reviews.ts). Null until then — no fake stars in search.
+  const agg = aggregateRating();
   return (
     <>
       <JsonLd schema={localBusinessSchema()} />
       <JsonLd schema={organizationSchema()} />
       <JsonLd schema={websiteSchema()} />
+      {agg && <JsonLd schema={aggregateRatingSchema({ ratingValue: agg.ratingValue, reviewCount: agg.reviewCount })} />}
       <Nav />
       <main>
         <Hero />
