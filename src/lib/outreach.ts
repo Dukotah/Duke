@@ -66,13 +66,49 @@ export function remainingDailyCapacity(
 }
 
 // Resolve the configured daily cap. A cold/freshly-verified domain can be warmed
-// up slowly via OUTREACH_DAILY_CAP; falls back to a conservative default.
+// up slowly via OUTREACH_DAILY_CAP; falls back to a conservative default. This is
+// the HARD ceiling — the warm-up ramp (below) only ever scales DOWN from here.
 export function resolveDailyCap(
   rawCap: string | undefined,
   fallback = 200,
 ): number {
   const n = parseInt(rawCap ?? "", 10);
   return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+// Days since the (UTC) verified date, or null if either date is unparseable.
+// Both inputs are YYYY-MM-DD; comparing at UTC midnight avoids TZ/DST drift.
+function daysSince(verifiedDate: string | undefined, today: string): number | null {
+  const start = Date.parse(`${(verifiedDate ?? "").trim()}T00:00:00Z`);
+  const now = Date.parse(`${today.trim()}T00:00:00Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(now)) return null;
+  return Math.floor((now - start) / 86_400_000);
+}
+
+// Warm-up ramp. A brand-new sending domain that suddenly blasts hundreds of cold
+// emails looks exactly like a spammer, so volume must increase slowly over the
+// first few weeks (see DELIVERABILITY.md). Given the date the domain was verified
+// in Resend (OUTREACH_DOMAIN_VERIFIED_DATE, YYYY-MM-DD) and today's date, return
+// the conservative daily ceiling for the current week of the warm-up, never above
+// the configured hard cap:
+//   week 1 (days 0-6):   20/day
+//   week 2 (days 7-13):  50/day
+//   week 3 (days 14-20): 100/day
+//   week 4+ (day 21+):   hard cap
+// A future or unparseable date is treated as day 0 (most conservative). When no
+// verified date is configured the ramp is OFF and the hard cap applies — so this
+// is purely opt-in and preserves prior behavior until the owner sets the date.
+export function rampedDailyCap(
+  verifiedDate: string | undefined,
+  today: string,
+  hardCap: number,
+): number {
+  if (!(verifiedDate ?? "").trim()) return hardCap; // ramp disabled
+  const days = daysSince(verifiedDate, today);
+  if (days === null) return hardCap;
+  const d = Math.max(0, days); // future date → week 1
+  const rung = d < 7 ? 20 : d < 14 ? 50 : d < 21 ? 100 : hardCap;
+  return Math.min(rung, hardCap);
 }
 
 // Real delivery is gated behind explicit domain verification. We only actually

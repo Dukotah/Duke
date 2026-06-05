@@ -9,6 +9,7 @@ import {
   canDeliver as canDeliverGate,
   gateLeads,
   personalize,
+  rampedDailyCap,
   remainingDailyCapacity,
   resolveDailyCap,
 } from "@/lib/outreach";
@@ -25,11 +26,17 @@ interface OutreachBody {
 }
 
 const MAX_PER_REQUEST = 50;
-// Conservative daily cap, overridable so a freshly verified domain can be
-// warmed up slowly (e.g. start at 25–50/day and ramp up over a couple weeks).
-// A cold domain that suddenly blasts hundreds of emails looks like spam.
-const MAX_PER_DAY = resolveDailyCap(process.env.OUTREACH_DAILY_CAP);
 const FOLLOW_UP_DAYS = 3;
+
+// Effective daily cap for `today` (YYYY-MM-DD). The configured value (or the
+// conservative 200 default) is the hard ceiling; the warm-up ramp scales it down
+// automatically for the first few weeks after the domain was verified, so a fresh
+// domain doesn't blast volume that looks like spam. Computed per-request because
+// it depends on the current date.
+function dailyCapFor(today: string): number {
+  const hardCap = resolveDailyCap(process.env.OUTREACH_DAILY_CAP);
+  return rampedDailyCap(process.env.OUTREACH_DOMAIN_VERIFIED_DATE, today, hardCap);
+}
 const SENDER = OUTREACH_FROM;
 
 function addDays(days: number): string {
@@ -55,7 +62,7 @@ export async function GET(req: NextRequest) {
   const redis = getRedis();
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const sentToday = parseInt((await redis.get(`outreach:${userId}:${today}`) as string | null) ?? "0", 10);
-  const dailyCap = MAX_PER_DAY;
+  const dailyCap = dailyCapFor(today);
   const remaining = Math.max(0, dailyCap - sentToday);
   const live = canDeliverGate(process.env.RESEND_API_KEY, process.env.OUTREACH_DOMAIN_VERIFIED);
 
@@ -93,17 +100,18 @@ export async function POST(req: NextRequest) {
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const dailyKey = `outreach:${userId}:${today}`;
 
-  // Check daily limit
+  // Check daily limit (warm-up ramp aware)
+  const maxPerDay = dailyCapFor(today);
   const sentToday = parseInt((await redis.get(dailyKey) as string | null) ?? "0", 10);
 
   // Drop malformed addresses (they hard-bounce) and anyone who unsubscribed
   // (never re-mail them) — both count as skipped.
   const { sendable, skipped } = gateLeads(leads, await getSuppressedEmails());
 
-  const canSend = remainingDailyCapacity(sendable.length, sentToday, MAX_PER_DAY);
+  const canSend = remainingDailyCapacity(sendable.length, sentToday, maxPerDay);
   if (canSend <= 0) {
     return NextResponse.json({
-      error: `Daily outreach limit of ${MAX_PER_DAY} reached`,
+      error: `Daily outreach limit of ${maxPerDay} reached`,
       sent: 0,
       failed: 0,
       skipped,

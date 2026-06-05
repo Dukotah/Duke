@@ -6,6 +6,7 @@ import {
   normalizeEmail,
   type OutreachLead,
   personalize,
+  rampedDailyCap,
   remainingDailyCapacity,
   resolveDailyCap,
 } from "./outreach";
@@ -113,6 +114,43 @@ describe("resolveDailyCap", () => {
 
   it("honors a custom fallback", () => {
     expect(resolveDailyCap(undefined, 50)).toBe(50);
+  });
+});
+
+describe("rampedDailyCap", () => {
+  const HARD = 200;
+
+  it("is OFF (hard cap) when no verified date is configured", () => {
+    expect(rampedDailyCap(undefined, "2026-06-05", HARD)).toBe(HARD);
+    expect(rampedDailyCap("", "2026-06-05", HARD)).toBe(HARD);
+    expect(rampedDailyCap("   ", "2026-06-05", HARD)).toBe(HARD);
+  });
+
+  it("falls back to the hard cap on an unparseable date", () => {
+    expect(rampedDailyCap("not-a-date", "2026-06-05", HARD)).toBe(HARD);
+  });
+
+  it("walks the warm-up rungs by week", () => {
+    // verified on 2026-06-01
+    expect(rampedDailyCap("2026-06-01", "2026-06-01", HARD)).toBe(20); // day 0
+    expect(rampedDailyCap("2026-06-01", "2026-06-07", HARD)).toBe(20); // day 6
+    expect(rampedDailyCap("2026-06-01", "2026-06-08", HARD)).toBe(50); // day 7
+    expect(rampedDailyCap("2026-06-01", "2026-06-14", HARD)).toBe(50); // day 13
+    expect(rampedDailyCap("2026-06-01", "2026-06-15", HARD)).toBe(100); // day 14
+    expect(rampedDailyCap("2026-06-01", "2026-06-21", HARD)).toBe(100); // day 20
+    expect(rampedDailyCap("2026-06-01", "2026-06-22", HARD)).toBe(HARD); // day 21
+    expect(rampedDailyCap("2026-06-01", "2026-08-01", HARD)).toBe(HARD); // well past
+  });
+
+  it("treats a future verified date as week 1 (most conservative)", () => {
+    expect(rampedDailyCap("2026-07-01", "2026-06-05", HARD)).toBe(20);
+  });
+
+  it("never exceeds a hard cap lower than the rung", () => {
+    // a deliberately low configured cap wins over the ramp rung
+    expect(rampedDailyCap("2026-06-01", "2026-08-01", 30)).toBe(30); // wk4 rung would be 30
+    expect(rampedDailyCap("2026-06-01", "2026-06-15", 40)).toBe(40); // wk3 rung 100 clamped to 40
+    expect(rampedDailyCap("2026-06-01", "2026-06-01", 10)).toBe(10); // wk1 rung 20 clamped to 10
   });
 });
 

@@ -77,6 +77,14 @@ spammer. Ramp slowly:
 | 3 | 75–100 |
 | 4+ | up to the 200/day cap |
 
+**The CRM now ramps this for you automatically.** Set
+`OUTREACH_DOMAIN_VERIFIED_DATE` (the `YYYY-MM-DD` you verified the domain in
+Resend) and the per-rep daily cap steps up on its own: 20/day in week 1, 50 in
+week 2, 100 in week 3, then the full cap from week 4. The warm-up capacity banner
+in the CRM reflects the current rung. `OUTREACH_DAILY_CAP` (default 200) is the
+hard ceiling the ramp tops out at — lower it if you want a gentler max. Leave
+`OUTREACH_DOMAIN_VERIFIED_DATE` unset to disable the ramp (flat cap, as before).
+
 Other things that keep you out of spam:
 
 - **Only email real, verified business addresses.** In the lead list, prefer
