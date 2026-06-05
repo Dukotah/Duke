@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Phone, Mail, Flame, Zap, ChevronRight, RefreshCw, Star, PhoneCall } from "lucide-react";
+import { Phone, Mail, Flame, Zap, ChevronRight, RefreshCw, Star, PhoneCall, Sparkles } from "lucide-react";
 import DailyGoals from "./DailyGoals";
 import MetricsCards from "./MetricsCards";
 import FollowUpBanner from "./FollowUpBanner";
@@ -10,6 +10,7 @@ interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
   website: string; city: string; county: string; tier: string;
   industry_fit: string; outreach_score: number; pitch: string; best_contact: string;
+  source?: "inbound" | "manual"; // present on custom leads; "inbound" = warm hand-raiser
 }
 
 interface LeadState {
@@ -155,8 +156,12 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="font-bold text-white text-sm leading-tight truncate" style={H}>{lead.name}</p>
-            {lead.tier === "A" && <Flame size={12} className="text-orange-400 shrink-0" />}
-            {lead.tier === "B" && <Zap size={12} className="text-yellow-400 shrink-0" />}
+            {lead.source === "inbound"
+              ? <span className="shrink-0 inline-flex items-center gap-0.5 text-[10px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-full" style={H}><Sparkles size={9} />Inbound</span>
+              : <>
+                  {lead.tier === "A" && <Flame size={12} className="text-orange-400 shrink-0" />}
+                  {lead.tier === "B" && <Zap size={12} className="text-yellow-400 shrink-0" />}
+                </>}
           </div>
           <p className="text-xs text-white/40 mt-0.5 truncate" style={H}>
             {lead.city} · {lead.category.replace(/_/g, " ")}

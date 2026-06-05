@@ -189,11 +189,16 @@ export async function GET(req: NextRequest) {
     });
 
     // Fetch custom leads for this user and prepend them
-    let customLeads: (Lead & { isCustom: true })[] = [];
+    let customLeads: (Lead & { isCustom: true; source: "inbound" | "manual" })[] = [];
     if (userId) {
       try {
         const custom = await getCustomLeads(userId);
-        customLeads = custom.map((cl) => ({
+        customLeads = custom.map((cl) => {
+        // Inbound leads (audit/tool/contact captures) note themselves "Inbound …";
+        // everything else is a lead Duke added by hand. Inbound = hottest = a real
+        // hand-raiser, so flag it for the queue to surface above cold tier-A leads.
+        const inbound = (cl.notes ?? "").trim().toLowerCase().startsWith("inbound");
+        return {
           id: `custom:${cl.id}`,
           name: cl.name,
           contact_name: cl.contactName ?? "",
@@ -215,7 +220,7 @@ export async function GET(req: NextRequest) {
           lat: "",
           lon: "",
           tier: "A",
-          tier_reason: "Manually added lead",
+          tier_reason: inbound ? "Inbound — warm hand-raiser" : "Manually added lead",
           builder: "",
           industry_fit: "high",
           outreach_score: 100,
@@ -223,7 +228,9 @@ export async function GET(req: NextRequest) {
           pitch: cl.notes || `Hi, I'm reaching out to ${cl.name} — do you have 2 minutes?`,
           is_chain: "0",
           isCustom: true as const,
-        }));
+          source: inbound ? ("inbound" as const) : ("manual" as const),
+        };
+        });
       } catch {}
     }
 
