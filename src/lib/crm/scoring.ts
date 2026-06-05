@@ -266,6 +266,77 @@ export function buildEmailDraft(lead: Lead, repName: string): { subject: string;
   return { subject, body: lines.join("\n") };
 }
 
+// Multi-touch cold-email sequence. buildEmailDraft is the first touch; most
+// replies to cold outreach come from touches 2–4, so this returns the whole
+// cadence — each a short, human, non-pushy follow-up that adds a NEW angle
+// instead of "just bumping this." Send-after days are from the FIRST email.
+export interface SequenceEmail {
+  step: number;
+  sendAfterDays: number;
+  purpose: string; // internal note on why this touch exists
+  subject: string;
+  body: string;
+}
+
+export function buildEmailSequence(lead: Lead, repName: string): SequenceEmail[] {
+  const first = lead.contactName?.split(" ")[0];
+  const greeting = first ? `Hi ${first},` : "Hi,";
+  const sign = repName && repName.trim().toLowerCase() !== "me" ? repName.trim() : "Copper Bay Tech";
+  const problems = problemList(lead.signals);
+  const top = problems[0];
+  const noSite = top?.key === "no_site";
+  const initial = buildEmailDraft(lead, repName);
+
+  // Touch 2 — gentle bump + lower the friction to a free audit (day 3).
+  const bump = [
+    greeting,
+    "",
+    `Just floating this back to the top of your inbox. No worries if now isn't the time — I know running ${lead.business} keeps you busy.`,
+    "",
+    noSite
+      ? `If it's useful, I can put together a quick example of what a site for ${lead.business} could look like — free, no strings.`
+      : `If it's easier, I can send over the free audit of your current site so you can see exactly what I'm seeing — takes me five minutes to pull.`,
+    "",
+    "Want me to send it?",
+    "",
+    "Best,",
+    sign,
+  ].join("\n");
+
+  // Touch 3 — new angle: the cost of doing nothing, framed around their town (day 7).
+  const angle = [
+    greeting,
+    "",
+    `One more thought and then I'll get out of your inbox. When someone in ${lead.city} searches for "${lead.industry.toLowerCase()} near me," the business with the faster, cleaner site usually gets the call — even when they're not the better business.`,
+    "",
+    `That's the gap I'd love to close for ${lead.business}. Fifteen minutes and I can show you exactly what I'd change and what it'd cost — no pressure either way.`,
+    "",
+    "Are mornings or afternoons better for you this week?",
+    "",
+    "Best,",
+    sign,
+  ].join("\n");
+
+  // Touch 4 — the breakup. These get a surprisingly high reply rate (day 14).
+  const breakup = [
+    greeting,
+    "",
+    `I don't want to keep cluttering your inbox, so this is my last note on it.`,
+    "",
+    `If improving ${lead.business}'s website ever moves up the list, just reply here or call/text me at (707) 239-6725 and I'll take care of it. I've kept the free audit on file for you either way.`,
+    "",
+    "Wishing you a great rest of the year,",
+    sign,
+  ].join("\n");
+
+  return [
+    { step: 1, sendAfterDays: 0, purpose: "Problem-led first touch", subject: initial.subject, body: initial.body },
+    { step: 2, sendAfterDays: 3, purpose: "Bump + offer the free audit", subject: `Re: ${initial.subject}`, body: bump },
+    { step: 3, sendAfterDays: 7, purpose: "New angle: cost of doing nothing", subject: `${lead.business} vs. the competition in ${lead.city}`, body: angle },
+    { step: 4, sendAfterDays: 14, purpose: "Breakup — high reply rate", subject: `Closing the loop on ${lead.business}`, body: breakup },
+  ];
+}
+
 function clamp01(n: number) {
   return Math.max(0, Math.min(1, n));
 }

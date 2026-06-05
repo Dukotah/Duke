@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLead, getReps, logEmail } from "@/lib/crm/store";
-import { buildEmailDraft } from "@/lib/crm/scoring";
+import { buildEmailDraft, buildEmailSequence } from "@/lib/crm/scoring";
 
 // GET /api/crm/leads/:id/email — a ready-to-send draft tailored to the
 // prospect's website problems. Handy for review before sending (and for an
@@ -11,7 +11,10 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   const repName = (await getReps())[0]?.name ?? "Me";
   const draft = buildEmailDraft(lead, repName);
-  return NextResponse.json({ draft, to: lead.email ?? null });
+  // Full multi-touch cadence (touch 1 == draft) so the UI / an agent can work
+  // the whole follow-up sequence, not just the first email.
+  const sequence = buildEmailSequence(lead, repName);
+  return NextResponse.json({ draft, sequence, to: lead.email ?? null });
 }
 
 function toHtml(text: string): string {
