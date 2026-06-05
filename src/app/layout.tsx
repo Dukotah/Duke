@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Lora } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -84,7 +85,13 @@ export default function RootLayout({
 }>) {
     return (
           <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
-                  <body className="min-h-full flex flex-col">{children}</body>
+                  <body className="min-h-full flex flex-col">
+          {children}
+          {/* Privacy-friendly, cookieless analytics. Pageviews flow
+              automatically once Web Analytics is enabled in the Vercel project
+              dashboard; custom funnel events are forwarded via src/lib/analytics.ts. */}
+          <Analytics />
+        </body>
           </html>
         );
 }

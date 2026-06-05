@@ -16,8 +16,13 @@
 //                      the layout for pageviews; for custom events you can also
 //                      route them here via Vercel's `track` if desired.
 //
-// Until one of those provider scripts is added, calls remain silent no-ops, so
-// it is safe to instrument conversion events ahead of choosing a provider.
+// Vercel Web Analytics is wired in by default (see <Analytics /> in the root
+// layout): every track() call below is also forwarded to it, so the funnel
+// records as soon as Web Analytics is enabled in the Vercel dashboard — no
+// extra provider script needed. The window-based providers below still work in
+// parallel if you also add GA4 / Plausible / GTM.
+
+import { track as vercelTrack } from "@vercel/analytics";
 
 declare global {
   interface Window {
@@ -45,6 +50,11 @@ export function track(event: string, props?: Record<string, unknown>): void {
   if (typeof window === "undefined") return;
 
   try {
+    // Vercel Web Analytics (cookieless). No-ops until <Analytics /> mounts and
+    // Web Analytics is enabled on the project; allowed prop values are
+    // string | number | boolean | null.
+    vercelTrack(event, props as Record<string, string | number | boolean | null> | undefined);
+
     // GA4 / gtag.js
     if (typeof window.gtag === "function") {
       window.gtag("event", event, props ?? {});
