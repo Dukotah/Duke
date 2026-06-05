@@ -11,6 +11,9 @@ export default function HealdsburgPage() {
   return (
     <CityPage
       city="Healdsburg"
+      relatedLinks={[
+        { href: "/it-support-healdsburg", label: "IT Support in Healdsburg", blurb: "Reliable IT for wine-country hospitality businesses." },
+      ]}
       description="Healdsburg's wine country economy runs on hospitality — boutique hotels, tasting rooms, upscale restaurants, and destination retail. We help Healdsburg businesses run the technology that keeps guests happy and operations smooth."
       painPoints={[
         "Reservation and booking systems that are clunky or unreliable during peak season",

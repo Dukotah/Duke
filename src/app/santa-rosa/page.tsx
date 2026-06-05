@@ -17,6 +17,10 @@ export default function SantaRosaPage() {
   return (
     <CityPage
       city="Santa Rosa"
+      relatedLinks={[
+        { href: "/web-design-santa-rosa", label: "Web Design in Santa Rosa", blurb: "Fast, modern sites that rank locally." },
+        { href: "/it-support-santa-rosa", label: "IT Support in Santa Rosa", blurb: "Same-day managed IT for Santa Rosa businesses." },
+      ]}
       description="Santa Rosa businesses deserve technology that works as hard as they do. Copper Bay Tech provides custom websites, managed IT support, and cybersecurity — with honest flat-fee pricing and no surprise invoices."
       painPoints={[
         "Your website isn't ranking locally in Santa Rosa searches",

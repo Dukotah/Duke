@@ -11,6 +11,9 @@ export default function WindsorPage() {
   return (
     <CityPage
       city="Windsor"
+      relatedLinks={[
+        { href: "/it-support-windsor", label: "IT Support in Windsor", blurb: "Managed IT and cloud migration for Windsor businesses." },
+      ]}
       description="Windsor is one of Sonoma County's fastest-growing communities, with a mix of family-owned businesses, local retail, and light industrial operations. We help Windsor businesses modernize their technology without the enterprise price tag."
       painPoints={[
         "Outdated websites that don't reflect how good the business actually is",

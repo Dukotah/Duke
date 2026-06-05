@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import RelatedLinks, { type RelatedLink } from "@/components/RelatedLinks";
 import { ArrowRight, Globe, Server, ShieldCheck, Phone } from "lucide-react";
 
 type CityPageProps = {
@@ -10,7 +11,25 @@ type CityPageProps = {
   painPoints: string[];
   services: { icon: React.ElementType; title: string; blurb: string }[];
   nearbyAreas: string[];
+  /**
+   * Optional city-specific internal links (e.g. a /it-support-{city} page),
+   * prepended ahead of the shared service-hub links. Keeps each city page a
+   * hub that passes equity to the pages we want ranking.
+   */
+  relatedLinks?: RelatedLink[];
 };
+
+// Shared on every city page: links to the three canonical service hubs plus
+// the highest-intent supporting pages. Turns otherwise dead-end location pages
+// into internal-link hubs (topical cluster + equity flow).
+const SERVICE_HUB_LINKS: RelatedLink[] = [
+  { href: "/web-design-sonoma-county", label: "Web Design & Development", blurb: "Fast, modern sites that bring in calls and bookings." },
+  { href: "/it-support-sonoma-county", label: "Managed IT Support", blurb: "Same-day help, backups, and networks that just work." },
+  { href: "/cybersecurity-small-business", label: "Cybersecurity", blurb: "Protect your business data, email, and customers." },
+  { href: "/pricing", label: "Pricing & Free Estimate", blurb: "See typical costs and get a no-pressure quote." },
+  { href: "/blog/how-to-choose-an-it-company-sonoma-county", label: "How to choose an IT company", blurb: "What to look for (and avoid) in a local provider." },
+  { href: "/work", label: "Our Work & Reviews", blurb: "Examples of what we build for local businesses." },
+];
 
 export default function CityPage({
   city,
@@ -19,6 +38,7 @@ export default function CityPage({
   painPoints,
   services,
   nearbyAreas,
+  relatedLinks = [],
 }: CityPageProps) {
   return (
     <>
@@ -158,6 +178,12 @@ export default function CityPage({
             </div>
           </div>
         </section>
+
+        {/* Internal links — service hubs + city-specific pages */}
+        <RelatedLinks
+          heading={`Services for ${city} businesses`}
+          links={[...relatedLinks, ...SERVICE_HUB_LINKS]}
+        />
 
         {/* CTA */}
         <section className="py-20 bg-[#18181B]">
