@@ -23,3 +23,17 @@ export const MAILING_ADDRESS = "Copper Bay Tech, 422 Larkfield Ctr, Santa Rosa, 
 // to Google — the single highest-leverage thing for local map-pack ranking.
 // Leave "" until your GBP is live so we never link to a dead page.
 export const GOOGLE_REVIEW_URL = "";
+
+// Social profiles. Paste a full URL to make that icon appear in the footer (and
+// feed Google's LocalBusiness `sameAs`). Leave "" to hide it — we never render a
+// link to a profile that doesn't exist. LinkedIn alone is worth adding for a
+// tech company; the rest are optional.
+export const SOCIAL = {
+  linkedin: "",
+  facebook: "",
+  instagram: "",
+  x: "",
+} as const;
+
+// Convenience: the non-empty profile URLs, for schema `sameAs`.
+export const SOCIAL_URLS: string[] = Object.values(SOCIAL).filter(Boolean);

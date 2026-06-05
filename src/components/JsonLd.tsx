@@ -33,6 +33,7 @@ export function localBusinessSchema(): Json {
     url: SITE,
     telephone: PHONE,
     email: EMAIL,
+    priceRange: "$$",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Petaluma",
