@@ -75,7 +75,7 @@ Our total liability to you for any claims arising out of or related to these ter
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-white">
-      <Nav />
+      <Nav light />
 
       <main className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">

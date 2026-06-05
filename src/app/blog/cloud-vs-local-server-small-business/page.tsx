@@ -14,7 +14,7 @@ export default function CloudVsLocalPost() {
     <div className="min-h-screen bg-white">
       <JsonLd schema={blogPostingSchema({ title: "Cloud vs. Local Server: What's Actually Right for Your Small Business?", description: "Should your small business move to the cloud or keep a local server? Here's a direct comparison for businesses with 3–30 employees — including when local still makes sense.", url: "https://copperbaytech.com/blog/cloud-vs-local-server-small-business", datePublished: "2026-03-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Cloud vs Local Server" }])} />
-      <Nav />
+      <Nav light />
 
       <article className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">

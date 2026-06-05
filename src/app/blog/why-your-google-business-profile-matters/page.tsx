@@ -14,7 +14,7 @@ export default function GoogleBusinessProfilePost() {
     <div className="min-h-screen bg-white">
       <JsonLd schema={blogPostingSchema({ title: "Why Your Google Business Profile Is the Most Important Page You Don't Own", description: "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search, and exactly what to fix today.", url: "https://copperbaytech.com/blog/why-your-google-business-profile-matters", datePublished: "2026-02-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Google Business Profile Matters" }])} />
-      <Nav />
+      <Nav light />
 
       <article className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">

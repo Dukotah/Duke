@@ -16,7 +16,13 @@ const links = [
   { label: "Contact", href: "/#contact" },
 ];
 
-export default function Nav() {
+// `light` is for pages whose hero/top section is light (FAQ, About, Terms, and
+// the white-background blog articles). Without it the nav floats transparent
+// with white text over a light background and the links/wordmark vanish until
+// you scroll. Pages with a dark hero (the majority) leave it false and keep the
+// glass-over-hero look. Defaulting to false is the safe choice: a missed
+// dark-hero page just shows a readable solid nav, never an invisible one.
+export default function Nav({ light = false }: { light?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
@@ -46,8 +52,9 @@ export default function Nav() {
   }, [open]);
 
   // When the chrome is "light" (solid linen) the text/icons go dark; when it's
-  // floating over the dark hero they stay white. Drawer-open forces solid.
-  const solid = scrolled || open;
+  // floating over the dark hero they stay white. Drawer-open and light-bg pages
+  // force solid so the nav is always legible.
+  const solid = scrolled || open || light;
 
   return (
     <header

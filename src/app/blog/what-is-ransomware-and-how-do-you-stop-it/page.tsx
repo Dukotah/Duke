@@ -14,7 +14,7 @@ export default function RansomwarePost() {
     <div className="min-h-screen bg-white">
       <JsonLd schema={blogPostingSchema({ title: "What Is Ransomware and How Do Small Businesses Actually Stop It?", description: "Ransomware attacks on small businesses are up 300%. This is what it is, how it gets in, and the specific steps Sonoma County business owners can take to protect themselves.", url: "https://copperbaytech.com/blog/what-is-ransomware-and-how-do-you-stop-it", datePublished: "2026-02-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "What Is Ransomware" }])} />
-      <Nav />
+      <Nav light />
 
       <article className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">

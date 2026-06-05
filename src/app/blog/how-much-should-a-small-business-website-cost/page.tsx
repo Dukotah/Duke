@@ -14,7 +14,7 @@ export default function WebsiteCostPost() {
     <div className="min-h-screen bg-white">
       <JsonLd schema={blogPostingSchema({ title: "How Much Should a Small Business Website Cost? (Honest Answer)", description: "Website pricing ranges wildly — from $500 DIY to $50,000 agency builds. Here's what actually drives the cost and what Sonoma County small businesses should realistically expect to pay.", url: "https://copperbaytech.com/blog/how-much-should-a-small-business-website-cost", datePublished: "2026-04-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Small Business Website Cost" }])} />
-      <Nav />
+      <Nav light />
 
       <article className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">

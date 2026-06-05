@@ -23,7 +23,10 @@ export default function ItHealthCheckPage() {
   return (
     <>
       <Nav />
-      <main className="pt-16">
+      {/* No pt-16: the ITQuiz hero is dark (bg-[#18181B]) and its own py-24
+          clears the fixed nav, so let it run full-bleed behind the transparent
+          nav like every other dark-hero page. */}
+      <main>
         <ITQuiz />
       </main>
       <Footer />

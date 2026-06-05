@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <Nav />
+      <Nav light />
       <main className="pt-16">
         <About />
         <Contact />
