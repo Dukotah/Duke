@@ -64,6 +64,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/cybersecurity-petaluma`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/tools`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/tools/missed-call-calculator`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/tools/website-cost-estimator`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/work`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/case-studies`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },

@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import PricingEstimator from "@/components/PricingEstimator";
 import Comparison from "@/components/Comparison";
-import { ArrowRight, Globe, Server, ShieldCheck, Check, Phone, Sparkles } from "lucide-react";
+import { ArrowRight, Globe, Server, ShieldCheck, Check, Phone, Sparkles, Calculator } from "lucide-react";
 
 const pricingSchema = {
   "@context": "https://schema.org",
@@ -295,6 +295,16 @@ export default function Pricing() {
               We quote a number before any work starts, and that&apos;s the number you pay. No hourly
               billing, no change-order padding, no hidden fees.
             </p>
+
+            <Link
+              href="/tools/website-cost-estimator"
+              className="group mx-auto mt-6 inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/85 transition-colors hover:border-[#F97316]/50 hover:text-white"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              <Calculator size={15} color="#F97316" />
+              Try the instant website cost estimator
+              <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+            </Link>
 
             {/* guarantee strip */}
             <ul className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-8">
