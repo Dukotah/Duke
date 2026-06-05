@@ -11,7 +11,7 @@ import {
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
 import { buildCallScript, buildObjections, bestTimeToCall } from "@/lib/crm/playbook";
-import { BOOKING_URL, SITE_URL } from "@/config/site";
+import { readBookingOverride, resolveBookingUrl } from "@/lib/booking";
 
 interface Lead {
   id: string; name: string; contact_name: string; category: string; phone: string; email: string;
@@ -140,11 +140,11 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   // eslint-disable-next-line react-hooks/set-state-in-effect -- sync notes field when the selected lead changes
   useEffect(() => { setNotes(state.notes ?? ""); prevNotes.current = state.notes ?? ""; }, [state.notes]);
 
-  // A rep can paste a personal Calendly link (stored per-browser by BulkOutreach);
+  // A rep can paste a personal scheduling link (shared per-browser via lib/booking);
   // read it client-side so it overrides the on-site booking page when present.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is client-only; read once on mount
-    try { setCalOverride(localStorage.getItem("calendly_link") ?? ""); } catch { /* ignore */ }
+    setCalOverride(readBookingOverride());
   }, []);
 
   const postActivity = (body: Record<string, unknown>) => {
@@ -274,12 +274,9 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const objections = buildObjections(playbookLead);
   const callWindow = bestTimeToCall(lead.category);
 
-  // Canonical booking link: a rep's personal Calendly override if set, otherwise
-  // the on-site /schedule funnel made absolute so it works in email/SMS.
-  const cal = calOverride.trim();
-  const bookingUrl = cal
-    ? (cal.startsWith("http") ? cal : `https://${cal}`)
-    : BOOKING_URL.startsWith("http") ? BOOKING_URL : `${SITE_URL}${BOOKING_URL}`;
+  // Canonical booking link: a rep's personal override if set, otherwise the
+  // on-site /schedule funnel made absolute so it works in email/SMS.
+  const bookingUrl = resolveBookingUrl(calOverride);
 
   return (
     <>
