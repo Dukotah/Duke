@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, Send, Save, RotateCcw, Check, Mail } from "lucide-react";
 import {
   loadTemplates,
@@ -43,6 +43,19 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
   const [delivered, setDelivered] = useState(true);
   const [savedFlash, setSavedFlash] = useState(false);
 
+  // Today's sending capacity (warm-up ramp) so a rep can't blow past the daily cap.
+  const [capacity, setCapacity] = useState<{ sentToday: number; dailyCap: number; remaining: number; live: boolean } | null>(null);
+  const fetchCapacity = useCallback(async () => {
+    try {
+      const res = await fetch("/api/crm/outreach");
+      if (res.ok) setCapacity(await res.json());
+    } catch { /* non-fatal */ }
+  }, []);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
+  useEffect(() => { fetchCapacity(); }, [fetchCapacity]);
+
+  const atCap = !!capacity && capacity.remaining < 1;
+
   const editable = templateKey !== "custom";
   const overridden = editable && hasOverride(templateKey);
 
@@ -78,7 +91,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
   };
 
   const handleSend = async () => {
-    if (!subject.trim() || !body.trim()) return;
+    if (!subject.trim() || !body.trim() || atCap) return;
     setSending(true);
     setError("");
     try {
@@ -101,6 +114,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
       setDelivered((d.delivered ?? 0) >= 1);
       setDone(true);
       onSent?.();
+      fetchCapacity(); // reflect the just-consumed daily budget
     } catch {
       setError("Network error — please try again");
       setSending(false);
@@ -210,13 +224,23 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
             </div>
 
             {/* Action bar */}
-            <div className="shrink-0 border-t border-white/[0.07] px-5 py-4 flex items-center gap-3">
-              <button onClick={onClose} className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors" style={H}>Cancel</button>
-              <button onClick={handleSend} disabled={sending || !subject.trim() || !body.trim()}
-                className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-opacity"
-                style={{ backgroundColor: "#F97316", ...H }}>
-                <Send size={14} />{sending ? "Sending…" : `Send to ${lead.name}`}
-              </button>
+            <div className="shrink-0 border-t border-white/[0.07] px-5 py-4">
+              {capacity && (
+                <p className={`text-xs mb-3 flex items-center gap-1.5 ${atCap ? "text-yellow-400" : "text-white/35"}`} style={H}>
+                  <Send size={11} className="shrink-0" />
+                  {atCap
+                    ? "Daily sending cap reached — resumes tomorrow"
+                    : `${capacity.remaining} of ${capacity.dailyCap} left in today's cap${capacity.live ? "" : " · practice mode (tracked, not sent)"}`}
+                </p>
+              )}
+              <div className="flex items-center gap-3">
+                <button onClick={onClose} className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors" style={H}>Cancel</button>
+                <button onClick={handleSend} disabled={sending || !subject.trim() || !body.trim() || atCap}
+                  className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-opacity"
+                  style={{ backgroundColor: "#F97316", ...H }}>
+                  <Send size={14} />{sending ? "Sending…" : atCap ? "Daily cap reached" : `Send to ${lead.name}`}
+                </button>
+              </div>
             </div>
           </>
         )}

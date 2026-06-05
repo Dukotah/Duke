@@ -219,6 +219,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   };
 
   const handleSend = async () => {
+    if (atCap) return;
     setSending(true);
     setSendError("");
     try {
@@ -255,6 +256,10 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
 
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
   const preview = previewEmail();
+
+  // Warm-up cap guards: block at zero, warn when the batch exceeds what's left today.
+  const atCap = !!capacity && capacity.remaining < 1;
+  const overCap = !!capacity && !atCap && selected.size > capacity.remaining;
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-[#111113]" style={H}>
@@ -630,6 +635,17 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
         </div>
       )}
 
+      {/* Cap guard notice (preview step) */}
+      {step === "preview" && (atCap || overCap) && (
+        <div className="shrink-0 px-4 pt-3">
+          <p className="text-xs text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 rounded-xl px-3 py-2" style={H}>
+            {atCap
+              ? "Daily sending cap reached — sends resume tomorrow as the warm-up ramps."
+              : `Only ${capacity?.remaining} of your ${selected.size} selected will send today (daily cap). The rest will be skipped — send them tomorrow.`}
+          </p>
+        </div>
+      )}
+
       {/* Bottom action bar */}
       {step !== "result" && (
         <div className="shrink-0 border-t border-white/[0.07] px-4 py-4 flex items-center gap-3">
@@ -668,12 +684,12 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
           {step === "preview" && (
             <button
               onClick={handleSend}
-              disabled={sending}
+              disabled={sending || atCap}
               className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
               style={{ backgroundColor: "#F97316", ...H }}
             >
               <Send size={14} />
-              {sending ? "Sending…" : `Send to ${selected.size} leads`}
+              {sending ? "Sending…" : atCap ? "Daily cap reached" : `Send to ${selected.size} leads`}
             </button>
           )}
         </div>
