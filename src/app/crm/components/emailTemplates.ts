@@ -18,7 +18,7 @@ export const DEFAULT_TEMPLATES: EmailTemplate[] = [
     subject: "Quick question about {business}",
     body: `Hi {name},
 
-I went looking for {business} online and couldn't find a website anywhere. Figured it was worth reaching out, because for most local businesses that quietly costs them customers without them ever knowing.
+I went looking for {business} online and couldn't find a website anywhere. Figured it was worth reaching out, because for most local businesses that is quietly costing them customers without them ever knowing.
 
 These days people check you out online before they ever pick up the phone. If there's nothing to find, they usually just go with whoever shows up first.
 

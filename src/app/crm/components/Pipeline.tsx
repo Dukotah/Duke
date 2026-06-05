@@ -205,12 +205,12 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
           const stageLeads = byStage[stage.key] ?? [];
           return (
             <div key={stage.key} className={`shrink-0 w-52 sm:w-auto snap-start flex flex-col rounded-2xl border p-3 min-h-[200px] ${stage.bg} ${stage.border}`}>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className={`w-1.5 h-1.5 rounded-full ${stage.dot}`} />
-                  <p className={`text-xs font-bold uppercase tracking-wider ${stage.color}`} style={H}>{stage.label}</p>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${stage.dot}`} />
+                  <p className={`text-xs font-bold uppercase tracking-wider whitespace-nowrap truncate ${stage.color}`} style={H}>{stage.label}</p>
                 </div>
-                <span className={`text-xs font-bold ${stage.color} opacity-60`} style={H}>{stageLeads.length}</span>
+                <span className={`text-xs font-bold shrink-0 pl-1 ${stage.color} opacity-60`} style={H}>{stageLeads.length}</span>
               </div>
               <div className="flex-1 space-y-2">
                 {stageLeads.slice(0, 8).map((lead) => (
