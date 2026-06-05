@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureToolLead, toolLabel } from "@/lib/crm/intake";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, name, context } = body;
+    const { email, name, context, website } = body;
 
     if (!email || typeof email !== "string" || !email.includes("@")) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+
+    // Land every free-tool hand-raiser in the /crm queue as a warm tier-A lead,
+    // carrying the tool's own result summary as the note. Non-fatal and
+    // independent of email sending, so a Redis/CRM hiccup never breaks the
+    // visitor-facing capture (and leads still land even without RESEND configured).
+    try {
+      await captureToolLead({ email, name, website, context: context ?? "Free tool" });
+    } catch (err) {
+      console.error("Capture → CRM lead failed (non-fatal):", err);
     }
 
     const apiKey = process.env.RESEND_API_KEY;
@@ -17,7 +28,10 @@ export async function POST(req: NextRequest) {
     }
 
     const displayName = name?.trim() || "there";
+    // Full context (with URL + findings) for Duke's own notification; a clean tool
+    // name for the customer-facing auto-reply so it doesn't echo a raw URL back.
     const displayContext = context || "website tool";
+    const customerTool = context ? toolLabel(context) : "website tool";
 
     await Promise.all([
       // Notify Duke
@@ -47,7 +61,7 @@ export async function POST(req: NextRequest) {
           subject: "Your results from Copper Bay Tech",
           html: `
             <p>Hi ${displayName},</p>
-            <p>Thanks for using the ${displayContext} — I'll follow up personally if there's anything I can help with.</p>
+            <p>Thanks for using the ${customerTool} — I'll follow up personally if there's anything I can help with.</p>
             <p>In the meantime, if you have questions or want to talk through what you found, feel free to reply to this email or call/text me at (707) 239-6725.</p>
             <p>— Duke<br>Copper Bay Tech<br>Petaluma, CA</p>
             <hr style="border:none;border-top:1px solid #eee;margin:20px 0">

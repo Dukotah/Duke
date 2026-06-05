@@ -89,6 +89,66 @@ export async function captureAuditLead(input: AuditIntake): Promise<IntakeResult
   return { leadId: lead.id, created: true, ownerId };
 }
 
+export interface ToolIntake {
+  email: string;
+  name?: string; // person, when the tool collected one (most don't)
+  website?: string; // the audited site, when the tool has one
+  context: string; // the human summary the tool already builds — becomes the note + niche
+}
+
+/**
+ * Short tool label from the context line, for the lead's niche/category column.
+ * The tools format context as "Tool Name — details", separated by an em dash, so
+ * the head before it is the tool name ("Website Audit Tool — https://x" → "Website
+ * Audit Tool"). Falls back to a generic label.
+ */
+export function toolLabel(context: string): string {
+  const head = (context || "").split("—")[0].trim();
+  return head || "Free tool";
+}
+
+/** Human note so Duke sees which tool they used and the result at a glance. */
+export function buildToolNote(context: string): string {
+  const c = (context || "").trim();
+  return `Inbound — used a free tool on the site and entered their email for the results.${c ? ` ${c}.` : ""} They raised their hand, so treat as a warm lead.`;
+}
+
+/**
+ * Turn any free-tool email capture (audit suite, calculators, quiz) into a CRM
+ * lead (admin-owned custom lead = tier-A, top of queue), so hand-raisers land in
+ * the /crm pipeline instead of only Duke's inbox. Idempotent per owner by email
+ * (and by site host when a website is known), so it collapses with any prior
+ * audit/contact lead from the same person. Returns null if there's no email to
+ * key on or no CRM user yet. Callers must treat a throw as non-fatal so a Redis
+ * hiccup never breaks the visitor-facing capture response.
+ */
+export async function captureToolLead(input: ToolIntake): Promise<IntakeResult | null> {
+  const email = input.email?.trim().toLowerCase();
+  if (!email) return null;
+
+  const ownerId = await inboundOwnerId();
+  if (!ownerId) return null; // no CRM user yet — nothing to attach the lead to
+
+  const url = input.website?.trim();
+  const existing = (await getCustomLeads(ownerId)).find(
+    (l) => l.email?.trim().toLowerCase() === email || (!!url && sameHost(l.website, url)),
+  );
+  if (existing) return { leadId: existing.id, created: false, ownerId };
+
+  const lead = await createCustomLead(ownerId, {
+    name: (url ? hostLabel(url) : "") || input.name?.trim() || email,
+    contactName: input.name?.trim() || "", // greet by name when we have one
+    phone: "",
+    email,
+    website: url ?? "",
+    city: "",
+    county: "",
+    niche: toolLabel(input.context),
+    notes: buildToolNote(input.context),
+  });
+  return { leadId: lead.id, created: true, ownerId };
+}
+
 export interface ContactIntake {
   name: string;
   business?: string;

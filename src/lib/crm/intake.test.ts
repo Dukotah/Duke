@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hostLabel, sameHost, buildAuditNote } from "./intake";
+import { hostLabel, sameHost, buildAuditNote, toolLabel, buildToolNote } from "./intake";
 
 describe("intake — hostLabel", () => {
   it("strips scheme and www", () => {
@@ -32,5 +32,33 @@ describe("intake — buildAuditNote", () => {
   it("clamps out-of-range scores", () => {
     expect(buildAuditNote(150)).toContain("100/100");
     expect(buildAuditNote(-5)).toContain("0/100");
+  });
+});
+
+describe("intake — toolLabel", () => {
+  it("takes the tool name before the em dash", () => {
+    expect(toolLabel("Website Audit Tool — https://acme.com (SEO 42/100)")).toBe("Website Audit Tool");
+    expect(toolLabel("Missed-Call Calculator — ~$48k/yr at risk")).toBe("Missed-Call Calculator");
+    expect(toolLabel("IT Risk Quiz — At Risk (score: 7)")).toBe("IT Risk Quiz");
+  });
+  it("keeps a hyphenated tool name intact (splits on em dash, not hyphen)", () => {
+    expect(toolLabel("Missed-Call Calculator — x")).toContain("Missed-Call");
+  });
+  it("falls back to a generic label for empty/odd context", () => {
+    expect(toolLabel("")).toBe("Free tool");
+    expect(toolLabel("No separator here")).toBe("No separator here");
+  });
+});
+
+describe("intake — buildToolNote", () => {
+  it("flags a warm inbound and embeds the tool's own summary", () => {
+    const note = buildToolNote("Website Cost Estimator — $4.5k–$7.5k (10 pages)");
+    expect(note.toLowerCase()).toContain("warm");
+    expect(note).toContain("$4.5k–$7.5k");
+    expect(note.toLowerCase()).toContain("free tool");
+  });
+  it("reads cleanly when context is empty", () => {
+    expect(buildToolNote("")).not.toContain("..");
+    expect(buildToolNote("").toLowerCase()).toContain("warm");
   });
 });

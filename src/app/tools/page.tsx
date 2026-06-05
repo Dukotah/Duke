@@ -638,16 +638,31 @@ export default function ToolsPage() {
   const [captureEmail, setCaptureEmail] = useState("");
   const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done">("idle");
 
+  // Boil the completed checks down to a one-line diagnosis so the CRM lead carries
+  // the specific problems found — Duke can then open the follow-up with their issue.
+  const buildAuditSummary = (): string => {
+    const parts: string[] = [];
+    if (checks.speed.status === "done") parts.push(`Speed ${checks.speed.data.score}/100`);
+    if (checks.ssl.status === "done") parts.push(checks.ssl.data.valid && !checks.ssl.data.error ? "SSL valid" : "SSL issue");
+    if (checks.seo.status === "done") parts.push(`SEO ${checks.seo.data.score}/100`);
+    if (checks.headers.status === "done") parts.push(`Security ${checks.headers.data.score}/100${checks.headers.data.critical ? ` (${checks.headers.data.critical} critical)` : ""}`);
+    if (checks.links.status === "done" && checks.links.data.broken.length) parts.push(`${checks.links.data.broken.length} broken links`);
+    if (checks.mobile.status === "done") parts.push(`Mobile ${checks.mobile.data.mobileScore}/100`);
+    return parts.join(", ");
+  };
+
   const handleEmailCapture = async () => {
     if (!captureEmail.includes("@") || captureStatus !== "idle") return;
     setCaptureStatus("loading");
     try {
+      const summary = buildAuditSummary();
       await fetch("/api/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: captureEmail,
-          context: `Website Audit Tool — ${auditedUrl}`,
+          website: auditedUrl,
+          context: `Website Audit Tool — ${auditedUrl}${summary ? ` (${summary})` : ""}`,
         }),
       });
     } catch (_) {}
