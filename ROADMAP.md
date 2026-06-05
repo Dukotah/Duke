@@ -13,8 +13,7 @@ by priority and grouped into shippable phases.
 The lead-capture → outreach → tracking loop. Shipped in this iteration:
 
 - [x] **CRM data model & store** (`src/lib/crm/`) — contacts, activities, and
-      per-email tracking with a pluggable storage interface (JSON-file adapter
-      today, swap to a hosted DB for production — see "Storage" below).
+      per-email tracking, persisted to Upstash Redis (see "Storage" below).
 - [x] **Lead capture wired to CRM** — the existing contact form now creates /
       updates a CRM contact in addition to emailing Duke.
 - [x] **Outreach sending** (`POST /api/crm/outreach`) — send a templated email
@@ -34,9 +33,10 @@ The lead-capture → outreach → tracking loop. Shipped in this iteration:
 
 ## Phase 1 — Make the loop production-grade (next 1–2 weeks)
 
-- [ ] **Durable storage.** The JSON-file store is ephemeral on Vercel. Move to
-      Vercel KV / Upstash Redis or Postgres (Neon/Supabase). The `CrmStore`
-      interface is already the single seam to swap.
+- [x] **Durable storage.** _(done)_ The power-dialer store was migrated off the
+      ephemeral local SQLite file to **Upstash Redis** (`src/lib/crm/store.ts`),
+      the same backend `src/lib/db.ts` already uses. Leads, calls, and
+      dispositions now survive serverless cold starts and Vercel's read-only FS.
 - [ ] **Verify the sending domain** in Resend (SPF/DKIM/DMARC) so outreach
       lands in the inbox, not spam. Required before any real cold send.
 - [ ] **Resend webhook signature verification** is implemented; wire the real
@@ -105,10 +105,12 @@ Status never downgrades (a reply won't be overwritten by a later open).
 
 ## Storage
 
-The default `JsonFileStore` persists to `CRM_DATA_DIR` (`.data/` by default).
-This is fine for local dev but **ephemeral on serverless** — see Phase 1.
-Swap by implementing the `CrmStore` interface in `src/lib/crm/store.ts`
-against KV/Postgres; nothing else changes.
+Persistence runs on **Upstash Redis** (`src/lib/redis.ts`), shared with the
+rest of the app (`src/lib/db.ts`). The power-dialer store (`src/lib/crm/store.ts`)
+keys everything under a `crm:` prefix and is durable across serverless cold
+starts. Set `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (see
+`.env.example`). To move to Postgres later, reimplement the same async
+functions in `store.ts`; the API routes already `await` them.
 
 See `docs/CRM_SETUP.md` for required environment variables and the Resend
 webhook setup.
