@@ -34,8 +34,8 @@ export interface ClientReview {
 // Empty until you have genuine, approved reviews. See header.
 export const REAL_REVIEWS: ClientReview[] = [];
 
-export function hasRealReviews(): boolean {
-  return REAL_REVIEWS.length > 0;
+export function hasRealReviews(reviews: ClientReview[] = REAL_REVIEWS): boolean {
+  return reviews.length > 0;
 }
 
 export interface Aggregate {
@@ -46,12 +46,12 @@ export interface Aggregate {
 }
 
 /** Computed aggregate, or null when there are no real reviews yet. */
-export function aggregateRating(): Aggregate | null {
-  if (!REAL_REVIEWS.length) return null;
-  const sum = REAL_REVIEWS.reduce((t, r) => t + r.rating, 0);
+export function aggregateRating(reviews: ClientReview[] = REAL_REVIEWS): Aggregate | null {
+  if (!reviews.length) return null;
+  const sum = reviews.reduce((t, r) => t + r.rating, 0);
   return {
-    ratingValue: Math.round((sum / REAL_REVIEWS.length) * 10) / 10,
-    reviewCount: REAL_REVIEWS.length,
+    ratingValue: Math.round((sum / reviews.length) * 10) / 10,
+    reviewCount: reviews.length,
     bestRating: 5,
     worstRating: 1,
   };
@@ -67,8 +67,8 @@ const BUSINESS_NAME = "Copper Bay Tech";
  * Google-recommended way to earn review rich results. Returns null when there
  * are no real reviews, so callers can `{schema && <JsonLd schema={schema} />}`.
  */
-export function reviewsSchema(): Json | null {
-  const agg = aggregateRating();
+export function reviewsSchema(reviews: ClientReview[] = REAL_REVIEWS): Json | null {
+  const agg = aggregateRating(reviews);
   if (!agg) return null;
   return {
     "@context": "https://schema.org",
@@ -82,7 +82,7 @@ export function reviewsSchema(): Json | null {
       bestRating: agg.bestRating,
       worstRating: agg.worstRating,
     },
-    review: REAL_REVIEWS.map((r) => ({
+    review: reviews.map((r) => ({
       "@type": "Review",
       reviewRating: {
         "@type": "Rating",
