@@ -14,8 +14,7 @@ export const EMAIL = "contact@copperbaytech.com";
 export const OUTREACH_FROM = "contact@copperbaytech.com";
 
 // CAN-SPAM requires a real physical postal address in every marketing email.
-// ⚠️ Update this with your actual street address or registered P.O. Box.
-export const MAILING_ADDRESS = "Copper Bay Tech, Petaluma, CA 94952";
+export const MAILING_ADDRESS = "Copper Bay Tech, 422 Larkfield Ctr, Santa Rosa, CA 95403";
 
 // Your Google Business Profile "write a review" short link. Get it from the
 // GBP dashboard ("Ask for reviews" → copy link), or build it as

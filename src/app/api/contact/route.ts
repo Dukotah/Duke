@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureContactLead } from "@/lib/crm/intake";
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,6 +8,15 @@ export async function POST(req: NextRequest) {
 
     if (!name || !business || !email || !service) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    // Bridge into the CRM: every contact-form submission becomes a tier-A lead
+    // in the /crm queue (deduped by email). Isolated + non-fatal so a CRM/Redis
+    // hiccup never breaks the visitor's submission or the email notifications.
+    try {
+      await captureContactLead({ name, business, email, phone, service, message });
+    } catch (e) {
+      console.error("Contact→CRM bridge failed (non-fatal):", e);
     }
 
     const apiKey = process.env.RESEND_API_KEY;

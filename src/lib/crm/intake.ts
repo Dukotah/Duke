@@ -88,3 +88,59 @@ export async function captureAuditLead(input: AuditIntake): Promise<IntakeResult
   });
   return { leadId: lead.id, created: true, ownerId };
 }
+
+export interface ContactIntake {
+  name: string;
+  business?: string;
+  email: string;
+  phone?: string;
+  service?: string;
+  message?: string;
+}
+
+/** Human note so Duke sees the full contact-form context at a glance. */
+export function buildContactNote(input: ContactIntake): string {
+  return [
+    "Inbound — submitted the website contact form. They reached out directly, so treat as a warm lead.",
+    input.service ? `Wants: ${input.service}.` : "",
+    input.message ? `Their message: "${input.message.trim()}"` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+/**
+ * Turn a contact-form submission into a CRM lead (admin-owned custom lead =
+ * tier-A, top of queue), the same path the audit bridge uses.
+ *
+ * Idempotent per owner by email: a repeat submission from the same person won't
+ * duplicate the card or clobber Duke's notes/disposition — first one wins. Also
+ * collapses with any prior audit lead from the same email (one person, one card).
+ * Returns null if there's no email to key on or no CRM user to assign to.
+ * Callers must treat a throw as non-fatal so a Redis hiccup never breaks the
+ * visitor-facing contact response.
+ */
+export async function captureContactLead(input: ContactIntake): Promise<IntakeResult | null> {
+  const email = input.email?.trim().toLowerCase();
+  if (!email) return null;
+
+  const ownerId = await inboundOwnerId();
+  if (!ownerId) return null; // no CRM user yet — nothing to attach the lead to
+
+  const existing = (await getCustomLeads(ownerId)).find(
+    (l) => l.email?.trim().toLowerCase() === email,
+  );
+  if (existing) return { leadId: existing.id, created: false, ownerId };
+
+  const lead = await createCustomLead(ownerId, {
+    name: input.business?.trim() || input.name?.trim() || email,
+    phone: input.phone?.trim() ?? "",
+    email,
+    website: "",
+    city: "",
+    county: "",
+    niche: input.service?.trim() || "Contact form",
+    notes: buildContactNote(input),
+  });
+  return { leadId: lead.id, created: true, ownerId };
+}
