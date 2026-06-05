@@ -185,6 +185,9 @@ export default function CybersecuritySmallBusiness() {
                   <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>Principal, Santa Rosa Insurance Group</p>
                 </div>
               </footer>
+              <p className="mt-6 text-[11px] italic text-white/30" style={{ fontFamily: "var(--font-body)" }}>
+                Representative example — illustrates the kind of work and results we aim for, not a verified quote from a specific named client.
+              </p>
             </blockquote>
             <div className="mt-10 grid grid-cols-3 gap-6">
               {[

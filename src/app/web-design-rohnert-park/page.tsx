@@ -201,6 +201,9 @@ export default function WebDesignRohnertPark() {
             </p>
             <p className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>Daniel P.</p>
             <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>Owner, Rohnert Park Auto Care</p>
+            <p className="mt-5 text-[11px] italic text-white/30" style={{ fontFamily: "var(--font-body)" }}>
+              Representative example — illustrates the kind of work and results we aim for, not a verified quote from a specific named client.
+            </p>
           </div>
         </section>
 
