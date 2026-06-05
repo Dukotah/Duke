@@ -66,6 +66,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/case-studies`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE}/testimonials`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/reviews`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/compare`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
