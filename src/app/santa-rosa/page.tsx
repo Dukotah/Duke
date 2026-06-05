@@ -20,6 +20,7 @@ export default function SantaRosaPage() {
       relatedLinks={[
         { href: "/web-design-santa-rosa", label: "Web Design in Santa Rosa", blurb: "Fast, modern sites that rank locally." },
         { href: "/it-support-santa-rosa", label: "IT Support in Santa Rosa", blurb: "Same-day managed IT for Santa Rosa businesses." },
+        { href: "/cybersecurity-santa-rosa", label: "Cybersecurity in Santa Rosa", blurb: "Ransomware protection, HIPAA, and audits." },
       ]}
       description="Santa Rosa businesses deserve technology that works as hard as they do. Copper Bay Tech provides custom websites, managed IT support, and cybersecurity — with honest flat-fee pricing and no surprise invoices."
       painPoints={[

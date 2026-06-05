@@ -20,6 +20,7 @@ export default function PetalumaPage() {
       relatedLinks={[
         { href: "/web-design-petaluma", label: "Web Design in Petaluma", blurb: "Custom websites built for Petaluma businesses." },
         { href: "/it-support-petaluma", label: "IT Support in Petaluma", blurb: "Local, responsive managed IT — no ticket queue." },
+        { href: "/cybersecurity-petaluma", label: "Cybersecurity in Petaluma", blurb: "Ransomware, email, and payment protection." },
       ]}
       description="Copper Bay Tech is based right here in Sonoma County and knows the Petaluma business community. We handle websites, IT support, and cybersecurity for local restaurants, law offices, wineries, and service businesses — with flat-fee pricing and no long-term contracts."
       painPoints={[
