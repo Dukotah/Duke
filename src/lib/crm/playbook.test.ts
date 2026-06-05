@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bestTimeToCall, buildCadence, buildCallScript, buildObjections, OBJECTIONS, openerTemplateKey, suggestCadence, topProblem, type PlaybookLead } from "./playbook";
+import { bestTimeToCall, buildCadence, buildCallScript, buildObjections, callTimingFor, OBJECTIONS, openerTemplateKey, suggestCadence, topProblem, type PlaybookLead } from "./playbook";
 
 const noSite: PlaybookLead = { name: "Acme Plumbing", city: "Petaluma", category: "Plumbers", tier: "A", website: "" };
 const diy: PlaybookLead = { name: "Bay Cafe", city: "Sonoma", category: "Cafes", tier: "B", website: "baycafe.com", builder: "Wix" };
@@ -126,5 +126,40 @@ describe("playbook — best time to call", () => {
     expect(fallback).toMatch(/mid-morning/i);
     expect(bestTimeToCall("Underwater Basket Weaving")).toBe(fallback);
     expect(bestTimeToCall("")).toBe(fallback);
+  });
+});
+
+describe("playbook — is-now-a-good-time", () => {
+  const TUE = 2, SAT = 6, SUN = 0;
+
+  it("flags the weekend regardless of hour or industry", () => {
+    expect(callTimingFor("Plumbers", 10, SAT).status).toBe("off");
+    expect(callTimingFor("Law Firms", 10, SUN).label).toBe("Weekend");
+  });
+
+  it("marks a preferred-window hour as a good time", () => {
+    // restaurants: 2–4pm
+    expect(callTimingFor("Restaurants", 15, TUE).status).toBe("good");
+    // trades: early 7–8am or after 4pm
+    expect(callTimingFor("Plumbers", 7, TUE).status).toBe("good");
+    expect(callTimingFor("Plumbers", 17, TUE).status).toBe("good");
+  });
+
+  it("marks ordinary business hours outside the window as just OK", () => {
+    // restaurant lunch rush (noon) is business hours but not the sweet spot
+    const r = callTimingFor("Restaurants", 12, TUE);
+    expect(r.status).toBe("ok");
+    expect(r.detail).toMatch(/best/i);
+  });
+
+  it("marks early-morning / evening as off-hours", () => {
+    expect(callTimingFor("Law Firms", 6, TUE).status).toBe("off");
+    expect(callTimingFor("Law Firms", 20, TUE).status).toBe("off");
+  });
+
+  it("uses the default window for unknown categories", () => {
+    // default preferred: 9–11am, 2–4pm
+    expect(callTimingFor(undefined, 10, TUE).status).toBe("good");
+    expect(callTimingFor("Underwater Basket Weaving", 15, TUE).status).toBe("good");
   });
 });

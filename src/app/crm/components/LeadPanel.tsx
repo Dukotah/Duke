@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
-import { buildCallScript, buildObjections, bestTimeToCall, suggestCadence } from "@/lib/crm/playbook";
+import { buildCallScript, buildObjections, callTimingFor, suggestCadence } from "@/lib/crm/playbook";
 import { readBookingOverride, resolveBookingUrl } from "@/lib/booking";
 
 interface Lead {
@@ -273,7 +273,20 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const playbookLead = { name: lead.name, city: lead.city, category: lead.category, website: lead.website, builder: lead.builder, tier: lead.tier };
   const callScript = buildCallScript(playbookLead, repName);
   const objections = buildObjections(playbookLead);
-  const callWindow = bestTimeToCall(lead.category);
+
+  // Is right now a good moment to dial? All leads are Sonoma County (Pacific), so
+  // judge against the lead's local hour/weekday — works even if the rep's browser
+  // is in another timezone.
+  const callTiming = (() => {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles", hour: "numeric", hour12: false, weekday: "short",
+    }).formatToParts(new Date());
+    let hour = parseInt(parts.find((p) => p.type === "hour")?.value ?? "0", 10);
+    if (hour === 24) hour = 0; // some engines emit 24 for midnight with hour12:false
+    const wdMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    const weekday = wdMap[parts.find((p) => p.type === "weekday")?.value ?? "Mon"] ?? 1;
+    return callTimingFor(lead.category, hour, weekday);
+  })();
 
   // Follow-up cadence (day 0/3/7/14). We don't track an exact per-email count, so
   // approximate: nothing sent yet for an untouched lead, otherwise treat the
@@ -372,10 +385,19 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                 {state.lastContacted && (
                   <p className="text-xs text-white/30 text-center mt-2" style={H}>Last contacted: {state.lastContacted}</p>
                 )}
-                <p className="text-xs text-white/40 text-center mt-2 flex items-center justify-center gap-1.5" style={H}>
-                  <CalendarClock size={11} className="text-[#F97316]/50 shrink-0" />
-                  <span>Best time: {callWindow}</span>
-                </p>
+                <div className="mt-2 flex flex-col items-center gap-1">
+                  <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
+                    callTiming.status === "good" ? "text-green-400 bg-green-400/10 border-green-400/20" :
+                    callTiming.status === "ok" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
+                    "text-zinc-400 bg-zinc-400/10 border-zinc-400/20"
+                  }`} style={H}>
+                    {callTiming.status === "good" ? "🟢" : callTiming.status === "ok" ? "🟡" : "🔴"} {callTiming.label}
+                  </span>
+                  <p className="text-xs text-white/40 text-center flex items-center justify-center gap-1.5" style={H}>
+                    <CalendarClock size={11} className="text-[#F97316]/50 shrink-0" />
+                    <span>{callTiming.detail}</span>
+                  </p>
+                </div>
               </div>
             )}
 

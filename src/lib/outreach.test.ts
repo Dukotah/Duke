@@ -154,6 +154,28 @@ describe("rampedDailyCap", () => {
   });
 });
 
+describe("daily capacity composition (mirrors /api/crm/outreach)", () => {
+  // The route computes: cap = rampedDailyCap(verifiedDate, today, resolveDailyCap(env));
+  //                     remaining = max(0, cap - sentToday).
+  it("reflects the current warm-up rung minus what's already gone out today", () => {
+    const hardCap = resolveDailyCap(undefined); // 200
+    const cap = rampedDailyCap("2026-06-01", "2026-06-05", hardCap); // week 1 → 20
+    expect(cap).toBe(20);
+    expect(Math.max(0, cap - 8)).toBe(12);
+  });
+
+  it("never reports negative remaining once the rung is exhausted", () => {
+    const cap = rampedDailyCap("2026-06-01", "2026-06-05", 200); // 20
+    expect(Math.max(0, cap - 25)).toBe(0);
+  });
+
+  it("uses the full hard cap when the ramp is off (no verified date)", () => {
+    const cap = rampedDailyCap(undefined, "2026-06-05", resolveDailyCap("150"));
+    expect(cap).toBe(150);
+    expect(Math.max(0, cap - 40)).toBe(110);
+  });
+});
+
 describe("canDeliver", () => {
   it("only delivers when an API key is present AND the domain is verified", () => {
     expect(canDeliver("re_key", "true")).toBe(true);

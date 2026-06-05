@@ -176,25 +176,68 @@ export function topProblem(lead: PlaybookLead): string {
 
 // A practical "best time to call" hint by industry, so a rep dials when the
 // owner is most likely to pick up instead of mid-rush. Heuristic, not data —
-// based on when each trade is typically off the floor and near a phone.
-const CALL_WINDOWS: { match: RegExp; when: string }[] = [
-  { match: /restaurant|cafe|coffee|bar|pub|food|bakery|deli|caterer/i, when: "Mid-afternoon (2–4pm), between the lunch and dinner rush" },
-  { match: /plumb|hvac|electric|roof|construct|contractor|landscap|paint|handyman|fence|concrete|trade/i, when: "Early (7–8am) or after 4pm — they're on job sites midday" },
-  { match: /salon|spa|barber|beauty|nail|hair|massage/i, when: "Tue–Thu late morning (10–11:30am), before afternoon appointments" },
-  { match: /dental|dentist|medical|clinic|doctor|chiro|therap|vet|health/i, when: "Early morning (8–9am) or the lunch hour (12–1pm)" },
-  { match: /law|attorney|account|cpa|insur|real estate|realtor|consult|financ|mortgage/i, when: "Mid-morning (9–11am) or mid-afternoon (2–4pm)" },
-  { match: /auto|mechanic|repair|tire|body shop|detail/i, when: "Mid-morning (10–11am), after the morning drop-offs" },
-  { match: /gym|fitness|yoga|pilates|studio|trainer/i, when: "Mid-morning (10am–12pm), between class rushes" },
-  { match: /retail|shop|store|boutique|florist|gift/i, when: "Mid-morning (10–11am), before the lunch crowd" },
+// based on when each trade is typically off the floor and near a phone. `hours`
+// are the preferred local-time windows as [startHour, endHour) 24h ranges, used
+// to judge whether right now is a good time to dial.
+interface CallWindow {
+  match: RegExp;
+  when: string;
+  hours: [number, number][];
+}
+const CALL_WINDOWS: CallWindow[] = [
+  { match: /restaurant|cafe|coffee|bar|pub|food|bakery|deli|caterer/i, when: "Mid-afternoon (2–4pm), between the lunch and dinner rush", hours: [[14, 16]] },
+  { match: /plumb|hvac|electric|roof|construct|contractor|landscap|paint|handyman|fence|concrete|trade/i, when: "Early (7–8am) or after 4pm — they're on job sites midday", hours: [[7, 8], [16, 18]] },
+  { match: /salon|spa|barber|beauty|nail|hair|massage/i, when: "Tue–Thu late morning (10–11:30am), before afternoon appointments", hours: [[10, 12]] },
+  { match: /dental|dentist|medical|clinic|doctor|chiro|therap|vet|health/i, when: "Early morning (8–9am) or the lunch hour (12–1pm)", hours: [[8, 9], [12, 13]] },
+  { match: /law|attorney|account|cpa|insur|real estate|realtor|consult|financ|mortgage/i, when: "Mid-morning (9–11am) or mid-afternoon (2–4pm)", hours: [[9, 11], [14, 16]] },
+  { match: /auto|mechanic|repair|tire|body shop|detail/i, when: "Mid-morning (10–11am), after the morning drop-offs", hours: [[10, 11]] },
+  { match: /gym|fitness|yoga|pilates|studio|trainer/i, when: "Mid-morning (10am–12pm), between class rushes", hours: [[10, 12]] },
+  { match: /retail|shop|store|boutique|florist|gift/i, when: "Mid-morning (10–11am), before the lunch crowd", hours: [[10, 11]] },
 ];
 
-export function bestTimeToCall(category?: string): string {
+const DEFAULT_WINDOW: CallWindow = {
+  match: /.^/, // never matches
+  when: "Mid-morning (10–11am) or mid-afternoon (2–4pm) tend to be best",
+  hours: [[9, 11], [14, 16]],
+};
+
+function windowFor(category?: string): CallWindow {
   const c = (category ?? "").trim();
   if (c) {
     const hit = CALL_WINDOWS.find((w) => w.match.test(c));
-    if (hit) return hit.when;
+    if (hit) return hit;
   }
-  return "Mid-morning (10–11am) or mid-afternoon (2–4pm) tend to be best";
+  return DEFAULT_WINDOW;
+}
+
+export function bestTimeToCall(category?: string): string {
+  return windowFor(category).when;
+}
+
+// Whether right now (the lead's LOCAL hour + weekday) is a good moment to dial.
+// `hour` is 0–23, `weekday` is 0=Sun…6=Sat. Pure so the panel can pass in the
+// lead-local time (all leads are Pacific) without this touching the clock.
+export type CallTiming = "good" | "ok" | "off";
+export interface CallTimingResult {
+  status: CallTiming;
+  label: string;
+  detail: string; // the recommended window, or why now is off
+}
+
+export function callTimingFor(category: string | undefined, hour: number, weekday: number): CallTimingResult {
+  const win = windowFor(category);
+  if (weekday === 0 || weekday === 6) {
+    return { status: "off", label: "Weekend", detail: "Most owners are off — weekdays land better." };
+  }
+  const inPreferred = win.hours.some(([start, end]) => hour >= start && hour < end);
+  if (inPreferred) {
+    return { status: "good", label: "Good time to call", detail: win.when };
+  }
+  // 8am–6pm local is still reasonable business hours, just not the sweet spot.
+  if (hour >= 8 && hour < 18) {
+    return { status: "ok", label: "OK to call", detail: `Best: ${win.when}` };
+  }
+  return { status: "off", label: "Off-hours", detail: `Try: ${win.when}` };
 }
 
 // Objection bank with the "[their top problem]" placeholder filled in from the
