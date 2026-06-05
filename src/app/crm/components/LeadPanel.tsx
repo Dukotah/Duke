@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
-import { buildCallScript, OBJECTIONS } from "@/lib/crm/playbook";
+import { buildCallScript, buildObjections } from "@/lib/crm/playbook";
+import { BOOKING_URL, SITE_URL } from "@/config/site";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -131,12 +132,20 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const [showScorePopover, setShowScorePopover] = useState(false);
   const [showScript, setShowScript] = useState(false);
   const [showObjections, setShowObjections] = useState(false);
+  const [calOverride, setCalOverride] = useState("");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
 
   // eslint-disable-next-line react-hooks/set-state-in-effect -- sync notes field when the selected lead changes
   useEffect(() => { setNotes(state.notes ?? ""); prevNotes.current = state.notes ?? ""; }, [state.notes]);
+
+  // A rep can paste a personal Calendly link (stored per-browser by BulkOutreach);
+  // read it client-side so it overrides the on-site booking page when present.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is client-only; read once on mount
+    try { setCalOverride(localStorage.getItem("calendly_link") ?? ""); } catch { /* ignore */ }
+  }, []);
 
   const postActivity = (body: Record<string, unknown>) => {
     fetch("/api/crm/activity", {
@@ -260,10 +269,16 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const fullPitch = lead.pitch || `Hi, I'm reaching out to ${lead.name} in ${lead.city} — do you have 2 minutes to talk about your online presence?`;
 
   // Full multi-block call script + objection bank, tailored to this lead.
-  const callScript = buildCallScript(
-    { name: lead.name, city: lead.city, category: lead.category, website: lead.website, builder: lead.builder, tier: lead.tier },
-    repName,
-  );
+  const playbookLead = { name: lead.name, city: lead.city, category: lead.category, website: lead.website, builder: lead.builder, tier: lead.tier };
+  const callScript = buildCallScript(playbookLead, repName);
+  const objections = buildObjections(playbookLead);
+
+  // Canonical booking link: a rep's personal Calendly override if set, otherwise
+  // the on-site /schedule funnel made absolute so it works in email/SMS.
+  const cal = calOverride.trim();
+  const bookingUrl = cal
+    ? (cal.startsWith("http") ? cal : `https://${cal}`)
+    : BOOKING_URL.startsWith("http") ? BOOKING_URL : `${SITE_URL}${BOOKING_URL}`;
 
   return (
     <>
@@ -493,7 +508,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
               </button>
               {showObjections && (
                 <div className="mt-3 space-y-2">
-                  {OBJECTIONS.map((o) => (
+                  {objections.map((o) => (
                     <div key={o.trigger} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-3">
                       <p className="text-xs font-semibold text-white/80 mb-1" style={H}>&ldquo;{o.trigger}&rdquo;</p>
                       <p className="text-sm text-white/55 leading-relaxed" style={H}>{o.response}</p>
@@ -560,26 +575,30 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
               </div>
             </div>
 
-                        {/* Calendly scheduling link */}
-                                    {(() => { const cal = typeof window !== "undefined" ? localStorage.getItem("calendly_link") ?? "" : ""; return cal ? (
-                                                  <div className="pt-2">
-                                                                  <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-2 flex items-center gap-1.5" style={H}><CalendarClock size={11} />Schedule a Call</p>
-                                                                                  <div className="flex gap-2 flex-wrap">
-                                                                                                    {lead.email && <a href={`mailto:${lead.email}?subject=Schedule a quick call — ${lead.name}&body=Hi, I'd love to find a time to connect! You can book a free 15-minute call here: ${cal}`}
-                                                                                                                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
-                                                                                                                                            <Mail size={11} />Send via Email
-                                                                                                                                                              </a>}
-                                                                                                                                                                                {lead.phone && <a href={`sms:${lead.phone}&body=Hi! Book a free 15-minute call: ${cal}`}
-                                                                                                                                                                                                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
-                                                                                                                                                                                                                        <Phone size={11} />Send via Text
-                                                                                                                                                                                                                                          </a>}
-                                                                                                                                                                                                                                                            <button onClick={() => { navigator.clipboard.writeText(cal); }}
-                                                                                                                                                                                                                                                                                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white/5 text-white/50 border border-white/10 hover:text-white/70 hover:bg-white/10 transition-all" style={H}>
-                                                                                                                                                                                                                                                                                                    <Copy size={11} />Copy Link
-                                                                                                                                                                                                                                                                                                                      </button>
-                                                                                                                                                                                                                                                                                                                                      </div>
-                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                ) : null; })()}
+            {/* Schedule a call — share the booking link via email/text */}
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+              <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
+                <CalendarClock size={11} />Schedule a Call
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {lead.email && (
+                  <a href={`mailto:${lead.email}?subject=${encodeURIComponent(`Schedule a quick call — ${lead.name}`)}&body=${encodeURIComponent(`Hi, I'd love to find a time to connect! You can book a free 15-minute call here: ${bookingUrl}`)}`}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
+                    <Mail size={11} />Send via Email
+                  </a>
+                )}
+                {lead.phone && (
+                  <a href={`sms:${lead.phone}?&body=${encodeURIComponent(`Hi! Book a free 15-minute call: ${bookingUrl}`)}`}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
+                    <Phone size={11} />Send via Text
+                  </a>
+                )}
+                <button onClick={() => navigator.clipboard.writeText(bookingUrl)}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white/5 text-white/50 border border-white/10 hover:text-white/70 hover:bg-white/10 transition-all" style={H}>
+                  <Copy size={11} />Copy Link
+                </button>
+              </div>
+            </div>
 
             {/* Notes */}
             <div className="px-5 py-4 border-b border-white/[0.06]">

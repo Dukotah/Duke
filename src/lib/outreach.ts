@@ -83,13 +83,19 @@ export function canDeliver(
 
 // Personalize a subject or body template with the lead's details. Placeholders
 // are case-insensitive: {name}, {business}, {city}, {fromName}.
+//
+// {name} is the recipient GREETING — a contact person's first name when we know
+// it, otherwise a neutral "there" so emails read "Hi there," instead of the
+// dead-giveaway "Hi Acme Plumbing,". {business} is always the company name.
+// Scraped leads rarely carry a contact person, so most sends fall back to "there".
 export function personalize(
   template: string,
-  lead: Pick<OutreachLead, "name" | "city">,
+  lead: Pick<OutreachLead, "name" | "city"> & { contactName?: string },
   fromName: string,
 ): string {
+  const greeting = lead.contactName?.trim().split(/\s+/)[0] || "there";
   return template
-    .replace(/\{name\}/gi, lead.name)
+    .replace(/\{name\}/gi, greeting)
     .replace(/\{business\}/gi, lead.name)
     .replace(/\{city\}/gi, lead.city)
     .replace(/\{fromName\}/gi, fromName);

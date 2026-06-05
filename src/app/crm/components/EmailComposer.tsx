@@ -53,7 +53,9 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
     }
   };
 
-  const vars = { name: lead.name, business: lead.name, city: lead.city, fromName };
+  // No contact-person name in the scraped lead, so {name} greeting falls back
+  // to "there"; {business} carries the company name.
+  const vars = { name: "", business: lead.name, city: lead.city, fromName };
 
   const saveEdits = () => {
     saveTemplateOverride(templateKey, subject, body);

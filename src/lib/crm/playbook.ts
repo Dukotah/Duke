@@ -106,6 +106,25 @@ export interface Objection {
   response: string;
 }
 
+// The lead's single biggest, most concrete problem — phrased to drop straight
+// into a sentence ("it's costing you customers right now: <topProblem>"). Mirrors
+// the tier logic the call script uses so the objection bank stays consistent.
+export function topProblem(lead: PlaybookLead): string {
+  if (hasNoSite(lead)) return "people searching for you online are finding your competitors instead";
+  if (isDiy(lead)) return "it loads slowly and isn't turning visitors into calls";
+  return "slow load times and an unclear next step are quietly costing you calls";
+}
+
+// Objection bank with the "[their top problem]" placeholder filled in from the
+// specific lead, so a caller reads a concrete line instead of a bracketed cue.
+export function buildObjections(lead: PlaybookLead): Objection[] {
+  const problem = topProblem(lead);
+  return OBJECTIONS.map((o) => ({
+    ...o,
+    response: o.response.replace(/\[their top problem\]/g, problem),
+  }));
+}
+
 export const OBJECTIONS: Objection[] = [
   {
     trigger: "We already have a website",

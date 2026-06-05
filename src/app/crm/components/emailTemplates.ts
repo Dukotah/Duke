@@ -211,9 +211,12 @@ export interface PersonalizeVars {
   fromName?: string;
 }
 
+// {name} is the recipient greeting — falls back to "there" when no contact
+// person is known, so previews match what's actually sent (see lib/outreach
+// personalize). {business} is the company name.
 export function personalize(text: string, vars: PersonalizeVars): string {
   return text
-    .replace(/\{name\}/gi, vars.name ?? "")
+    .replace(/\{name\}/gi, vars.name?.trim() || "there")
     .replace(/\{business\}/gi, vars.business ?? "")
     .replace(/\{city\}/gi, vars.city ?? "")
     .replace(/\{fromName\}/gi, vars.fromName ?? "");

@@ -145,7 +145,18 @@ describe("personalize", () => {
       { name: "Joe's Diner", city: "Sonoma" },
       "Duke",
     );
-    expect(out).toBe("Hi Joe's Diner in Sonoma, from Duke. Joe's Diner!");
+    // {name} is the greeting; with no contact person it falls back to "there".
+    // {business} carries the company name.
+    expect(out).toBe("Hi there in Sonoma, from Duke. Joe's Diner!");
+  });
+
+  it("uses the contact's first name for the {name} greeting when known", () => {
+    const out = personalize(
+      "Hi {name}, about {business}",
+      { name: "Joe's Diner", city: "Sonoma", contactName: "Joseph Romano" },
+      "Duke",
+    );
+    expect(out).toBe("Hi Joseph, about Joe's Diner");
   });
 
   it("leaves text without placeholders untouched", () => {

@@ -202,7 +202,9 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const previewEmail = () => {
     if (selectedLeads.length === 0) return { subject: "", body: "" };
     const lead = selectedLeads[0];
-    const vars = { name: lead.name, business: lead.name, city: lead.city, fromName };
+    // {name} greeting falls back to "there" (no contact person scraped);
+    // {business} carries the company name.
+    const vars = { name: "", business: lead.name, city: lead.city, fromName };
     return { subject: personalize(subject, vars), body: personalize(body, vars) };
   };
 

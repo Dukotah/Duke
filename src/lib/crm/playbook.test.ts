@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCallScript, OBJECTIONS, type PlaybookLead } from "./playbook";
+import { buildCallScript, buildObjections, OBJECTIONS, topProblem, type PlaybookLead } from "./playbook";
 
 const noSite: PlaybookLead = { name: "Acme Plumbing", city: "Petaluma", category: "Plumbers", tier: "A", website: "" };
 const diy: PlaybookLead = { name: "Bay Cafe", city: "Sonoma", category: "Cafes", tier: "B", website: "baycafe.com", builder: "Wix" };
@@ -51,5 +51,24 @@ describe("playbook — objections", () => {
       expect(o.response.length).toBeGreaterThan(0);
     }
     expect(OBJECTIONS.some((o) => /cost|how much/i.test(o.trigger))).toBe(true);
+  });
+
+  it("fills the [their top problem] placeholder with a lead-specific problem", () => {
+    // The static bank still carries the bracketed cue...
+    expect(OBJECTIONS.some((o) => o.response.includes("[their top problem]"))).toBe(true);
+
+    // ...but buildObjections resolves it per lead, leaving no brackets behind.
+    for (const lead of [noSite, diy, hasSite]) {
+      const built = buildObjections(lead);
+      expect(built.some((o) => o.response.includes("[their top problem]"))).toBe(false);
+      const problem = topProblem(lead);
+      expect(built.some((o) => o.response.includes(problem))).toBe(true);
+    }
+  });
+
+  it("picks a distinct top problem per tier", () => {
+    expect(topProblem(noSite)).toMatch(/competitors/i);
+    expect(topProblem(diy)).toMatch(/slowly|visitors/i);
+    expect(topProblem(hasSite)).toMatch(/slow load|next step/i);
   });
 });
