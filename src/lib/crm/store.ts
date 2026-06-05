@@ -1,23 +1,27 @@
-// SQLite-backed CRM store.
+// Redis-backed CRM store (power-dialer leads, activities, reps).
 //
-// Leads / activities / reps are persisted to a local SQLite database via Node's
-// built-in `node:sqlite` (synchronous), so data now survives server restarts.
-// The same small interface that the in-memory version exposed
-// (getLeads / updateLead / logActivity / getStats / …) is preserved exactly, so
-// the API routes and UI are untouched — and this file can be swapped again for
-// Postgres later by reimplementing these functions.
+// Persistence runs on Upstash Redis — the same durable backend the rest of the
+// app uses (`src/lib/db.ts`). This replaces the previous `node:sqlite` store,
+// which wrote to a local file (`.data/crm.db`) and therefore reset on every
+// serverless cold start (and could fail outright on Vercel's read-only FS).
 //
-// The database file lives at `$CRM_DB_PATH` (default `.data/crm.db`). It is
-// created and seeded on first access. A `globalThis` cache holds the open
-// connection so Next's dev hot-reloads don't reopen/reseed it.
+// The public surface is identical to before — getLeads / getLead / updateLead /
+// logDisposition / getStats / … — except every function is now `async`, since
+// Redis I/O is. Callers under /api/crm already `await` it.
+//
+// Key layout (prefixed `crm:` to stay clear of db.ts's `lead:`/`user:` keys):
+//   crm:rep:<id>          hash   — a caller
+//   crm:reps:index        set    — all rep ids
+//   crm:lead:<id>         hash   — a lead (signals JSON-encoded; activities live apart)
+//   crm:leads:index       set    — all lead ids
+//   crm:activity:<leadId> list   — JSON activities, oldest→newest (rpush/lrange)
+//   crm:seq               int    — monotonic counter for generated ids
+//   crm:seeded            flag    — set once demo data has been seeded
 
-import path from "node:path";
-import fs from "node:fs";
-import { DatabaseSync } from "node:sqlite";
+import { getRedis } from "@/lib/redis";
 import type {
   Lead,
   Activity,
-  ActivityType,
   Disposition,
   PipelineStage,
   Rep,
@@ -26,278 +30,147 @@ import type {
 import { PIPELINE_STAGES } from "./types";
 import { buildSeedLeads, SEED_REPS } from "./seed";
 
-const DB_PATH =
-  process.env.CRM_DB_PATH ?? path.join(process.cwd(), ".data", "crm.db");
+const KEY = {
+  rep: (id: string) => `crm:rep:${id}`,
+  reps: "crm:reps:index",
+  lead: (id: string) => `crm:lead:${id}`,
+  leads: "crm:leads:index",
+  acts: (leadId: string) => `crm:activity:${leadId}`,
+  seq: "crm:seq",
+  seeded: "crm:seeded",
+} as const;
 
-const g = globalThis as unknown as { __crmSqlite?: DatabaseSync };
+// ─── Serialization ─────────────────────────────────────────────────────────
+// Redis hashes hold flat string/number/bool fields. `signals` is a nested
+// object so it's JSON-encoded; `activities` are stored separately as a list.
+// `undefined` fields are dropped (Redis can't store them); optional timestamps
+// that are explicitly `null` are kept as null.
 
-function conn(): DatabaseSync {
-  if (!g.__crmSqlite) {
-    fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-    const db = new DatabaseSync(DB_PATH);
-    db.exec("PRAGMA journal_mode = WAL;");
-    db.exec("PRAGMA foreign_keys = ON;");
-    migrate(db);
-    seedIfEmpty(db);
-    g.__crmSqlite = db;
+function leadToHash(lead: Lead): Record<string, unknown> {
+  const { activities: _activities, signals, ...rest } = lead;
+  const flat: Record<string, unknown> = { ...rest, signals: JSON.stringify(signals) };
+  for (const k of Object.keys(flat)) {
+    if (flat[k] === undefined) delete flat[k];
   }
-  return g.__crmSqlite;
+  return flat;
 }
 
-function migrate(db: DatabaseSync): void {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS reps (
-      id          TEXT PRIMARY KEY,
-      name        TEXT NOT NULL,
-      avatarColor TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS leads (
-      id              TEXT PRIMARY KEY,
-      business        TEXT NOT NULL,
-      contactName     TEXT,
-      phone           TEXT NOT NULL,
-      website         TEXT,
-      industry        TEXT NOT NULL,
-      city            TEXT NOT NULL,
-      state           TEXT NOT NULL,
-      signals         TEXT NOT NULL,
-      heatScore       REAL NOT NULL,
-      stage           TEXT NOT NULL,
-      ownerRepId      TEXT,
-      estValue        REAL NOT NULL,
-      source          TEXT NOT NULL,
-      callbackAt      TEXT,
-      attempts        INTEGER NOT NULL,
-      lastContactedAt TEXT,
-      createdAt       TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS activities (
-      id          TEXT PRIMARY KEY,
-      leadId      TEXT NOT NULL,
-      type        TEXT NOT NULL,
-      disposition TEXT,
-      body        TEXT,
-      durationSec INTEGER,
-      repId       TEXT,
-      createdAt   TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_activities_leadId ON activities(leadId);
-    CREATE TABLE IF NOT EXISTS meta (
-      key   TEXT PRIMARY KEY,
-      value TEXT NOT NULL
-    );
-    INSERT OR IGNORE INTO meta (key, value) VALUES ('seq', '1');
-  `);
+interface LeadHash extends Record<string, unknown> {
+  id?: string;
+  signals?: string | object;
 }
 
-function seedIfEmpty(db: DatabaseSync): void {
-  const row = db.prepare("SELECT COUNT(*) AS n FROM leads").get() as { n: number };
-  if (row.n > 0) return;
-
-  const insertRep = db.prepare(
-    "INSERT INTO reps (id, name, avatarColor) VALUES (?, ?, ?)",
-  );
-  for (const rep of SEED_REPS) {
-    insertRep.run(rep.id, rep.name, rep.avatarColor);
-  }
-  for (const lead of buildSeedLeads()) {
-    insertLeadRow(db, lead);
-    for (const activity of lead.activities) insertActivityRow(db, activity);
-  }
-}
-
-// node:sqlite only binds null / number / bigint / string / Uint8Array, so
-// `undefined` columns must be coerced to null on the way in.
-function nz<T>(v: T | undefined): T | null {
-  return v === undefined ? null : v;
-}
-
-function insertLeadRow(db: DatabaseSync, lead: Lead): void {
-  db.prepare(
-    `INSERT INTO leads (
-       id, business, contactName, phone, website, industry, city, state,
-       signals, heatScore, stage, ownerRepId, estValue, source, callbackAt,
-       attempts, lastContactedAt, createdAt
-     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-  ).run(
-    lead.id,
-    lead.business,
-    nz(lead.contactName),
-    lead.phone,
-    nz(lead.website),
-    lead.industry,
-    lead.city,
-    lead.state,
-    JSON.stringify(lead.signals),
-    lead.heatScore,
-    lead.stage,
-    nz(lead.ownerRepId),
-    lead.estValue,
-    lead.source,
-    nz(lead.callbackAt),
-    lead.attempts,
-    nz(lead.lastContactedAt),
-    lead.createdAt,
-  );
-}
-
-function insertActivityRow(db: DatabaseSync, a: Activity): void {
-  db.prepare(
-    `INSERT INTO activities (id, leadId, type, disposition, body, durationSec, repId, createdAt)
-     VALUES (?,?,?,?,?,?,?,?)`,
-  ).run(
-    a.id,
-    a.leadId,
-    a.type,
-    nz(a.disposition),
-    nz(a.body),
-    nz(a.durationSec),
-    nz(a.repId),
-    a.createdAt,
-  );
-}
-
-// Persist the mutable columns of an existing lead (createdAt never changes).
-function persistLead(db: DatabaseSync, lead: Lead): void {
-  db.prepare(
-    `UPDATE leads SET
-       business=?, contactName=?, phone=?, website=?, industry=?, city=?,
-       state=?, signals=?, heatScore=?, stage=?, ownerRepId=?, estValue=?,
-       source=?, callbackAt=?, attempts=?, lastContactedAt=?
-     WHERE id=?`,
-  ).run(
-    lead.business,
-    nz(lead.contactName),
-    lead.phone,
-    nz(lead.website),
-    lead.industry,
-    lead.city,
-    lead.state,
-    JSON.stringify(lead.signals),
-    lead.heatScore,
-    lead.stage,
-    nz(lead.ownerRepId),
-    lead.estValue,
-    lead.source,
-    nz(lead.callbackAt),
-    lead.attempts,
-    nz(lead.lastContactedAt),
-    lead.id,
-  );
-}
-
-// --- Row → domain mapping --------------------------------------------------
-
-interface LeadRow {
-  id: string;
-  business: string;
-  contactName: string | null;
-  phone: string;
-  website: string | null;
-  industry: string;
-  city: string;
-  state: string;
-  signals: string;
-  heatScore: number;
-  stage: string;
-  ownerRepId: string | null;
-  estValue: number;
-  source: string;
-  callbackAt: string | null;
-  attempts: number;
-  lastContactedAt: string | null;
-  createdAt: string;
-}
-
-interface ActivityRow {
-  id: string;
-  leadId: string;
-  type: string;
-  disposition: string | null;
-  body: string | null;
-  durationSec: number | null;
-  repId: string | null;
-  createdAt: string;
-}
-
-function rowToActivity(r: ActivityRow): Activity {
+function hashToLead(h: LeadHash, activities: Activity[]): Lead {
+  const signals =
+    typeof h.signals === "string"
+      ? (JSON.parse(h.signals) as Lead["signals"])
+      : (h.signals as Lead["signals"]);
   return {
-    id: r.id,
-    leadId: r.leadId,
-    type: r.type as ActivityType,
-    disposition: (r.disposition as Disposition | null) ?? undefined,
-    body: r.body ?? undefined,
-    durationSec: r.durationSec ?? undefined,
-    repId: r.repId ?? undefined,
-    createdAt: r.createdAt,
-  };
-}
-
-function rowToLead(r: LeadRow, activities: Activity[]): Lead {
-  return {
-    id: r.id,
-    business: r.business,
-    contactName: r.contactName ?? undefined,
-    phone: r.phone,
-    website: r.website ?? undefined,
-    industry: r.industry,
-    city: r.city,
-    state: r.state,
-    signals: JSON.parse(r.signals) as Lead["signals"],
-    heatScore: r.heatScore,
-    stage: r.stage as PipelineStage,
-    ownerRepId: r.ownerRepId ?? undefined,
-    estValue: r.estValue,
-    source: r.source,
-    callbackAt: r.callbackAt,
-    attempts: r.attempts,
-    lastContactedAt: r.lastContactedAt,
-    createdAt: r.createdAt,
+    id: String(h.id),
+    business: String(h.business),
+    contactName: (h.contactName as string | undefined) ?? undefined,
+    phone: String(h.phone),
+    email: (h.email as string | undefined) ?? undefined,
+    website: (h.website as string | undefined) ?? undefined,
+    industry: String(h.industry),
+    city: String(h.city ?? ""),
+    state: String(h.state ?? "CA"),
+    signals,
+    heatScore: Number(h.heatScore ?? 0),
+    stage: h.stage as PipelineStage,
+    ownerRepId: (h.ownerRepId as string | undefined) ?? undefined,
+    estValue: Number(h.estValue ?? 0),
+    source: String(h.source ?? "Manual"),
+    callbackAt: (h.callbackAt as string | null | undefined) ?? null,
+    attempts: Number(h.attempts ?? 0),
+    lastContactedAt: (h.lastContactedAt as string | null | undefined) ?? null,
+    createdAt: String(h.createdAt),
     activities,
   };
 }
 
-// Load every lead with its activities attached. Two queries + an in-memory
-// group-by keeps it to O(n) regardless of lead count.
-function allLeads(): Lead[] {
-  const db = conn();
-  const leadRows = db.prepare("SELECT * FROM leads").all() as unknown as LeadRow[];
-  const actRows = db
-    .prepare("SELECT * FROM activities ORDER BY createdAt ASC, rowid ASC")
-    .all() as unknown as ActivityRow[];
+// ─── Seeding ─────────────────────────────────────────────────────────────────
+// Seed demo reps + leads exactly once. An NX lock keeps concurrent serverless
+// invocations from double-seeding. (Demo data only — a partial seed after a
+// mid-flight crash is acceptable and self-evident.)
 
-  const byLead = new Map<string, Activity[]>();
-  for (const a of actRows) {
-    const list = byLead.get(a.leadId);
-    if (list) list.push(rowToActivity(a));
-    else byLead.set(a.leadId, [rowToActivity(a)]);
+async function ensureSeeded(): Promise<void> {
+  const redis = getRedis();
+  if (await redis.get(KEY.seeded)) return;
+  const lock = await redis.set(KEY.seeded, "1", { nx: true });
+  if (lock !== "OK") return; // another invocation is seeding
+
+  for (const rep of SEED_REPS) {
+    await redis.hset(KEY.rep(rep.id), rep as unknown as Record<string, unknown>);
+    await redis.sadd(KEY.reps, rep.id);
   }
-
-  return leadRows.map((r) => rowToLead(r, byLead.get(r.id) ?? []));
+  for (const lead of buildSeedLeads()) {
+    await writeLead(lead);
+    if (lead.activities.length) {
+      await redis.rpush(KEY.acts(lead.id), ...lead.activities.map((a) => JSON.stringify(a)));
+    }
+  }
 }
 
-function nextId(prefix: string): string {
-  const db = conn();
-  const row = db
-    .prepare(
-      "UPDATE meta SET value = CAST(value AS INTEGER) + 1 WHERE key='seq' RETURNING value",
-    )
-    .get() as { value: string } | undefined;
-  const seq = row ? Number(row.value) : Date.now();
-  return `${prefix}_${Date.now().toString(36)}${seq}`;
+// Persist a lead's hash + index membership (does not touch its activity list).
+async function writeLead(lead: Lead): Promise<void> {
+  const redis = getRedis();
+  await redis.hset(KEY.lead(lead.id), leadToHash(lead));
+  await redis.sadd(KEY.leads, lead.id);
 }
 
-// --- Reads -----------------------------------------------------------------
-
-export function getReps(): Rep[] {
-  const db = conn();
-  return db.prepare("SELECT * FROM reps").all() as unknown as Rep[];
+async function appendActivity(leadId: string, activity: Activity): Promise<void> {
+  await getRedis().rpush(KEY.acts(leadId), JSON.stringify(activity));
 }
 
-export function getLeads(): Lead[] {
+async function loadActivities(leadId: string): Promise<Activity[]> {
+  const items = await getRedis().lrange(KEY.acts(leadId), 0, -1);
+  return (items as unknown[]).map((raw) =>
+    typeof raw === "string" ? (JSON.parse(raw) as Activity) : (raw as Activity),
+  );
+}
+
+async function nextId(prefix: string): Promise<string> {
+  const seq = await getRedis().incr(KEY.seq);
+  return `${prefix}_${seq.toString(36)}${seq}`;
+}
+
+// Load every lead with its activities attached.
+async function allLeads(): Promise<Lead[]> {
+  await ensureSeeded();
+  const redis = getRedis();
+  const ids = (await redis.smembers(KEY.leads)) as string[];
+  const leads = await Promise.all(
+    ids.map(async (id) => {
+      const [h, acts] = await Promise.all([
+        redis.hgetall(KEY.lead(id)) as Promise<LeadHash | null>,
+        loadActivities(id),
+      ]);
+      if (!h || !h.id) return null;
+      return hashToLead(h, acts);
+    }),
+  );
+  return leads.filter(Boolean) as Lead[];
+}
+
+// ─── Reads ─────────────────────────────────────────────────────────────────
+
+export async function getReps(): Promise<Rep[]> {
+  await ensureSeeded();
+  const redis = getRedis();
+  const ids = (await redis.smembers(KEY.reps)) as string[];
+  const reps = await Promise.all(
+    ids.map((id) => redis.hgetall(KEY.rep(id)) as Promise<Rep | null>),
+  );
+  // Stable order (smembers is unordered) so "first rep" defaults are deterministic.
+  return (reps.filter(Boolean) as Rep[]).sort((a, b) => a.id.localeCompare(b.id));
+}
+
+export async function getLeads(): Promise<Lead[]> {
   // Hottest first; callbacks that are due bubble up regardless of heat.
   const now = Date.now();
-  return allLeads().sort((a, b) => {
+  const leads = await allLeads();
+  return leads.sort((a, b) => {
     const aDue = a.callbackAt && new Date(a.callbackAt).getTime() <= now ? 1 : 0;
     const bDue = b.callbackAt && new Date(b.callbackAt).getTime() <= now ? 1 : 0;
     if (aDue !== bDue) return bDue - aDue;
@@ -305,76 +178,77 @@ export function getLeads(): Lead[] {
   });
 }
 
-export function getLead(id: string): Lead | undefined {
-  const db = conn();
-  const r = db.prepare("SELECT * FROM leads WHERE id = ?").get(id) as
-    | LeadRow
-    | undefined;
-  if (!r) return undefined;
-  const acts = db
-    .prepare(
-      "SELECT * FROM activities WHERE leadId = ? ORDER BY createdAt ASC, rowid ASC",
-    )
-    .all(id) as unknown as ActivityRow[];
-  return rowToLead(r, acts.map(rowToActivity));
+export async function getLead(id: string): Promise<Lead | undefined> {
+  await ensureSeeded();
+  const redis = getRedis();
+  const [h, acts] = await Promise.all([
+    redis.hgetall(KEY.lead(id)) as Promise<LeadHash | null>,
+    loadActivities(id),
+  ]);
+  if (!h || !h.id) return undefined;
+  return hashToLead(h, acts);
 }
 
 // The power-dialer "next up" queue: workable stages only, hottest first,
 // skipping anything that's lost/won/do-not-call.
-export function getQueue(): Lead[] {
+export async function getQueue(): Promise<Lead[]> {
   const workable: PipelineStage[] = [
     "new",
     "attempting",
     "contacted",
     "callback_scheduled",
   ];
-  return getLeads().filter((l) => workable.includes(l.stage));
+  const leads = await getLeads();
+  return leads.filter((l) => workable.includes(l.stage));
 }
 
-// --- Writes ----------------------------------------------------------------
+// ─── Writes ──────────────────────────────────────────────────────────────────
 
-export function updateLead(id: string, patch: Partial<Lead>): Lead | undefined {
-  const lead = getLead(id);
+export async function updateLead(id: string, patch: Partial<Lead>): Promise<Lead | undefined> {
+  const lead = await getLead(id);
   if (!lead) return undefined;
   Object.assign(lead, patch);
-  persistLead(conn(), lead);
+  await writeLead(lead);
   return lead;
 }
 
-export function addNote(leadId: string, body: string, repId?: string): Activity | undefined {
-  const lead = getLead(leadId);
+export async function addNote(leadId: string, body: string, repId?: string): Promise<Activity | undefined> {
+  const lead = await getLead(leadId);
   if (!lead) return undefined;
   const activity: Activity = {
-    id: nextId("act"),
+    id: await nextId("act"),
     leadId,
     type: "note",
     body,
     repId,
     createdAt: new Date().toISOString(),
   };
-  insertActivityRow(conn(), activity);
+  await appendActivity(leadId, activity);
   return activity;
 }
 
 // Record a sent email on the lead's timeline. Keeps the lead in its current
 // stage (an email is a touch, not a disposition) but updates last-contacted.
-export function logEmail(
+export async function logEmail(
   leadId: string,
   input: { subject: string; body: string; repId?: string },
-): Lead | undefined {
-  const lead = getLead(leadId);
+): Promise<Lead | undefined> {
+  const lead = await getLead(leadId);
   if (!lead) return undefined;
   const now = new Date().toISOString();
-  lead.activities.push({
-    id: nextId("act"),
+  const activity: Activity = {
+    id: await nextId("act"),
     leadId,
     type: "email",
     body: `Subject: ${input.subject}\n\n${input.body}`,
     repId: input.repId,
     createdAt: now,
-  });
+  };
+  await appendActivity(leadId, activity);
+  lead.activities.push(activity);
   lead.lastContactedAt = now;
   if (input.repId) lead.ownerRepId = input.repId;
+  await writeLead(lead);
   return lead;
 }
 
@@ -407,13 +281,13 @@ export interface DispositionInput {
   callbackAt?: string | null;
 }
 
-export function logDisposition(leadId: string, input: DispositionInput): Lead | undefined {
-  const lead = getLead(leadId);
+export async function logDisposition(leadId: string, input: DispositionInput): Promise<Lead | undefined> {
+  const lead = await getLead(leadId);
   if (!lead) return undefined;
 
   const now = new Date().toISOString();
   const activity: Activity = {
-    id: nextId("act"),
+    id: await nextId("act"),
     leadId,
     type: "call",
     disposition: input.disposition,
@@ -422,7 +296,7 @@ export function logDisposition(leadId: string, input: DispositionInput): Lead | 
     repId: input.repId,
     createdAt: now,
   };
-  insertActivityRow(conn(), activity);
+  await appendActivity(leadId, activity);
   lead.activities.push(activity);
 
   lead.attempts += 1;
@@ -437,14 +311,14 @@ export function logDisposition(leadId: string, input: DispositionInput): Lead | 
     lead.callbackAt = null;
   }
 
-  persistLead(conn(), lead);
+  await writeLead(lead);
   return lead;
 }
 
-export function createLead(input: Partial<Lead> & { business: string; phone: string }): Lead {
+export async function createLead(input: Partial<Lead> & { business: string; phone: string }): Promise<Lead> {
   const now = new Date().toISOString();
   const lead: Lead = {
-    id: nextId("lead"),
+    id: await nextId("lead"),
     business: input.business,
     contactName: input.contactName,
     phone: input.phone,
@@ -473,14 +347,14 @@ export function createLead(input: Partial<Lead> & { business: string; phone: str
     createdAt: now,
     activities: [],
   };
-  insertLeadRow(conn(), lead);
+  await writeLead(lead);
   return lead;
 }
 
-// --- Aggregates ------------------------------------------------------------
+// ─── Aggregates ──────────────────────────────────────────────────────────────
 
-export function getStats(): CrmStats {
-  const leads = allLeads();
+export async function getStats(): Promise<CrmStats> {
+  const leads = await allLeads();
   const now = new Date();
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
@@ -547,9 +421,8 @@ export interface RepStat {
   connectRate: number;
 }
 
-export function getRepStats(): RepStat[] {
-  const leads = allLeads();
-  const reps = getReps();
+export async function getRepStats(): Promise<RepStat[]> {
+  const [leads, reps] = await Promise.all([allLeads(), getReps()]);
   const map = new Map<string, { calls: number; connects: number; booked: number }>();
   for (const rep of reps) map.set(rep.id, { calls: 0, connects: 0, booked: 0 });
 

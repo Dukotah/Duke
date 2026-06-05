@@ -12,7 +12,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (!disposition || !(disposition in DISPOSITION_LABELS)) {
       return NextResponse.json({ error: "Valid disposition is required" }, { status: 400 });
     }
-    const lead = logDisposition(id, {
+    const lead = await logDisposition(id, {
       disposition,
       note: typeof body.note === "string" ? body.note : undefined,
       durationSec: typeof body.durationSec === "number" ? body.durationSec : undefined,
