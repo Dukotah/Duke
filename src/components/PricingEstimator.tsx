@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Info } from "lucide-react";
 
@@ -286,13 +287,13 @@ export default function PricingEstimator() {
                 })}
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a
+                <Link
                   href="/#contact"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   Get an Exact Quote <ArrowRight size={15} />
-                </a>
+                </Link>
                 <button
                   onClick={() => { setCurrent(0); setAnswers({}); setDone(false); }}
                   className="inline-flex items-center justify-center px-6 py-3 rounded-md text-sm font-semibold text-[#3F3F46]/70 border border-[#18181B]/15 hover:border-[#18181B]/40 transition-colors"

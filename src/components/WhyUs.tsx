@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Check, X, Minus } from "lucide-react";
 
 type CellValue =
@@ -339,13 +340,13 @@ export default function WhyUs() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-12 text-center"
         >
-          <a
+          <Link
             href="/#contact"
             className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Talk to Duke — no sales pitch
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

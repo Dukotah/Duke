@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, AlertTriangle, CheckCircle, ShieldAlert, Mail } from "lucide-react";
 
@@ -280,13 +281,13 @@ export default function ITQuiz() {
                 {result.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-                <a
+                <Link
                   href="/#contact"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {result.cta} <ArrowRight size={15} />
-                </a>
+                </Link>
                 <button
                   onClick={handleReset}
                   className="inline-flex items-center justify-center px-6 py-3 rounded-md text-sm font-semibold text-white/60 border border-white/20 hover:border-white/40 hover:text-white transition-colors"

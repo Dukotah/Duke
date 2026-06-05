@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -38,14 +39,14 @@ export default function ScrollCTA() {
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <a
+              <Link
                 href="/#contact"
                 onClick={() => setDismissed(true)}
                 className="inline-flex items-center gap-1.5 bg-[#F97316] hover:bg-[#ea6c0a] transition-colors text-white text-sm font-semibold px-4 py-2 rounded-xl"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Let&apos;s talk <ArrowRight size={14} />
-              </a>
+              </Link>
               <button
                 onClick={() => setDismissed(true)}
                 className="p-1.5 text-white/30 hover:text-white/60 transition-colors"

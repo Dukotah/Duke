@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   Briefcase,
   Stethoscope,
@@ -145,13 +146,13 @@ export default function Industries() {
             Don&apos;t see your industry? Reach out — if you&apos;re a local business, we can
             almost certainly help.
           </p>
-          <a
+          <Link
             href="/#contact"
             className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Let&apos;s talk about your business
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

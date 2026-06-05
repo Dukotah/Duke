@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Globe, ShieldCheck, Cloud } from "lucide-react";
 
 /**
@@ -199,13 +200,13 @@ export default function Portfolio() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mt-12 text-center"
         >
-          <a
+          <Link
             href="/#contact"
             className="inline-flex items-center gap-2 rounded-md bg-[#F97316] px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#ea6c0a]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Start your project <ArrowRight size={15} />
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Globe, ShieldCheck, Cloud, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -379,13 +380,13 @@ export default function CaseStudies() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-10 text-center"
         >
-          <a
+          <Link
             href="/#contact"
             className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Become the next case study <ArrowRight size={15} />
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>
