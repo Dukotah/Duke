@@ -26,15 +26,15 @@ export async function POST(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const parsed = await parseJsonBody<{
-      name?: string; phone?: string; email?: string; website?: string;
+      name?: string; contactName?: string; phone?: string; email?: string; website?: string;
       city?: string; county?: string; niche?: string; notes?: string;
     }>(req);
     if (!parsed.ok) return parsed.response;
-    const { name, phone = "", email = "", website = "", city = "", county = "", niche = "", notes = "" } = parsed.data;
+    const { name, contactName = "", phone = "", email = "", website = "", city = "", county = "", niche = "", notes = "" } = parsed.data;
 
     if (!name?.trim()) return NextResponse.json({ error: "Business name is required" }, { status: 400 });
 
-    const lead = await createCustomLead(userId, { name: name.trim(), phone, email, website, city, county, niche, notes });
+    const lead = await createCustomLead(userId, { name: name.trim(), contactName: contactName.trim(), phone, email, website, city, county, niche, notes });
     return NextResponse.json(lead, { status: 201 });
   } catch (err) {
     return handleApiError("crm/custom-leads POST", err);

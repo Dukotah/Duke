@@ -289,7 +289,8 @@ export async function deleteActivity(leadId: string): Promise<void> {
 
 export interface CustomLead {
   id: string;
-  name: string;
+  name: string; // business name
+  contactName?: string; // person to greet in outreach, when known (e.g. from the contact form)
   phone: string;
   email: string;
   website: string;
@@ -308,6 +309,7 @@ export async function createCustomLead(
   const redis = getRedis();
   const lead: CustomLead = {
     ...data,
+    contactName: data.contactName?.trim() ?? "", // never store undefined (Redis hset)
     id: crypto.randomUUID(),
     addedBy: userId,
     createdAt: new Date().toISOString(),

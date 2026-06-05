@@ -10,12 +10,14 @@ import {
   personalize,
   type EmailTemplate,
 } from "./emailTemplates";
+import { firstName } from "@/lib/outreach";
 
 const H = { fontFamily: "var(--font-heading)" };
 
 interface ComposerLead {
   id: string;
   name: string;
+  contactName?: string;
   email: string;
   city: string;
 }
@@ -53,9 +55,9 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
     }
   };
 
-  // No contact-person name in the scraped lead, so {name} greeting falls back
-  // to "there"; {business} carries the company name.
-  const vars = { name: "", business: lead.name, city: lead.city, fromName };
+  // {name} greeting uses the contact's first name when known, else falls back
+  // to "there" (handled in personalize); {business} carries the company name.
+  const vars = { name: firstName(lead.contactName), business: lead.name, city: lead.city, fromName };
 
   const saveEdits = () => {
     saveTemplateOverride(templateKey, subject, body);
@@ -84,7 +86,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          leads: [{ id: lead.id, name: lead.name, email: lead.email, city: lead.city }],
+          leads: [{ id: lead.id, name: lead.name, contactName: lead.contactName, email: lead.email, city: lead.city }],
           subject,
           body,
           fromName,

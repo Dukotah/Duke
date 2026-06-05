@@ -9,6 +9,7 @@ import {
   loadTemplates, saveTemplateOverride, resetTemplateOverride, hasOverride,
   personalize, type EmailTemplate,
 } from "./emailTemplates";
+import { firstName } from "@/lib/outreach";
 
 const H = { fontFamily: "var(--font-heading)" };
 const LIMIT = 50;
@@ -16,6 +17,7 @@ const LIMIT = 50;
 interface Lead {
   id: string;
   name: string;
+  contact_name: string;
   category: string;
   email: string;
   city: string;
@@ -215,9 +217,9 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const previewEmail = () => {
     if (selectedLeads.length === 0) return { subject: "", body: "" };
     const lead = selectedLeads[0];
-    // {name} greeting falls back to "there" (no contact person scraped);
+    // {name} greeting uses the contact's first name when known, else "there";
     // {business} carries the company name.
-    const vars = { name: "", business: lead.name, city: lead.city, fromName };
+    const vars = { name: firstName(lead.contact_name), business: lead.name, city: lead.city, fromName };
     return { subject: personalize(subject, vars), body: personalize(body, vars) };
   };
 
@@ -228,6 +230,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
       const leadsPayload = selectedLeads.map((l) => ({
         id: l.id,
         name: l.name,
+        contactName: l.contact_name,
         email: l.email,
         city: l.city,
       }));

@@ -15,6 +15,7 @@ interface Props {
 
 export default function AddLeadModal({ onClose, onAdded }: Props) {
   const [name, setName] = useState("");
+  const [contactName, setContactName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
@@ -41,7 +42,7 @@ export default function AddLeadModal({ onClose, onAdded }: Props) {
       const res = await fetch("/api/crm/custom-leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, email, website, city, county, niche, notes }),
+        body: JSON.stringify({ name, contactName, phone, email, website, city, county, niche, notes }),
       });
       if (res.ok) { onAdded(); onClose(); }
       else {
@@ -82,6 +83,15 @@ export default function AddLeadModal({ onClose, onAdded }: Props) {
               className={`w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border text-sm text-white placeholder-white/20 focus:outline-none transition-colors ${errors.name ? "border-red-400/50 focus:border-red-400/70" : "border-white/10 focus:border-[#F97316]/50"}`}
               style={H} />
             {errors.name && <p className="text-xs text-red-400 mt-1" style={H}>{errors.name}</p>}
+          </div>
+
+          {/* Contact Name */}
+          <div>
+            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Contact Name</label>
+            <input value={contactName} onChange={(e) => setContactName(e.target.value)}
+              placeholder="e.g. Jordan — the person you'll greet in emails"
+              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              style={H} />
           </div>
 
           {/* Phone + Email */}

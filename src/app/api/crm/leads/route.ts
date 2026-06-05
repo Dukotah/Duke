@@ -7,6 +7,7 @@ const CSV_URL =
 export interface Lead {
   id: string;
   name: string;
+  contact_name: string;
   category: string;
   alt_categories: string;
   phone: string;
@@ -88,6 +89,7 @@ async function getLeads(): Promise<Lead[]> {
     leads.push({
       id: col(row, "id") || String(i),
       name,
+      contact_name: col(row, "contact_name") || col(row, "contact") || col(row, "owner_name") || col(row, "owner") || col(row, "contact_person"),
       category: col(row, "category") || col(row, "niche"),
       alt_categories: col(row, "alt_categories"),
       phone: col(row, "phone_fmt") || col(row, "phone"),
@@ -194,6 +196,7 @@ export async function GET(req: NextRequest) {
         customLeads = custom.map((cl) => ({
           id: `custom:${cl.id}`,
           name: cl.name,
+          contact_name: cl.contactName ?? "",
           category: cl.niche || "custom",
           alt_categories: "",
           phone: cl.phone,

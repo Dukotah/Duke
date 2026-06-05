@@ -131,7 +131,7 @@ const OutreachTemplates = dynamic(() => import("./components/OutreachTemplates")
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Lead {
-  id: string; name: string; category: string; phone: string; email: string;
+  id: string; name: string; contact_name: string; category: string; phone: string; email: string;
   email_owned: string; website: string; socials: string; best_contact: string;
   address: string; city: string; state: string; zip: string; county: string;
   tier: string; tier_reason: string; builder: string; industry_fit: string;

@@ -14,7 +14,7 @@ import { buildCallScript, buildObjections, bestTimeToCall } from "@/lib/crm/play
 import { BOOKING_URL, SITE_URL } from "@/config/site";
 
 interface Lead {
-  id: string; name: string; category: string; phone: string; email: string;
+  id: string; name: string; contact_name: string; category: string; phone: string; email: string;
   email_owned: string; website: string; socials: string; best_contact: string;
   address: string; city: string; county: string; tier: string;
   tier_reason: string; builder: string; industry_fit: string;
@@ -286,7 +286,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
       {showEmail && (
         <EmailComposer
-          lead={{ id: lead.id, name: lead.name, email: lead.email, city: lead.city }}
+          lead={{ id: lead.id, name: lead.name, contactName: lead.contact_name, email: lead.email, city: lead.city }}
           repName={repName}
           onClose={() => setShowEmail(false)}
           onSent={handleEmailSent}

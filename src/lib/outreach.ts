@@ -4,9 +4,15 @@
 
 export interface OutreachLead {
   id: string;
-  name: string;
+  name: string; // business name
+  contactName?: string; // person to greet, when known
   email: string;
   city: string;
+}
+
+// First name for an email greeting, or "" when no usable contact person is known.
+export function firstName(full?: string): string {
+  return full?.trim().split(/\s+/)[0] ?? "";
 }
 
 // Basic shape check to avoid sending to obviously malformed addresses.
@@ -93,7 +99,7 @@ export function personalize(
   lead: Pick<OutreachLead, "name" | "city"> & { contactName?: string },
   fromName: string,
 ): string {
-  const greeting = lead.contactName?.trim().split(/\s+/)[0] || "there";
+  const greeting = firstName(lead.contactName) || "there";
   return template
     .replace(/\{name\}/gi, greeting)
     .replace(/\{business\}/gi, lead.name)

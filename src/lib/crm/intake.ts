@@ -134,6 +134,7 @@ export async function captureContactLead(input: ContactIntake): Promise<IntakeRe
 
   const lead = await createCustomLead(ownerId, {
     name: input.business?.trim() || input.name?.trim() || email,
+    contactName: input.name?.trim() || "", // the person who reached out — greet them by name
     phone: input.phone?.trim() ?? "",
     email,
     website: "",
