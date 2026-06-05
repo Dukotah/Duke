@@ -6,9 +6,11 @@ import {
   StickyNote, Send, Star, Link, Flame, Zap,
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
   CalendarClock, Activity, Lock, UserCheck, Info,
+  ChevronDown, ChevronRight, MessageSquare,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
+import { buildCallScript, OBJECTIONS } from "@/lib/crm/playbook";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -127,6 +129,8 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const [claimLoading, setClaimLoading] = useState(false);
   const [showFollowUp, setShowFollowUp] = useState(false);
   const [showScorePopover, setShowScorePopover] = useState(false);
+  const [showScript, setShowScript] = useState(false);
+  const [showObjections, setShowObjections] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
@@ -254,6 +258,12 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
 
   // Build the full pitch to display
   const fullPitch = lead.pitch || `Hi, I'm reaching out to ${lead.name} in ${lead.city} — do you have 2 minutes to talk about your online presence?`;
+
+  // Full multi-block call script + objection bank, tailored to this lead.
+  const callScript = buildCallScript(
+    { name: lead.name, city: lead.city, category: lead.category, website: lead.website, builder: lead.builder, tier: lead.tier },
+    repName,
+  );
 
   return (
     <>
@@ -440,6 +450,56 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
               </div>
               {lead.tier_reason && (
                 <p className="text-xs text-white/25 mt-2 px-1 leading-relaxed" style={H}>{lead.tier_reason}</p>
+              )}
+            </div>
+
+            {/* Full call script (collapsible) */}
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+              <button onClick={() => setShowScript((v) => !v)} className="w-full flex items-center justify-between group">
+                <span className="text-xs font-semibold text-white/35 uppercase tracking-wider flex items-center gap-1.5 group-hover:text-white/55 transition-colors" style={H}>
+                  <Phone size={11} />Full Call Script
+                </span>
+                {showScript ? <ChevronDown size={14} className="text-white/30" /> : <ChevronRight size={14} className="text-white/30" />}
+              </button>
+              {showScript && (
+                <div className="mt-3 space-y-3">
+                  {callScript.map((block) => (
+                    <div key={block.heading}>
+                      <p className="text-[11px] font-semibold text-[#F97316]/80 uppercase tracking-wider mb-1.5" style={H}>{block.heading}</p>
+                      <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-3 relative">
+                        <div className="space-y-1.5 pr-7">
+                          {block.lines.map((line, i) => (
+                            <p key={i} className="text-sm text-white/80 leading-relaxed" style={H}>{line}</p>
+                          ))}
+                        </div>
+                        <button onClick={() => navigator.clipboard.writeText(block.lines.join("\n"))}
+                          className="absolute top-2.5 right-2.5 p-1.5 rounded-md text-white/20 hover:text-white/60 hover:bg-white/5 transition-colors">
+                          <Copy size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Objection handling (collapsible) */}
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+              <button onClick={() => setShowObjections((v) => !v)} className="w-full flex items-center justify-between group">
+                <span className="text-xs font-semibold text-white/35 uppercase tracking-wider flex items-center gap-1.5 group-hover:text-white/55 transition-colors" style={H}>
+                  <MessageSquare size={11} />Objection Handling
+                </span>
+                {showObjections ? <ChevronDown size={14} className="text-white/30" /> : <ChevronRight size={14} className="text-white/30" />}
+              </button>
+              {showObjections && (
+                <div className="mt-3 space-y-2">
+                  {OBJECTIONS.map((o) => (
+                    <div key={o.trigger} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-3">
+                      <p className="text-xs font-semibold text-white/80 mb-1" style={H}>&ldquo;{o.trigger}&rdquo;</p>
+                      <p className="text-sm text-white/55 leading-relaxed" style={H}>{o.response}</p>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
 

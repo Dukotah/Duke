@@ -1,0 +1,150 @@
+// Cold-call playbook for the LIVE CRM (db.ts / CSV leads).
+//
+// Generates a full call script (opener → hook → value → ask → fallback) and an
+// objection bank from the fields a scraped lead actually has — name, city,
+// category, website, builder, tier — with no WebsiteSignals required. Ported
+// from the retired crm/store `scoring` module so the dashboard's LeadPanel can
+// render a real script per lead instead of a single canned opening line.
+
+export interface PlaybookLead {
+  name: string; // business name
+  city?: string;
+  category?: string; // niche / industry
+  website?: string;
+  builder?: string; // e.g. "Wix" / "Squarespace" — a DIY tell
+  tier?: string; // "A" (no site) | "B" (DIY) | "C" (has site)
+  contactName?: string; // optional person name, if known
+}
+
+function hasNoSite(l: PlaybookLead): boolean {
+  return (l.tier ?? "").toUpperCase() === "A" || !l.website?.trim();
+}
+function isDiy(l: PlaybookLead): boolean {
+  return !hasNoSite(l) && ((l.tier ?? "").toUpperCase() === "B" || !!l.builder?.trim());
+}
+
+export interface ScriptBlock {
+  heading: string;
+  lines: string[];
+}
+
+// The opener references the lead's single biggest problem so the very first
+// sentence is specific and disarming.
+export function buildCallScript(lead: PlaybookLead, repName = "me"): ScriptBlock[] {
+  const rep = repName && repName.trim().toLowerCase() !== "me" ? repName.trim() : "me";
+  const first = lead.contactName?.split(" ")[0];
+  const greet = first ? `Hi, is this ${first}?` : "Hi there —";
+  const industry = (lead.category || "business").toLowerCase();
+  const city = lead.city || "your area";
+
+  const hook = hasNoSite(lead)
+    ? `I went looking for ${lead.name} online and couldn't find a website anywhere — and that's actually why I'm calling.`
+    : isDiy(lead)
+      ? `I was on ${lead.name}'s website${lead.builder ? ` (looks like it's on ${lead.builder})` : ""} and noticed a few things that are quietly costing you customers — that's why I'm calling.`
+      : `I was on ${lead.name}'s website this morning and had a couple of ideas — that's actually why I'm calling.`;
+
+  const problems = hasNoSite(lead)
+    ? [
+        "No website means people searching for you online find your competitors instead.",
+        "Folks check you out online before they ever call — if there's nothing to find, they move on.",
+      ]
+    : isDiy(lead)
+      ? [
+          "DIY sites usually load slowly and don't turn visitors into calls.",
+          "They often don't look right on phones, where most of your visitors are.",
+          "The next step isn't clear, so people leave without ever reaching out.",
+        ]
+      : [
+          "Slow load times lose visitors before the page even finishes appearing.",
+          "Mobile layout and clear calls-to-action are usually where the easy wins are.",
+        ];
+
+  return [
+    {
+      heading: "Opener",
+      lines: [
+        greet,
+        `This is ${rep} with Copper Bay Tech, here in Sonoma County.`,
+        hook,
+        "Do you have thirty seconds — or did I catch you at a bad time?",
+      ],
+    },
+    {
+      heading: "The hook (their problem)",
+      lines: problems.map((p) => `• ${p}`),
+    },
+    {
+      heading: "Value bridge",
+      lines: [
+        `When someone Googles "${industry} in ${city}," your website is your handshake. Right now it's costing you customers you never even hear about.`,
+        hasNoSite(lead)
+          ? "I build simple, fast sites for local businesses — most start around $1,500 and go live in about two weeks."
+          : "We rebuild sites like yours — fast, secure, mobile — usually live in about two weeks.",
+      ],
+    },
+    {
+      heading: "The ask (book the call)",
+      lines: [
+        `I'd love to show you a quick before-and-after of what we'd do for ${lead.name} — no charge, no pressure.`,
+        "Are mornings or afternoons better for a 15-minute call this week?",
+      ],
+    },
+    {
+      heading: "If they hesitate",
+      lines: [
+        "Totally fair. Can I text or email you a free audit of your current setup so you can see exactly what I'm seeing?",
+        "What's the best email or number for that?",
+      ],
+    },
+  ];
+}
+
+// Searchable objection bank so the caller never freezes mid-call. Responses
+// reference "[their top problem]" — swap in the specific issue when reading.
+export interface Objection {
+  trigger: string;
+  response: string;
+}
+
+export const OBJECTIONS: Objection[] = [
+  {
+    trigger: "We already have a website",
+    response:
+      "Totally — and I'm not saying it's bad. I'm saying it's costing you customers right now: [their top problem]. A quick rebuild fixes that and pays for itself fast. Worth 15 minutes to see?",
+  },
+  {
+    trigger: "How much does it cost?",
+    response:
+      "Most of our rebuilds land between $1,500 and $4,500, one time — and we can usually phase it so there's no big upfront hit. The right number depends on what you need, which is exactly what the free 15-minute call figures out.",
+  },
+  {
+    trigger: "I don't have time",
+    response:
+      "That's exactly why people work with us — we do all the heavy lifting. The call itself is 15 minutes, and we handle the rest. Mornings or afternoons better for you?",
+  },
+  {
+    trigger: "We're not interested",
+    response:
+      "Fair enough — can I ask, is it that the timing's off, or that the website just isn't a priority right now? Either way I can send you the free audit so it's there when you need it.",
+  },
+  {
+    trigger: "My nephew/cousin built it",
+    response:
+      "Love that — and we can build on what they did rather than replace it. The issue is [their top problem], which is a quick fix for us. Happy to loop them in too; we work with in-house folks all the time.",
+  },
+  {
+    trigger: "Just email me something",
+    response:
+      "Happy to — what's the best address? And so I send the right thing: is your main goal more calls, more bookings, or just looking more professional? I'll tailor the audit to that.",
+  },
+  {
+    trigger: "I'm with a customer / call me back",
+    response:
+      "No problem at all — I'll be quick. What's a better time today or tomorrow? I'll lock it in so I'm not chasing you.",
+  },
+  {
+    trigger: "Is this a sales call?",
+    response:
+      "It is, and I'll respect your time — I only called because I actually saw something on your site worth fixing. If it's not for you, no hard feelings. Can I give you 30 seconds?",
+  },
+];

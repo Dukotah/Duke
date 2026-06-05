@@ -46,7 +46,7 @@ Copper Bay Tech`,
   },
   {
     key: "follow_up",
-    label: "🔁 Follow Up",
+    label: "🔁 Follow Up 1 (bump)",
     subject: "Following up, {name}",
     body: `Hi {name},
 
@@ -55,6 +55,36 @@ Just bumping this back to the top of your inbox in case it slipped by. I reached
 No pressure at all. If the timing is off, just say the word and I'll check back down the road. And if you're open to it, I can jump on a quick call whenever works for you.
 
 Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
+    key: "follow_up_angle",
+    label: "🔁 Follow Up 2 (angle)",
+    subject: "{business} vs. the competition in {city}",
+    body: `Hi {name},
+
+One more thought and then I'll get out of your inbox. When someone in {city} searches for what you do, the business with the faster, cleaner website usually gets the call, even when they aren't the better business.
+
+That's the gap I'd love to close for {business}. Fifteen minutes and I can show you exactly what I'd change and what it would cost, no pressure either way.
+
+Are mornings or afternoons better for you this week?
+
+Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
+    key: "follow_up_breakup",
+    label: "🔁 Follow Up 3 (breakup)",
+    subject: "Closing the loop on {business}",
+    body: `Hi {name},
+
+I don't want to keep cluttering your inbox, so this is my last note on it.
+
+If giving the {business} website a hand ever moves up the list, just reply here or call or text me at (707) 239-6725 and I'll take care of it. I've kept a free audit on file for you either way.
+
+Wishing you all the best,
 {fromName}
 Copper Bay Tech`,
   },
