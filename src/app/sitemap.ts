@@ -5,6 +5,7 @@ const BASE = SITE_URL;
 
 const blogPosts: Array<{ slug: string; lastModified: string; priority: number }> = [
   // June 2026
+  { slug: "cybersecurity-for-law-firms-sonoma-county", lastModified: "2026-06-06", priority: 0.8 },
   { slug: "it-support-for-restaurants-sonoma-county", lastModified: "2026-06-06", priority: 0.8 },
   { slug: "how-ai-helps-sonoma-county-small-businesses", lastModified: "2026-06-02", priority: 0.8 },
   { slug: "small-business-cybersecurity-threats-sonoma-county", lastModified: "2026-06-01", priority: 0.8 },

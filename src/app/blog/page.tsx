@@ -22,6 +22,14 @@ type Post = {
 const posts: Post[] = [
   // June 2026
   {
+    slug: "cybersecurity-for-law-firms-sonoma-county",
+    tag: "Cybersecurity",
+    title: "Cybersecurity for Law Firms in Sonoma County: What You Need to Know",
+    excerpt: "Law firms are among the top targets for ransomware and data theft — and most small firms are underprepared. Here's what Sonoma County attorneys need to protect client data and stay bar-compliant.",
+    readTime: "7 min read",
+    date: "June 2026",
+  },
+  {
     slug: "it-support-for-restaurants-sonoma-county",
     tag: "IT Support",
     title: "IT Support for Restaurants in Sonoma County: What Actually Breaks, and What to Do About It",
