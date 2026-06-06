@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCustomLeads, getAllClaims, getTerritory, getLeadPreviews, previewKey } from "@/lib/db";
 
-const CSV_URL =
+export const CSV_URL =
   "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/claude/lead-data-sourcing-eyOeN/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
 
 export interface Lead {

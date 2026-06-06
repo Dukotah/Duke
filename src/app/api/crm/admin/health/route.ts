@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
+import { CSV_URL } from "@/app/api/crm/leads/route";
 
 function isAdmin(req: NextRequest) {
   return req.headers.get("x-user-role") === "admin";
@@ -22,6 +23,15 @@ export async function GET(req: NextRequest) {
     } catch {
       redisOk = false;
     }
+  }
+
+  // Live-test the cold-lead feed (the scraper CSV the queue reads from GitHub).
+  let csvOk = false;
+  try {
+    const res = await fetch(CSV_URL, { signal: AbortSignal.timeout(5000) });
+    csvOk = res.ok;
+  } catch {
+    csvOk = false;
   }
 
   const hasResend = set(process.env.RESEND_API_KEY);
@@ -76,6 +86,33 @@ export async function GET(req: NextRequest) {
       vars: ["PAGESPEED_API_KEY"],
       okText: "Audits run at full speed.",
       problem: "Site-speed audits still work on Google's free tier, but may be rate-limited. Add a key for higher limits.",
+    },
+    {
+      id: "lead-feed",
+      label: "Lead feed (prospecting CSV)",
+      required: false,
+      ok: csvOk,
+      vars: [],
+      okText: "The prospecting lead list is reachable and loading into the call queue.",
+      problem: "Couldn't reach the lead CSV right now. Cold prospecting leads won't load until the scraper export is published and public. Inbound leads (contact form + free tools) are unaffected.",
+    },
+    {
+      id: "preview-links",
+      label: "Demo-site links (website factory → CRM)",
+      required: false,
+      ok: set(process.env.CRM_ADMIN_TOKEN),
+      vars: ["CRM_ADMIN_TOKEN"],
+      okText: "Generated demo sites can be attached to their CRM lead.",
+      problem: "Optional: set CRM_ADMIN_TOKEN (the same value used by the website factory's push-to-crm script) so generated demo-site links attach to the matching lead.",
+    },
+    {
+      id: "lead-webhook",
+      label: "Auto-refresh of the lead feed",
+      required: false,
+      ok: set(process.env.GITHUB_WEBHOOK_SECRET),
+      vars: ["GITHUB_WEBHOOK_SECRET"],
+      okText: "New scraper exports refresh the queue automatically.",
+      problem: "Optional: set GITHUB_WEBHOOK_SECRET so new lead-CSV commits refresh the queue within seconds instead of waiting up to an hour for the cache.",
     },
   ];
 

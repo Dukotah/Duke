@@ -67,6 +67,7 @@ export default function Footer() {
   };
 
   const navLinks = [
+    { label: "Get Started", href: "/get-started" },
     { label: "Services", href: "/#services" },
     { label: "Pricing", href: "/pricing" },
     { label: "How We Work", href: "/process" },
