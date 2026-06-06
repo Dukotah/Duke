@@ -125,6 +125,11 @@ export default function GoogleBusinessProfilePost() {
             </p>
           </div>
 
+          <p className="text-sm text-zinc-500 mt-8 px-6">
+            Related:{" "}
+            <a href="/services/web-development" className="text-orange-500 hover:text-orange-600">Web Development & SEO</a>
+          </p>
+
           <div className="mt-12 rounded-2xl p-6 border border-[#18181B]/10 bg-[#FAFAF9]">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-2" style={{ fontFamily: "var(--font-heading)" }}>Free Resource</p>
             <h3 className="text-[#18181B] font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Check your website&apos;s SEO health</h3>

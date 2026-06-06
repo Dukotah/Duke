@@ -145,6 +145,13 @@ export default function Article() {
                 ))}
               </ul>
 
+              <p className="text-sm text-zinc-500 mt-8">
+                Related:{" "}
+                <Link href="/services/cybersecurity" className="text-orange-500 hover:text-orange-600">Cybersecurity Services</Link>
+                {" · "}
+                <Link href="/industries/healthcare" className="text-orange-500 hover:text-orange-600">IT for Healthcare</Link>
+              </p>
+
               <div className="bg-[#18181B] rounded-xl p-6 text-center">
                 <p className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Want a hands-on security assessment for your practice?</p>
                 <p className="text-white/60 text-sm mb-5">We run practical HIPAA-aligned security audits for small healthcare practices in Sonoma County. Most critical issues are fixed same day.</p>

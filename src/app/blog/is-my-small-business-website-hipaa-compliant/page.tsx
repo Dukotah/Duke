@@ -68,6 +68,13 @@ export default function Article() {
             <div className="p-5 rounded-xl bg-[#FFF7ED] border border-[#F97316]/20 text-sm text-[#3F3F46]/60" style={{ fontFamily: "var(--font-body)" }}>
               <strong className="text-[#18181B]">Note:</strong> This is not legal advice. HIPAA compliance is complex and fact-specific. Work with a qualified attorney alongside your technical team.
             </div>
+            <p className="text-sm text-zinc-500 mt-8">
+              Related:{" "}
+              <Link href="/services/cybersecurity" className="text-orange-500 hover:text-orange-600">Cybersecurity</Link>
+              {" · "}
+              <Link href="/industries/healthcare" className="text-orange-500 hover:text-orange-600">IT for Healthcare</Link>
+            </p>
+
             <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources

@@ -177,6 +177,13 @@ export default function Article() {
                 , or just a second opinion on where you stand.
               </p>
 
+              <p className="text-sm text-zinc-500 mt-8">
+                Related:{" "}
+                <Link href="/services/cybersecurity" className="text-orange-500 hover:text-orange-600">Cybersecurity Services</Link>
+                {" · "}
+                <Link href="/services/it-support" className="text-orange-500 hover:text-orange-600">IT Support</Link>
+              </p>
+
               <div className="bg-[#18181B] rounded-xl p-6 text-center">
                 <p className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Want to know which gaps you actually have?</p>
                 <p className="text-white/60 text-sm mb-5" style={{ fontFamily: "var(--font-body)" }}>Free 30-minute security review — no jargon, no sales pressure. We&apos;ll tell you the three things to fix first.</p>

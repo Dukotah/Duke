@@ -107,6 +107,11 @@ export default function Post() {
           </Link>
         </div>
 
+        <p className="text-sm text-zinc-500 mt-8">
+          Related:{" "}
+          <Link href="/services/web-development" className="text-orange-500 hover:text-orange-600">Web Development</Link>
+        </p>
+
       </div>
     </main>
     </>

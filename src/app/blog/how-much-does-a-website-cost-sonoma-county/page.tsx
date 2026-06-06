@@ -178,6 +178,12 @@ export default function Article() {
           </div>
         </section>
 
+        <section className="py-4 max-w-3xl mx-auto px-6">
+          <p className="text-sm text-zinc-500 mt-8">
+            Related:{" "}
+            <Link href="/services/web-development" className="text-orange-500 hover:text-orange-600">Web Development</Link>
+          </p>
+        </section>
         <section className="py-16 bg-[#18181B]">
           <div className="max-w-2xl mx-auto px-6 text-center">
             <h2 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>

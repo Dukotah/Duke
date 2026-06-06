@@ -224,6 +224,10 @@ export default function Article() {
               </Link>
             </div>
 
+            <p className="text-sm text-zinc-500 mt-8">
+              Related:{" "}
+              <Link href="/services/web-development" className="text-orange-500 hover:text-orange-600">Web Development</Link>
+            </p>
             <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link
                 href="/blog"

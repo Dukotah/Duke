@@ -145,6 +145,10 @@ export default function RansomwarePost() {
             </p>
           </div>
 
+          <p className="text-sm text-zinc-500 mt-8">
+              Related:{" "}
+              <Link href="/services/cybersecurity" className="text-orange-500 hover:text-orange-600">Cybersecurity Services</Link>
+            </p>
           <div className="mt-12 rounded-2xl p-6 border border-[#18181B]/10 bg-[#FAFAF9]">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-2" style={{ fontFamily: "var(--font-heading)" }}>Free Consultation</p>
             <h3 className="text-[#18181B] font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Not sure how exposed you are?</h3>

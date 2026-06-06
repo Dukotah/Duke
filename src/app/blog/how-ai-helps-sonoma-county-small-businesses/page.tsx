@@ -153,6 +153,13 @@ export default function Article() {
                 . You own the system; we build it, connect it, and keep it sharp.
               </p>
 
+              <p className="text-sm text-zinc-500 mt-8">
+                Related:{" "}
+                <Link href="/services/web-development" className="text-orange-500 hover:text-orange-600">Web Development</Link>
+                {" · "}
+                <Link href="/services/it-support" className="text-orange-500 hover:text-orange-600">IT Support</Link>
+              </p>
+
               <div className="bg-[#18181B] rounded-xl p-6 text-center">
                 <p className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Curious what AI could win back for you?</p>
                 <p className="text-white/60 text-sm mb-5" style={{ fontFamily: "var(--font-body)" }}>Free 30-minute call — no jargon, no pressure. We&apos;ll find the one piece that&apos;ll pay for itself fastest.</p>

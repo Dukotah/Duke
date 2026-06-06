@@ -128,6 +128,11 @@ export default function Article() {
               </p>
             </div>
 
+            <p className="text-sm text-zinc-500 mt-8">
+              Related:{" "}
+              <Link href="/services/it-support" className="text-orange-500 hover:text-orange-600">IT Support</Link>
+            </p>
+
             <BlogEmailCapture />
 
             <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">

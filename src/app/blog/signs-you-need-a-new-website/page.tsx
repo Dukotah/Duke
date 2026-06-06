@@ -120,6 +120,10 @@ export default function Article() {
               </div>
             </div>
 
+            <p className="text-sm text-zinc-500 mt-8">
+              Related:{" "}
+              <Link href="/services/web-development" className="text-orange-500 hover:text-orange-600">Web Development</Link>
+            </p>
             <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
               <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
