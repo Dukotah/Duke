@@ -2,7 +2,16 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import JsonLd, { serviceSchema, breadcrumbSchema, faqSchema } from "@/components/JsonLd";
+import { PRICING } from "@/config/pricing";
 import { ArrowRight, Check } from "lucide-react";
+
+// Map a service label to its pricing.ts key so each page can emit a price range.
+const PRICE_KEY: Record<string, keyof typeof PRICING> = {
+  "Web Design": "web",
+  "IT Support": "it",
+  "Cybersecurity": "cybersecurity",
+  "AI Integration": "ai",
+};
 
 /**
  * Reusable template for "{service} in {city}" landing pages — the local
@@ -56,6 +65,8 @@ export default function ServiceCityPage({
   ctaBlurb = "Free 30-minute call. We'll tell you honestly what we'd fix first and what it would cost — no pressure.",
 }: ServiceCityPageProps) {
   const patternId = `topo-${service}-${city}`.toLowerCase().replace(/[^a-z]/g, "");
+  const priceKey = PRICE_KEY[service];
+  const offer = priceKey ? { low: PRICING[priceKey].low, high: PRICING[priceKey].high } : undefined;
   return (
     <>
       <JsonLd
@@ -64,6 +75,7 @@ export default function ServiceCityPage({
           description: `${service} services for ${city}, California small businesses from Copper Bay Tech.`,
           url: canonical,
           areaServed: { "@type": "City", name: city, containedInPlace: { "@type": "State", name: "California" } },
+          offer,
         })}
       />
       <JsonLd

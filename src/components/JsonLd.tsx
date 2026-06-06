@@ -68,6 +68,8 @@ export function serviceSchema(opts: {
   description: string;
   areaServed: Json | string;
   url?: string;
+  /** Optional price range (USD) — emitted as a schema.org AggregateOffer. */
+  offer?: { low: number; high: number };
 }): Json {
   return {
     "@context": "https://schema.org",
@@ -75,6 +77,16 @@ export function serviceSchema(opts: {
     name: opts.name,
     description: opts.description,
     ...(opts.url ? { url: opts.url } : {}),
+    ...(opts.offer
+      ? {
+          offers: {
+            "@type": "AggregateOffer",
+            priceCurrency: "USD",
+            lowPrice: opts.offer.low,
+            highPrice: opts.offer.high,
+          },
+        }
+      : {}),
     provider: {
       "@type": "LocalBusiness",
       name: BUSINESS_NAME,

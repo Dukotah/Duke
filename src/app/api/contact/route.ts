@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { captureContactLead } from "@/lib/crm/intake";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimit(`contact:${clientIp(req)}`, { limit: 5, windowSec: 600 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many submissions — please wait a few minutes and try again." }, { status: 429 });
+    }
     const body = await req.json();
     const { name, business, email, phone, service, message, company_website, elapsedMs } = body;
 

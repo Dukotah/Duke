@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
     try {
+          const rl = await rateLimit(`audit:${clientIp(req)}`, { limit: 8, windowSec: 600 });
+          if (!rl.ok) {
+            return NextResponse.json({ error: "Too many audits — please wait a few minutes." }, { status: 429 });
+          }
           const { url } = await req.json();
 
       if (!url || typeof url !== "string") {

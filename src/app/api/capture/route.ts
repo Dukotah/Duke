@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { captureToolLead, toolLabel } from "@/lib/crm/intake";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimit(`capture:${clientIp(req)}`, { limit: 10, windowSec: 600 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests — please try again shortly." }, { status: 429 });
+    }
     const body = await req.json();
     const { email, name, context, website } = body;
 
