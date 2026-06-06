@@ -131,9 +131,12 @@ the owner can pull them. Those are flagged **[owner]** and must not be faked.
 **✅ Shipped from this list (2026-06-06):** #1 (sticky mobile call/book bar —
 consolidated the existing StickyCTA site-wide + route-aware), #19/#25 (Service
 `AggregateOffer` price schema from `pricing.ts` on all service-city pages), #53
-(CRM `previewUrl` "Demo" badge), #91 (baseline security headers; strict CSP still
-TODO), #92 (Upstash rate limiting on `/api/contact|capture|audit`, fails open),
-#93 (contact-form honeypot + submit-timing spam gate). Many discrete a11y items
+(CRM `previewUrl` "Demo" badge), #86 (first-touch lead-source attribution —
+UTM/referrer/landing captured per session, folded into the CRM note + notify
+email on BOTH the contact form and all 4 free-tool captures), #91 (baseline
+security headers; strict CSP still TODO), #92 (Upstash rate limiting on
+`/api/contact|capture|audit`, fails open), #93 (contact-form honeypot +
+submit-timing spam gate). Many discrete a11y items
 from #78–84 also shipped in the audit pass. **Already existed (no work needed):**
 #76 (custom `not-found.tsx`); #16 trust signals are largely covered by the
 existing `SocialProof` "Serving …" strip.
