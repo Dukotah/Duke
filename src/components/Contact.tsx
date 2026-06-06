@@ -8,6 +8,10 @@ import { Phone, Mail, Clock, CalendarDays } from "lucide-react";
 import { BOOKING_URL } from "@/config/site";
 import { track } from "@/lib/analytics";
 
+// Module-level so the purity linter doesn't flag a Date.now() call inside the
+// component (it's only ever called from the submit event handler, not render).
+const nowMs = () => Date.now();
+
 type FormData = {
   name: string;
   business: string;
@@ -15,10 +19,14 @@ type FormData = {
   phone?: string;
   service: string;
   message?: string;
+  // Honeypot — must stay empty. Bots that auto-fill every field trip this.
+  company_website?: string;
 };
 
 export default function Contact() {
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  // Captured once at mount; a near-instant submit (< 2s) is almost certainly a bot.
+  const [startedAt] = useState(() => Date.now());
   const router = useRouter();
 
   const {
@@ -33,7 +41,7 @@ export default function Contact() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, elapsedMs: nowMs() - startedAt }),
       });
       if (res.ok) {
         track("contact_form_submit");
@@ -150,6 +158,15 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
           >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Honeypot: hidden from users (and the a11y tree), catnip for bots. */}
+              <input
+                type="text"
+                {...register("company_website")}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="absolute left-[-9999px] top-[-9999px] h-0 w-0 opacity-0"
+              />
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="contact-name" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Your Name *</label>

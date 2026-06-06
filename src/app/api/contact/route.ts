@@ -4,7 +4,18 @@ import { captureContactLead } from "@/lib/crm/intake";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, business, email, phone, service, message } = body;
+    const { name, business, email, phone, service, message, company_website, elapsedMs } = body;
+
+    // Spam gate: a filled honeypot (humans never see the field) or a near-instant
+    // submit (< 2s) is almost certainly a bot. Return ok so the bot doesn't retry,
+    // but drop it — no email, no CRM lead.
+    if (company_website || (typeof elapsedMs === "number" && elapsedMs < 2000)) {
+      console.warn("Contact form: dropped likely-bot submission", {
+        honeypot: !!company_website,
+        elapsedMs,
+      });
+      return NextResponse.json({ ok: true });
+    }
 
     if (!name || !business || !email || !service) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
