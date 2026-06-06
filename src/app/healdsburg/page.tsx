@@ -12,6 +12,7 @@ export default function HealdsburgPage() {
     <CityPage
       city="Healdsburg"
       relatedLinks={[
+        { href: "/web-design-healdsburg", label: "Web Design in Healdsburg", blurb: "Conversion-focused websites for wineries, tasting rooms, inns, and restaurants." },
         { href: "/it-support-healdsburg", label: "IT Support in Healdsburg", blurb: "Reliable IT for wine-country hospitality businesses." },
       ]}
       description="Healdsburg's wine country economy runs on hospitality — boutique hotels, tasting rooms, upscale restaurants, and destination retail. We help Healdsburg businesses run the technology that keeps guests happy and operations smooth."

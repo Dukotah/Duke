@@ -56,6 +56,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/web-design-santa-rosa`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/web-design-petaluma`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/web-design-rohnert-park`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/web-design-healdsburg`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/it-support-santa-rosa`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/it-support-petaluma`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/it-support-windsor`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
