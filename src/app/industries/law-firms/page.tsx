@@ -43,6 +43,11 @@ export default function LawFirmsPage() {
       ]}
       relatedPosts={[
         {
+          slug: "cybersecurity-for-law-firms-sonoma-county",
+          title: "Cybersecurity for Law Firms in Sonoma County: What You Need to Know",
+          tag: "Cybersecurity",
+        },
+        {
           slug: "ransomware-protection-small-business",
           title: "Ransomware Protection for Small Business: What Actually Works",
           tag: "Cybersecurity",
@@ -50,11 +55,6 @@ export default function LawFirmsPage() {
         {
           slug: "how-to-choose-an-it-company-sonoma-county",
           title: "How to Choose an IT Company in Sonoma County (Without Getting Burned)",
-          tag: "IT Support",
-        },
-        {
-          slug: "how-much-does-it-support-cost-for-small-business",
-          title: "How Much Does IT Support Cost for a Small Business in Sonoma County?",
           tag: "IT Support",
         },
       ]}

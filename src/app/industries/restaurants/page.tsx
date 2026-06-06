@@ -79,19 +79,19 @@ export default function RestaurantsPage() {
       ]}
       relatedPosts={[
         {
-          slug: "best-website-for-a-sonoma-county-winery",
-          title: "What Makes a Great Website for a Sonoma County Winery?",
-          tag: "Web Development",
+          slug: "it-support-for-restaurants-sonoma-county",
+          title: "IT Support for Restaurants in Sonoma County: What Actually Breaks, and What to Do About It",
+          tag: "IT Support",
+        },
+        {
+          slug: "restaurant-technology-guide-sonoma-county",
+          title: "The Small Restaurant Owner's Guide to Technology in Sonoma County",
+          tag: "IT Support",
         },
         {
           slug: "how-to-rank-on-google-maps-local-business",
           title: "How to Get Your Sonoma County Business to Rank Higher on Google Maps",
           tag: "Local SEO",
-        },
-        {
-          slug: "5-signs-your-business-website-is-costing-you-customers",
-          title: "5 Signs Your Business Website Is Costing You Customers Right Now",
-          tag: "Web Development",
         },
       ]}
     />

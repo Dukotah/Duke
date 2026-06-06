@@ -22,6 +22,14 @@ type Post = {
 const posts: Post[] = [
   // June 2026
   {
+    slug: "it-support-for-real-estate-offices-sonoma-county",
+    tag: "IT Support",
+    title: "IT Support for Real Estate Offices in Sonoma County",
+    excerpt: "Real estate teams depend on fast internet, secure document sharing, and reliable MLS access. Here's what IT support for Sonoma County real estate offices actually looks like.",
+    readTime: "5 min read",
+    date: "June 2026",
+  },
+  {
     slug: "cybersecurity-for-law-firms-sonoma-county",
     tag: "Cybersecurity",
     title: "Cybersecurity for Law Firms in Sonoma County: What You Need to Know",
