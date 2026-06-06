@@ -128,6 +128,11 @@ leverage. Most are buildable by an agent; a handful need Dukotah (**[owner]**).
 OFF-site (Google Business Profile, real reviews, citations, backlinks) and only
 the owner can pull them. Those are flagged **[owner]** and must not be faked.
 
+**✅ Shipped from this list (2026-06-06):** #1 (sticky mobile call/book bar), #53
+(CRM `previewUrl` "Demo" badge), #91 (baseline security headers; strict CSP still
+TODO), #93 (contact-form honeypot + submit-timing spam gate). Many discrete a11y
+items from #78–84 also shipped in the audit pass.
+
 ## 1. Conversion rate optimization (CRO)
 1. `M` Sticky mobile "call / book" bar after the hero scrolls off — one-tap `tel:` + `/schedule`.
 2. `M` A/B-test hero CTA copy via a config-driven variant flag.
