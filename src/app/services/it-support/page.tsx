@@ -12,6 +12,45 @@ export const metadata: Metadata = {
   },
 };
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How quickly can Copper Bay Tech respond to an IT emergency?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "For critical issues — downed server, ransomware, no internet — we aim to respond within 1 hour and are on-site in Sonoma County within 2 hours during business hours. Remote support for most issues starts within 15–30 minutes.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do you require long-term contracts for IT support?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No long-term contracts. We offer monthly managed support plans you can cancel anytime, as well as hourly break-fix rates for businesses that just need occasional help.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What areas of Sonoma County do you serve?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We serve all of Sonoma County including Petaluma, Santa Rosa, Healdsburg, Windsor, Rohnert Park, Sebastopol, Sonoma, Novato, and surrounding areas. Remote support is available anywhere.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much does small business IT support cost?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Monthly managed IT support for a small business (under 10 employees) typically starts around $300–600/month depending on the number of devices and services needed. Hourly break-fix rates are $125/hr. We offer a free 15-minute consultation to give you an accurate quote.",
+      },
+    },
+  ],
+};
+
 const schema = {
   "@context": "https://schema.org",
   "@type": "Service",
@@ -44,7 +83,7 @@ export default function ITSupportPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([schema, faqSchema]) }}
       />
       <Nav />
 

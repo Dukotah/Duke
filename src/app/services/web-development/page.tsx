@@ -12,6 +12,45 @@ export const metadata: Metadata = {
   },
 };
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How long does it take to build a small business website?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Most small business websites go live in 2–3 weeks from the kickoff call. We handle the design, copy, and technical setup. You review and approve. Complex sites with e-commerce or booking systems can take 4–6 weeks.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much does a small business website cost in Sonoma County?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A professional small business website from Copper Bay Tech starts at $1,500 for a simple 5-page site. Most projects land between $2,000 and $4,500. E-commerce and booking-integrated sites start at $3,500. We offer payment plans with no interest.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Will my website show up on Google?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Every site we build is optimized for local search from day one — fast loading, mobile-first design, proper meta tags, structured data, and Google Business Profile setup. We also submit your sitemap to Google Search Console so your site gets indexed quickly.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens after my website launches?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We include 30 days of free post-launch support to fix any issues. After that, we offer optional monthly maintenance plans starting at $79/month covering security updates, backups, uptime monitoring, and content changes. You're never left on your own.",
+      },
+    },
+  ],
+};
+
 const schema = {
   "@context": "https://schema.org",
   "@type": "Service",
@@ -44,7 +83,7 @@ export default function WebDevelopmentPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([schema, faqSchema]) }}
       />
       <Nav />
 

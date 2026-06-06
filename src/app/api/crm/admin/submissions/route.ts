@@ -52,6 +52,52 @@ async function sendRepNotification(
   }
 }
 
+async function sendReviewRequest(leadEmail: string, leadName: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey || !leadEmail) {
+    console.log(`[CRM] Skipping review request to ${leadEmail} — no RESEND_API_KEY`);
+    return;
+  }
+
+  const googleProfileUrl = process.env.GOOGLE_REVIEW_URL ??
+    "https://g.page/r/CopperbayTech/review";
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: "Duke at Copper Bay Tech <contact@copperbaytech.com>",
+      to: [leadEmail],
+      subject: "Quick favor — would you leave us a Google review?",
+      text: `Hi ${leadName},
+
+It was great working with you. I really hope we knocked it out of the park.
+
+If you have 2 minutes, would you mind leaving us a Google review? It's the single biggest thing that helps other local businesses find us — and it makes a huge difference for a small shop like ours.
+
+Here's the direct link:
+${googleProfileUrl}
+
+No pressure at all — but if you're happy with the work, I'd be really grateful.
+
+Thanks again,
+
+Duke
+Copper Bay Tech
+(707) 239-6725
+copperbaytech.com`,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("[CRM] Failed to send review request:", res.status, err);
+  }
+}
+
 function isAdmin(req: NextRequest) {
   return req.headers.get("x-user-role") === "admin";
 }
@@ -90,7 +136,7 @@ export async function PATCH(req: NextRequest) {
     if (action === "accept" || action === "reject") {
       const updated = await resolveSubmission(id, action === "accept" ? "accepted" : "rejected", dealValue);
 
-      // Send email notification to the rep
+      // Notify the rep and (on accept) request a Google review from the client.
       try {
         const rep = await getUserById(updated.userId);
         if (rep?.email) {
@@ -104,8 +150,11 @@ export async function PATCH(req: NextRequest) {
             updated.commissionAmount
           );
         }
+        if (action === "accept" && updated.leadEmail) {
+          await sendReviewRequest(updated.leadEmail, updated.leadName);
+        }
       } catch (err) {
-        console.error("[CRM] Failed to send rep notification:", err);
+        console.error("[CRM] Failed to send post-accept emails:", err);
         // Don't fail the request
       }
 

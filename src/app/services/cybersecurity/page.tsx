@@ -20,6 +20,45 @@ export const metadata: Metadata = {
   },
 };
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How do I know if my small business needs a cybersecurity assessment?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "If your business stores customer data, processes payments, uses email for business, or has more than one employee with computer access — you need an assessment. Most small businesses in Sonoma County have at least 3 critical vulnerabilities we can identify and fix in a single visit.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What does a cybersecurity assessment include?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Our assessment covers: network security review, password policy audit, phishing vulnerability test, software and patching status, backup verification, and a written report with prioritized recommendations. It takes 2–4 hours on-site and we walk you through every finding.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much does cybersecurity for a small business cost?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A one-time security assessment starts at $500 for businesses under 10 employees. Ongoing monthly security monitoring (updates, alerts, backup checks) starts around $150–300/month. We also offer employee phishing training starting at $99/session.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can you help if we've already been hacked or infected with ransomware?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes — call us immediately at (707) 239-6725. We handle incident response for Sonoma County businesses: isolating the infection, assessing damage, recovering data from backups, and hardening systems to prevent recurrence. The faster we respond, the less damage occurs.",
+      },
+    },
+  ],
+};
+
 const schema = {
   "@context": "https://schema.org",
   "@type": "Service",
@@ -52,7 +91,7 @@ export default function CybersecurityPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([schema, faqSchema]) }}
       />
       <Nav />
 

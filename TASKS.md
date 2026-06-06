@@ -2,13 +2,58 @@
 
 _Last updated: 2026-06-06_
 
+## Done
+
+### T1 — GitHub Actions CI ✅
+`.github/workflows/ci.yml` — lint, typecheck, test, build on every push/PR.
+
+### T2 — Drip sequence cron ✅
+`/api/crm/cron/tick` + `vercel.json` (runs daily at 10am UTC).
+3-step sequence templates in `src/lib/crm/sequences.ts`.
+9 new tests. Respects suppression list, daily cap, domain verification gate.
+
+### T3 — Lead score display ✅
+Already implemented in existing `CallQueue` (colored score circle) and `AllLeads` (ScoreBar).
+Queue sorted by `outreach_score` descending by default. No change needed.
+
+### T4 — Audit tool timeout enforcement ✅
+Already implemented in all audit routes that fetch user-provided URLs.
+`schema/`, `tech/`, `compliance/`, `crawl/`, `seo/`, `links/`, `headers/` all use `AbortSignal.timeout`.
+
+### T5 — Password reset flow ✅
+`/api/crm/reset-request`, `/api/crm/reset-confirm`, `/crm/reset` page.
+"Forgot password?" link on login. Redis token with 1h TTL.
+
+### T6 — Resend email events webhook ✅
+`/api/crm/email-events`: receives opened/clicked/bounced/complained events.
+Signature verified when `RESEND_WEBHOOK_SECRET` set. Bounces auto-suppress.
+`verifyResendSignature` (already existed) now actually wired to a route.
+
 ## Doing
 
-_(none yet — starting now)_
+_(starting Phase 2 now)_
 
-## Todo
+## Todo — Phase 2
 
-### T1 — GitHub Actions CI
+### T7 — Admin setup tab: actionable error states
+When a health check fails, show a one-line fix instruction, not just a red dot.
+Current: setup tab shows green/red for each integration.
+Target: failing checks show "Fix: set RESEND_API_KEY in Vercel env vars" etc.
+
+### T8 — Blog post: IT support for Sonoma County restaurants
+New SEO post targeting "IT support for restaurants Sonoma County".
+Internal links to /services/it-support and /industries/restaurants.
+
+### T9 — FAQ schema on service pages
+Add FAQPage JSON-LD to /services/it-support, /services/cybersecurity, /services/web-development.
+3 FAQs per page targeting common prospect questions.
+
+### T10 — Testimonial capture trigger
+After admin marks a submission "accepted", auto-send an email to the client
+asking for a Google review (direct link to the CBT Google Business Profile).
+
+### Todo — Phase 2
+
 Set up `.github/workflows/ci.yml`: install deps, lint, typecheck, build, test.
 Runs on push to any branch and on PRs to main.
 **Definition of done**: green check appears on every PR.

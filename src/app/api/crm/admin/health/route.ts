@@ -75,7 +75,25 @@ export async function GET(req: NextRequest) {
       ok: set(process.env.PAGESPEED_API_KEY),
       vars: ["PAGESPEED_API_KEY"],
       okText: "Audits run at full speed.",
-      problem: "Site-speed audits still work on Google's free tier, but may be rate-limited. Add a key for higher limits.",
+      problem: "Fix: Go to console.cloud.google.com → Enable PageSpeed Insights API → Create a key → add as PAGESPEED_API_KEY. Without it, audits work but may hit Google's anonymous rate limit.",
+    },
+    {
+      id: "email_events",
+      label: "Email event tracking",
+      required: false,
+      ok: set(process.env.RESEND_WEBHOOK_SECRET),
+      vars: ["RESEND_WEBHOOK_SECRET"],
+      okText: "Open/click/bounce events update leads automatically.",
+      problem: "Fix: In Resend dashboard → Webhooks → Add endpoint: https://yourdomain.com/api/crm/email-events → copy the Signing Secret → set as RESEND_WEBHOOK_SECRET. Subscribe to: email.opened, email.clicked, email.bounced, email.complained.",
+    },
+    {
+      id: "drip_cron",
+      label: "Automated follow-up sequences",
+      required: false,
+      ok: set(process.env.CRON_SECRET),
+      vars: ["CRON_SECRET"],
+      okText: "Drip emails fire automatically via Vercel Cron (daily at 10am UTC).",
+      problem: "Fix: Generate a random secret (openssl rand -base64 32) → set as CRON_SECRET → Vercel Cron will send it automatically. The cron job sends follow-up emails at day 3, 7, and 14 to leads who haven't replied.",
     },
   ];
 
