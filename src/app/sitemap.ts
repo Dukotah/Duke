@@ -4,6 +4,10 @@ import { SITE_URL } from "@/config/site";
 const BASE = SITE_URL;
 
 const blogPosts: Array<{ slug: string; lastModified: string; priority: number }> = [
+  // June 2026 — comparison guides
+  { slug: "squarespace-vs-custom-website-for-small-business", lastModified: "2026-06-04", priority: 0.8 },
+  { slug: "local-it-company-vs-national-msp", lastModified: "2026-06-04", priority: 0.8 },
+  { slug: "free-antivirus-vs-managed-security-small-business", lastModified: "2026-06-04", priority: 0.8 },
   // June 2026
   { slug: "how-ai-helps-sonoma-county-small-businesses", lastModified: "2026-06-02", priority: 0.8 },
   { slug: "small-business-cybersecurity-threats-sonoma-county", lastModified: "2026-06-01", priority: 0.8 },

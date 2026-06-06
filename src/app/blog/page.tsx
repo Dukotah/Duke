@@ -20,6 +20,31 @@ type Post = {
 };
 
 const posts: Post[] = [
+  // June 2026 — comparison guides
+  {
+    slug: "squarespace-vs-custom-website-for-small-business",
+    tag: "Web Development",
+    title: "Squarespace vs Custom Website for Small Business: An Honest Comparison",
+    excerpt: "Website builders like Squarespace are genuinely fine for some businesses — and the wrong call for others. A both-sides look at cost, SEO ceilings, lock-in, and when each option actually makes sense.",
+    readTime: "7 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "local-it-company-vs-national-msp",
+    tag: "IT Support",
+    title: "Local IT Company vs National MSP: Which Is Right for Your Small Business?",
+    excerpt: "Ticket queues, rotating technicians, and per-device fees — or a direct line, flat monthly pricing, and someone who already knows your setup. An honest comparison of local IT vs national MSPs.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "free-antivirus-vs-managed-security-small-business",
+    tag: "Cybersecurity",
+    title: "Free Antivirus vs Managed Security: What Small Businesses Actually Need",
+    excerpt: "Free antivirus like Windows Defender is a useful layer — but only one layer. What free AV covers, the gaps that actually cause breaches, and when to move to managed security.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
   // June 2026
   {
     slug: "how-ai-helps-sonoma-county-small-businesses",
