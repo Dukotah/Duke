@@ -36,6 +36,9 @@ export const metadata: Metadata = {
   title: "IT Support & Websites for Sonoma County Restaurants | Copper Bay Tech",
   description:
     "POS integrations, reservation systems, guest Wi-Fi, and websites for Sonoma County restaurants. Local IT support that shows up when you need it.",
+  alternates: {
+    canonical: "https://copperbaytech.com/industries/restaurants",
+  },
   openGraph: {
     url: "https://copperbaytech.com/industries/restaurants",
   },

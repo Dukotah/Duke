@@ -36,6 +36,9 @@ export const metadata: Metadata = {
   title: "HIPAA-Compliant IT & Websites for Sonoma County Medical Practices | Copper Bay Tech",
   description:
     "IT support and websites for Sonoma County dentists, therapists, chiropractors, and medical offices. HIPAA-compliant setup, no long-term contracts.",
+  alternates: {
+    canonical: "https://copperbaytech.com/industries/healthcare",
+  },
   openGraph: {
     url: "https://copperbaytech.com/industries/healthcare",
   },

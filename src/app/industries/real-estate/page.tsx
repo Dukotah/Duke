@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Websites & IT for Sonoma County Real Estate Agents | Copper Bay Tech",
   description:
     "Custom websites, CRM integrations, and IT support for Sonoma County real estate agents and brokerages. Look as good online as you do in person.",
+  alternates: {
+    canonical: "https://copperbaytech.com/industries/real-estate",
+  },
   openGraph: {
     url: "https://copperbaytech.com/industries/real-estate",
   },

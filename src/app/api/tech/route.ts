@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 interface TechItem {
   name: string;
@@ -72,6 +73,8 @@ const SIGNATURES: Array<{
 ];
 
 export async function POST(req: NextRequest) {
+  const limit = rateLimit(req, { limit: 10, windowMs: 60_000 });
+  if (!limit.ok) return NextResponse.json({ error: limit.message }, { status: 429 });
   try {
     const { url } = await req.json();
     if (!url || typeof url !== "string") {

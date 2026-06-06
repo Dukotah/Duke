@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "IT Support & Websites for Sonoma County Law Firms | Copper Bay Tech",
   description:
     "Secure IT support and professional websites for Sonoma County attorneys and law firms. Client data protection, compliance, and flat-fee pricing.",
+  alternates: {
+    canonical: "https://copperbaytech.com/industries/law-firms",
+  },
   openGraph: {
     url: "https://copperbaytech.com/industries/law-firms",
   },

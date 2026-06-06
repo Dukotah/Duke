@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const limit = rateLimit(req, { limit: 3, windowMs: 60_000 });
+  if (!limit.ok) {
+    return NextResponse.json({ error: limit.message }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { email } = body;

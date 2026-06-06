@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 interface LinkResult {
   url: string;
@@ -58,6 +59,8 @@ async function checkLink(url: string, text: string): Promise<LinkResult> {
 }
 
 export async function POST(req: NextRequest) {
+  const limit = rateLimit(req, { limit: 10, windowMs: 60_000 });
+  if (!limit.ok) return NextResponse.json({ error: limit.message }, { status: 429 });
   try {
     const { url } = await req.json();
 

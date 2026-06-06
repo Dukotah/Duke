@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "IT Support & Websites for Sonoma County Wineries | Copper Bay Tech",
   description:
     "Tasting room reservation systems, wine club tech, and custom websites for Sonoma County wineries. Local IT support that understands wine country.",
+  alternates: {
+    canonical: "https://copperbaytech.com/industries/wineries",
+  },
   openGraph: {
     url: "https://copperbaytech.com/industries/wineries",
   },

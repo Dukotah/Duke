@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { captureAuditLead } from "@/lib/crm/intake";
+import { rateLimit } from "@/lib/rate-limit";
 
 function scoreColor(score: number) {
   if (score >= 90) return "#22c55e";
@@ -23,6 +24,8 @@ function metricRow(label: string, value: string, score: number | null) {
 }
 
 export async function POST(req: NextRequest) {
+  const limit = rateLimit(req, { limit: 5, windowMs: 60_000 });
+  if (!limit.ok) return NextResponse.json({ error: limit.message }, { status: 429 });
   try {
     const { email, url, auditData } = await req.json();
     if (!email) return NextResponse.json({ ok: true });
