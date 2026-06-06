@@ -12,7 +12,9 @@ export default function WindsorPage() {
     <CityPage
       city="Windsor"
       relatedLinks={[
+        { href: "/web-design-windsor", label: "Web Design in Windsor", blurb: "Fast, mobile-first websites that win local 'near me' searches." },
         { href: "/it-support-windsor", label: "IT Support in Windsor", blurb: "Managed IT and cloud migration for Windsor businesses." },
+        { href: "/cybersecurity-windsor", label: "Cybersecurity in Windsor", blurb: "Practical phishing, ransomware, and data protection for small offices." },
       ]}
       description="Windsor is one of Sonoma County's fastest-growing communities, with a mix of family-owned businesses, local retail, and light industrial operations. We help Windsor businesses modernize their technology without the enterprise price tag."
       painPoints={[
