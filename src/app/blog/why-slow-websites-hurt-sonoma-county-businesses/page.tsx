@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     url: "https://copperbaytech.com/blog/why-slow-websites-hurt-sonoma-county-businesses",
     type: "article",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/why-slow-websites-hurt-sonoma-county-businesses",
+  },
 };
 
 export default function Post() {

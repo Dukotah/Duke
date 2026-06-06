@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "Do Small Businesses Really Need Cybersecurity? | Copper Bay Tech",
   description:
     "The myth that hackers only target large companies is costing small businesses millions. Here's the truth — and what to do about it.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/do-small-businesses-need-cybersecurity",
+  },
 };
 
 export default function Article() {

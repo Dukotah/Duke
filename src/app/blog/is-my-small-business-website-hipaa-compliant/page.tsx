@@ -16,6 +16,9 @@ const blogSchema = blogPostingSchema({
 export const metadata: Metadata = {
   title: "Is My Small Business Website HIPAA Compliant? | Copper Bay Tech",
   description: "If your business collects patient info online, HIPAA applies. Here is a plain-English checklist.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/is-my-small-business-website-hipaa-compliant",
+  },
 };
 
 const checks = [

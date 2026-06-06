@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/small-business-website-cost-guide",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/small-business-website-cost-guide",
+  },
 };
 
 const tiers = [

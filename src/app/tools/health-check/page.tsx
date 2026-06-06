@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 
 interface SpeedData {
   url: string;
@@ -407,8 +408,22 @@ export default function HealthCheckPage() {
 
   const hasResults = Object.values(checks).some(c => c.status !== "idle");
 
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to use the Full Website Health Check tool",
+    "description": "Run a free, instant audit of your website covering speed, SSL, SEO, broken links, and mobile readiness.",
+    "step": [
+      { "@type": "HowToStep", "name": "Enter your website URL", "text": "Type your website address into the URL field — no https:// required." },
+      { "@type": "HowToStep", "name": "Click Run Audit", "text": "Click the Run Full Audit button to start five checks simultaneously." },
+      { "@type": "HowToStep", "name": "Review your scores across speed, SEO, and security", "text": "Results appear as each check completes — review your performance score, SSL validity, SEO issues, broken links, and mobile readiness scores." },
+      { "@type": "HowToStep", "name": "Follow the prioritized recommendations", "text": "Use the flagged issues and opportunities to prioritize fixes, or book a free call with Copper Bay Tech to have them resolved for you." },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
+      <JsonLd schema={howToSchema} />
       <Nav />
 
       <section className="pt-32 pb-12 px-6 text-center">

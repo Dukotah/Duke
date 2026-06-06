@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/how-to-speed-up-your-business-website",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/how-to-speed-up-your-business-website",
+  },
 };
 
 const diyFixes = [

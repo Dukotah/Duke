@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: "How to Choose an IT Company in Sonoma County | Copper Bay Tech",
   description:
     "Most small businesses hire their first IT vendor after something breaks. Here's what to look for — and what to avoid — before you're in crisis mode.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/how-to-choose-an-it-company-sonoma-county",
+  },
 };
 
 export default function Article() {

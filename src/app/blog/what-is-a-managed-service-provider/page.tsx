@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/what-is-a-managed-service-provider",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/what-is-a-managed-service-provider",
+  },
 };
 
 export default function Article() {

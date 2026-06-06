@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/why-your-business-needs-mfa",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/why-your-business-needs-mfa",
+  },
 };
 
 export default function Article() {

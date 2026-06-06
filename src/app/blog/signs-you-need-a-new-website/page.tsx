@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "7 Signs It's Time for a New Business Website (Not Just a Refresh) | Copper Bay Tech",
   description:
     "Some website problems can be patched. Others mean it's time to start over. Here are 7 signs your current site is holding your business back.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/signs-you-need-a-new-website",
+  },
 };
 
 export default function Article() {

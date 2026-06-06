@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/how-to-rank-on-google-maps-local-business",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/how-to-rank-on-google-maps-local-business",
+  },
 };
 
 const factors = [

@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/google-business-profile-setup-sonoma-county",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/google-business-profile-setup-sonoma-county",
+  },
 };
 
 const steps = [

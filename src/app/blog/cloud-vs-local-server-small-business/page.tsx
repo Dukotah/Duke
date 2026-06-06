@@ -7,6 +7,9 @@ import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd
 export const metadata = {
   title: "Cloud vs. Local Server: What's Actually Right for Your Small Business? | Copper Bay Tech",
   description: "Should your small business move to the cloud or keep a local server? Here's a direct comparison for businesses with 3–30 employees — including when local still makes sense.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/cloud-vs-local-server-small-business",
+  },
 };
 
 export default function CloudVsLocalPost() {

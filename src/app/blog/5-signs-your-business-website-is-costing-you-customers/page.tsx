@@ -16,6 +16,9 @@ const blogSchema = blogPostingSchema({
 export const metadata: Metadata = {
   title: "5 Signs Your Website Is Costing You Customers | Copper Bay Tech",
   description: "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers",
+  },
 };
 
 const signs = [

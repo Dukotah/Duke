@@ -7,6 +7,9 @@ import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd
 export const metadata = {
   title: "What Is Ransomware and How Do Small Businesses Actually Stop It? | Copper Bay Tech",
   description: "Ransomware attacks on small businesses are up 300%. This is what it is, how it gets in, and the specific steps Sonoma County business owners can take to protect themselves.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/what-is-ransomware-and-how-do-you-stop-it",
+  },
 };
 
 export default function RansomwarePost() {

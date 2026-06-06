@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/google-workspace-vs-microsoft-365-small-business",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/google-workspace-vs-microsoft-365-small-business",
+  },
 };
 
 const googlePros = [

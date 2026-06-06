@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/best-website-for-a-sonoma-county-winery",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/best-website-for-a-sonoma-county-winery",
+  },
 };
 
 const mustHaves = [

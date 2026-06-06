@@ -7,6 +7,9 @@ import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd
 export const metadata = {
   title: "Why Your Google Business Profile Is the Most Important Page You Don't Own | Copper Bay Tech",
   description: "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search, and exactly what to fix today.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/why-your-google-business-profile-matters",
+  },
 };
 
 export default function GoogleBusinessProfilePost() {

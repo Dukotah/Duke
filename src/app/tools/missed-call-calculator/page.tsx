@@ -5,6 +5,7 @@ import Link from "next/link";
 import { PhoneMissed, ArrowRight, Loader2, CheckCircle2, Mail, Sparkles } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 
 // Average weeks per month (52 / 12) — keeps the monthly math honest.
 const WEEKS_PER_MONTH = 4.33;
@@ -90,8 +91,22 @@ export default function MissedCallCalculator() {
     setCaptureStatus("done");
   };
 
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to use the Missed Call Revenue Calculator",
+    "description": "Estimate how much revenue you're losing to missed calls and how much an AI receptionist could recover.",
+    "step": [
+      { "@type": "HowToStep", "name": "Enter your average number of missed calls per week", "text": "Use the sliders to set how many calls your business receives per week and what percentage you typically miss." },
+      { "@type": "HowToStep", "name": "Enter your average deal value", "text": "Set the average value of a job or customer and the close rate for missed callers who would have bought." },
+      { "@type": "HowToStep", "name": "View your estimated monthly revenue loss", "text": "The calculator instantly shows your estimated annual and monthly revenue walking out the door due to missed calls." },
+      { "@type": "HowToStep", "name": "Book a call to see how to recover it", "text": "See what an AI receptionist could conservatively recapture, then book a free consultation with Copper Bay Tech to get started." },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
+      <JsonLd schema={howToSchema} />
       <Nav />
 
       {/* Hero */}

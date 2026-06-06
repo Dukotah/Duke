@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   openGraph: {
     url: "https://copperbaytech.com/blog/how-much-does-it-support-cost-for-small-business",
   },
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/how-much-does-it-support-cost-for-small-business",
+  },
 };
 
 const models = [

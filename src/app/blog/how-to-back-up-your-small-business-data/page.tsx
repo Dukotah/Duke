@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "How to Back Up Your Small Business Data (The Right Way) | Copper Bay Tech",
   description:
     "Most small business backups fail when they're actually needed. The 3-2-1 rule, cloud vs. local, and how to know your backups will actually work.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/how-to-back-up-your-small-business-data",
+  },
 };
 
 export default function Article() {

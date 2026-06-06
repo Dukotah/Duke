@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: "What Is Managed IT Support — and Does Your Business Need It? | Copper Bay Tech",
   description:
     "Break/fix IT is reactive and unpredictable. Managed IT support is proactive and flat-fee. Here's how to know which model is right for your business.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/what-is-managed-it-support",
+  },
 };
 
 export default function Article() {
