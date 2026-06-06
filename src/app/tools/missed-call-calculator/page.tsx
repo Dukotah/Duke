@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getAttribution } from "@/lib/attribution";
 import { PhoneMissed, ArrowRight, Loader2, CheckCircle2, Mail, Sparkles } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -79,6 +80,7 @@ export default function MissedCallCalculator() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: captureEmail,
+          attribution: getAttribution(),
           context: `Missed-Call Calculator — ~${fmtMoney(lostPerYear)}/yr at risk (${Math.round(
             missedPerMonth,
           )} missed calls/mo, ${fmtMoney(avgValue)} avg job, ${closeRate}% close)`,

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getAttribution } from "@/lib/attribution";
 import { Globe, Loader2, ArrowRight, ShieldCheck, CheckCircle2, Mail } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -661,6 +662,7 @@ export default function ToolsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: captureEmail,
+          attribution: getAttribution(),
           website: auditedUrl,
           context: `Website Audit Tool — ${auditedUrl}${summary ? ` (${summary})` : ""}`,
         }),

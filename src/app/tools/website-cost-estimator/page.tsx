@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getAttribution } from "@/lib/attribution";
 import { Calculator, ArrowRight, Loader2, CheckCircle2, Mail, Check } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -109,6 +110,7 @@ export default function WebsiteCostEstimator() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: captureEmail,
+          attribution: getAttribution(),
           context: `Website Cost Estimator — ${fmtMoney(low)}–${fmtMoney(high)}${
             monthly ? ` + ${fmtMoney(monthly)}/mo care plan` : ""
           } (${pages} pages; ${selectedFeatures.length ? selectedFeatures.join(", ") : "no add-ons"})`,

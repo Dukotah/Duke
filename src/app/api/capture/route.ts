@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { captureToolLead, toolLabel } from "@/lib/crm/intake";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { formatAttribution } from "@/lib/attribution";
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too many requests — please try again shortly." }, { status: 429 });
     }
     const body = await req.json();
-    const { email, name, context, website } = body;
+    const { email, name, context, website, attribution } = body;
 
     if (!email || typeof email !== "string" || !email.includes("@")) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
     // independent of email sending, so a Redis/CRM hiccup never breaks the
     // visitor-facing capture (and leads still land even without RESEND configured).
     try {
-      await captureToolLead({ email, name, website, context: context ?? "Free tool" });
+      await captureToolLead({ email, name, website, context: context ?? "Free tool", attribution: formatAttribution(attribution) });
     } catch (err) {
       console.error("Capture → CRM lead failed (non-fatal):", err);
     }

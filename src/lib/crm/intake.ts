@@ -94,6 +94,7 @@ export interface ToolIntake {
   name?: string; // person, when the tool collected one (most don't)
   website?: string; // the audited site, when the tool has one
   context: string; // the human summary the tool already builds — becomes the note + niche
+  attribution?: string; // pre-formatted first-touch source (utm/referrer/landing)
 }
 
 /**
@@ -144,7 +145,9 @@ export async function captureToolLead(input: ToolIntake): Promise<IntakeResult |
     city: "",
     county: "",
     niche: toolLabel(input.context),
-    notes: buildToolNote(input.context),
+    notes: input.attribution
+      ? `${buildToolNote(input.context)} How they found us: ${input.attribution}.`
+      : buildToolNote(input.context),
   });
   return { leadId: lead.id, created: true, ownerId };
 }

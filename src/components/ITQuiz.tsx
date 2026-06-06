@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getAttribution } from "@/lib/attribution";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, AlertTriangle, CheckCircle, ShieldAlert, Mail } from "lucide-react";
 
@@ -140,6 +141,7 @@ export default function ITQuiz() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: captureEmail,
+          attribution: getAttribution(),
           context: `IT Risk Quiz — ${result.label} (score: ${totalScore})`,
         }),
       });
