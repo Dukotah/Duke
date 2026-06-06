@@ -19,6 +19,8 @@ export default function SebastopolPage() {
       city="Sebastopol"
       relatedLinks={[
         { href: "/web-design-sebastopol", label: "Web Design in Sebastopol", blurb: "Design-forward, story-driven websites for makers, food brands, and boutiques." },
+        { href: "/it-support-sebastopol", label: "IT Support in Sebastopol", blurb: "Reliable POS, Wi-Fi, and cloud help for shops and creative teams — no ticket queue." },
+        { href: "/cybersecurity-sebastopol", label: "Cybersecurity in Sebastopol", blurb: "Practical, privacy-respecting security for makers, e-commerce, and wellness practices." },
       ]}
       description="Sebastopol's creative and independent business community deserves tech support that's just as straightforward. Copper Bay Tech offers custom websites, IT support, and cybersecurity for local shops, studios, and service businesses — with transparent pricing and no lock-in."
       painPoints={[
