@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import JsonLd, { serviceSchema, breadcrumbSchema, faqSchema } from "@/components/JsonLd";
 import { PRICING } from "@/config/pricing";
+import { SERVICE_CITIES, SERVICE_META } from "@/config/serviceCities";
 import { ArrowRight, Check } from "lucide-react";
 
 // Map a service label to its pricing.ts key so each page can emit a price range.
@@ -11,6 +12,13 @@ const PRICE_KEY: Record<string, keyof typeof PRICING> = {
   "IT Support": "it",
   "Cybersecurity": "cybersecurity",
   "AI Integration": "ai",
+};
+
+// Map a service label to its serviceCities key (for the cross-service block).
+const SERVICE_TO_CITYKEY: Record<string, "web" | "it" | "cyber"> = {
+  "Web Design": "web",
+  "IT Support": "it",
+  "Cybersecurity": "cyber",
 };
 
 /**
@@ -67,6 +75,14 @@ export default function ServiceCityPage({
   const patternId = `topo-${service}-${city}`.toLowerCase().replace(/[^a-z]/g, "");
   const priceKey = PRICE_KEY[service];
   const offer = priceKey ? { low: PRICING[priceKey].low, high: PRICING[priceKey].high } : undefined;
+  // Auto cross-link the OTHER services available in this same city.
+  const cityEntry = SERVICE_CITIES[city];
+  const currentKey = SERVICE_TO_CITYKEY[service];
+  const otherServices = cityEntry
+    ? (["web", "it", "cyber"] as const)
+        .filter((k) => k !== currentKey && cityEntry[k])
+        .map((k) => ({ href: `/${SERVICE_META[k].prefix}-${cityEntry.slug}`, label: SERVICE_META[k].label }))
+    : [];
   return (
     <>
       <JsonLd
@@ -176,6 +192,25 @@ export default function ServiceCityPage({
                     <h3 className="font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{f.q}</h3>
                     <p className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{f.a}</p>
                   </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Other services we offer in this same city (matrix-driven cross-sell) */}
+        {otherServices.length > 0 && (
+          <section className="py-14 bg-white border-t border-[#18181B]/8">
+            <div className="max-w-4xl mx-auto px-6 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>More for {city} businesses</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#18181B] mb-7" style={{ fontFamily: "var(--font-heading)" }}>
+                Other services we offer in {city}.
+              </h2>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {otherServices.map((s) => (
+                  <Link key={s.href} href={s.href} className="inline-flex items-center gap-2 rounded-lg border border-[#18181B]/15 px-5 py-3 text-sm font-semibold text-[#18181B] transition-colors hover:border-[#F97316] hover:text-[#F97316] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2" style={{ fontFamily: "var(--font-heading)" }}>
+                    {s.label} in {city} <ArrowRight size={14} aria-hidden={true} />
+                  </Link>
                 ))}
               </div>
             </div>

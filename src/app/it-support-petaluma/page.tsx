@@ -8,13 +8,13 @@ import { ArrowRight, Check } from "lucide-react";
 export const metadata: Metadata = {
   title: "IT Support Petaluma CA | Local Managed IT Services | Copper Bay Tech",
   description:
-    "IT support for Petaluma businesses. Based locally in Petaluma, Copper Bay Tech provides managed IT, network support, cloud migration, and direct access when things go wrong.",
+    "IT support for Petaluma businesses. Copper Bay Tech is a local Sonoma County IT team providing managed IT, network support, cloud migration, and direct access when things go wrong.",
   keywords:
     "IT support Petaluma, IT company Petaluma CA, managed IT Petaluma, computer support Petaluma, small business IT Petaluma",
   alternates: { canonical: "https://copperbaytech.com/it-support-petaluma" },
   openGraph: {
     title: "IT Support Petaluma | Copper Bay Tech",
-    description: "Local managed IT support based in Petaluma, CA.",
+    description: "Local managed IT support for Petaluma businesses, serving all of Sonoma County.",
     url: "https://copperbaytech.com/it-support-petaluma",
     siteName: "Copper Bay Tech",
   },
@@ -65,10 +65,10 @@ export default function ITSupportPetaluma() {
             </span>
             <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               IT support<br />
-              <span style={{ color: "#F97316" }}>based in Petaluma.</span>
+              <span style={{ color: "#F97316" }}>for Petaluma businesses.</span>
             </h1>
             <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-              Copper Bay Tech is based in Petaluma. We provide local IT support, network management, and cloud migration for Petaluma businesses — with a direct line, not a helpdesk ticket.
+              We&apos;re a local North Bay IT team serving Petaluma businesses. We provide IT support, network management, and cloud migration — with a direct line, not a helpdesk ticket.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/#contact" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
@@ -104,11 +104,11 @@ export default function ITSupportPetaluma() {
                 </div>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>Based in Petaluma</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>Local to Sonoma County</p>
                 <h3 className="text-2xl font-bold text-[#18181B] mb-6" style={{ fontFamily: "var(--font-heading)" }}>Local IT support that can actually show up.</h3>
                 <div className="space-y-4">
                   {[
-                    { label: "On-site when needed", body: "Some IT problems need a person in the room. We're in Petaluma and can be at your office fast." },
+                    { label: "On-site when needed", body: "Some IT problems need a person in the room. We serve Petaluma and the surrounding North Bay — we can be at your office fast." },
                     { label: "We know your setup", body: "Retainer clients don't explain their setup from scratch every time. We already know it." },
                     { label: "Direct line", body: "Text or call a real number. Not a ticket that goes to a queue in another state." },
                     { label: "No long-term contracts", body: "Month-to-month. 30-day cancel. We earn your business every month." },
@@ -146,7 +146,7 @@ export default function ITSupportPetaluma() {
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2 className="text-4xl font-bold text-[#18181B] mb-6" style={{ fontFamily: "var(--font-heading)" }}>Let&apos;s talk about your IT situation.</h2>
             <p className="text-lg text-[#3F3F46]/60 mb-10" style={{ fontFamily: "var(--font-body)" }}>
-              We can meet in person in Petaluma or hop on a call. Free 30 minutes, honest assessment.
+              We can meet in person anywhere in the North Bay, or hop on a call. Free 30 minutes, honest assessment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/#contact" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>

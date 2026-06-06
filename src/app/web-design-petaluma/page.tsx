@@ -8,7 +8,7 @@ import { ArrowRight, Check } from "lucide-react";
 export const metadata: Metadata = {
   title: "Web Design Petaluma CA | Custom Websites | Copper Bay Tech",
   description:
-    "Custom website design for Petaluma businesses. Fast, mobile-first, built to convert. Local web designer based in Petaluma serving all of Sonoma County.",
+    "Custom website design for Petaluma businesses. Fast, mobile-first, built to convert. Local Sonoma County web designer serving Petaluma and the greater North Bay.",
   keywords:
     "web design Petaluma, website design Petaluma CA, web developer Petaluma, small business website Petaluma CA",
   alternates: { canonical: "https://copperbaytech.com/web-design-petaluma" },
@@ -88,7 +88,7 @@ export default function WebDesignPetaluma() {
               className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Copper Bay Tech is based in Petaluma. We build custom websites for local businesses that load fast, rank locally, and convert visitors into customers.
+              We&apos;re a local Sonoma County web developer serving Petaluma businesses. We build custom websites that load fast, rank locally, and convert visitors into customers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -155,12 +155,12 @@ export default function WebDesignPetaluma() {
         {/* Based locally */}
         <section className="py-24 bg-white">
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>Based in Petaluma</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>Local to Sonoma County</p>
             <h2 className="text-4xl font-bold text-[#18181B] mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               Your web designer is a neighbor, not a vendor.
             </h2>
             <p className="text-lg text-[#3F3F46]/60 max-w-2xl mx-auto mb-12" style={{ fontFamily: "var(--font-body)" }}>
-              We&apos;re not a remote agency you&apos;ll never meet. Copper Bay Tech is based in Petaluma. We can meet in person, we know the local business landscape, and we&apos;re around when something comes up.
+              We&apos;re not a remote agency you&apos;ll never meet. We&apos;re local — we can meet in person anywhere in the North Bay, we know the local business landscape, and we&apos;re around when something comes up.
             </p>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
@@ -198,7 +198,7 @@ export default function WebDesignPetaluma() {
               Let&apos;s build something.
             </h2>
             <p className="text-lg text-[#3F3F46]/60 mb-10" style={{ fontFamily: "var(--font-body)" }}>
-              Free 30-minute consultation. In person in Petaluma or over a call — your call.
+              Free 30-minute consultation. In person anywhere in Sonoma County, or over a call — your call.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

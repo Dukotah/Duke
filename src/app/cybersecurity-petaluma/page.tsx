@@ -25,7 +25,7 @@ export default function CybersecurityPetaluma() {
       city="Petaluma"
       canonical={CANONICAL}
       hub={{ href: "/cybersecurity-small-business", label: "Cybersecurity" }}
-      heroBlurb="We're based in Petaluma — and we help local businesses lock down their data, email, and payments without the enterprise price tag or the fear-mongering."
+      heroBlurb="We&apos;re local to Sonoma County — and we help Petaluma businesses lock down their data, email, and payments without the enterprise price tag or the fear-mongering."
       intro={[
         "Petaluma has always punched above its weight in tech — but most of the businesses that make this town tick are small: downtown retailers, restaurants and food producers, manufacturers and trades along the river, and the professional offices in between. Almost none of them have a security person on staff, which is exactly the gap attackers count on.",
         "We're local, so this isn't a faceless helpdesk in another time zone. We sit down with Petaluma owners, look at how email, payments, and customer data actually flow through the business, and fix the few things that matter most first — strong logins, tested backups, and email that can't be easily spoofed in your name.",

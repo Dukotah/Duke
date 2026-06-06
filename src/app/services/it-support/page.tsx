@@ -339,7 +339,7 @@ export default function ITSupportPage() {
               },
               {
                 q: "Do you do on-site visits in Sonoma County?",
-                a: "Yes. We're based in Petaluma and regularly visit clients in Santa Rosa, Sebastopol, Rohnert Park, Sonoma, Windsor, Healdsburg, Cotati, and Bodega Bay. Some issues require hands-on work — server installations, network cabling, hardware failures — and we show up. Remote-first, but not remote-only.",
+                a: "Yes. We serve Petaluma and regularly visit clients in Santa Rosa, Sebastopol, Rohnert Park, Sonoma, Windsor, Healdsburg, Cotati, and Bodega Bay. Some issues require hands-on work — server installations, network cabling, hardware failures — and we show up. Remote-first, but not remote-only.",
               },
               {
                 q: "Can you support our Google Workspace or Microsoft 365?",

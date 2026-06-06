@@ -42,7 +42,7 @@ ${issueLines || "• Images and scripts that aren't optimized for speed"}
 
 Why this matters: Google uses page speed as a ranking signal. A score this low can push your site down in local search results — meaning customers searching for what you offer are finding your competitors instead.
 
-I'm Duke, a local web developer based in Petaluma. I help Sonoma County businesses fix exactly these kinds of issues — faster sites, better local rankings, more customers finding you online.
+I'm Duke, a local Sonoma County web developer. I help North Bay businesses fix exactly these kinds of issues — faster sites, better local rankings, more customers finding you online.
 
 Would you be open to a 15-minute call to walk through what I found and what it would take to fix it? No pitch, no pressure — just a straight conversation.
 

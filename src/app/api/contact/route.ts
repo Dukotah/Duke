@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
             <p>Hi ${name},</p>
             <p>Thanks for reaching out — I got your message and will be back to you within one business day.</p>
             <p>If anything's urgent, feel free to call or text me directly at <strong>(707) 239-6725</strong>.</p>
-            <p>Talk soon,<br>Duke<br>Copper Bay Tech · Petaluma, CA</p>
+            <p>Talk soon,<br>Duke<br>Copper Bay Tech · Sonoma County, CA</p>
             <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
             <p style="font-size:12px;color:#999;">Copper Bay Tech · Sonoma County IT & Web · copperbaytech.com</p>
           `,

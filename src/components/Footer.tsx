@@ -57,7 +57,6 @@ export default function Footer() {
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Santa Rosa",
       addressRegion: "CA",
       addressCountry: "US",
     },

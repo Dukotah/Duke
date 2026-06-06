@@ -97,7 +97,7 @@ export default function ServicesPage() {
             style={{ fontFamily: "var(--font-body)" }}
           >
             Copper Bay Tech provides web development, IT support, and cybersecurity for small
-            businesses across Sonoma County. Based in Petaluma. Flat fees. No long-term contracts.
+            businesses across Sonoma County. Local to the North Bay. Flat fees. No long-term contracts.
             Real humans who pick up the phone.
           </p>
         </div>
@@ -178,7 +178,7 @@ export default function ServicesPage() {
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: "📍", title: "Actually local", desc: "Based in Petaluma. On-site support across the North Bay within the same day for most clients." },
+              { icon: "📍", title: "Actually local", desc: "Local to Sonoma County. On-site support across the North Bay within the same day for most clients." },
               { icon: "💬", title: "One point of contact", desc: "You talk to the same person every time — not a ticketing system or a different tech each call." },
               { icon: "📋", title: "Flat-fee pricing", desc: "No hourly billing. You know what you'll pay before work starts. No surprises on your invoice." },
               { icon: "🚫", title: "No long-term contracts", desc: "Month-to-month for support and maintenance. We earn your business every month, not just at signing." },

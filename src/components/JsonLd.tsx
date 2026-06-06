@@ -35,9 +35,9 @@ export function localBusinessSchema(): Json {
     telephone: PHONE,
     email: EMAIL,
     priceRange: "$$",
+    // Service-area business — no public storefront, so no addressLocality.
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Santa Rosa",
       addressRegion: "CA",
       addressCountry: "US",
     },
@@ -93,7 +93,6 @@ export function serviceSchema(opts: {
       telephone: PHONE,
       address: {
         "@type": "PostalAddress",
-        addressLocality: "Santa Rosa",
         addressRegion: "CA",
       },
     },
@@ -185,12 +184,11 @@ export function organizationSchema(): Json {
     logo: `${SITE}/logos/logo-horizontal.png`,
     telephone: PHONE,
     email: EMAIL,
-    // NAP must match the Google Business Profile + MAILING_ADDRESS in config/site.ts.
+    // Service-area business — no public storefront address; we serve a radius
+    // (see areaServed below). Omitting addressLocality avoids asserting an HQ city.
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Santa Rosa",
       addressRegion: "CA",
-      postalCode: "95403",
       addressCountry: "US",
     },
     areaServed: {

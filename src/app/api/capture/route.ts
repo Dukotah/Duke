@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
             <p>Hi ${displayName},</p>
             <p>Thanks for using the ${customerTool} — I'll follow up personally if there's anything I can help with.</p>
             <p>In the meantime, if you have questions or want to talk through what you found, feel free to reply to this email or call/text me at (707) 239-6725.</p>
-            <p>— Duke<br>Copper Bay Tech<br>Petaluma, CA</p>
+            <p>— Duke<br>Copper Bay Tech<br>Sonoma County, CA</p>
             <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
             <p style="font-size:12px;color:#999;">Copper Bay Tech · Serving Sonoma County · copperbaytech.com</p>
           `,
