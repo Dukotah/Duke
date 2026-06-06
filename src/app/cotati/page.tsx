@@ -11,6 +11,10 @@ export default function CotatiPage() {
   return (
     <CityPage
       city="Cotati"
+      relatedLinks={[
+        { href: "/web-design-cotati", label: "Web Design in Cotati", blurb: "Affordable, local-first websites that win 'near me' searches for La Plaza businesses." },
+        { href: "/it-support-cotati", label: "IT Support in Cotati", blurb: "Right-sized, same-day, no-contract IT for small local bars, shops, and offices." },
+      ]}
       description="Cotati's close-knit business community deserves tech support that's just as local. Copper Bay Tech provides IT support, custom websites, and cybersecurity for Cotati businesses — with honest flat-fee pricing and no lock-in."
       painPoints={[
         "Your website isn't showing up in local searches",

@@ -13,6 +13,8 @@ export default function BodegaBayPage() {
       city="Bodega Bay"
       relatedLinks={[
         { href: "/web-design-bodega-bay", label: "Web Design in Bodega Bay", blurb: "Fast, coastal websites with charter, lodging, and dining booking built in." },
+        { href: "/it-support-bodega-bay", label: "IT Support in Bodega Bay", blurb: "Resilient coastal connectivity, failover, and POS uptime for the harbor village." },
+        { href: "/cybersecurity-bodega-bay", label: "Cybersecurity in Bodega Bay", blurb: "PCI, endpoint, and backup protection built for unreliable coastal internet." },
       ]}
       description="Bodega Bay's coastal businesses — fishing charters, vacation rentals, restaurants, and shops — operate in a high-season environment where reliable technology isn't optional. Copper Bay Tech provides local IT support and websites that work as hard as you do."
       painPoints={[

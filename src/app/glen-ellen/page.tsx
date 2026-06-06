@@ -13,6 +13,8 @@ export default function GlenEllenPage() {
       city="Glen Ellen"
       relatedLinks={[
         { href: "/web-design-glen-ellen", label: "Web Design in Glen Ellen", blurb: "Story-driven websites for Valley of the Moon wineries, inns, and restaurants." },
+        { href: "/it-support-glen-ellen", label: "IT Support in Glen Ellen", blurb: "White-glove IT and rural/historic-building Wi-Fi for boutique venues." },
+        { href: "/cybersecurity-glen-ellen", label: "Cybersecurity in Glen Ellen", blurb: "Reputation-grade PCI and data protection for premium wine-country brands." },
       ]}
       description="Glen Ellen sits at the heart of the Valley of the Moon wine country. Wineries, inns, restaurants, and local shops here serve a discerning clientele — and deserve technology that matches that standard. Copper Bay Tech provides custom websites and IT support with transparent pricing."
       painPoints={[
