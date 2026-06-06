@@ -55,6 +55,9 @@ export default function SebastopolPage() {
         "Graton",
         "Occidental",
       ]}
+      relatedLinks={[
+        { href: "/it-support-sebastopol", label: "IT Support in Sebastopol", blurb: "Managed IT and cloud support for Sebastopol businesses." },
+      ]}
     />
   );
 }

@@ -18,6 +18,7 @@ export default function RohnertParkPage() {
     <CityPage
       city="Rohnert Park"
       relatedLinks={[
+        { href: "/it-support-rohnert-park", label: "IT Support in Rohnert Park", blurb: "Managed IT and cloud migration for Rohnert Park businesses." },
         { href: "/web-design-rohnert-park", label: "Web Design in Rohnert Park", blurb: "Custom websites for Rohnert Park businesses." },
       ]}
       description="Rohnert Park businesses count on reliable technology to stay competitive. Copper Bay Tech handles the IT and web side so you can focus on running your business — with clear pricing and a local team you can actually reach."
