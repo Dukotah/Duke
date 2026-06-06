@@ -57,7 +57,7 @@ export default function Footer() {
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Petaluma",
+      addressLocality: "Santa Rosa",
       addressRegion: "CA",
       addressCountry: "US",
     },
@@ -134,7 +134,7 @@ export default function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Copper Bay Tech on ${label}`}
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 text-white/55 outline-none transition-colors duration-200 hover:border-[#F97316]/40 hover:text-white focus-visible:text-white focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-white/10 text-white/55 outline-none transition-colors duration-200 hover:border-[#F97316]/40 hover:text-white focus-visible:text-white focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
                     >
                       <Icon size={16} />
                     </a>
@@ -145,9 +145,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className={headingClass} style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className={headingClass} style={{ fontFamily: "var(--font-heading)" }}>
               Navigation
-            </p>
+            </h2>
             <ul className="space-y-3">
               {navLinks.map((l) => (
                 <li key={l.href}>
@@ -160,9 +160,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className={headingClass} style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className={headingClass} style={{ fontFamily: "var(--font-heading)" }}>
               Services
-            </p>
+            </h2>
             <ul className="space-y-3">
               {serviceLinks.map((l) => (
                 <li key={l.href}>
@@ -176,9 +176,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className={headingClass} style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className={headingClass} style={{ fontFamily: "var(--font-heading)" }}>
               Contact
-            </p>
+            </h2>
             <ul className="space-y-4">
               <li>
                 <a href="tel:+17072396725" className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
@@ -201,12 +201,12 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>
+          <p className="text-xs text-white/55" style={{ fontFamily: "var(--font-body)" }}>
             &copy; {year} Copper Bay Tech. All rights reserved.
           </p>
           <Link
             href="/privacy"
-            className="text-xs text-white/40 rounded-sm outline-none transition-colors hover:text-white/70 focus-visible:text-white/70 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+            className="text-xs text-white/55 rounded-sm outline-none transition-colors hover:text-white/70 focus-visible:text-white/70 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Privacy Policy

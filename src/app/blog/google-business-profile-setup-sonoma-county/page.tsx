@@ -10,8 +10,17 @@ export const metadata: Metadata = {
   title: "How to Set Up and Optimize Your Google Business Profile in Sonoma County | Copper Bay Tech",
   description:
     "A step-by-step guide to claiming, verifying, and optimizing your Google Business Profile so Sonoma County customers can find you in Google Maps and local search.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/google-business-profile-setup-sonoma-county",
+  },
   openGraph: {
+    title: "How to Set Up and Optimize Your Google Business Profile in Sonoma County | Copper Bay Tech",
+    description:
+      "A step-by-step guide to claiming, verifying, and optimizing your Google Business Profile so Sonoma County customers can find you in Google Maps and local search.",
     url: "https://copperbaytech.com/blog/google-business-profile-setup-sonoma-county",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

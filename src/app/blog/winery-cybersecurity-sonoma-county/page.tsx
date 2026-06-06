@@ -9,6 +9,18 @@ export const metadata: Metadata = {
   title: "Why Sonoma County Wineries Are a Cybersecurity Target | Copper Bay Tech",
   description:
     "Wine club data, tasting room POS systems, and reservation platforms make Sonoma County wineries attractive targets. Here's what to do about it.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/winery-cybersecurity-sonoma-county",
+  },
+  openGraph: {
+    title: "Why Sonoma County Wineries Are a Cybersecurity Target | Copper Bay Tech",
+    description:
+      "Wine club data, tasting room POS systems, and reservation platforms make Sonoma County wineries attractive targets. Here's what to do about it.",
+    url: "https://copperbaytech.com/blog/winery-cybersecurity-sonoma-county",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function Article() {

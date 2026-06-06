@@ -9,8 +9,17 @@ export const metadata: Metadata = {
   title: "Google Workspace vs Microsoft 365: Which Is Right for Your Small Business? | Copper Bay Tech",
   description:
     "An honest comparison of Google Workspace and Microsoft 365 for small businesses — pricing, features, and who should use which.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/google-workspace-vs-microsoft-365-small-business",
+  },
   openGraph: {
+    title: "Google Workspace vs Microsoft 365: Which Is Right for Your Small Business? | Copper Bay Tech",
+    description:
+      "An honest comparison of Google Workspace and Microsoft 365 for small businesses — pricing, features, and who should use which.",
     url: "https://copperbaytech.com/blog/google-workspace-vs-microsoft-365-small-business",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

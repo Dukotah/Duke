@@ -5,11 +5,16 @@ import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd
 export const metadata: Metadata = {
   title: "Why a Slow Website Is Costing Your Sonoma County Business Customers | Copper Bay Tech",
   description: "If your site takes more than 3 seconds to load, more than half your visitors are already gone. Here's what's slowing you down and how to fix it.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/why-slow-websites-hurt-sonoma-county-businesses",
+  },
   openGraph: {
-    title: "Why a Slow Website Is Costing Your Sonoma County Business Customers",
-    description: "More than half of visitors leave a site that takes over 3 seconds to load. Here's what's hurting Sonoma County businesses in Google search.",
+    title: "Why a Slow Website Is Costing Your Sonoma County Business Customers | Copper Bay Tech",
+    description: "If your site takes more than 3 seconds to load, more than half your visitors are already gone. Here's what's slowing you down and how to fix it.",
     url: "https://copperbaytech.com/blog/why-slow-websites-hurt-sonoma-county-businesses",
+    siteName: "Copper Bay Tech",
     type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

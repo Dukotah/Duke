@@ -58,7 +58,7 @@ const faqs = [
   },
   {
     q: "How much does a security audit cost?",
-    a: "A standard small business security audit runs $400–$800 depending on size and complexity. Ongoing monitoring is available as a monthly add-on to a retainer.",
+    a: "A standard small business security audit runs $750–$1,200 depending on size and complexity. Ongoing monitoring is available as a monthly add-on to a retainer.",
   },
   {
     q: "What if you find something serious?",

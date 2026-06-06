@@ -19,6 +19,15 @@ export const metadata: Metadata = {
     "A practical HIPAA technical security checklist for small healthcare practices in Sonoma County. What you actually need — and what most practices are missing.",
   keywords: "HIPAA compliance Sonoma County, HIPAA security small practice, healthcare IT Petaluma Santa Rosa, HIPAA checklist",
   alternates: { canonical: "https://copperbaytech.com/blog/hipaa-security-checklist-sonoma-county-healthcare" },
+  openGraph: {
+    title: "HIPAA Security Checklist for Sonoma County Healthcare Practices",
+    description:
+      "A practical HIPAA technical security checklist for small healthcare practices in Sonoma County. What you actually need — and what most practices are missing.",
+    url: "https://copperbaytech.com/blog/hipaa-security-checklist-sonoma-county-healthcare",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 const checks = [

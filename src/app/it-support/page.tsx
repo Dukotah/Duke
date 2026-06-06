@@ -26,7 +26,7 @@ const serviceSchema = {
     "Managed IT support for Sonoma County small businesses. Networks, workstations, cloud migration, and ongoing support.",
   offers: {
     "@type": "Offer",
-    priceRange: "$800 – $2,500",
+    priceRange: "$550 – $2,200",
     priceCurrency: "USD",
   },
 };
@@ -45,13 +45,13 @@ const included = [
 const retainerTiers = [
   {
     name: "Starter",
-    price: "$250/mo",
-    desc: "1–2 person businesses. Monthly check-in, email support, and priority scheduling for issues.",
+    price: "$550/mo",
+    desc: "1–3 person businesses. Monthly check-in, email support, and priority scheduling for issues.",
   },
   {
     name: "Core",
-    price: "$500/mo",
-    desc: "3–10 person teams. Proactive monitoring, faster response, and quarterly infrastructure reviews.",
+    price: "$1,200/mo",
+    desc: "4–10 person teams. Proactive monitoring, faster response, and quarterly infrastructure reviews.",
     featured: true,
   },
   {

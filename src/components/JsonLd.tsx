@@ -5,6 +5,7 @@
  * Use the small builder helpers below for the common schema types so the
  * shape stays consistent with the LocalBusiness data in Footer.tsx.
  */
+import { SOCIAL_URLS } from "@/config/site";
 
 const PHONE = "+17072396725";
 const EMAIL = "contact@copperbaytech.com";
@@ -36,7 +37,7 @@ export function localBusinessSchema(): Json {
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Petaluma",
+      addressLocality: "Santa Rosa",
       addressRegion: "CA",
       addressCountry: "US",
     },
@@ -80,7 +81,7 @@ export function serviceSchema(opts: {
       telephone: PHONE,
       address: {
         "@type": "PostalAddress",
-        addressLocality: "Petaluma",
+        addressLocality: "Santa Rosa",
         addressRegion: "CA",
       },
     },
@@ -172,28 +173,26 @@ export function organizationSchema(): Json {
     logo: `${SITE}/logos/logo-horizontal.png`,
     telephone: PHONE,
     email: EMAIL,
+    // NAP must match the Google Business Profile + MAILING_ADDRESS in config/site.ts.
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Petaluma",
+      addressLocality: "Santa Rosa",
       addressRegion: "CA",
-      postalCode: "94952",
+      postalCode: "95403",
       addressCountry: "US",
     },
     areaServed: {
       "@type": "GeoCircle",
       geoMidpoint: {
         "@type": "GeoCoordinates",
-        latitude: 38.2324,
-        longitude: -122.6367,
+        latitude: 38.4405,
+        longitude: -122.7144,
       },
       geoRadius: "80000",
     },
-    // Update sameAs with real profile URLs once accounts are confirmed live.
-    sameAs: [
-      "https://www.linkedin.com/company/copper-bay-tech",
-      "https://www.facebook.com/copperbaytech",
-      "https://www.yelp.com/biz/copper-bay-tech-petaluma",
-    ],
+    // Only emit sameAs once real profile URLs are configured in config/site.ts —
+    // linking to profiles that 404 or aren't ours corrupts the entity graph.
+    ...(SOCIAL_URLS.length ? { sameAs: SOCIAL_URLS } : {}),
     contactPoint: {
       "@type": "ContactPoint",
       telephone: PHONE,

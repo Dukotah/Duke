@@ -9,6 +9,16 @@ export const metadata: Metadata = {
   title: "How to Back Up Your Small Business Data (The Right Way) | Copper Bay Tech",
   description:
     "Most small business backups fail when they're actually needed. The 3-2-1 rule, cloud vs. local, and how to know your backups will actually work.",
+  alternates: { canonical: "https://copperbaytech.com/blog/how-to-back-up-your-small-business-data" },
+  openGraph: {
+    title: "How to Back Up Your Small Business Data (The Right Way)",
+    description:
+      "Most small business backups fail when they're actually needed. The 3-2-1 rule, cloud vs. local, and how to know your backups will actually work.",
+    url: "https://copperbaytech.com/blog/how-to-back-up-your-small-business-data",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function Article() {

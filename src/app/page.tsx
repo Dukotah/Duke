@@ -25,7 +25,7 @@ import { aggregateRating } from "@/lib/reviews";
  * Keep this list short. New sections almost always belong on a sub-page.
  */
 export const metadata: Metadata = {
-  alternates: { canonical: "/" },
+  alternates: { canonical: "https://copperbaytech.com" },
 };
 
 export default function Home() {

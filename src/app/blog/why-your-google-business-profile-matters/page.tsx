@@ -1,12 +1,22 @@
+import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Why Your Google Business Profile Is the Most Important Page You Don't Own | Copper Bay Tech",
   description: "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search, and exactly what to fix today.",
+  alternates: { canonical: "https://copperbaytech.com/blog/why-your-google-business-profile-matters" },
+  openGraph: {
+    title: "Why Your Google Business Profile Is the Most Important Page You Don't Own | Copper Bay Tech",
+    description: "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search, and exactly what to fix today.",
+    url: "https://copperbaytech.com/blog/why-your-google-business-profile-matters",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function GoogleBusinessProfilePost() {

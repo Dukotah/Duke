@@ -7,7 +7,7 @@ import { Star } from "lucide-react";
 export const metadata: Metadata = {
   title: "Client Testimonials | Copper Bay Tech — Sonoma County",
   description:
-    "What Sonoma County business owners say about Copper Bay Tech. Five-star testimonials from local web design and IT support clients across Petaluma, Santa Rosa, and beyond.",
+    "Examples of the kind of web design, IT support, and cybersecurity work Copper Bay Tech does for Sonoma County businesses across Petaluma, Santa Rosa, and beyond.",
   alternates: { canonical: "https://copperbaytech.com/testimonials" },
   openGraph: {
     title: "Client Testimonials | Copper Bay Tech",

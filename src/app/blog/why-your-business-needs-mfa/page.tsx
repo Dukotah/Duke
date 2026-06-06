@@ -9,8 +9,15 @@ export const metadata: Metadata = {
   title: "Why Every Small Business Needs Multi-Factor Authentication (And How to Set It Up) | Copper Bay Tech",
   description:
     "95% of account takeovers rely on stolen passwords alone. MFA stops them. Here's what it is, why it matters, and how to turn it on in under 10 minutes.",
+  alternates: { canonical: "https://copperbaytech.com/blog/why-your-business-needs-mfa" },
   openGraph: {
+    title: "Why Every Small Business Needs Multi-Factor Authentication (And How to Set It Up)",
+    description:
+      "95% of account takeovers rely on stolen passwords alone. MFA stops them. Here's what it is, why it matters, and how to turn it on in under 10 minutes.",
     url: "https://copperbaytech.com/blog/why-your-business-needs-mfa",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

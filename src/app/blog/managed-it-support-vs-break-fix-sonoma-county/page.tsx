@@ -19,6 +19,15 @@ export const metadata: Metadata = {
     "Break-fix IT feels cheaper until something breaks at the worst possible moment. Here's how to decide which model makes sense for your Sonoma County business.",
   keywords: "managed IT support Sonoma County, break-fix IT, IT support Santa Rosa, IT services small business",
   alternates: { canonical: "https://copperbaytech.com/blog/managed-it-support-vs-break-fix-sonoma-county" },
+  openGraph: {
+    title: "Managed IT Support vs Break-Fix: Which Is Right for Your Business?",
+    description:
+      "Break-fix IT feels cheaper until something breaks at the worst possible moment. Here's how to decide which model makes sense for your Sonoma County business.",
+    url: "https://copperbaytech.com/blog/managed-it-support-vs-break-fix-sonoma-county",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function Article() {

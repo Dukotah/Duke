@@ -138,7 +138,7 @@ export default function Nav({ light = false }: { light?: boolean }) {
         {/* Mobile toggle */}
         <button
           type="button"
-          className={`md:hidden inline-flex items-center justify-center p-2 rounded-md outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 active:scale-95 ${
+          className={`md:hidden inline-flex items-center justify-center p-3 rounded-md outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 active:scale-95 ${
             solid ? "text-[#18181B] focus-visible:ring-offset-[#FAFAF9] hover:bg-[#18181B]/[0.04]" : "text-white focus-visible:ring-offset-transparent hover:bg-white/10"
           }`}
           onClick={() => setOpen((v) => !v)}

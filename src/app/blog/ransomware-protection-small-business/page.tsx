@@ -10,8 +10,17 @@ export const metadata: Metadata = {
   title: "Ransomware Protection for Small Business: What Actually Works | Copper Bay Tech",
   description:
     "Small businesses are the #1 ransomware target. Here's what actually protects you — and what's a waste of money — explained without the technical jargon.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/ransomware-protection-small-business",
+  },
   openGraph: {
+    title: "Ransomware Protection for Small Business: What Actually Works | Copper Bay Tech",
+    description:
+      "Small businesses are the #1 ransomware target. Here's what actually protects you — and what's a waste of money — explained without the technical jargon.",
     url: "https://copperbaytech.com/blog/ransomware-protection-small-business",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

@@ -148,7 +148,7 @@ function ScoreCircle({ score, label, size = 110 }: { score: number; label: strin
   const color = scoreColor(score);
   return (
     <div className="flex flex-col items-center gap-1">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`${label}: ${score} out of 100`}>
         <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#27272A" strokeWidth={size*0.08} />
         <circle
           cx={size/2} cy={size/2} r={r}
@@ -160,9 +160,9 @@ function ScoreCircle({ score, label, size = 110 }: { score: number; label: strin
           transform={`rotate(-90 ${size/2} ${size/2})`}
         />
         <text x={size/2} y={size/2} textAnchor="middle" dominantBaseline="central"
-          fill={color} fontSize={size*0.22} fontWeight="bold">{score}</text>
+          fill={color} fontSize={size*0.22} fontWeight="bold" aria-hidden="true">{score}</text>
       </svg>
-      <span className="text-xs text-zinc-400 text-center leading-tight">{label}</span>
+      <span className="text-xs text-zinc-400 text-center leading-tight" aria-hidden="true">{label}</span>
     </div>
   );
 }

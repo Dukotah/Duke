@@ -8,6 +8,15 @@ export const metadata: Metadata = {
   title: "Industries We Serve | Copper Bay Tech — Sonoma County",
   description:
     "IT support, web development, and cybersecurity tailored for restaurants, medical practices, law firms, real estate, and wineries in Sonoma County.",
+  alternates: { canonical: "https://copperbaytech.com/industries" },
+  openGraph: {
+    title: "Industries We Serve | Copper Bay Tech",
+    description:
+      "IT, web, and cybersecurity tailored for Sonoma County restaurants, medical practices, law firms, real estate, and wineries.",
+    url: "https://copperbaytech.com/industries",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 const schema = {

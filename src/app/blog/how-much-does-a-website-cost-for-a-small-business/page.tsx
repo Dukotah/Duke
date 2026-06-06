@@ -9,6 +9,16 @@ export const metadata: Metadata = {
   title: "How Much Does a Website Cost for a Small Business in 2026? | Copper Bay Tech",
   description:
     "DIY, freelancer, or agency? We break down real website costs for small businesses in 2026 — and explain why the cheapest option often costs the most.",
+  alternates: { canonical: "https://copperbaytech.com/blog/how-much-does-a-website-cost-for-a-small-business" },
+  openGraph: {
+    title: "How Much Does a Website Cost for a Small Business in 2026? | Copper Bay Tech",
+    description:
+      "DIY, freelancer, or agency? We break down real website costs for small businesses in 2026 — and explain why the cheapest option often costs the most.",
+    url: "https://copperbaytech.com/blog/how-much-does-a-website-cost-for-a-small-business",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function Article() {

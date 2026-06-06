@@ -9,8 +9,17 @@ export const metadata: Metadata = {
   title: "How to Get Your Sonoma County Business to Rank Higher on Google Maps | Copper Bay Tech",
   description:
     "The 3 factors Google uses to rank local businesses on Google Maps — and the specific steps you can take to improve your ranking in Sonoma County.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/how-to-rank-on-google-maps-local-business",
+  },
   openGraph: {
+    title: "How to Get Your Sonoma County Business to Rank Higher on Google Maps | Copper Bay Tech",
+    description:
+      "The 3 factors Google uses to rank local businesses on Google Maps — and the specific steps you can take to improve your ranking in Sonoma County.",
     url: "https://copperbaytech.com/blog/how-to-rank-on-google-maps-local-business",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

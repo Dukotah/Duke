@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Copper Bay Tech",
   description: "Privacy Policy for Copper Bay Tech — how we collect, use, and protect your information.",
+  alternates: { canonical: "https://copperbaytech.com/privacy" },
 };
 
 export default function PrivacyPolicy() {
   return (
-    <main className="max-w-3xl mx-auto px-6 py-24">
+    <>
+      <Nav light />
+      <main className="max-w-3xl mx-auto px-6 py-24 pt-32">
       <Link
         href="/"
         className="text-sm text-[#F97316] hover:underline mb-8 inline-block"
@@ -131,6 +136,8 @@ export default function PrivacyPolicy() {
           .
         </p>
       </div>
-    </main>
+      </main>
+      <Footer />
+    </>
   );
 }

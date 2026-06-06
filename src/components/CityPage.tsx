@@ -84,7 +84,7 @@ export default function CityPage({
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                <Phone size={15} /> (707) 239-6725
+                <Phone size={15} aria-hidden={true} /> (707) 239-6725
               </a>
             </div>
           </div>
@@ -136,7 +136,7 @@ export default function CityPage({
                   className="p-6 bg-white rounded-xl border border-[#18181B]/8 shadow-sm"
                 >
                   <div className="w-10 h-10 rounded-lg bg-[#18181B]/8 flex items-center justify-center mb-4">
-                    <Icon size={20} color="#18181B" />
+                    <Icon size={20} color="#18181B" aria-hidden={true} />
                   </div>
                   <h3
                     className="font-bold text-[#18181B] mb-2"

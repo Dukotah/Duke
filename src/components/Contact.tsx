@@ -218,7 +218,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="w-full py-3.5 rounded-md text-sm font-semibold text-white transition-colors disabled:opacity-60"
+                className="w-full py-3.5 rounded-md text-sm font-semibold text-white transition-colors disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#18181B] focus-visible:ring-offset-2"
                 style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
                 onMouseEnter={(e) => { if (status !== "loading") e.currentTarget.style.backgroundColor = "#111113"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#18181B"; }}

@@ -10,8 +10,15 @@ export const metadata: Metadata = {
   title: "How Much Does IT Support Cost for a Small Business? | Copper Bay Tech",
   description:
     "Hourly? Retainer? Break-fix? Here's what IT support actually costs for small businesses in Sonoma County — and how to avoid overpaying.",
+  alternates: { canonical: "https://copperbaytech.com/blog/how-much-does-it-support-cost-for-small-business" },
   openGraph: {
+    title: "How Much Does IT Support Cost for a Small Business?",
+    description:
+      "Hourly? Retainer? Break-fix? Here's what IT support actually costs for small businesses in Sonoma County — and how to avoid overpaying.",
     url: "https://copperbaytech.com/blog/how-much-does-it-support-cost-for-small-business",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

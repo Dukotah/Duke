@@ -16,6 +16,17 @@ const blogSchema = blogPostingSchema({
 export const metadata: Metadata = {
   title: "5 Signs Your Website Is Costing You Customers | Copper Bay Tech",
   description: "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers",
+  },
+  openGraph: {
+    title: "5 Signs Your Website Is Costing You Customers | Copper Bay Tech",
+    description: "Slow load times, broken mobile layouts, and missing contact info are invisible revenue killers. Here is how to diagnose them fast.",
+    url: "https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 const signs = [

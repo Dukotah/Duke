@@ -22,6 +22,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://copperbaytech.com/blog/how-ai-helps-sonoma-county-small-businesses",
   },
+  openGraph: {
+    title: "How AI Actually Helps a Sonoma County Small Business (2026) | Copper Bay Tech",
+    description:
+      "The practical, no-hype ways small businesses use AI in 2026: answer every call, respond to leads instantly, automate reviews, and kill busywork. What works and where to start.",
+    url: "https://copperbaytech.com/blog/how-ai-helps-sonoma-county-small-businesses",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function Article() {

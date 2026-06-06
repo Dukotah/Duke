@@ -103,6 +103,7 @@ export const metadata: Metadata = {
     description: "Transparent flat-fee pricing for web design, IT support, and cybersecurity.",
     url: "https://copperbaytech.com/pricing",
     siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

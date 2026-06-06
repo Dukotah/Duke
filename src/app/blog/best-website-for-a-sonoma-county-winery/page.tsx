@@ -9,8 +9,15 @@ export const metadata: Metadata = {
   title: "What Makes a Great Website for a Sonoma County Winery? | Copper Bay Tech",
   description:
     "Tasting room visits, wine club signups, and direct-to-consumer sales all start with your website. Here's what Sonoma County wineries get wrong — and what works.",
+  alternates: { canonical: "https://copperbaytech.com/blog/best-website-for-a-sonoma-county-winery" },
   openGraph: {
+    title: "What Makes a Great Website for a Sonoma County Winery?",
+    description:
+      "Tasting room visits, wine club signups, and direct-to-consumer sales all start with your website. Here's what Sonoma County wineries get wrong — and what works.",
     url: "https://copperbaytech.com/blog/best-website-for-a-sonoma-county-winery",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

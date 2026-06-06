@@ -13,8 +13,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: "IT Services for Sonoma County Small Businesses | Copper Bay Tech",
     description:
-      "Web development, IT support, and cybersecurity. Based in Petaluma, serving all of Sonoma County.",
+      "Web development, IT support, and cybersecurity. Serving all of Sonoma County.",
     url: "https://copperbaytech.com/services",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   alternates: {
     canonical: "https://copperbaytech.com/services",

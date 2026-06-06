@@ -102,10 +102,10 @@ export default function ServiceCityPage({
               {heroBlurb}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/#contact" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
                 Get a Free Assessment <ArrowRight size={16} />
               </Link>
-              <Link href="/pricing" className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold" style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}>
+              <Link href="/pricing" className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]" style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}>
                 See Pricing
               </Link>
             </div>
@@ -132,7 +132,7 @@ export default function ServiceCityPage({
                 <ul className="space-y-3">
                   {includes.map((item) => (
                     <li key={item} className="flex items-start gap-3">
-                      <Check size={16} color="#F97316" className="flex-shrink-0 mt-0.5" />
+                      <Check size={16} color="#F97316" className="flex-shrink-0 mt-0.5" aria-hidden={true} />
                       <span className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item}</span>
                     </li>
                   ))}
@@ -193,10 +193,10 @@ export default function ServiceCityPage({
             </h2>
             <p className="text-lg text-white/60 mb-10" style={{ fontFamily: "var(--font-body)" }}>{ctaBlurb}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/#contact" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
                 Get a Free Assessment <ArrowRight size={16} />
               </Link>
-              <a href="tel:+17072396725" className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold text-white" style={{ border: "2px solid rgba(255,255,255,0.3)", fontFamily: "var(--font-heading)" }}>
+              <a href="tel:+17072396725" className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]" style={{ border: "2px solid rgba(255,255,255,0.3)", fontFamily: "var(--font-heading)" }}>
                 Call (707) 239-6725
               </a>
             </div>

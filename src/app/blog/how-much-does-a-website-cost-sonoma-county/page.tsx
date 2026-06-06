@@ -19,6 +19,15 @@ export const metadata: Metadata = {
     "Real pricing for small business websites in Sonoma County. What you should expect to pay, what drives costs up, and how to avoid getting ripped off.",
   keywords: "website cost Sonoma County, how much does a website cost, web design pricing Petaluma Santa Rosa",
   alternates: { canonical: "https://copperbaytech.com/blog/how-much-does-a-website-cost-sonoma-county" },
+  openGraph: {
+    title: "How Much Does a Website Cost in Sonoma County? (2026)",
+    description:
+      "Real pricing for small business websites in Sonoma County. What you should expect to pay, what drives costs up, and how to avoid getting ripped off.",
+    url: "https://copperbaytech.com/blog/how-much-does-a-website-cost-sonoma-county",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function Article() {

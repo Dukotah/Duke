@@ -9,8 +9,17 @@ export const metadata: Metadata = {
   title: "How to Speed Up Your Business Website (Without a Developer) | Copper Bay Tech",
   description:
     "Five things you can do today without touching code — and three signs it's time to call in a developer.",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/how-to-speed-up-your-business-website",
+  },
   openGraph: {
+    title: "How to Speed Up Your Business Website (Without a Developer) | Copper Bay Tech",
+    description:
+      "Five things you can do today without touching code — and three signs it's time to call in a developer.",
     url: "https://copperbaytech.com/blog/how-to-speed-up-your-business-website",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

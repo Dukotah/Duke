@@ -1,12 +1,22 @@
+import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "What Is Ransomware and How Do Small Businesses Actually Stop It? | Copper Bay Tech",
   description: "Ransomware attacks on small businesses are up 300%. This is what it is, how it gets in, and the specific steps Sonoma County business owners can take to protect themselves.",
+  alternates: { canonical: "https://copperbaytech.com/blog/what-is-ransomware-and-how-do-you-stop-it" },
+  openGraph: {
+    title: "What Is Ransomware and How Do Small Businesses Actually Stop It? | Copper Bay Tech",
+    description: "Ransomware attacks on small businesses are up 300%. This is what it is, how it gets in, and the specific steps Sonoma County business owners can take to protect themselves.",
+    url: "https://copperbaytech.com/blog/what-is-ransomware-and-how-do-you-stop-it",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function RansomwarePost() {

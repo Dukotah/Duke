@@ -9,8 +9,17 @@ export const metadata: Metadata = {
   title: "What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One? | Copper Bay Tech",
   description:
     "MSP, break-fix, in-house IT — what's the difference, when does each make sense, and what should a small business in Sonoma County actually expect to pay?",
+  alternates: {
+    canonical: "https://copperbaytech.com/blog/what-is-a-managed-service-provider",
+  },
   openGraph: {
+    title: "What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One? | Copper Bay Tech",
+    description:
+      "MSP, break-fix, in-house IT — what's the difference, when does each make sense, and what should a small business in Sonoma County actually expect to pay?",
     url: "https://copperbaytech.com/blog/what-is-a-managed-service-provider",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

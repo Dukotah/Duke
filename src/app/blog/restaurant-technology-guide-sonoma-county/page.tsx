@@ -9,6 +9,16 @@ export const metadata: Metadata = {
   title: "The Small Restaurant Owner's Guide to Technology in Sonoma County | Copper Bay Tech",
   description:
     "POS systems, WiFi reliability, online ordering, and data backup — a practical technology guide for Sonoma County restaurant owners.",
+  alternates: { canonical: "https://copperbaytech.com/blog/restaurant-technology-guide-sonoma-county" },
+  openGraph: {
+    title: "The Small Restaurant Owner's Guide to Technology in Sonoma County | Copper Bay Tech",
+    description:
+      "POS systems, WiFi reliability, online ordering, and data backup — a practical technology guide for Sonoma County restaurant owners.",
+    url: "https://copperbaytech.com/blog/restaurant-technology-guide-sonoma-county",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function Article() {

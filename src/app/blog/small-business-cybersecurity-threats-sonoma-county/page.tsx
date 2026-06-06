@@ -23,6 +23,15 @@ export const metadata: Metadata = {
     canonical:
       "https://copperbaytech.com/blog/small-business-cybersecurity-threats-sonoma-county",
   },
+  openGraph: {
+    title: "Small Business Cybersecurity Threats in Sonoma County (2026) | Copper Bay Tech",
+    description:
+      "The five cyber threats most likely to hit a Sonoma County small business this year — phishing, ransomware, weak passwords, unpatched software, and lost devices — plus what actually stops them.",
+    url: "https://copperbaytech.com/blog/small-business-cybersecurity-threats-sonoma-county",
+    siteName: "Copper Bay Tech",
+    type: "article",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function Article() {
