@@ -128,7 +128,9 @@ leverage. Most are buildable by an agent; a handful need Dukotah (**[owner]**).
 OFF-site (Google Business Profile, real reviews, citations, backlinks) and only
 the owner can pull them. Those are flagged **[owner]** and must not be faked.
 
-**✅ Shipped from this list (2026-06-06):** #17 (/process "how we work" page),
+**✅ Shipped from this list (2026-06-06):** #10 (/get-started guided funnel),
+#94 (CRM health endpoint now checks lead-feed reachability + CRM_ADMIN_TOKEN +
+webhook), #17 (/process "how we work" page),
 #18 (who-we-are/aren't-a-fit-for, on /process), #21 (visible breadcrumbs in both
 page templates + BreadcrumbList schema), #24 (hub FAQs — already present),
 #26 (/locations matrix hub), #27 (visible "Updated" dates on blog posts),
