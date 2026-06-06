@@ -55,6 +55,7 @@ export default function Article() {
               How Much Does a Website Cost in Sonoma County? (2026)
             </h1>
             <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>6 min read · May 2026</p>
+            <p className="text-sm text-[#3F3F46]/55 mt-1" style={{ fontFamily: "var(--font-body)" }}>Updated May 1, 2026</p>
           </div>
         </section>
 

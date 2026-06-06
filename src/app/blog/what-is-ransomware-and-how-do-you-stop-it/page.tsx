@@ -41,6 +41,7 @@ export default function RansomwarePost() {
             <h1 className="text-3xl sm:text-4xl font-bold text-[#18181B] leading-tight mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               What Is Ransomware and How Do Small Businesses Actually Stop It?
             </h1>
+            <p className="text-sm text-[#3F3F46]/40 mb-3" style={{ fontFamily: "var(--font-body)" }}>Updated February 1, 2026</p>
             <p className="text-[#3F3F46]/60 text-lg leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
               Ransomware attacks on small businesses have increased dramatically. This is exactly what it is, how it gets in, and the concrete steps you can take this week.
             </p>

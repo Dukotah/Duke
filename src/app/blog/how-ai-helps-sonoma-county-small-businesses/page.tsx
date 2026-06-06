@@ -52,6 +52,7 @@ export default function Article() {
               How AI Actually Helps a Sonoma County Small Business (2026)
             </h1>
             <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>6 min read · June 2026</p>
+            <p className="text-sm text-[#3F3F46]/55 mt-1" style={{ fontFamily: "var(--font-body)" }}>Updated June 2, 2026</p>
           </div>
         </section>
 

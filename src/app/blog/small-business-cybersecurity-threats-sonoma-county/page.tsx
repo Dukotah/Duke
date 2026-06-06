@@ -59,6 +59,7 @@ export default function Article() {
               The 5 Cybersecurity Threats Most Likely to Hit a Sonoma County Small Business in 2026
             </h1>
             <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>6 min read · June 2026</p>
+            <p className="text-sm text-[#3F3F46]/55 mt-1" style={{ fontFamily: "var(--font-body)" }}>Updated June 1, 2026</p>
           </div>
         </section>
 

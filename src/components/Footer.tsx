@@ -69,6 +69,8 @@ export default function Footer() {
   const navLinks = [
     { label: "Services", href: "/#services" },
     { label: "Pricing", href: "/pricing" },
+    { label: "How We Work", href: "/process" },
+    { label: "Locations", href: "/locations" },
     { label: "Work", href: "/work" },
     { label: "Free IT Health Check", href: "/it-health-check" },
     { label: "Tools", href: "/tools" },

@@ -39,6 +39,7 @@ export default function Article() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
               The Small Restaurant Owner&apos;s Guide to Technology in Sonoma County
             </h1>
+            <p className="text-sm text-white/30 mb-2" style={{ fontFamily: "var(--font-body)" }}>Updated March 1, 2026</p>
             <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>
               7 min read · March 2026
             </p>

@@ -90,6 +90,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/tools/website-cost-estimator`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/work`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/case-studies`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/locations`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/process`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },

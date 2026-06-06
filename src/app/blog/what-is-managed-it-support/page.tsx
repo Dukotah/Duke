@@ -53,6 +53,7 @@ export default function Article() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
               What Is Managed IT Support — and Does Your Business Need It?
             </h1>
+            <p className="text-sm text-white/30 mb-2" style={{ fontFamily: "var(--font-body)" }}>Updated February 1, 2026</p>
             <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>
               6 min read · February 2026
             </p>

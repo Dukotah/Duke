@@ -42,6 +42,9 @@ export default function Article() {
             <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>
               6 min read · May 2026
             </p>
+            <p className="text-sm text-[#3F3F46]/55 mt-1" style={{ fontFamily: "var(--font-body)" }}>
+              Updated May 1, 2026
+            </p>
           </div>
         </section>
 

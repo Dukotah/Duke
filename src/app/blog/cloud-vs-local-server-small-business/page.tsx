@@ -43,6 +43,7 @@ export default function CloudVsLocalPost() {
             <h1 className="text-3xl sm:text-4xl font-bold text-[#18181B] leading-tight mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Cloud vs. Local Server: What&apos;s Actually Right for Your Small Business?
             </h1>
+            <p className="text-sm text-[#3F3F46]/55 mb-3" style={{ fontFamily: "var(--font-body)" }}>Updated March 1, 2026</p>
             <p className="text-[#3F3F46]/60 text-lg leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
               This question comes up constantly with Sonoma County business owners. Here&apos;s a straight answer — including the cases where local still makes sense.
             </p>

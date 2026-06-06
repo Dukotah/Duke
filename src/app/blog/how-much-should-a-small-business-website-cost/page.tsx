@@ -43,6 +43,7 @@ export default function WebsiteCostPost() {
             <h1 className="text-3xl sm:text-4xl font-bold text-[#18181B] leading-tight mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               How Much Should a Small Business Website Cost? (Honest Answer)
             </h1>
+            <p className="text-sm text-[#3F3F46]/55 mb-3" style={{ fontFamily: "var(--font-body)" }}>Updated April 1, 2026</p>
             <p className="text-[#3F3F46]/60 text-lg leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
               Website pricing is all over the map and the industry doesn&apos;t make it easy to compare. Here&apos;s what actually drives cost — and what you should expect to pay for what.
             </p>

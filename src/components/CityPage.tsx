@@ -2,6 +2,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import RelatedLinks, { type RelatedLink } from "@/components/RelatedLinks";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowRight, Globe, Server, ShieldCheck, Phone } from "lucide-react";
 
 type CityPageProps = {
@@ -42,6 +43,7 @@ export default function CityPage({
 }: CityPageProps) {
   return (
     <>
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Locations", url: "https://copperbaytech.com/locations" }, { name: city }])} />
       <Nav />
       <main>
         {/* Hero */}
@@ -93,6 +95,13 @@ export default function CityPage({
         {/* Pain points */}
         <section className="py-16 bg-white">
           <div className="max-w-4xl mx-auto px-6">
+            <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-[#3F3F46]/60" style={{ fontFamily: "var(--font-body)" }}>
+              <Link href="/" className="hover:text-[#F97316]">Home</Link>
+              <span aria-hidden="true">/</span>
+              <Link href="/locations" className="hover:text-[#F97316]">Locations</Link>
+              <span aria-hidden="true">/</span>
+              <span className="text-[#3F3F46]/80">{city}</span>
+            </nav>
             <p
               className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
               style={{ fontFamily: "var(--font-heading)" }}

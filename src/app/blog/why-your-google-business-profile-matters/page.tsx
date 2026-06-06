@@ -41,6 +41,7 @@ export default function GoogleBusinessProfilePost() {
             <h1 className="text-3xl sm:text-4xl font-bold text-[#18181B] leading-tight mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Why Your Google Business Profile Is the Most Important Page You Don&apos;t Own
             </h1>
+            <p className="text-sm text-[#3F3F46]/40 mb-3" style={{ fontFamily: "var(--font-body)" }}>Updated February 1, 2026</p>
             <p className="text-[#3F3F46]/60 text-lg leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
               Most small businesses in Sonoma County treat their Google Business Profile as an afterthought. That&apos;s a mistake. Here&apos;s what it actually controls and what to fix today.
             </p>

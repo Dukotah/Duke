@@ -143,10 +143,19 @@ export default function ServiceCityPage({
 
         {/* Intro — local context */}
         <section className="py-16 bg-white">
-          <div className="max-w-3xl mx-auto px-6 space-y-5">
-            {intro.map((p, i) => (
-              <p key={i} className="text-[#3F3F46]/75 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{p}</p>
-            ))}
+          <div className="max-w-3xl mx-auto px-6">
+            <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-[#3F3F46]/60" style={{ fontFamily: "var(--font-body)" }}>
+              <Link href="/" className="hover:text-[#F97316]">Home</Link>
+              <span aria-hidden="true">/</span>
+              <Link href={hub.href} className="hover:text-[#F97316]">{hub.label}</Link>
+              <span aria-hidden="true">/</span>
+              <span className="text-[#3F3F46]/80">{service} in {city}</span>
+            </nav>
+            <div className="space-y-5">
+              {intro.map((p, i) => (
+                <p key={i} className="text-[#3F3F46]/75 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{p}</p>
+              ))}
+            </div>
           </div>
         </section>
 
