@@ -1,5 +1,6 @@
 import tls from "node:tls";
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 interface SSLResult {
   valid: boolean;
@@ -45,6 +46,8 @@ function checkSSL(hostname: string): Promise<SSLResult> {
 }
 
 export async function POST(req: NextRequest) {
+  const limit = rateLimit(req, { limit: 10, windowMs: 60_000 });
+  if (!limit.ok) return NextResponse.json({ error: limit.message }, { status: 429 });
   try {
     const { url } = await req.json();
 
