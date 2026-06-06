@@ -128,8 +128,12 @@ leverage. Most are buildable by an agent; a handful need Dukotah (**[owner]**).
 OFF-site (Google Business Profile, real reviews, citations, backlinks) and only
 the owner can pull them. Those are flagged **[owner]** and must not be faked.
 
-**✅ Shipped from this list (2026-06-06):** #23 (matrix-driven "other services in
-this city" cross-sell block on every service-city page), #1 (sticky mobile call/book bar —
+**✅ Shipped from this list (2026-06-06):** #17 (/process "how we work" page),
+#18 (who-we-are/aren't-a-fit-for, on /process), #21 (visible breadcrumbs in both
+page templates + BreadcrumbList schema), #24 (hub FAQs — already present),
+#26 (/locations matrix hub), #27 (visible "Updated" dates on blog posts),
+#23 (matrix-driven "other services in this city" cross-sell block on every
+service-city page), #1 (sticky mobile call/book bar —
 consolidated the existing StickyCTA site-wide + route-aware), #19/#25 (Service
 `AggregateOffer` price schema from `pricing.ts` on all service-city pages), #53
 (CRM `previewUrl` "Demo" badge), #86 (first-touch lead-source attribution —
