@@ -20,6 +20,7 @@ export default function SonomaPage() {
       relatedLinks={[
         { href: "/web-design-sonoma", label: "Web Design in Sonoma", blurb: "Booking-focused websites for Plaza tasting rooms, restaurants, and inns." },
         { href: "/it-support-sonoma", label: "IT Support in Sonoma", blurb: "Rock-solid POS, reservations, and Wi-Fi for Plaza hospitality businesses." },
+        { href: "/cybersecurity-sonoma", label: "Cybersecurity in Sonoma", blurb: "PCI, guest-data, and ransomware protection for Plaza tasting rooms and inns." },
       ]}
       description="Sonoma's wine country businesses — tasting rooms, restaurants, boutique hotels, and retail shops — run on reputation and experience. Copper Bay Tech helps you back that up with technology that's reliable, secure, and easy for your staff to use."
       painPoints={[

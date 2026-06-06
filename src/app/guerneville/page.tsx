@@ -11,6 +11,9 @@ export default function GuernevillePage() {
   return (
     <CityPage
       city="Guerneville"
+      relatedLinks={[
+        { href: "/web-design-guerneville", label: "Web Design in Guerneville", blurb: "Booking-ready websites for Russian River rentals, restaurants, and outfitters." },
+      ]}
       description="Guerneville's hospitality businesses — vacation rentals, restaurants, boutique shops, and event venues — need technology that handles peak season traffic and keeps running year-round. Copper Bay Tech provides local IT support and custom websites with flat-fee pricing."
       painPoints={[
         "Your vacation rental or hospitality website can't handle peak season traffic",
