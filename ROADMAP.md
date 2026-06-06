@@ -128,7 +128,8 @@ leverage. Most are buildable by an agent; a handful need Dukotah (**[owner]**).
 OFF-site (Google Business Profile, real reviews, citations, backlinks) and only
 the owner can pull them. Those are flagged **[owner]** and must not be faked.
 
-**✅ Shipped from this list (2026-06-06):** #1 (sticky mobile call/book bar —
+**✅ Shipped from this list (2026-06-06):** #23 (matrix-driven "other services in
+this city" cross-sell block on every service-city page), #1 (sticky mobile call/book bar —
 consolidated the existing StickyCTA site-wide + route-aware), #19/#25 (Service
 `AggregateOffer` price schema from `pricing.ts` on all service-city pages), #53
 (CRM `previewUrl` "Demo" badge), #86 (first-touch lead-source attribution —
@@ -139,7 +140,14 @@ security headers; strict CSP still TODO), #92 (Upstash rate limiting on
 submit-timing spam gate). Many discrete a11y items
 from #78–84 also shipped in the audit pass. **Already existed (no work needed):**
 #76 (custom `not-found.tsx`); #16 trust signals are largely covered by the
-existing `SocialProof` "Serving …" strip.
+existing `SocialProof` "Serving …" strip; #47 (Article/BlogPosting schema) was
+already present on all 31 blog posts.
+
+**NAP resolved (2026-06-06):** business is a **service-area business, no public
+storefront** — schema is region-only + areaServed (no city HQ), and "based in
+<city>" copy is now service-area language. The earlier Petaluma↔Santa Rosa
+conflict is moot. ⚠️ Owner: set up the Google Business Profile as a service-area
+business (hide address) and pick a CAN-SPAM mailing address for `MAILING_ADDRESS`.
 
 ## 1. Conversion rate optimization (CRO)
 1. `M` Sticky mobile "call / book" bar after the hero scrolls off — one-tap `tel:` + `/schedule`.
