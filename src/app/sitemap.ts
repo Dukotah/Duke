@@ -5,6 +5,7 @@ const BASE = SITE_URL;
 
 const blogPosts: Array<{ slug: string; lastModified: string; priority: number }> = [
   // June 2026
+  { slug: "it-support-for-restaurants-sonoma-county", lastModified: "2026-06-06", priority: 0.8 },
   { slug: "how-ai-helps-sonoma-county-small-businesses", lastModified: "2026-06-02", priority: 0.8 },
   { slug: "small-business-cybersecurity-threats-sonoma-county", lastModified: "2026-06-01", priority: 0.8 },
   { slug: "google-business-profile-setup-sonoma-county", lastModified: "2026-06-01", priority: 0.8 },
@@ -60,6 +61,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/it-support-petaluma`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/it-support-windsor`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/it-support-healdsburg`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/it-support-sebastopol`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/it-support-rohnert-park`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/cybersecurity-santa-rosa`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/cybersecurity-petaluma`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/tools`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },

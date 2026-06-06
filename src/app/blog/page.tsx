@@ -22,6 +22,14 @@ type Post = {
 const posts: Post[] = [
   // June 2026
   {
+    slug: "it-support-for-restaurants-sonoma-county",
+    tag: "IT Support",
+    title: "IT Support for Restaurants in Sonoma County: What Actually Breaks, and What to Do About It",
+    excerpt: "POS crashes, WiFi dead zones, and printer failures cost Sonoma County restaurants real money. Here's what IT support for restaurants actually looks like — and what to fix first.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
+  {
     slug: "how-ai-helps-sonoma-county-small-businesses",
     tag: "AI & Automation",
     title: "How AI Actually Helps a Sonoma County Small Business (2026)",
