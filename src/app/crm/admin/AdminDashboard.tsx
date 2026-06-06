@@ -947,9 +947,21 @@ function SetupTab() {
                     {c.required ? "Required" : "Optional"}
                   </span>
                 </div>
-                <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>
-                  {c.ok ? c.okText : c.problem}
-                </p>
+                {c.ok ? (
+                  <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>{c.okText}</p>
+                ) : (() => {
+                  const fixIdx = c.problem.indexOf("Fix:");
+                  const desc = fixIdx > 0 ? c.problem.slice(0, fixIdx).trim() : c.problem;
+                  const fix = fixIdx >= 0 ? c.problem.slice(fixIdx) : null;
+                  return (
+                    <>
+                      {desc && <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>{desc}</p>}
+                      {fix && (
+                        <p className="text-xs text-[#F97316]/90 mt-1.5 leading-relaxed font-medium" style={H}>{fix}</p>
+                      )}
+                    </>
+                  );
+                })()}
                 {!c.ok && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {c.vars.map((v) => (
