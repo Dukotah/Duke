@@ -59,6 +59,7 @@ export default function LoginPage() {
       <div className="w-full max-w-xs crm-rise">
 
         {/* Logo */}
+
         <div className="text-center mb-10">
           <p className="text-[28px] font-bold tracking-tight text-white" style={H}>
             Copper Bay<span className="text-[#F97316]">Tech</span>
@@ -103,6 +104,12 @@ export default function LoginPage() {
           >
             {submitting ? "Signing in…" : "Sign in"}
           </button>
+
+          <div className="text-center pt-1">
+            <a href="/crm/reset" className="text-xs text-white/25 hover:text-white/50 transition-colors" style={H}>
+              Forgot password?
+            </a>
+          </div>
         </form>
 
         {/* Divider */}
