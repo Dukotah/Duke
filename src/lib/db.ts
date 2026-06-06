@@ -332,6 +332,54 @@ export async function getCustomLeads(userId: string): Promise<CustomLead[]> {
   return leads.filter(Boolean).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+// ─── Lead Preview Sites (from the /websites factory) ──────────────────────────
+// A generated demo/preview site for a prospect, attached by BUSINESS NAME rather
+// than lead id: cold-lead ids are CSV row indexes that shift on every re-export,
+// while the name is stable and is the only field both the CRM CSV and the
+// /websites manifest share. Stored in ONE global hash so the whole queue is
+// enriched with a single HGETALL.
+
+export interface LeadPreview {
+  previewUrl: string;
+  linkedAt: string;
+}
+
+const LEAD_PREVIEWS_KEY = "lead_previews";
+
+// Normalize a business name to a stable join key. Both the writer (the push
+// endpoint, from the /websites manifest name) and the reader (the lead queue,
+// from the CSV name) run a name through this, so the two sides line up without
+// a shared id.
+export function previewKey(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+export async function setLeadPreview(name: string, previewUrl: string): Promise<void> {
+  const key = previewKey(name);
+  if (!key || !previewUrl) return;
+  const redis = getRedis();
+  const value: LeadPreview = { previewUrl, linkedAt: new Date().toISOString() };
+  await redis.hset(LEAD_PREVIEWS_KEY, { [key]: JSON.stringify(value) });
+}
+
+// Returns a map of normalized-name → previewUrl for enriching the lead queue.
+export async function getLeadPreviews(): Promise<Record<string, string>> {
+  const redis = getRedis();
+  const all = (await redis.hgetall(LEAD_PREVIEWS_KEY)) as Record<string, unknown> | null;
+  if (!all) return {};
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(all)) {
+    try {
+      // Upstash may auto-deserialize JSON values back to objects, so accept both.
+      const parsed = (typeof v === "string" ? JSON.parse(v) : v) as LeadPreview;
+      if (parsed?.previewUrl) out[k] = parsed.previewUrl;
+    } catch {
+      /* skip malformed entry */
+    }
+  }
+  return out;
+}
+
 // ─── Lead Claims ─────────────────────────────────────────────────────────────
 
 export interface LeadClaim {

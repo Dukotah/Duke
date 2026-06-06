@@ -19,6 +19,7 @@ interface Lead {
   address: string; city: string; county: string; tier: string;
   tier_reason: string; builder: string; industry_fit: string;
   outreach_score: number; pitch: string;
+  previewUrl?: string | null;
 }
 
 interface LeadState {
@@ -631,6 +632,17 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                       {websiteHost}
                       {lead.builder && <span className="ml-2 text-xs text-yellow-400/60">({lead.builder})</span>}
                     </a>
+                  </div>
+                )}
+                {lead.previewUrl && (
+                  <div className="flex items-center gap-2">
+                    <Globe size={13} className="text-violet-400/70 shrink-0" />
+                    <a href={lead.previewUrl} target="_blank" rel="noopener noreferrer"
+                      className="text-sm text-violet-300 hover:text-violet-200 transition-colors flex-1 truncate" style={H}>
+                      Preview site we built
+                    </a>
+                    <span className="text-[10px] text-violet-300/60 bg-violet-400/10 border border-violet-400/20 px-2 py-0.5 rounded-full shrink-0" style={H}>Demo</span>
+                    <CopyBtn text={lead.previewUrl} />
                   </div>
                 )}
                 {lead.address && (
