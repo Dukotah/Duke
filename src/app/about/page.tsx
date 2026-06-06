@@ -28,7 +28,6 @@ export default function AboutPage() {
         <Contact />
       </main>
       <Footer />
-      <div className="h-16 md:hidden" aria-hidden="true" />
     </>
   );
 }

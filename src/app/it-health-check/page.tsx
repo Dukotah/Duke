@@ -30,7 +30,6 @@ export default function ItHealthCheckPage() {
         <ITQuiz />
       </main>
       <Footer />
-      <div className="h-16 md:hidden" aria-hidden="true" />
     </>
   );
 }

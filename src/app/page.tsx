@@ -10,7 +10,6 @@ import ToolsTeaser from "@/components/ToolsTeaser";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
-import StickyCTA from "@/components/StickyCTA";
 import JsonLd, { localBusinessSchema, organizationSchema, websiteSchema, aggregateRatingSchema } from "@/components/JsonLd";
 import { aggregateRating } from "@/lib/reviews";
 
@@ -50,10 +49,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-      {/* Spacer so the fixed mobile action bar never covers footer content. */}
-      <div className="h-16 md:hidden" aria-hidden="true" />
       <ChatWidget />
-      <StickyCTA />
     </>
   );
 }

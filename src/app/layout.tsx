@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Lora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import MobileCTABar from "@/components/MobileCTABar";
+import StickyCTA from "@/components/StickyCTA";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -88,8 +88,10 @@ export default function RootLayout({
           <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
                   <body className="min-h-full flex flex-col">
           {children}
-          {/* One-tap call/book bar on mobile (hides itself on /crm + utility routes). */}
-          <MobileCTABar />
+          {/* Shared mobile bottom spacer so the fixed StickyCTA never covers footer content. */}
+          <div className="h-16 md:hidden" aria-hidden="true" />
+          {/* One-tap call/book bar on mobile — site-wide, hidden on /crm + utility routes. */}
+          <StickyCTA />
           {/* Privacy-friendly, cookieless analytics. Pageviews flow
               automatically once Web Analytics is enabled in the Vercel project
               dashboard; custom funnel events are forwarded via src/lib/analytics.ts. */}
