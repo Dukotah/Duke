@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Lora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import StickyCTA from "@/components/StickyCTA";
+import AttributionTracker from "@/components/AttributionTracker";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -92,6 +93,8 @@ export default function RootLayout({
           <div className="h-16 md:hidden" aria-hidden="true" />
           {/* One-tap call/book bar on mobile — site-wide, hidden on /crm + utility routes. */}
           <StickyCTA />
+          {/* Records first-touch lead source (UTM/referrer/landing) per session. */}
+          <AttributionTracker />
           {/* Privacy-friendly, cookieless analytics. Pageviews flow
               automatically once Web Analytics is enabled in the Vercel project
               dashboard; custom funnel events are forwarded via src/lib/analytics.ts. */}

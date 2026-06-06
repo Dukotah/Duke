@@ -156,6 +156,7 @@ export interface ContactIntake {
   phone?: string;
   service?: string;
   message?: string;
+  attribution?: string; // pre-formatted first-touch source (utm/referrer/landing)
 }
 
 /** Human note so Duke sees the full contact-form context at a glance. */
@@ -164,6 +165,7 @@ export function buildContactNote(input: ContactIntake): string {
     "Inbound — submitted the website contact form. They reached out directly, so treat as a warm lead.",
     input.service ? `Wants: ${input.service}.` : "",
     input.message ? `Their message: "${input.message.trim()}"` : "",
+    input.attribution ? `How they found us: ${input.attribution}.` : "",
   ]
     .filter(Boolean)
     .join(" ");

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { captureContactLead } from "@/lib/crm/intake";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { formatAttribution } from "@/lib/attribution";
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +10,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too many submissions — please wait a few minutes and try again." }, { status: 429 });
     }
     const body = await req.json();
-    const { name, business, email, phone, service, message, company_website, elapsedMs } = body;
+    const { name, business, email, phone, service, message, company_website, elapsedMs, attribution } = body;
+    const source = formatAttribution(attribution);
 
     // Spam gate: a filled honeypot (humans never see the field) or a near-instant
     // submit (< 2s) is almost certainly a bot. Return ok so the bot doesn't retry,
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
     // in the /crm queue (deduped by email). Isolated + non-fatal so a CRM/Redis
     // hiccup never breaks the visitor's submission or the email notifications.
     try {
-      await captureContactLead({ name, business, email, phone, service, message });
+      await captureContactLead({ name, business, email, phone, service, message, attribution: source });
     } catch (e) {
       console.error("Contact→CRM bridge failed (non-fatal):", e);
     }
@@ -71,6 +73,7 @@ export async function POST(req: NextRequest) {
             ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ""}
             <p><strong>Service:</strong> ${service}</p>
             ${message ? `<p><strong>Message:</strong><br>${message.replace(/\n/g, "<br>")}</p>` : ""}
+            ${source ? `<p><strong>Source:</strong> ${source}</p>` : ""}
           `,
         }),
       }),

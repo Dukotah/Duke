@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Phone, Mail, Clock, CalendarDays } from "lucide-react";
 import { BOOKING_URL } from "@/config/site";
 import { track } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 
 // Module-level so the purity linter doesn't flag a Date.now() call inside the
 // component (it's only ever called from the submit event handler, not render).
@@ -41,7 +42,7 @@ export default function Contact() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, elapsedMs: nowMs() - startedAt }),
+        body: JSON.stringify({ ...data, elapsedMs: nowMs() - startedAt, attribution: getAttribution() }),
       });
       if (res.ok) {
         track("contact_form_submit");
