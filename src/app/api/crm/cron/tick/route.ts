@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { listUsers, getCustomLeads, getAllLeadStates, setLeadState, addActivity, getSuppressedEmails } from "@/lib/db";
+import { listUsers, getCustomLeads, getAllLeadStates, addActivity, getSuppressedEmails } from "@/lib/db";
 import { getNextStep, personalizeSequence, MAX_SEQUENCE_STEP } from "@/lib/crm/sequences";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
@@ -188,18 +188,15 @@ async function persistSend(
     note: `[Auto] ${subject}`,
   });
 
-  await setLeadState(userId, leadId, {
+  // setLeadState is a thin wrapper around redis.hset — call it directly so we
+  // can include the non-typed sequenceStep field in a single round-trip.
+  await redis.hset(`lead:${userId}:${leadId}`, {
     status: "contacted",
     stage: "contacted",
     lastContacted: sentAt,
-    followUpDate: addDays(nextDelayDays + 7), // next check-in window is generous
-    // Store sequenceStep as a plain number — Redis hset accepts it fine.
-    ...(({ sequenceStep: nextStep } as unknown) as object),
-  } as Parameters<typeof setLeadState>[2]);
-
-  // Track directly under the hset key to avoid a type-system fight.
-  const r = redis as unknown as { hset: (key: string, data: Record<string, unknown>) => Promise<unknown> };
-  await r.hset(`lead:${userId}:${leadId}`, { sequenceStep: String(nextStep) });
+    followUpDate: addDays(nextDelayDays + 7),
+    sequenceStep: String(nextStep),
+  });
 
   if (countAgainstCap) {
     await redis.set(dailyKey, String(sentToday + 1), { ex: 90000 });
