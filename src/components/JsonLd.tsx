@@ -28,6 +28,9 @@ export function localBusinessSchema(): Json {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    // Stable @id so every page's LocalBusiness resolves to ONE entity in
+    // Google's graph (entity disambiguation).
+    "@id": `${SITE}/#business`,
     name: BUSINESS_NAME,
     description:
       "IT consulting, web development, and cybersecurity for Sonoma County businesses.",
@@ -41,6 +44,21 @@ export function localBusinessSchema(): Json {
       addressRegion: "CA",
       addressCountry: "US",
     },
+    // Geographic anchor (Sonoma County midpoint) — AI/search use this to resolve
+    // a service-area business with no street address.
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 38.4405,
+      longitude: -122.7144,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
+    ],
     areaServed: [
       "Petaluma",
       "Santa Rosa",
@@ -106,6 +124,8 @@ export function blogPostingSchema(opts: {
   description: string;
   url: string;
   datePublished: string;
+  /** Optional last-modified date (E-E-A-T freshness). Defaults to datePublished. */
+  dateModified?: string;
 }): Json {
   return {
     "@context": "https://schema.org",
@@ -115,7 +135,13 @@ export function blogPostingSchema(opts: {
     url: opts.url,
     mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
     datePublished: opts.datePublished,
-    author: { "@type": "Organization", name: BUSINESS_NAME },
+    dateModified: opts.dateModified ?? opts.datePublished,
+    // Named expert author (E-E-A-T) — Google prefers a Person for articles.
+    author: {
+      "@type": "Person",
+      name: "Dukotah Hutcheon",
+      url: `${SITE}/about`,
+    },
     publisher: {
       "@type": "Organization",
       name: BUSINESS_NAME,
@@ -181,7 +207,12 @@ export function organizationSchema(): Json {
     "@type": "Organization",
     name: BUSINESS_NAME,
     url: SITE,
-    logo: `${SITE}/logos/logo-horizontal.png`,
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE}/logos/logo-horizontal.png`,
+      width: 400,
+      height: 60,
+    },
     telephone: PHONE,
     email: EMAIL,
     // Service-area business — no public storefront address; we serve a radius

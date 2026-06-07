@@ -3,6 +3,11 @@
 :root {
   --navy: #18181B;
   --gold: #F97316;
+  /* AA-compliant gold for SMALL text on white/linen (#F97316 is ~3:1, fails AA
+     for body-size text). Use `text-gold-on-light` / text-[var(--gold-on-light)]
+     for eyebrow labels, small links, and inline accents on light surfaces.
+     Keep full --gold for large display text (>=24px bold), icons, dark bg. */
+  --gold-on-light: #C2540A;
   --linen: #FAFAF9;
   --text: #3F3F46;
   --green: #18181B;
@@ -15,6 +20,7 @@
   --color-foreground: var(--foreground);
   --color-navy: var(--navy);
   --color-gold: var(--gold);
+  --color-gold-on-light: var(--gold-on-light);
   --color-linen: var(--linen);
   --color-green: var(--green);
 }
