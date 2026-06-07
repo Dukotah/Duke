@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
+import ArticleHeader from "@/components/ArticleHeader";
 
 export const metadata: Metadata = {
   title: "What Is Ransomware and How Do Small Businesses Actually Stop It? | Copper Bay Tech",
@@ -28,24 +27,7 @@ export default function RansomwarePost() {
 
       <article className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-[#3F3F46]/50 hover:text-[#18181B] transition-colors text-sm mb-8" style={{ fontFamily: "var(--font-heading)" }}>
-            <ArrowLeft size={14} /> All Articles
-          </Link>
-
-          <header className="mb-10">
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>Cybersecurity</span>
-              <span className="text-[#18181B]/20">·</span>
-              <span className="text-xs text-[#3F3F46]/40" style={{ fontFamily: "var(--font-heading)" }}>7 min read</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#18181B] leading-tight mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              What Is Ransomware and How Do Small Businesses Actually Stop It?
-            </h1>
-            <p className="text-sm text-[#3F3F46]/40 mb-3" style={{ fontFamily: "var(--font-body)" }}>Updated February 1, 2026</p>
-            <p className="text-[#3F3F46]/60 text-lg leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-              Ransomware attacks on small businesses have increased dramatically. This is exactly what it is, how it gets in, and the concrete steps you can take this week.
-            </p>
-          </header>
+          <ArticleHeader tag="Cybersecurity" title="What Is Ransomware and How Do Small Businesses Actually Stop It?" date="February 1, 2026" readTime="7 min read" />
 
           <div className="prose prose-zinc max-w-none" style={{ fontFamily: "var(--font-body)" }}>
             <p>

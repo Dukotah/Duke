@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
+import ArticleHeader from "@/components/ArticleHeader";
 
 export const metadata: Metadata = {
   title: "The Small Restaurant Owner's Guide to Technology in Sonoma County | Copper Bay Tech",
@@ -28,23 +29,7 @@ export default function Article() {
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Restaurant Technology Sonoma County" }])} />
       <Nav />
       <main>
-        <section className="pt-32 pb-8 bg-[#18181B]">
-          <div className="max-w-2xl mx-auto px-6">
-            <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition-colors mb-8" style={{ fontFamily: "var(--font-heading)" }}>
-              <ArrowLeft size={14} /> All Resources
-            </Link>
-            <span className="inline-block mb-4 px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-widest" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#F97316", fontFamily: "var(--font-heading)" }}>
-              IT Support
-            </span>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
-              The Small Restaurant Owner&apos;s Guide to Technology in Sonoma County
-            </h1>
-            <p className="text-sm text-white/30 mb-2" style={{ fontFamily: "var(--font-body)" }}>Updated March 1, 2026</p>
-            <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-              7 min read · March 2026
-            </p>
-          </div>
-        </section>
+        <ArticleHeader tag="IT Support" title="The Small Restaurant Owner&apos;s Guide to Technology in Sonoma County" date="March 1, 2026" readTime="7 min read" />
 
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6">

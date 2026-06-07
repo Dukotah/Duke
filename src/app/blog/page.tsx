@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { ArrowRight, Clock } from "lucide-react";
+import BlogIndex from "@/components/BlogIndex";
+import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Resources & Blog | Copper Bay Tech",
@@ -345,66 +346,13 @@ export default function BlogPage() {
           </div>
         </section>
 
-        {/* Posts */}
-        <section className="py-16 bg-[#FAFAF9]">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="space-y-6">
-              {posts.map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="group block rounded-2xl bg-white border border-[#18181B]/10 hover:border-[#18181B]/30 transition-all overflow-hidden shadow-sm hover:shadow-md"
-                >
-                  <div className="p-8">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span
-                        className="text-xs font-semibold uppercase tracking-widest px-2.5 py-1 rounded-md"
-                        style={{
-                          backgroundColor: "rgba(249,115,22,0.1)",
-                          color: "#F97316",
-                          fontFamily: "var(--font-heading)",
-                        }}
-                      >
-                        {post.tag}
-                      </span>
-                      <span
-                        className="flex items-center gap-1.5 text-xs text-[#3F3F46]/60"
-                        style={{ fontFamily: "var(--font-body)" }}
-                      >
-                        <Clock size={12} /> {post.readTime}
-                      </span>
-                      <span
-                        className="text-xs text-[#3F3F46]/60"
-                        style={{ fontFamily: "var(--font-body)" }}
-                      >
-                        {post.date}
-                      </span>
-                    </div>
-                    <h2
-                      className="text-xl font-bold text-[#18181B] mb-3 group-hover:text-[#F97316] transition-colors leading-snug"
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
-                      {post.title}
-                    </h2>
-                    <p
-                      className="text-sm text-[#3F3F46]/60 leading-relaxed mb-4"
-                      style={{ fontFamily: "var(--font-body)" }}
-                    >
-                      {post.excerpt}
-                    </p>
-                    <span
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#F97316] group-hover:gap-2.5 transition-all"
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
-                      Read article <ArrowRight size={14} />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+        {/* Posts — featured + category filter + grid (client) */}
+        <BlogIndex posts={posts} />
 
-            {/* CTA */}
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-10 text-center">
+        {/* CTA */}
+        <section className="pb-20 bg-[#FAFAF9]">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="rounded-2xl bg-[#18181B] p-10 text-center">
               <p
                 className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}

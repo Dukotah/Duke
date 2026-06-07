@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
+import ArticleHeader from "@/components/ArticleHeader";
 
 export const metadata: Metadata = {
   title: "Cloud vs. Local Server: What's Actually Right for Your Small Business? | Copper Bay Tech",
@@ -30,24 +29,7 @@ export default function CloudVsLocalPost() {
 
       <article className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-[#3F3F46]/50 hover:text-[#18181B] transition-colors text-sm mb-8" style={{ fontFamily: "var(--font-heading)" }}>
-            <ArrowLeft size={14} /> All Articles
-          </Link>
-
-          <header className="mb-10">
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>IT Support</span>
-              <span className="text-[#18181B]/20">·</span>
-              <span className="text-xs text-[#3F3F46]/40" style={{ fontFamily: "var(--font-heading)" }}>6 min read</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#18181B] leading-tight mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Cloud vs. Local Server: What&apos;s Actually Right for Your Small Business?
-            </h1>
-            <p className="text-sm text-[#3F3F46]/55 mb-3" style={{ fontFamily: "var(--font-body)" }}>Updated March 1, 2026</p>
-            <p className="text-[#3F3F46]/60 text-lg leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-              This question comes up constantly with Sonoma County business owners. Here&apos;s a straight answer — including the cases where local still makes sense.
-            </p>
-          </header>
+          <ArticleHeader tag="IT Support" title="Cloud vs. Local Server: What&apos;s Actually Right for Your Small Business?" date="March 1, 2026" readTime="6 min read" />
 
           <div className="prose prose-zinc max-w-none" style={{ fontFamily: "var(--font-body)" }}>
             <p>

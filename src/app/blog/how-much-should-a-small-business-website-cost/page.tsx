@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import ArticleHeader from "@/components/ArticleHeader";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
@@ -30,24 +30,7 @@ export default function WebsiteCostPost() {
 
       <article className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-[#3F3F46]/50 hover:text-[#18181B] transition-colors text-sm mb-8" style={{ fontFamily: "var(--font-heading)" }}>
-            <ArrowLeft size={14} /> All Articles
-          </Link>
-
-          <header className="mb-10">
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>Web Development</span>
-              <span className="text-[#18181B]/20">·</span>
-              <span className="text-xs text-[#3F3F46]/40" style={{ fontFamily: "var(--font-heading)" }}>5 min read</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#18181B] leading-tight mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              How Much Should a Small Business Website Cost? (Honest Answer)
-            </h1>
-            <p className="text-sm text-[#3F3F46]/55 mb-3" style={{ fontFamily: "var(--font-body)" }}>Updated April 1, 2026</p>
-            <p className="text-[#3F3F46]/60 text-lg leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-              Website pricing is all over the map and the industry doesn&apos;t make it easy to compare. Here&apos;s what actually drives cost — and what you should expect to pay for what.
-            </p>
-          </header>
+          <ArticleHeader tag="Web Development" title="How Much Should a Small Business Website Cost? (Honest Answer)" date="April 1, 2026" readTime="5 min read" />
 
           <div className="prose prose-zinc max-w-none" style={{ fontFamily: "var(--font-body)" }}>
             <p>

@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
+import ArticleHeader from "@/components/ArticleHeader";
 
 export const metadata: Metadata = {
   title: "How Much Does a Business Website Cost in 2026? A Plain-English Guide | Copper Bay Tech",
@@ -65,37 +66,7 @@ export default function Article() {
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Business Website Cost Guide 2026" }])} />
       <Nav />
       <main>
-        <section className="pt-32 pb-8 bg-[#18181B]">
-          <div className="max-w-2xl mx-auto px-6">
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition-colors mb-8"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              <ArrowLeft size={14} /> All Resources
-            </Link>
-            <span
-              className="inline-block mb-4 px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-widest"
-              style={{
-                backgroundColor: "rgba(249,115,22,0.15)",
-                color: "#F97316",
-                fontFamily: "var(--font-heading)",
-              }}
-            >
-              Web Development
-            </span>
-            <h1
-              className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              How Much Does a Business Website Cost in 2026? A Plain-English Guide
-            </h1>
-            <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-              6 min read · June 2026
-            </p>
-            <p className="text-sm text-[#3F3F46]/55 mt-1" style={{ fontFamily: "var(--font-body)" }}>Updated June 1, 2026</p>
-          </div>
-        </section>
+        <ArticleHeader tag="Web Development" title="How Much Does a Business Website Cost in 2026? A Plain-English Guide" date="June 1, 2026" readTime="6 min read" />
 
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>

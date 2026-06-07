@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import ArticleHeader from "@/components/ArticleHeader";
 
 const blogSchema = blogPostingSchema({
   title: "Is My Small Business Website HIPAA Compliant? A Plain-English Checklist",
@@ -45,20 +46,7 @@ export default function Article() {
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Is My Website HIPAA Compliant" }])} />
       <Nav />
       <main>
-        <section className="pt-32 pb-8 bg-[#18181B]">
-          <div className="max-w-2xl mx-auto px-6">
-            <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-8 transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
-              <ArrowLeft size={14} /> All Resources
-            </Link>
-            <span className="inline-block mb-4 px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-widest" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#F97316", fontFamily: "var(--font-heading)" }}>
-              Cybersecurity
-            </span>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
-              Is My Small Business Website HIPAA Compliant? A Plain-English Checklist
-            </h1>
-            <p className="text-white/50 text-sm" style={{ fontFamily: "var(--font-body)" }}>6 min read &middot; April 2026</p>
-          </div>
-        </section>
+        <ArticleHeader tag="Cybersecurity" title="Is My Small Business Website HIPAA Compliant? A Plain-English Checklist" date="April 2026" readTime="6 min read" />
         <section className="py-12 bg-white">
           <div className="max-w-2xl mx-auto px-6">
             <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>

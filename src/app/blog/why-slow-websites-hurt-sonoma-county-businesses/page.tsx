@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import JsonLd, { blogPostingSchema, breadcrumbSchema } from "@/components/JsonLd";
+import ArticleHeader from "@/components/ArticleHeader";
 
 export const metadata: Metadata = {
   title: "Why a Slow Website Is Costing Your Sonoma County Business Customers | Copper Bay Tech",
@@ -23,22 +24,8 @@ export default function Post() {
     <>
       <JsonLd schema={blogPostingSchema({ title: "Why a Slow Website Is Costing Your Sonoma County Business Customers", description: "If your site takes more than 3 seconds to load, more than half your visitors are already gone. Here's what's slowing you down and how to fix it.", url: "https://copperbaytech.com/blog/why-slow-websites-hurt-sonoma-county-businesses", datePublished: "2026-05-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Slow Websites Hurt Your Business" }])} />
+      <ArticleHeader tag="Web Performance" title="Why a Slow Website Is Costing Your Sonoma County Business Customers" date="May 30, 2026" readTime="5 min read" />
       <main className="max-w-2xl mx-auto px-6 py-24">
-      <Link href="/blog" className="text-sm text-[#F97316] hover:underline mb-10 inline-block" style={{ fontFamily: "var(--font-heading)" }}>
-        ← All posts
-      </Link>
-
-      <span className="text-xs font-semibold uppercase tracking-widest text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>
-        Web Performance
-      </span>
-
-      <h1 className="text-3xl md:text-4xl font-bold text-[#18181B] mt-3 mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
-        Why a Slow Website Is Costing Your Sonoma County Business Customers
-      </h1>
-
-      <p className="text-sm text-[#3F3F46]/40 mb-10" style={{ fontFamily: "var(--font-body)" }}>
-        May 30, 2026 · By Duke, Copper Bay Tech
-      </p>
 
       <div className="prose-content space-y-6 text-[#3F3F46] leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
