@@ -443,11 +443,16 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const [showBulkEmail, setShowBulkEmail] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Load all state + submissions once
   useEffect(() => {
-    fetch("/api/crm/state").then((r) => r.json()).then((d) => { setStates(d); setStatesLoaded(true); }).catch(() => setStatesLoaded(true));
-    fetch("/api/crm/submit").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setSubmissions(d); }).catch(() => {});
+    fetch("/api/crm/state").then((r) => r.json()).then((d) => { setStates(d); setStatesLoaded(true); }).catch((e) => {
+      console.error("CRM: failed to load lead states", e);
+      setStatesLoaded(true);
+      setLoadError("Couldn't load your lead queue — check your connection and refresh.");
+    });
+    fetch("/api/crm/submit").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setSubmissions(d); }).catch((e) => console.error("CRM: failed to load submissions", e));
   }, []);
 
   // Load leads for pipeline (needs all touched leads)
@@ -458,7 +463,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
     // Fetch a broad set for pipeline
     fetch("/api/crm/leads?limit=100&sortBy=outreach_score").then((r) => r.json()).then((d) => {
       if (d.leads) setAllLeads(d.leads);
-    }).catch(() => {});
+    }).catch((e) => console.error("CRM: failed to load pipeline leads", e));
   }, [statesLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateState = useCallback(async (leadId: string, patch: Partial<LeadState>) => {
@@ -473,7 +478,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   }, []);
 
   const refreshSubs = useCallback(() => {
-    fetch("/api/crm/submit").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setSubmissions(d); }).catch(() => {});
+    fetch("/api/crm/submit").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setSubmissions(d); }).catch((e) => console.error("CRM: failed to refresh submissions", e));
   }, []);
 
   const handleCallOutcome = useCallback(async (outcome: string) => {
@@ -551,6 +556,13 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
       )}
 
       <div className="min-h-screen crm-backdrop flex flex-col text-white/80" style={H}>
+
+        {loadError && (
+          <div role="alert" className="flex items-center justify-between gap-3 px-4 py-2.5 bg-red-500/15 border-b border-red-500/30 text-red-200 text-sm">
+            <span>{loadError}</span>
+            <button onClick={() => setLoadError(null)} className="shrink-0 text-red-200/70 hover:text-red-100 text-xs font-semibold uppercase tracking-wide">Dismiss</button>
+          </div>
+        )}
 
         {/* Top bar */}
         <header className="border-b border-white/[0.06] crm-chrome sticky top-0 z-30 shrink-0">
