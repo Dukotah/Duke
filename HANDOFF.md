@@ -25,9 +25,26 @@ lowest-risk fixes:
   advances #53/#95. **Review before push — revert that commit if unwanted.** Note: the richer
   fields only populate once the `/websites` `push-to-crm` script sends them; legacy data is
   tolerated.
-- **Next up (see IMPROVEMENTS.md §3):** city-page canonicals, og:image coverage, blog FAQPage
-  schema, orange-on-light contrast token, reduced-motion gating, tool-widget error states,
-  `/web-development` tier alignment.
+- **Backlog sweep (IMPROVEMENTS.md §3) — CLEARED via 2 agent waves (commits `d77b84c`,
+  `1d8e038`, `50d1b4d`):**
+  - SEO: canonicals on 20 city/industry/case-study pages + blog index; BreadcrumbList schema
+    on industries + case studies; LocalBusiness `@id`/geo/openingHours; BlogPosting `Person`
+    author + `dateModified`; Organization logo ImageObject; blog date contrast.
+  - a11y: `useReducedMotion()` gating across 21 components; `--gold-on-light` (#C2540A) AA token
+    swapped onto small orange-on-light eyebrow/link text; focus-visible rings on CTAs site-wide;
+    ChatWidget dialog/aria; FAQ aria-controls; WhyUs cell contrast; SocialProof spacing.
+  - Functional: free-tool capture widgets now have an error state (were showing false success);
+    `/web-development` pricing aligned to canonical `PRICING`.
+  - **Descoped:** generic og:image on the 39 matrix pages (already falls back to the layout
+    brand card via metadataBase — near-zero ROI; unique per-page OG would be a design task).
+  - **Blog FAQPage schema:** agents found most posts have no in-body FAQ; none fabricated.
+- ⚠️ **Concurrency:** during this session another process committed `bcb33d6` (TOC/reading-time,
+  #48) to `main` — NOT made by this session. The TOC builds clean but its mobile button
+  (`bottom-20 right-4`) may overlap the ChatWidget/StickyCTA — verify in-app before push.
+  If a routine/second session is editing `duke`, coordinate to avoid clobbering.
+- **Still open (lower priority, broader audit):** CRMDashboard silent fetch errors,
+  `/tools/health-check` dup (redirect or add capture), contact→CRM hostname dedup, CSP
+  report-only header.
 
 ## Latest (2026-06-06, part 10) — pages batch + DEPLOY #2
 Shipped via a 7-agent workflow + my template work: **#26** `/locations` hub (matrix of every city × services, from `serviceCities.ts`), **#17/#18** `/process` page (how-we-work + fit/not-fit), **#21** visible breadcrumbs in `ServiceCityPage` + `CityPage` (+ BreadcrumbList schema, city crumb → `/locations`), **#27** visible "Updated <date>" on blog posts that lacked one, **#24** hub FAQs (already present, no change). Wired `/locations`+`/process` into sitemap + footer. Fixed the `/process` agent's Nav bug (dark hero needs default `<Nav />`, not `light`). Build now **172 static pages**; tsc+eslint+link-audit+build clean. Pushed → Vercel (deploy #2).
