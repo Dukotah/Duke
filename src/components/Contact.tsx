@@ -236,15 +236,13 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="w-full py-3.5 rounded-md text-sm font-semibold text-white transition-colors disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#18181B] focus-visible:ring-offset-2"
-                style={{ backgroundColor: "#18181B", fontFamily: "var(--font-heading)" }}
-                onMouseEnter={(e) => { if (status !== "loading") e.currentTarget.style.backgroundColor = "#111113"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#18181B"; }}
+                className="w-full py-3.5 rounded-md text-sm font-semibold text-white bg-[#18181B] hover:bg-[#111113] transition-colors disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#18181B] focus-visible:ring-offset-2"
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 {status === "loading" ? "Sending..." : "Send Message"}
               </button>
 
-              <p className="text-xs text-[#3F3F46]/50 text-center" style={{ fontFamily: "var(--font-body)" }}>
+              <p className="text-xs text-[#3F3F46]/60 text-center" style={{ fontFamily: "var(--font-body)" }}>
                 We reply within one business day. No spam, no sales pressure — and
                 we never share your details.
               </p>
