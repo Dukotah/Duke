@@ -4,7 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import PricingEstimator from "@/components/PricingEstimator";
 import Comparison from "@/components/Comparison";
-import { ArrowRight, Globe, Server, ShieldCheck, Check, Phone, Sparkles } from "lucide-react";
+import { ArrowRight, Globe, Server, ShieldCheck, Check, Phone, Sparkles, Gauge } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pricing | Web Design, IT Support & Cybersecurity | Copper Bay Tech",
@@ -232,6 +232,44 @@ export default function Pricing() {
         {/* Pricing cards */}
         <section className="relative -mt-16 pb-24">
           <div className="mx-auto max-w-6xl px-6">
+            {/* Freemium banner */}
+            <Link
+              href="/business-analysis"
+              className="group mb-10 flex flex-col items-start gap-5 overflow-hidden rounded-3xl bg-[#18181B] p-7 shadow-[0_30px_60px_-15px_rgba(24,24,27,0.45)] ring-1 ring-[#F97316]/40 transition-all duration-300 hover:ring-[#F97316]/70 sm:flex-row sm:items-center sm:gap-7 sm:p-8"
+            >
+              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-[#F97316]/15 ring-1 ring-[#F97316]/25">
+                <Gauge size={26} color="#F97316" strokeWidth={1.75} />
+              </div>
+              <div className="flex-1">
+                <span
+                  className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#F97316]/30 bg-[#F97316]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#F97316]"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Free · No obligation
+                </span>
+                <h2
+                  className="text-balance text-2xl font-bold leading-tight tracking-tight text-white md:text-3xl"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Not ready to buy? Get a free business analysis first.
+                </h2>
+                <p
+                  className="mt-2 max-w-2xl text-pretty text-[15px] leading-relaxed text-white/60"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  We scan your website, Google profile, social media, and branding — then show you the single
+                  biggest improvement you can make to grow. Instant results in about 30 seconds.
+                </p>
+              </div>
+              <span
+                className="inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-xl bg-[#F97316] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#F97316]/25 transition-all duration-200 group-hover:bg-[#ea6c0a]"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Run free analysis
+                <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+
             <div className="grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
               {tiers.map((t) => (
                 <div
