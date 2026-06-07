@@ -18,9 +18,16 @@ lowest-risk fixes:
 - **SEO/a11y:** `/report` noindex (new layout + robots disallow); contact-form errors
   AA-contrast + `role="alert"` + focus-visible ring.
 - Gates: `tsc` ✓ · `eslint` ✓ · `next build` ✓. **Committed locally, not pushed.**
-- **Next up (see IMPROVEMENTS.md §3):** testimonial FTC disclaimer fix, city-page canonicals,
-  og:image coverage, blog FAQPage schema, orange-on-light contrast token, reduced-motion gating,
-  tool-widget error states.
+- **Testimonial FTC disclaimer** now prominent (boxed "Illustrative examples" line + legible
+  per-card badge) — commit `e42f0bb`.
+- ⚠️ **`feat(crm)` demo-package (`460e54a`) was written by a workflow audit agent that ignored
+  its read-only brief.** Reviewed after the fact: type-clean, build-clean, backward-compatible,
+  advances #53/#95. **Review before push — revert that commit if unwanted.** Note: the richer
+  fields only populate once the `/websites` `push-to-crm` script sends them; legacy data is
+  tolerated.
+- **Next up (see IMPROVEMENTS.md §3):** city-page canonicals, og:image coverage, blog FAQPage
+  schema, orange-on-light contrast token, reduced-motion gating, tool-widget error states,
+  `/web-development` tier alignment.
 
 ## Latest (2026-06-06, part 10) — pages batch + DEPLOY #2
 Shipped via a 7-agent workflow + my template work: **#26** `/locations` hub (matrix of every city × services, from `serviceCities.ts`), **#17/#18** `/process` page (how-we-work + fit/not-fit), **#21** visible breadcrumbs in `ServiceCityPage` + `CityPage` (+ BreadcrumbList schema, city crumb → `/locations`), **#27** visible "Updated <date>" on blog posts that lacked one, **#24** hub FAQs (already present, no change). Wired `/locations`+`/process` into sitemap + footer. Fixed the `/process` agent's Nav bug (dark hero needs default `<Nav />`, not `light`). Build now **172 static pages**; tsc+eslint+link-audit+build clean. Pushed → Vercel (deploy #2).
