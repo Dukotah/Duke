@@ -56,6 +56,7 @@ function migrate(db: DatabaseSync): void {
       business        TEXT NOT NULL,
       contactName     TEXT,
       phone           TEXT NOT NULL,
+      email           TEXT,
       website         TEXT,
       industry        TEXT NOT NULL,
       city            TEXT NOT NULL,
@@ -88,6 +89,26 @@ function migrate(db: DatabaseSync): void {
     );
     INSERT OR IGNORE INTO meta (key, value) VALUES ('seq', '1');
   `);
+
+  // Additive column migrations for databases created before these columns
+  // existed. SQLite has no "ADD COLUMN IF NOT EXISTS", so we check the table's
+  // current columns and only ALTER when missing — keeping this idempotent.
+  ensureColumn(db, "leads", "email", "TEXT");
+}
+
+// Add a column to a table only if it isn't already present. Safe to call on
+// every startup (e.g. an `email` column added after the initial release).
+function ensureColumn(
+  db: DatabaseSync,
+  table: string,
+  column: string,
+  type: string,
+): void {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all() as unknown as {
+    name: string;
+  }[];
+  if (cols.some((c) => c.name === column)) return;
+  db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type};`);
 }
 
 function seedIfEmpty(db: DatabaseSync): void {
@@ -115,15 +136,16 @@ function nz<T>(v: T | undefined): T | null {
 function insertLeadRow(db: DatabaseSync, lead: Lead): void {
   db.prepare(
     `INSERT INTO leads (
-       id, business, contactName, phone, website, industry, city, state,
+       id, business, contactName, phone, email, website, industry, city, state,
        signals, heatScore, stage, ownerRepId, estValue, source, callbackAt,
        attempts, lastContactedAt, createdAt
-     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
   ).run(
     lead.id,
     lead.business,
     nz(lead.contactName),
     lead.phone,
+    nz(lead.email),
     nz(lead.website),
     lead.industry,
     lead.city,
@@ -161,7 +183,7 @@ function insertActivityRow(db: DatabaseSync, a: Activity): void {
 function persistLead(db: DatabaseSync, lead: Lead): void {
   db.prepare(
     `UPDATE leads SET
-       business=?, contactName=?, phone=?, website=?, industry=?, city=?,
+       business=?, contactName=?, phone=?, email=?, website=?, industry=?, city=?,
        state=?, signals=?, heatScore=?, stage=?, ownerRepId=?, estValue=?,
        source=?, callbackAt=?, attempts=?, lastContactedAt=?
      WHERE id=?`,
@@ -169,6 +191,7 @@ function persistLead(db: DatabaseSync, lead: Lead): void {
     lead.business,
     nz(lead.contactName),
     lead.phone,
+    nz(lead.email),
     nz(lead.website),
     lead.industry,
     lead.city,
@@ -193,6 +216,7 @@ interface LeadRow {
   business: string;
   contactName: string | null;
   phone: string;
+  email: string | null;
   website: string | null;
   industry: string;
   city: string;
@@ -239,6 +263,7 @@ function rowToLead(r: LeadRow, activities: Activity[]): Lead {
     business: r.business,
     contactName: r.contactName ?? undefined,
     phone: r.phone,
+    email: r.email ?? undefined,
     website: r.website ?? undefined,
     industry: r.industry,
     city: r.city,

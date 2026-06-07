@@ -10,9 +10,16 @@ export const EMAIL = "contact@copperbaytech.com";
 // The address outreach is sent from. Must be a verified domain in Resend.
 export const OUTREACH_FROM = "contact@copperbaytech.com";
 
+// The business name and city used everywhere (Footer, JSON-LD, etc.). This is
+// the single source of truth for NAP (Name / Address / Phone) consistency.
+export const BUSINESS_NAME = "Copper Bay Tech";
+export const CITY = "Santa Rosa";
+export const REGION = "CA";
+export const COUNTRY = "US";
+
 // CAN-SPAM requires a real physical postal address in every marketing email.
-// ⚠️ TODO: drop in the real Santa Rosa PO Box, e.g.
-//   "Copper Bay Tech, PO Box 1234, Santa Rosa, CA 95402"
+// TODO(human): real CAN-SPAM postal address — drop in the full Santa Rosa PO Box,
+//   e.g. "Copper Bay Tech, PO Box 1234, Santa Rosa, CA 95402".
 // Interim city-level value below removes the incorrect Petaluma address; replace
 // it with the full PO Box line to be fully CAN-SPAM compliant before sending.
 export const MAILING_ADDRESS = "Copper Bay Tech, Santa Rosa, CA";

@@ -4,19 +4,23 @@ import { useState } from "react";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { biggestImprovement, type Improvement } from "@/lib/businessAnalysis/report";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
 interface AuditData {
+  verified?: boolean;
   score: number;
   metrics?: Record<string, { value: string; score: number | null; title: string }>;
 }
 interface SSLData {
+  verified?: boolean;
   valid: boolean;
   daysUntilExpiry: number;
   error?: string;
 }
 interface SEOData {
+  verified?: boolean;
   score: number;
   issues: { label: string; severity: "pass" | "warning" | "error"; detail: string }[];
 }
@@ -26,6 +30,7 @@ interface Signal {
   detail: string;
 }
 interface PresenceData {
+  verified?: boolean;
   reachable: boolean;
   social: { platform: string; url: string }[];
   socialScore: number;
@@ -75,134 +80,36 @@ async function runCheck<T>(endpoint: string, url: string): Promise<T | null> {
   }
 }
 
-// ── Biggest-improvement rule engine ───────────────────────────────────────────
-
-interface Improvement {
-  title: string;
-  why: string;
-  action: string;
-  service: string;
-  ctaLabel: string;
-  ctaHref: string;
-}
-
-function biggestImprovement(args: {
-  reachable: boolean;
-  perf: number | null;
-  sslOk: boolean;
-  seo: number | null;
-  local: number;
-  social: number;
-  branding: number;
-}): Improvement {
-  const { reachable, perf, sslOk, seo, local, social, branding } = args;
-
-  if (!reachable) {
-    return {
-      title: "Get a website that actually loads",
-      why: "We couldn't reach your site. Every day it's down or missing, customers searching for you find a competitor instead.",
-      action: "Stand up a fast, professional, mobile-first website that turns searches into calls.",
-      service: "Web Design",
-      ctaLabel: "Fix my website",
-      ctaHref: "/web-design-sonoma-county",
-    };
-  }
-  if (!sslOk) {
-    return {
-      title: "Secure your site with HTTPS",
-      why: "Your site isn't showing a valid security certificate. Browsers flag it as “Not secure,” which scares away visitors and tanks Google rankings.",
-      action: "Install and auto-renew SSL so every visitor sees the trusted padlock.",
-      service: "Web Design",
-      ctaLabel: "Secure my site",
-      ctaHref: "/#contact",
-    };
-  }
-  if (local < 50) {
-    return {
-      title: "Claim & optimize your Google Business Profile",
-      why: "Your local-search signals are weak. For a local business this is the single highest-ROI fix — the map pack is where ready-to-buy customers look first.",
-      action: "Optimize your Google Business Profile and add local schema, address, and reviews so you show up in the map pack.",
-      service: "Web Design + Local SEO",
-      ctaLabel: "Boost my local presence",
-      ctaHref: "/web-design-sonoma-county",
-    };
-  }
-  if (perf !== null && perf < 50) {
-    return {
-      title: "Speed up your website",
-      why: "Your site is slow. Over half of mobile visitors leave a page that takes more than 3 seconds — that's leads walking out the door.",
-      action: "Rebuild on a fast, modern stack and optimize images so pages load in under 2 seconds.",
-      service: "Web Design",
-      ctaLabel: "Make my site fast",
-      ctaHref: "/web-design-sonoma-county",
-    };
-  }
-  if (seo !== null && seo < 50) {
-    return {
-      title: "Fix your SEO foundation",
-      why: "Core SEO basics are missing, so Google can't understand or rank your pages. You're invisible for the searches that matter.",
-      action: "Set proper titles, descriptions, headings, and schema so you rank for what customers actually search.",
-      service: "Web Design",
-      ctaLabel: "Improve my SEO",
-      ctaHref: "/web-design-sonoma-county",
-    };
-  }
-  if (social < 50) {
-    return {
-      title: "Build an active social presence",
-      why: "We found little to no social presence linked from your site. Customers check social to confirm you're real and active before they buy.",
-      action: "Connect and showcase the right 2–3 platforms, and keep them active so you stay top-of-mind.",
-      service: "Web Design + Marketing",
-      ctaLabel: "Grow my reach",
-      ctaHref: "/#contact",
-    };
-  }
-  if (branding < 60) {
-    return {
-      title: "Tighten your branding",
-      why: "Inconsistent branding (icons, share images, identity) makes a real business look unfinished and forgettable.",
-      action: "Polish your favicon, social share images, and brand identity so you look as professional as you are.",
-      service: "Web Design",
-      ctaLabel: "Polish my brand",
-      ctaHref: "/web-design-sonoma-county",
-    };
-  }
-  return {
-    title: "Capture leads 24/7 with an AI assistant",
-    why: "Your fundamentals are solid — the biggest gain now is converting more of the traffic you already get. Most missed leads happen after hours.",
-    action: "Add an AI receptionist that answers calls and website chat, books appointments, and never misses a lead.",
-    service: "AI Integration",
-    ctaLabel: "See AI Integration",
-    ctaHref: "/ai-integration-small-business",
-  };
-}
-
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function Donut({ score, label, size = 104 }: { score: number; label: string; size?: number }) {
+function Donut({ score, label, size = 104, unverified = false }: { score: number; label: string; size?: number; unverified?: boolean }) {
   const r = size * 0.42;
   const circ = 2 * Math.PI * r;
-  const offset = circ - (score / 100) * circ;
-  const color = scoreColor(score);
+  // When we couldn't verify a category, show a neutral muted ring + dash —
+  // never a red "0" that wrongly implies the business scored badly.
+  const offset = unverified ? circ : circ - (score / 100) * circ;
+  const color = unverified ? "#52525B" : scoreColor(score);
   return (
     <div className="flex flex-col items-center gap-2">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#27272A" strokeWidth={size * 0.085} />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke={color}
-          strokeWidth={size * 0.085}
-          strokeDasharray={circ}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          style={{ transition: "stroke-dashoffset 0.8s ease" }}
-        />
-        <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central" fill={color} fontSize={size * 0.24} fontWeight="bold">
-          {score}
+        {!unverified && (
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={r}
+            fill="none"
+            stroke={color}
+            strokeWidth={size * 0.085}
+            strokeDasharray={circ}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            transform={`rotate(-90 ${size / 2} ${size / 2})`}
+            style={{ transition: "stroke-dashoffset 0.8s ease" }}
+          />
+        )}
+        <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central" fill={color} fontSize={unverified ? size * 0.16 : size * 0.24} fontWeight="bold">
+          {unverified ? "—" : score}
         </text>
       </svg>
       <span className="text-xs font-semibold text-zinc-300 text-center leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -233,8 +140,24 @@ function SignalList({ signals }: { signals: Signal[] }) {
   );
 }
 
-function CategoryCard({ score, title, icon, signals, defaultOpen = false }: { score: number; title: string; icon: string; signals: Signal[]; defaultOpen?: boolean }) {
+function CategoryCard({ score, title, icon, signals, defaultOpen = false, unverified = false }: { score: number; title: string; icon: string; signals: Signal[]; defaultOpen?: boolean; unverified?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
+  // Unverified categories render a neutral, muted state — a calm "we couldn't
+  // verify this" rather than a red 0 that misrepresents the business.
+  if (unverified) {
+    return (
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden opacity-75">
+        <div className="w-full flex items-center gap-4 px-5 py-4 text-left">
+          <span className="text-xl grayscale">{icon}</span>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-zinc-300 font-bold text-sm" style={{ fontFamily: "var(--font-heading)" }}>{title}</h3>
+            <p className="text-zinc-500 text-xs">We couldn&apos;t verify this</p>
+          </div>
+          <span className="text-2xl font-black text-zinc-600">—</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
       <button onClick={() => setOpen((o) => !o)} className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-zinc-800/40 transition-colors">
@@ -258,6 +181,8 @@ export default function BusinessAnalysisPage() {
   const [businessName, setBusinessName] = useState("");
   const [website, setWebsite] = useState("");
   const [email, setEmail] = useState("");
+  // Honeypot: a real human leaves this blank; bots auto-fill every field.
+  const [hp, setHp] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [scanLabel, setScanLabel] = useState("");
 
@@ -275,17 +200,6 @@ export default function BusinessAnalysisPage() {
     const url = normalizeUrl(website);
     setPhase("scanning");
 
-    // Capture the lead immediately (hybrid: instant report + Duke follow-up).
-    void fetch("/api/capture", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email.trim(),
-        name: businessName.trim(),
-        context: `Free Business Analysis — ${businessName.trim() || "business"} (${url})`,
-      }),
-    }).catch(() => {});
-
     setScanLabel("Scanning your website…");
     const [a, s, o, p] = await Promise.all([
       runCheck<AuditData>("/api/audit", url),
@@ -298,6 +212,52 @@ export default function BusinessAnalysisPage() {
     setSeo(o);
     setPresence(p);
     setPhase("results");
+
+    // Close the loop: persist the scored lead in the CRM and email the full
+    // report. We compute the scores from the freshly-resolved scan results here
+    // (state updates above aren't visible yet within this tick), using the exact
+    // same logic as the derived render values below so the email agrees.
+    const cPerf = a?.score ?? null;
+    const cSslOk = !!s?.valid && !s?.error;
+    const cSslScore = s ? (cSslOk ? 100 : 0) : null;
+    const cSeo = o?.score ?? null;
+    const cWebsiteParts = [cPerf, cSslScore, cSeo].filter((v): v is number => v !== null);
+    const cWebsite = cWebsiteParts.length ? Math.round(cWebsiteParts.reduce((x, y) => x + y, 0) / cWebsiteParts.length) : 0;
+    const cLocal = p?.local.localScore ?? 0;
+    const cSocial = p?.socialScore ?? 0;
+    const cBranding = p?.branding.brandingScore ?? 0;
+    const cOverall = Math.round(cWebsite * 0.35 + cLocal * 0.3 + cBranding * 0.2 + cSocial * 0.15);
+    const cSignals = {
+      reachable: p?.reachable ?? true,
+      perf: cPerf,
+      sslOk: cSslOk,
+      seo: cSeo,
+      local: cLocal,
+      social: cSocial,
+      branding: cBranding,
+    };
+    const cImprovement = biggestImprovement(cSignals);
+
+    void fetch("/api/business-analysis/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email.trim(),
+        website: url,
+        businessName: businessName.trim() || undefined,
+        scores: {
+          overall: cOverall,
+          website: cWebsite,
+          local: cLocal,
+          social: cSocial,
+          branding: cBranding,
+        },
+        grade: letterGrade(cOverall),
+        recommendedService: cImprovement.service,
+        signals: cSignals,
+        honeypot: hp,
+      }),
+    }).catch(() => {});
   }
 
   // ── Derived scores ──────────────────────────────────────────────────────────
@@ -315,7 +275,20 @@ export default function BusinessAnalysisPage() {
   // Weighted toward what moves the needle for a local business.
   const overall = Math.round(websiteScore * 0.35 + localScore * 0.3 + brandingScore * 0.2 + socialScore * 0.15);
 
-  const improvement = biggestImprovement({
+  // Per-category verification. When a scan couldn't confirm a category, we show
+  // a neutral "couldn't verify" state instead of a misleading red 0. A scan
+  // counts as verified only when it ran AND its result didn't flag verified:false.
+  // Website rolls up its three sub-scans: verified if any one of them verified.
+  const auditVerified = !!audit && audit.verified !== false;
+  const sslVerified = !!ssl && ssl.verified !== false;
+  const seoVerified = !!seo && seo.verified !== false;
+  const websiteVerified = auditVerified || sslVerified || seoVerified;
+  const presenceVerified = !!presence && presence.verified !== false;
+  const localVerified = presenceVerified;
+  const socialVerified = presenceVerified;
+  const brandingVerified = presenceVerified;
+
+  const improvement: Improvement = biggestImprovement({
     reachable: presence?.reachable ?? true,
     perf: perfScore,
     sslOk,
@@ -379,6 +352,20 @@ export default function BusinessAnalysisPage() {
                 placeholder="you@email.com"
                 className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm"
               />
+              {/* Honeypot: hidden from humans, irresistible to bots. A filled
+                  value makes the server silently drop the submission. */}
+              <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: "auto", width: 1, height: 1, overflow: "hidden" }}>
+                <label htmlFor="ba-company-website">Company website (leave blank)</label>
+                <input
+                  id="ba-company-website"
+                  type="text"
+                  name="company_website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={hp}
+                  onChange={(e) => setHp(e.target.value)}
+                />
+              </div>
               {error && <p className="text-red-400 text-xs px-1">{error}</p>}
               <button
                 type="submit"
@@ -472,17 +459,23 @@ export default function BusinessAnalysisPage() {
           <section className="px-6 pb-6">
             <div className="max-w-3xl mx-auto">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-items-center py-6">
-                <Donut score={websiteScore} label="Website" />
-                <Donut score={localScore} label="Google / Local" />
-                <Donut score={socialScore} label="Social" />
-                <Donut score={brandingScore} label="Branding" />
+                <Donut score={websiteScore} label="Website" unverified={!websiteVerified} />
+                <Donut score={localScore} label="Google / Local" unverified={!localVerified} />
+                <Donut score={socialScore} label="Social" unverified={!socialVerified} />
+                <Donut score={brandingScore} label="Branding" unverified={!brandingVerified} />
               </div>
 
               <div className="space-y-4">
-                <CategoryCard score={websiteScore} title="Website" icon="🌐" signals={websiteSignals} />
-                {presence && <CategoryCard score={localScore} title="Google / Local Presence" icon="📍" signals={presence.local.signals} />}
-                {presence && <CategoryCard score={socialScore} title="Social Media" icon="📱" signals={presence.socialSignals} />}
-                {presence && <CategoryCard score={brandingScore} title="Branding" icon="✨" signals={presence.branding.signals} />}
+                <CategoryCard score={websiteScore} title="Website" icon="🌐" signals={websiteSignals} unverified={!websiteVerified} />
+                {presence
+                  ? <CategoryCard score={localScore} title="Google / Local Presence" icon="📍" signals={presence.local.signals} unverified={!localVerified} />
+                  : <CategoryCard score={0} title="Google / Local Presence" icon="📍" signals={[]} unverified />}
+                {presence
+                  ? <CategoryCard score={socialScore} title="Social Media" icon="📱" signals={presence.socialSignals} unverified={!socialVerified} />
+                  : <CategoryCard score={0} title="Social Media" icon="📱" signals={[]} unverified />}
+                {presence
+                  ? <CategoryCard score={brandingScore} title="Branding" icon="✨" signals={presence.branding.signals} unverified={!brandingVerified} />
+                  : <CategoryCard score={0} title="Branding" icon="✨" signals={[]} unverified />}
               </div>
             </div>
           </section>

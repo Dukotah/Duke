@@ -1,7 +1,10 @@
 import tls from "node:tls";
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
+import { assertSafeUrl } from "@/lib/ssrf";
 
 interface SSLResult {
+  verified: boolean;
   valid: boolean;
   daysUntilExpiry: number;
   expiresAt: string;
@@ -28,6 +31,7 @@ function checkSSL(hostname: string): Promise<SSLResult> {
           (expiresAt.getTime() - Date.now()) / 86400000
         );
         resolve({
+          verified: true,
           valid: socket.authorized || true,
           daysUntilExpiry,
           expiresAt: expiresAt.toISOString(),
@@ -45,6 +49,11 @@ function checkSSL(hostname: string): Promise<SSLResult> {
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, { limit: 10, windowMs: 60_000 });
+  if (!rl.ok) {
+    return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
+  }
+
   try {
     const { url } = await req.json();
 
@@ -52,19 +61,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
     }
 
-    let normalizedUrl = url.trim();
-    if (
-      !normalizedUrl.startsWith("http://") &&
-      !normalizedUrl.startsWith("https://")
-    ) {
-      normalizedUrl = "https://" + normalizedUrl;
-    }
-
     let parsed: URL;
     try {
-      parsed = new URL(normalizedUrl);
+      parsed = await assertSafeUrl(url);
     } catch {
-      return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid or disallowed URL" }, { status: 400 });
     }
 
     const hostname = parsed.hostname;
@@ -76,6 +77,7 @@ export async function POST(req: NextRequest) {
       const message = err instanceof Error ? err.message : "SSL check failed";
       return NextResponse.json(
         {
+          verified: false,
           valid: false,
           daysUntilExpiry: 0,
           expiresAt: "",

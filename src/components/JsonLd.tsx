@@ -6,10 +6,22 @@
  * shape stays consistent with the LocalBusiness data in Footer.tsx.
  */
 
-const PHONE = "+17072396725";
-const EMAIL = "contact@copperbaytech.com";
-const SITE = "https://copperbaytech.com";
-const BUSINESS_NAME = "Copper Bay Tech";
+import {
+  PHONE_HREF,
+  EMAIL as SITE_EMAIL,
+  SITE_URL,
+  BUSINESS_NAME as SITE_BUSINESS_NAME,
+  CITY,
+  REGION,
+  COUNTRY,
+} from "@/config/site";
+
+// Re-derive the local constants from the single source of truth in site.ts so
+// the NAP (name / address / phone) stays in sync with Footer.tsx.
+const PHONE = PHONE_HREF.replace("tel:", "");
+const EMAIL = SITE_EMAIL;
+const SITE = SITE_URL;
+const BUSINESS_NAME = SITE_BUSINESS_NAME;
 
 type Json = Record<string, unknown>;
 
@@ -35,9 +47,9 @@ export function localBusinessSchema(): Json {
     email: EMAIL,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Petaluma",
-      addressRegion: "CA",
-      addressCountry: "US",
+      addressLocality: CITY,
+      addressRegion: REGION,
+      addressCountry: COUNTRY,
     },
     areaServed: [
       "Petaluma",
@@ -79,8 +91,8 @@ export function serviceSchema(opts: {
       telephone: PHONE,
       address: {
         "@type": "PostalAddress",
-        addressLocality: "Petaluma",
-        addressRegion: "CA",
+        addressLocality: CITY,
+        addressRegion: REGION,
       },
     },
     areaServed: opts.areaServed,

@@ -1,13 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { escapeHtml } from "@/lib/html";
+import { rateLimit } from "@/lib/rate-limit";
+
+const subscribeSchema = z.object({
+  email: z.string().trim().email().max(254),
+});
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, { limit: 10, windowMs: 60_000 });
+  if (!rl.ok) {
+    return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
+  }
+
   try {
     const body = await req.json();
-    const { email } = body;
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const parsed = subscribeSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
+    const { email } = parsed.data;
 
     const apiKey = process.env.RESEND_API_KEY;
 
@@ -15,6 +28,8 @@ export async function POST(req: NextRequest) {
       console.log("Blog subscriber (no RESEND_API_KEY set):", email);
       return NextResponse.json({ ok: true });
     }
+
+    const safeEmail = escapeHtml(email);
 
     // Notify duke@copperbaytech.com
     await fetch("https://api.resend.com/emails", {
@@ -27,7 +42,7 @@ export async function POST(req: NextRequest) {
         from: "Copper Bay Tech <noreply@copperbaytech.com>",
         to: ["duke@copperbaytech.com"],
         subject: `New blog subscriber: ${email}`,
-        html: `<p>New subscriber from the blog: <strong>${email}</strong></p>`,
+        html: `<p>New subscriber from the blog: <strong>${safeEmail}</strong></p>`,
       }),
     });
 

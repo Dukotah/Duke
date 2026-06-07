@@ -3,6 +3,12 @@ import { SITE_URL } from "@/config/site";
 
 const BASE = SITE_URL;
 
+// Single source of truth for the "last modified" date of static routes. Using a
+// fixed build-date constant (rather than `new Date()` at request time) keeps
+// sitemap output stable so crawlers don't see every URL change on every build.
+// Bump this when the static pages meaningfully change.
+const BUILD_DATE = new Date("2026-06-06");
+
 // Blog posts with their publish/update dates. Keep in sync with src/app/blog/*.
 const blogPosts: Array<{ slug: string; lastModified: string; priority: number }> = [
   { slug: "5-signs-your-business-website-is-costing-you-customers", lastModified: "2026-03-01", priority: 0.6 },
@@ -16,7 +22,7 @@ const blogPosts: Array<{ slug: string; lastModified: string; priority: number }>
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const now = BUILD_DATE;
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1.0 },

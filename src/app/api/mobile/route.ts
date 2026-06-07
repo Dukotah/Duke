@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
+import { assertSafeUrl } from "@/lib/ssrf";
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+    const rl = rateLimit(req, { limit: 10, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: rl.message }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
+    }
+
     try {
           const { url } = await req.json();
 
@@ -10,15 +17,11 @@ export async function POST(req: NextRequest) {
               return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
       }
 
-      let normalizedUrl = url.trim();
-          if (!normalizedUrl.startsWith("http://") && !normalizedUrl.startsWith("https://")) {
-                  normalizedUrl = "https://" + normalizedUrl;
-          }
-
+      let normalizedUrl: string;
       try {
-              new URL(normalizedUrl);
+              normalizedUrl = (await assertSafeUrl(url)).toString();
       } catch {
-              return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
+              return NextResponse.json({ error: "Invalid or disallowed URL" }, { status: 400 });
       }
 
       const apiKey = process.env.PAGESPEED_API_KEY;

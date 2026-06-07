@@ -1,6 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, ArrowUpRight } from "lucide-react";
+import {
+  BUSINESS_NAME,
+  CITY,
+  REGION,
+  COUNTRY,
+  PHONE,
+  PHONE_HREF,
+  EMAIL,
+  SITE_URL,
+} from "@/config/site";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -8,16 +18,16 @@ export default function Footer() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
+    name: BUSINESS_NAME,
     description: "IT consulting, web development, and cybersecurity for Sonoma County businesses.",
-    url: "https://copperbaytech.com",
-    telephone: "+17072396725",
-    email: "contact@copperbaytech.com",
+    url: SITE_URL,
+    telephone: PHONE_HREF.replace("tel:", ""),
+    email: EMAIL,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Santa Rosa",
-      addressRegion: "CA",
-      addressCountry: "US",
+      addressLocality: CITY,
+      addressRegion: REGION,
+      addressCountry: COUNTRY,
     },
     areaServed: ["Petaluma","Santa Rosa","Sebastopol","Rohnert Park","Sonoma","Bodega Bay","Cotati","Windsor","Healdsburg"],
     serviceType: ["Web Development","IT Consulting","Cybersecurity","Network Setup","Process Automation"],
@@ -120,15 +130,15 @@ export default function Footer() {
             </p>
             <ul className="space-y-4">
               <li>
-                <a href="tel:+17072396725" className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
+                <a href={PHONE_HREF} className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
                   <Phone size={15} className="mt-0.5 shrink-0 text-[#F97316]" />
-                  (707) 239-6725
+                  {PHONE}
                 </a>
               </li>
               <li>
-                <a href="mailto:contact@copperbaytech.com" className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
+                <a href={`mailto:${EMAIL}`} className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
                   <Mail size={15} className="mt-0.5 shrink-0 text-[#F97316]" />
-                  contact@copperbaytech.com
+                  {EMAIL}
                 </a>
               </li>
               <li className="flex items-start gap-1 text-sm text-white/55" style={{ fontFamily: "var(--font-heading)" }}>
@@ -141,7 +151,7 @@ export default function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>
-            &copy; {year} Copper Bay Tech. All rights reserved.
+            &copy; {year} {BUSINESS_NAME}. All rights reserved.
           </p>
           <Link
             href="/privacy"
