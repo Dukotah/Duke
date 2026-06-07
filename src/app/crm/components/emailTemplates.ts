@@ -10,7 +10,7 @@ export interface EmailTemplate {
 }
 
 // Written to sound like a real person wrote them: plain words, no em dashes,
-// no hyphenated phrases. Variables: {name} {business} {city} {fromName}
+// no hyphenated phrases. Variables: {name} {business} {city} {demoUrl} {fromName}
 export const DEFAULT_TEMPLATES: EmailTemplate[] = [
   {
     key: "no_website",
@@ -39,6 +39,24 @@ I was on the {business} website and a couple of things jumped out that could hel
 Cleaning up sites like yours is pretty much all I do. Faster loading, looks right on phones, and clearer buttons so people know exactly what to do next. Most projects wrap up in under two weeks.
 
 Happy to throw together a quick before and after mockup so you can see what I mean. Worth a 10 minute call?
+
+Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
+    key: "demo_ready",
+    label: "🌐 Demo Ready",
+    subject: "I built {business} a sample site",
+    body: `Hi {name},
+
+I went ahead and built {business} a sample website so you can see it instead of just picturing it. Here is the link, no signup or anything:
+
+{demoUrl}
+
+Have a look whenever you get a minute. If you like the direction, I can have the real thing live for you within a week or so, and most builds start around $1,500.
+
+Worth a quick 10 minute call?
 
 Thanks,
 {fromName}
@@ -178,6 +196,7 @@ export interface PersonalizeVars {
   name?: string;
   business?: string;
   city?: string;
+  demoUrl?: string;
   fromName?: string;
 }
 
@@ -186,5 +205,6 @@ export function personalize(text: string, vars: PersonalizeVars): string {
     .replace(/\{name\}/gi, vars.name ?? "")
     .replace(/\{business\}/gi, vars.business ?? "")
     .replace(/\{city\}/gi, vars.city ?? "")
+    .replace(/\{demoUrl\}/gi, vars.demoUrl ?? "")
     .replace(/\{fromName\}/gi, vars.fromName ?? "");
 }

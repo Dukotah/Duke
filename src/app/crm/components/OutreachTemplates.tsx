@@ -15,7 +15,7 @@ const H = { fontFamily: "var(--font-heading)" };
 
 // Sample lead used to show what a personalized email will look like before any
 // real lead is selected. Reps can edit these to sanity-check their variables.
-const DEFAULT_SAMPLE = { name: "Jordan", business: "Petaluma Plumbing", city: "Petaluma" };
+const DEFAULT_SAMPLE = { name: "Jordan", business: "Petaluma Plumbing", city: "Petaluma", demoUrl: "https://petaluma-plumbing.demo.copperbaytech.com" };
 
 interface Props {
   repName: string;
@@ -135,7 +135,7 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          leads: [{ id: `test-${Date.now()}`, name: sample.name, email, city: sample.city }],
+          leads: [{ id: `test-${Date.now()}`, name: sample.name, email, city: sample.city, demoUrl: sample.demoUrl }],
           subject,
           body,
           fromName,
@@ -307,7 +307,7 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
                   </div>
                 )}
               </div>
-              <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
+              <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{demoUrl}"}, {"{fromName}"}</p>
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}

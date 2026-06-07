@@ -181,17 +181,24 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: `${fromName} via Copper Bay Tech <${SENDER}>`,
+          // Send as a plain personal sender (just the rep's name) rather than a
+          // "<rep> via Copper Bay Tech" bulk-looking display name. Cold outreach
+          // that reads as a real 1:1 email is far more likely to land in the
+          // Primary tab than Gmail's Promotions tab.
+          from: `${fromName} <${SENDER}>`,
           reply_to: SENDER,
           to: [lead.email],
           subject: personalizedSubject,
           text: personalizedBody + buildFooter(unsubUrl),
-          // RFC 8058 one-click unsubscribe — required by Gmail/Yahoo bulk
-          // sender rules and a major signal against being marked as spam.
-          headers: {
-            "List-Unsubscribe": `<${unsubUrl}>, <mailto:${SENDER}?subject=unsubscribe>`,
-            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-          },
+          // NOTE: We intentionally do NOT set the RFC 8058 List-Unsubscribe /
+          // List-Unsubscribe-Post headers here. Those are required only for true
+          // bulk senders (>5k/day) and are one of the strongest signals that gets
+          // mail filed under Gmail's Promotions tab — exactly what we're avoiding.
+          // The plain-text opt-out link in buildFooter() keeps us CAN-SPAM
+          // compliant and still feeds the suppression list. If outreach ever
+          // scales past a few hundred/day, add the headers back (and switch the
+          // unsubscribe URL to a POST-only one-click endpoint to avoid
+          // link-scanner false unsubscribes).
         }),
       });
 

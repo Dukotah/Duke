@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCustomLeads, getAllClaims, getTerritory } from "@/lib/db";
+import { getCustomLeads, getAllClaims, getTerritory, getAllDemoLinks, getAllEmailOverrides, WEBSITE_LEADS_OWNER } from "@/lib/db";
+import { applyEmailOverrides } from "@/lib/leadMatch";
 
 const CSV_URL =
   "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/claude/lead-data-sourcing-eyOeN/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
@@ -32,6 +33,9 @@ export interface Lead {
   score: number;
   pitch: string;
   is_chain: string;
+  // Live URL of a generated demo/sample site for this business, merged in at
+  // read time from Redis (see getAllDemoLinks). Empty when none exists.
+  demoUrl?: string;
 }
 
 let cachedLeads: Lead[] | null = null;
@@ -41,6 +45,12 @@ const CACHE_TTL = 1000 * 60 * 60;
 export function clearLeadsCache() {
   cachedLeads = null;
   cacheTime = 0;
+}
+
+// Exposed for the site-links sync route so it can match manifest entries against
+// the same CSV lead set the UI uses (cached identically). Read-only.
+export async function loadAllLeads(): Promise<Lead[]> {
+  return getLeads();
 }
 
 function parseCSVLine(line: string): string[] {
@@ -140,7 +150,11 @@ export async function GET(req: NextRequest) {
 
     const userId = req.headers.get("x-user-id");
 
-    const all = await getLeads();
+    const rawAll = await getLeads();
+    // Apply email overrides (a known address for a lead whose CSV email is blank)
+    // BEFORE any filtering, so an enriched lead passes the hasEmail filter and
+    // shows up in outreach. New objects only — never mutate the cached rows.
+    const all = applyEmailOverrides(rawAll, await getAllEmailOverrides());
     let filtered = all;
 
     // Territory filtering — apply unless allTerritories=1
@@ -190,7 +204,12 @@ export async function GET(req: NextRequest) {
     let customLeads: (Lead & { isCustom: true })[] = [];
     if (userId) {
       try {
-        const custom = await getCustomLeads(userId);
+        // The rep's own manually-added leads, plus the global website-synced
+        // leads (shared owner), de-duped by id.
+        const own = await getCustomLeads(userId);
+        const fromWebsites = userId === WEBSITE_LEADS_OWNER ? [] : await getCustomLeads(WEBSITE_LEADS_OWNER);
+        const ownIds = new Set(own.map((l) => l.id));
+        const custom = [...own, ...fromWebsites.filter((l) => !ownIds.has(l.id))];
         customLeads = custom.map((cl) => ({
           id: `custom:${cl.id}`,
           name: cl.name,
@@ -219,6 +238,7 @@ export async function GET(req: NextRequest) {
           score: 100,
           pitch: cl.notes || `Hi, I'm reaching out to ${cl.name} — do you have 2 minutes?`,
           is_chain: "0",
+          demoUrl: cl.demoUrl ?? "",
           isCustom: true as const,
         }));
       } catch {}
@@ -242,7 +262,14 @@ export async function GET(req: NextRequest) {
     const claims = await getAllClaims();
     const claimMap: Record<string, { userId: string; repName: string }> = {};
     for (const c of claims) claimMap[c.leadId] = { userId: c.userId, repName: c.repName };
-    const leads = pageLeads.map((l) => ({ ...l, claimedBy: claimMap[l.id] ?? null }));
+    // Merge demo-site links (keyed by leadId), same pattern as claims. A link
+    // stored for the lead id wins; custom leads already carry their own demoUrl.
+    const demoMap = await getAllDemoLinks();
+    const leads = pageLeads.map((l) => ({
+      ...l,
+      claimedBy: claimMap[l.id] ?? null,
+      demoUrl: demoMap[l.id] ?? l.demoUrl ?? "",
+    }));
 
     const counties = [...new Set(all.map((l) => l.county).filter(Boolean))].sort();
     const niches = [...new Set(all.map((l) => l.category).filter(Boolean))].sort();

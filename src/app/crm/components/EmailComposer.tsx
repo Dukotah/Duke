@@ -18,6 +18,7 @@ interface ComposerLead {
   name: string;
   email: string;
   city: string;
+  demoUrl?: string;
 }
 
 interface Props {
@@ -53,7 +54,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
     }
   };
 
-  const vars = { name: lead.name, business: lead.name, city: lead.city, fromName };
+  const vars = { name: lead.name, business: lead.name, city: lead.city, demoUrl: lead.demoUrl, fromName };
 
   const saveEdits = () => {
     saveTemplateOverride(templateKey, subject, body);
@@ -82,7 +83,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          leads: [{ id: lead.id, name: lead.name, email: lead.email, city: lead.city }],
+          leads: [{ id: lead.id, name: lead.name, email: lead.email, city: lead.city, demoUrl: lead.demoUrl }],
           subject,
           body,
           fromName,
@@ -187,7 +188,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
                     </div>
                   )}
                 </div>
-                <p className="text-xs text-white/25 mb-2" style={H}>Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
+                <p className="text-xs text-white/25 mb-2" style={H}>Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{demoUrl}"}, {"{fromName}"}</p>
                 <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={11}
                   placeholder="Write your message…"
                   className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50 leading-relaxed" style={H} />

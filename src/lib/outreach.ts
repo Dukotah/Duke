@@ -7,6 +7,9 @@ export interface OutreachLead {
   name: string;
   email: string;
   city: string;
+  // Live URL of a generated demo/sample site for this lead, if one exists.
+  // Injected into the email body via the {demoUrl} placeholder.
+  demoUrl?: string;
 }
 
 // Basic shape check to avoid sending to obviously malformed addresses.
@@ -82,15 +85,18 @@ export function canDeliver(
 }
 
 // Personalize a subject or body template with the lead's details. Placeholders
-// are case-insensitive: {name}, {business}, {city}, {fromName}.
+// are case-insensitive: {name}, {business}, {city}, {demoUrl}, {fromName}.
+// A missing {demoUrl} collapses to an empty string (same as other vars), so
+// templates that reference it should keep it on its own line.
 export function personalize(
   template: string,
-  lead: Pick<OutreachLead, "name" | "city">,
+  lead: Pick<OutreachLead, "name" | "city" | "demoUrl">,
   fromName: string,
 ): string {
   return template
     .replace(/\{name\}/gi, lead.name)
     .replace(/\{business\}/gi, lead.name)
     .replace(/\{city\}/gi, lead.city)
+    .replace(/\{demoUrl\}/gi, lead.demoUrl ?? "")
     .replace(/\{fromName\}/gi, fromName);
 }

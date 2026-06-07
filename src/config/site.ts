@@ -11,5 +11,8 @@ export const EMAIL = "contact@copperbaytech.com";
 export const OUTREACH_FROM = "contact@copperbaytech.com";
 
 // CAN-SPAM requires a real physical postal address in every marketing email.
-// ⚠️ Update this with your actual street address or registered P.O. Box.
-export const MAILING_ADDRESS = "Copper Bay Tech, Petaluma, CA 94952";
+// ⚠️ TODO: drop in the real Santa Rosa PO Box, e.g.
+//   "Copper Bay Tech, PO Box 1234, Santa Rosa, CA 95402"
+// Interim city-level value below removes the incorrect Petaluma address; replace
+// it with the full PO Box line to be fully CAN-SPAM compliant before sending.
+export const MAILING_ADDRESS = "Copper Bay Tech, Santa Rosa, CA";

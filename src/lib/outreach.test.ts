@@ -151,4 +151,17 @@ describe("personalize", () => {
   it("leaves text without placeholders untouched", () => {
     expect(personalize("No tokens here", { name: "X", city: "Y" }, "Z")).toBe("No tokens here");
   });
+
+  it("injects {demoUrl} when present", () => {
+    const out = personalize(
+      "See it: {demoUrl}",
+      { name: "Joe", city: "Sonoma", demoUrl: "https://joe.example.com" },
+      "Duke",
+    );
+    expect(out).toBe("See it: https://joe.example.com");
+  });
+
+  it("collapses {demoUrl} to empty string when the lead has none", () => {
+    expect(personalize("See it: {demoUrl}", { name: "Joe", city: "Sonoma" }, "Duke")).toBe("See it: ");
+  });
 });

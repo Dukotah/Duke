@@ -29,7 +29,9 @@ export function generateOutreachEmail(
     .map((o) => `• ${o.title}${o.displayValue ? ` (${o.displayValue})` : ""}`)
     .join("\n");
 
-  const subject = `Your website scored ${score}/100 on Google — here's what's hurting you`;
+  // A plain, personal subject (no score/clickbait) reads as a 1:1 note rather
+  // than a marketing blast — better for landing in the Primary inbox tab.
+  const subject = `Quick question about ${businessName}'s website`;
 
   const body = `Hi there,
 
@@ -42,7 +44,7 @@ ${issueLines || "• Images and scripts that aren't optimized for speed"}
 
 Why this matters: Google uses page speed as a ranking signal. A score this low can push your site down in local search results — meaning customers searching for what you offer are finding your competitors instead.
 
-I'm Duke, a local web developer based in Petaluma. I help Sonoma County businesses fix exactly these kinds of issues — faster sites, better local rankings, more customers finding you online.
+I'm Duke, a local web developer based in Santa Rosa. I help Sonoma County businesses fix exactly these kinds of issues — faster sites, better local rankings, more customers finding you online.
 
 Would you be open to a 15-minute call to walk through what I found and what it would take to fix it? No pitch, no pressure — just a straight conversation.
 

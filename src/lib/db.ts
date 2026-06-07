@@ -287,6 +287,12 @@ export async function deleteActivity(leadId: string): Promise<void> {
 
 // ─── Custom Leads ─────────────────────────────────────────────────────────────
 
+// Synthetic owner for leads auto-created by the website-link sync. Using a fixed
+// owner (rather than the syncing admin) makes these leads global — every rep sees
+// them in the queue — and makes re-syncing idempotent, since a prior run's lead
+// is found again on the next match pass instead of being duplicated.
+export const WEBSITE_LEADS_OWNER = "website";
+
 export interface CustomLead {
   id: string;
   name: string;
@@ -299,6 +305,10 @@ export interface CustomLead {
   notes: string;
   addedBy: string;
   createdAt: string;
+  // Live URL of a demo/sample site built for this lead (optional). Surfaced in
+  // outreach via the {demoUrl} template variable. See setDemoLink below for the
+  // CSV-lead equivalent.
+  demoUrl?: string;
 }
 
 export async function createCustomLead(
@@ -308,6 +318,8 @@ export async function createCustomLead(
   const redis = getRedis();
   const lead: CustomLead = {
     ...data,
+    // Redis (Upstash) rejects `undefined` field values, so keep demoUrl a string.
+    demoUrl: data.demoUrl ?? "",
     id: crypto.randomUUID(),
     addedBy: userId,
     createdAt: new Date().toISOString(),
@@ -328,6 +340,94 @@ export async function getCustomLeads(userId: string): Promise<CustomLead[]> {
     })
   );
   return leads.filter(Boolean).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+// ─── Demo site links ──────────────────────────────────────────────────────────
+// The main lead list is a read-only CSV (the scraper export), so a generated
+// demo-site URL can't be written back onto the lead itself. Instead we keep the
+// URL here keyed by leadId and merge it onto the lead list at read time — the
+// same approach used for claims below. CSV lead → its CSV id; custom lead →
+// `custom:<id>`. Surfaced to outreach via the {demoUrl} template variable.
+
+const DEMO_LINK_PREFIX = "demolink:";
+
+export async function setDemoLink(leadId: string, url: string): Promise<void> {
+  const redis = getRedis();
+  await redis.set(`${DEMO_LINK_PREFIX}${leadId}`, url);
+}
+
+export async function getDemoLink(leadId: string): Promise<string | null> {
+  const redis = getRedis();
+  const v = await redis.get(`${DEMO_LINK_PREFIX}${leadId}`);
+  return v ? String(v) : null;
+}
+
+export async function getAllDemoLinks(): Promise<Record<string, string>> {
+  const redis = getRedis();
+  const keys = await redis.keys(`${DEMO_LINK_PREFIX}*`);
+  if (!keys.length) return {};
+  const map: Record<string, string> = {};
+  await Promise.all(
+    (keys as string[]).map(async (key) => {
+      const leadId = key.slice(DEMO_LINK_PREFIX.length);
+      const v = await redis.get(key);
+      if (v) map[leadId] = String(v);
+    })
+  );
+  return map;
+}
+
+// Remove everything the website-link sync creates: demo links, email overrides,
+// and the global website-owned leads. Scoped to those artifacts only — never
+// touches scraper CSV leads, reps' own custom leads, claims, or activity.
+// Mirrors scripts/clear-website-links.mjs so the admin can undo a sync in-app.
+export async function clearWebsiteLinkData(): Promise<{
+  demoLinks: number;
+  emailOverrides: number;
+  leads: number;
+}> {
+  const redis = getRedis();
+
+  const demoKeys = (await redis.keys(`${DEMO_LINK_PREFIX}*`)) as string[];
+  const overrideKeys = (await redis.keys(`${EMAIL_OVERRIDE_PREFIX}*`)) as string[];
+  const leadIds = (await redis.smembers(`custom_leads:${WEBSITE_LEADS_OWNER}`)) as string[];
+
+  await Promise.all([
+    ...demoKeys.map((k) => redis.del(k)),
+    ...overrideKeys.map((k) => redis.del(k)),
+    ...leadIds.map((id) => redis.del(`custom_lead:${id}`)),
+  ]);
+  if (leadIds.length) await redis.del(`custom_leads:${WEBSITE_LEADS_OWNER}`);
+
+  return { demoLinks: demoKeys.length, emailOverrides: overrideKeys.length, leads: leadIds.length };
+}
+
+// ─── Email overrides ──────────────────────────────────────────────────────────
+// Some scraper CSV rows have no email even though we know one (e.g. from a
+// generated site's manifest). Storing the address here, keyed by leadId, lets a
+// business become reachable in outreach without editing the read-only CSV. Merged
+// onto the lead's email at read time only when the CSV email is blank.
+
+const EMAIL_OVERRIDE_PREFIX = "emailoverride:";
+
+export async function setEmailOverride(leadId: string, email: string): Promise<void> {
+  const redis = getRedis();
+  await redis.set(`${EMAIL_OVERRIDE_PREFIX}${leadId}`, email);
+}
+
+export async function getAllEmailOverrides(): Promise<Record<string, string>> {
+  const redis = getRedis();
+  const keys = await redis.keys(`${EMAIL_OVERRIDE_PREFIX}*`);
+  if (!keys.length) return {};
+  const map: Record<string, string> = {};
+  await Promise.all(
+    (keys as string[]).map(async (key) => {
+      const leadId = key.slice(EMAIL_OVERRIDE_PREFIX.length);
+      const v = await redis.get(key);
+      if (v) map[leadId] = String(v);
+    })
+  );
+  return map;
 }
 
 // ─── Lead Claims ─────────────────────────────────────────────────────────────

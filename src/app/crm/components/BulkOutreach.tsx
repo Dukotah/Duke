@@ -22,6 +22,7 @@ interface Lead {
   state: string;
   tier: string;
   outreach_score: number;
+  demoUrl?: string;
 }
 
 interface LeadsResponse {
@@ -137,17 +138,19 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                         };
 
   const toggleLead = (lead: Lead) => {
+    // Keep the two pieces of state in separate, pure updaters. (Calling one
+    // setter inside another's updater double-applies under Strict Mode, which
+    // duplicated entries in selectedLeads.) The `some` guard makes the array
+    // update idempotent so counts always match the `selected` set.
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(lead.id)) {
-        next.delete(lead.id);
-        setSelectedLeads((sl) => sl.filter((l) => l.id !== lead.id));
-      } else {
-        next.add(lead.id);
-        setSelectedLeads((sl) => [...sl, lead]);
-      }
+      if (next.has(lead.id)) next.delete(lead.id);
+      else next.add(lead.id);
       return next;
     });
+    setSelectedLeads((sl) =>
+      sl.some((l) => l.id === lead.id) ? sl.filter((l) => l.id !== lead.id) : [...sl, lead]
+    );
   };
 
   const toggleAll = () => {
@@ -202,7 +205,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const previewEmail = () => {
     if (selectedLeads.length === 0) return { subject: "", body: "" };
     const lead = selectedLeads[0];
-    const vars = { name: lead.name, business: lead.name, city: lead.city, fromName };
+    const vars = { name: lead.name, business: lead.name, city: lead.city, demoUrl: lead.demoUrl, fromName };
     return { subject: personalize(subject, vars), body: personalize(body, vars) };
   };
 
@@ -215,6 +218,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
         name: l.name,
         email: l.email,
         city: l.city,
+        demoUrl: l.demoUrl,
       }));
             const finalBody = calendlyLink ? body + "\n\nBook a free 15-minute call: " + calendlyLink : body;
       const res = await fetch("/api/crm/outreach", {
@@ -488,7 +492,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                 </div>
               )}
             </div>
-            <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
+            <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{demoUrl}"}, {"{fromName}"}</p>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -528,6 +532,18 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
               <span className="text-sm text-white/60">All have email</span>
               <span className="text-sm font-bold text-green-400">✓</span>
             </div>
+            {(subject + body).includes("{demoUrl}") && (() => {
+              const withDemo = selectedLeads.filter((l) => l.demoUrl).length;
+              const allHave = withDemo === selectedLeads.length;
+              return (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-white/60">Have a demo link</span>
+                  <span className={`text-sm font-bold ${allHave ? "text-green-400" : "text-yellow-400"}`}>
+                    {withDemo}/{selectedLeads.length}{allHave ? "" : " — rest send a blank link"}
+                  </span>
+                </div>
+              );
+            })()}
             <div className="flex items-center justify-between">
               <span className="text-sm text-white/60">From</span>
               <span className="text-sm text-white/80">{fromName} via Copper Bay Tech</span>

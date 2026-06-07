@@ -15,7 +15,7 @@ interface Lead {
   email_owned: string; website: string; socials: string; best_contact: string;
   address: string; city: string; county: string; tier: string;
   tier_reason: string; builder: string; industry_fit: string;
-  outreach_score: number; pitch: string;
+  outreach_score: number; pitch: string; demoUrl?: string;
 }
 
 interface LeadState {
@@ -260,7 +260,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
       {showEmail && (
         <EmailComposer
-          lead={{ id: lead.id, name: lead.name, email: lead.email, city: lead.city }}
+          lead={{ id: lead.id, name: lead.name, email: lead.email, city: lead.city, demoUrl: lead.demoUrl }}
           repName={repName}
           onClose={() => setShowEmail(false)}
           onSent={handleEmailSent}

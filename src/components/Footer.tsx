@@ -15,7 +15,7 @@ export default function Footer() {
     email: "contact@copperbaytech.com",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Petaluma",
+      addressLocality: "Santa Rosa",
       addressRegion: "CA",
       addressCountry: "US",
     },
