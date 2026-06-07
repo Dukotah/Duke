@@ -2,15 +2,25 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft, Cloud, Check } from "lucide-react";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
   title: "Case Study: Sebastopol Family Dental | Copper Bay Tech",
   description: "How we migrated a 12-person dental office from a local server to Google Workspace over a single weekend — zero downtime, staff up and running Monday morning.",
+  alternates: { canonical: "https://copperbaytech.com/case-studies/sebastopol-family-dental" },
+  openGraph: {
+    title: "Case Study: Sebastopol Family Dental | Copper Bay Tech",
+    description: "How we migrated a 12-person dental office from a local server to Google Workspace over a single weekend — zero downtime, staff up and running Monday morning.",
+    url: "https://copperbaytech.com/case-studies/sebastopol-family-dental",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function SebastopolFamilyDental() {
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Sebastopol Family Dental" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">

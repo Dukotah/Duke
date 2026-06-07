@@ -5,11 +5,14 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Santa Rosa, CA | Copper Bay Tech",
   description:
     "Local IT consulting, custom websites, and cybersecurity for Santa Rosa small businesses. Copper Bay Tech — flat-fee pricing, no long-term contracts. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/santa-rosa" },
   openGraph: {
     title: "IT Support & Web Development in Santa Rosa | Copper Bay Tech",
     description:
       "Trusted IT support and custom websites for Santa Rosa businesses. Serving all of Sonoma County.",
     url: "https://copperbaytech.com/santa-rosa",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

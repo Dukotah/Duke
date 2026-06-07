@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
 import IndustryPage from "@/components/IndustryPage";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "IT Support & Websites for Sonoma County Law Firms | Copper Bay Tech",
   description:
     "Secure IT support and professional websites for Sonoma County attorneys and law firms. Client data protection, compliance, and flat-fee pricing.",
+  alternates: { canonical: "https://copperbaytech.com/industries/law-firms" },
   openGraph: {
     url: "https://copperbaytech.com/industries/law-firms",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 
 export default function LawFirmsPage() {
   return (
-    <IndustryPage
+    <>
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Industries", url: "https://copperbaytech.com/industries" }, { name: "Law Firms" }])} />
+      <IndustryPage
       industry="Law Firms & Legal Practices"
       tagline="Secure, reliable technology for client-facing legal practices."
       description="Law firms handle confidential client data that must be protected — and your website should generate consultations, not raise doubts. We help Sonoma County attorneys build secure infrastructure and professional digital presence without the enterprise complexity."
@@ -59,5 +65,6 @@ export default function LawFirmsPage() {
         },
       ]}
     />
+    </>
   );
 }

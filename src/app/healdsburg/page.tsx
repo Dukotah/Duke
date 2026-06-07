@@ -5,6 +5,15 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Healdsburg, CA | Copper Bay Tech",
   description:
     "Copper Bay Tech provides IT support, web development, and cybersecurity for Healdsburg businesses — from boutique hotels and wine country restaurants to local retailers.",
+  alternates: { canonical: "https://copperbaytech.com/healdsburg" },
+  openGraph: {
+    title: "IT Support & Web Development in Healdsburg, CA | Copper Bay Tech",
+    description:
+      "Copper Bay Tech provides IT support, web development, and cybersecurity for Healdsburg businesses — from boutique hotels and wine country restaurants to local retailers.",
+    url: "https://copperbaytech.com/healdsburg",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function HealdsburgPage() {

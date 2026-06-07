@@ -5,11 +5,14 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Petaluma, CA | Copper Bay Tech",
   description:
     "Copper Bay Tech provides local IT support, custom websites, and cybersecurity for Petaluma small businesses. Flat-fee pricing, no contracts. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/petaluma" },
   openGraph: {
     title: "IT Support & Web Development in Petaluma | Copper Bay Tech",
     description:
       "Local IT support and custom websites for Petaluma businesses. Serving the North Bay since day one.",
     url: "https://copperbaytech.com/petaluma",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

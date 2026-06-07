@@ -2,15 +2,25 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft, Globe, Check } from "lucide-react";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
   title: "Case Study: Petaluma Home Staging Co. | Copper Bay Tech",
   description: "How we rebuilt a slow, broken website for a Petaluma home staging business — cutting load time from 8 seconds to 1.4 seconds and generating 8 new inquiries in 6 weeks.",
+  alternates: { canonical: "https://copperbaytech.com/case-studies/petaluma-home-staging" },
+  openGraph: {
+    title: "Case Study: Petaluma Home Staging Co. | Copper Bay Tech",
+    description: "How we rebuilt a slow, broken website for a Petaluma home staging business — cutting load time from 8 seconds to 1.4 seconds and generating 8 new inquiries in 6 weeks.",
+    url: "https://copperbaytech.com/case-studies/petaluma-home-staging",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function PetalumaHomeStaging() {
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Petaluma Home Staging Co." }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">

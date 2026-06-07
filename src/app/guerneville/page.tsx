@@ -5,6 +5,15 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Guerneville, CA | Copper Bay Tech",
   description:
     "IT consulting and custom websites for Guerneville small businesses — vacation rentals, restaurants, retail, and hospitality. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/guerneville" },
+  openGraph: {
+    title: "IT Support & Web Development in Guerneville, CA | Copper Bay Tech",
+    description:
+      "IT consulting and custom websites for Guerneville small businesses — vacation rentals, restaurants, retail, and hospitality. Call (707) 239-6725.",
+    url: "https://copperbaytech.com/guerneville",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function GuernevillePage() {

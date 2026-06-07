@@ -5,11 +5,14 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Rohnert Park, CA | Copper Bay Tech",
   description:
     "IT consulting, custom websites, and cybersecurity for Rohnert Park small businesses. Copper Bay Tech — local, flat-fee, no contracts. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/rohnert-park" },
   openGraph: {
     title: "IT Support & Web Development in Rohnert Park | Copper Bay Tech",
     description:
       "Local IT and web services for Rohnert Park businesses. Honest pricing, no surprises.",
     url: "https://copperbaytech.com/rohnert-park",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

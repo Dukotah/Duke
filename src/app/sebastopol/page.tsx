@@ -5,11 +5,14 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Sebastopol, CA | Copper Bay Tech",
   description:
     "Copper Bay Tech provides IT support, custom websites, and cybersecurity for Sebastopol small businesses. Local, honest, flat-fee pricing. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/sebastopol" },
   openGraph: {
     title: "IT Support & Web Development in Sebastopol | Copper Bay Tech",
     description:
       "Local IT and web services for Sebastopol businesses. No contracts, no surprises.",
     url: "https://copperbaytech.com/sebastopol",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

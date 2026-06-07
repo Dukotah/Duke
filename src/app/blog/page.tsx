@@ -8,6 +8,15 @@ export const metadata: Metadata = {
   title: "Resources & Blog | Copper Bay Tech",
   description:
     "Practical IT and web advice for Sonoma County small businesses. Learn how to protect your data, improve your website, and make better tech decisions.",
+  alternates: { canonical: "https://copperbaytech.com/blog" },
+  openGraph: {
+    title: "Resources & Blog | Copper Bay Tech",
+    description:
+      "Practical IT and web advice for Sonoma County small businesses. Learn how to protect your data, improve your website, and make better tech decisions.",
+    url: "https://copperbaytech.com/blog",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 type Post = {
@@ -359,13 +368,13 @@ export default function BlogPage() {
                         {post.tag}
                       </span>
                       <span
-                        className="flex items-center gap-1.5 text-xs text-[#3F3F46]/40"
+                        className="flex items-center gap-1.5 text-xs text-[#3F3F46]/60"
                         style={{ fontFamily: "var(--font-body)" }}
                       >
                         <Clock size={12} /> {post.readTime}
                       </span>
                       <span
-                        className="text-xs text-[#3F3F46]/30"
+                        className="text-xs text-[#3F3F46]/60"
                         style={{ fontFamily: "var(--font-body)" }}
                       >
                         {post.date}

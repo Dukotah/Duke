@@ -5,6 +5,15 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Cotati, CA | Copper Bay Tech",
   description:
     "Local IT support and custom websites for Cotati small businesses. Copper Bay Tech — flat-fee pricing, no contracts. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/cotati" },
+  openGraph: {
+    title: "IT Support & Web Development in Cotati, CA | Copper Bay Tech",
+    description:
+      "Local IT support and custom websites for Cotati small businesses. Copper Bay Tech — flat-fee pricing, no contracts. Call (707) 239-6725.",
+    url: "https://copperbaytech.com/cotati",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function CotatiPage() {

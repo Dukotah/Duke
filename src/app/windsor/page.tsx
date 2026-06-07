@@ -5,6 +5,15 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Windsor, CA | Copper Bay Tech",
   description:
     "Copper Bay Tech helps Windsor businesses with IT support, modern websites, and cloud migration. Serving Windsor's growing community of family businesses and light industrial companies.",
+  alternates: { canonical: "https://copperbaytech.com/windsor" },
+  openGraph: {
+    title: "IT Support & Web Development in Windsor, CA | Copper Bay Tech",
+    description:
+      "Copper Bay Tech helps Windsor businesses with IT support, modern websites, and cloud migration. Serving Windsor's growing community of family businesses and light industrial companies.",
+    url: "https://copperbaytech.com/windsor",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function WindsorPage() {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import IndustryPage from "@/components/IndustryPage";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -36,14 +37,18 @@ export const metadata: Metadata = {
   title: "HIPAA-Compliant IT & Websites for Sonoma County Medical Practices | Copper Bay Tech",
   description:
     "IT support and websites for Sonoma County dentists, therapists, chiropractors, and medical offices. HIPAA-compliant setup, no long-term contracts.",
+  alternates: { canonical: "https://copperbaytech.com/industries/healthcare" },
   openGraph: {
     url: "https://copperbaytech.com/industries/healthcare",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 
 export default function HealthcarePage() {
   return (
     <>
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Industries", url: "https://copperbaytech.com/industries" }, { name: "Healthcare" }])} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}

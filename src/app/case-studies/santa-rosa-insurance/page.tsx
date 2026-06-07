@@ -2,15 +2,25 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Check } from "lucide-react";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
   title: "Case Study: Santa Rosa Insurance Group | Copper Bay Tech",
   description: "How a security audit found two critical vulnerabilities at a Santa Rosa insurance firm — and got them fixed the same day.",
+  alternates: { canonical: "https://copperbaytech.com/case-studies/santa-rosa-insurance" },
+  openGraph: {
+    title: "Case Study: Santa Rosa Insurance Group | Copper Bay Tech",
+    description: "How a security audit found two critical vulnerabilities at a Santa Rosa insurance firm — and got them fixed the same day.",
+    url: "https://copperbaytech.com/case-studies/santa-rosa-insurance",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function SantaRosaInsurance() {
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Santa Rosa Insurance Group" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">

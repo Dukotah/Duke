@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
 import IndustryPage from "@/components/IndustryPage";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Websites & IT for Sonoma County Real Estate Agents | Copper Bay Tech",
   description:
     "Custom websites, CRM integrations, and IT support for Sonoma County real estate agents and brokerages. Look as good online as you do in person.",
+  alternates: { canonical: "https://copperbaytech.com/industries/real-estate" },
   openGraph: {
     url: "https://copperbaytech.com/industries/real-estate",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 
 export default function RealEstatePage() {
   return (
-    <IndustryPage
+    <>
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Industries", url: "https://copperbaytech.com/industries" }, { name: "Real Estate" }])} />
+      <IndustryPage
       industry="Real Estate Agents & Brokerages"
       tagline="Technology that makes you the obvious choice."
       description="In real estate, your digital presence is your first impression. We help Sonoma County agents and brokerages build standout websites, connect their tools, and rank for the searches that bring in buyers and sellers."
@@ -59,5 +65,6 @@ export default function RealEstatePage() {
         },
       ]}
     />
+    </>
   );
 }

@@ -5,6 +5,15 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Glen Ellen, CA | Copper Bay Tech",
   description:
     "IT support and custom websites for Glen Ellen businesses — wineries, inns, restaurants, and local services in the Valley of the Moon. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/glen-ellen" },
+  openGraph: {
+    title: "IT Support & Web Development in Glen Ellen, CA | Copper Bay Tech",
+    description:
+      "IT support and custom websites for Glen Ellen businesses — wineries, inns, restaurants, and local services in the Valley of the Moon. Call (707) 239-6725.",
+    url: "https://copperbaytech.com/glen-ellen",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function GlenEllenPage() {

@@ -5,6 +5,15 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Bodega Bay, CA | Copper Bay Tech",
   description:
     "IT support and custom websites for Bodega Bay businesses — coastal hospitality, vacation rentals, and local services. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/bodega-bay" },
+  openGraph: {
+    title: "IT Support & Web Development in Bodega Bay, CA | Copper Bay Tech",
+    description:
+      "IT support and custom websites for Bodega Bay businesses — coastal hospitality, vacation rentals, and local services. Call (707) 239-6725.",
+    url: "https://copperbaytech.com/bodega-bay",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function BodegaBayPage() {

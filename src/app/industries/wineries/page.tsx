@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
 import IndustryPage from "@/components/IndustryPage";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "IT Support & Websites for Sonoma County Wineries | Copper Bay Tech",
   description:
     "Tasting room reservation systems, wine club tech, and custom websites for Sonoma County wineries. Local IT support that understands wine country.",
+  alternates: { canonical: "https://copperbaytech.com/industries/wineries" },
   openGraph: {
     url: "https://copperbaytech.com/industries/wineries",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 
 export default function WineriesPage() {
   return (
-    <IndustryPage
+    <>
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Industries", url: "https://copperbaytech.com/industries" }, { name: "Wineries" }])} />
+      <IndustryPage
       industry="Wineries & Tasting Rooms"
       tagline="Technology built for the pace of wine country."
       description="Tasting room visits, wine club signups, and DTC sales all start with your digital presence — and rely on technology working when the room is full. We help Sonoma County wineries build websites and infrastructure that keep up with the season."
@@ -59,5 +65,6 @@ export default function WineriesPage() {
         },
       ]}
     />
+    </>
   );
 }

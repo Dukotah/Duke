@@ -5,11 +5,14 @@ export const metadata: Metadata = {
   title: "IT Support & Web Development in Sonoma, CA | Copper Bay Tech",
   description:
     "Local IT consulting, custom websites, and cybersecurity for Sonoma small businesses — wineries, restaurants, and retail. Copper Bay Tech. Call (707) 239-6725.",
+  alternates: { canonical: "https://copperbaytech.com/sonoma" },
   openGraph: {
     title: "IT Support & Web Development in Sonoma | Copper Bay Tech",
     description:
       "IT support and custom websites for Sonoma wineries, restaurants, and small businesses.",
     url: "https://copperbaytech.com/sonoma",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

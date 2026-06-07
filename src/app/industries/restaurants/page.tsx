@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import IndustryPage from "@/components/IndustryPage";
+import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -36,14 +37,18 @@ export const metadata: Metadata = {
   title: "IT Support & Websites for Sonoma County Restaurants | Copper Bay Tech",
   description:
     "POS integrations, reservation systems, guest Wi-Fi, and websites for Sonoma County restaurants. Local IT support that shows up when you need it.",
+  alternates: { canonical: "https://copperbaytech.com/industries/restaurants" },
   openGraph: {
     url: "https://copperbaytech.com/industries/restaurants",
+    siteName: "Copper Bay Tech",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 
 export default function RestaurantsPage() {
   return (
     <>
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Industries", url: "https://copperbaytech.com/industries" }, { name: "Restaurants" }])} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
