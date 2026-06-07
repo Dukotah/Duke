@@ -70,10 +70,12 @@ export default function Testimonials() {
           </h2>
           {SHOW_SAMPLE_MARKER && (
             <p
-              className="mx-auto mt-4 max-w-md text-xs text-[#3F3F46]/40"
+              className="mx-auto mt-5 max-w-lg rounded-lg border border-[#18181B]/10 bg-[#FAFAF9] px-4 py-2.5 text-sm text-[#3F3F46]/80"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Sample copy shown during launch — replaced with named, client-approved quotes.
+              <strong className="font-semibold text-[#18181B]">Illustrative examples</strong> —
+              representative of the work and outcomes we aim for, not verified client reviews.
+              Real, named, client-approved quotes will replace these.
             </p>
           )}
         </motion.div>
@@ -90,10 +92,10 @@ export default function Testimonials() {
             >
               {SHOW_SAMPLE_MARKER && (
                 <span
-                  className="absolute right-4 top-4 rounded-full bg-[#18181B]/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#3F3F46]/45"
+                  className="absolute right-4 top-4 rounded-full bg-[#18181B]/[0.08] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-[#3F3F46]/80"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
-                  Sample
+                  Illustrative
                 </span>
               )}
               <div className="mb-4 flex gap-0.5" aria-hidden="true">
