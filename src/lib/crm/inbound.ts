@@ -11,8 +11,8 @@
 // scores / grade / recommended service / source, set the first-touch source
 // only if it was never set) instead of creating a duplicate.
 //
-// Resilience: the store is synchronous SQLite and may be unavailable (e.g. a
-// read-only deploy filesystem). A normal "store unavailable" failure must NOT
+// Resilience: the store is async and may be unavailable (e.g. a read-only
+// deploy filesystem). A normal "store unavailable" failure must NOT
 // throw to the caller — the public tool's primary job is the email/report, the
 // CRM write is best-effort — so we catch, log, and return a best-effort result.
 
@@ -71,8 +71,8 @@ function buildEnrichmentNote(input: InboundLeadInput): string | null {
 // Find an existing lead matching the inbound contact, by email → phone → name,
 // reusing the shared normalizers so this stays consistent with the website-link
 // sync. Returns the lead id, or null when there's no match.
-function findExistingId(input: InboundLeadInput): string | null {
-  const leads = getLeads();
+async function findExistingId(input: InboundLeadInput): Promise<string | null> {
+  const leads = await getLeads();
 
   const email = normalizeEmail(input.email);
   if (email) {
@@ -113,10 +113,10 @@ export async function createInboundLead(
   input: InboundLeadInput,
 ): Promise<CreateInboundLeadResult> {
   try {
-    const existingId = findExistingId(input);
+    const existingId = await findExistingId(input);
 
     if (existingId) {
-      const existing = getLead(existingId);
+      const existing = await getLead(existingId);
       // Only enrich blanks, never clobber a rep's edits.
       const patch: Parameters<typeof updateLead>[1] = {};
       if (existing) {
@@ -136,15 +136,15 @@ export async function createInboundLead(
           patch.heatScore = input.scores.overall;
         }
       }
-      if (Object.keys(patch).length > 0) updateLead(existingId, patch);
+      if (Object.keys(patch).length > 0) await updateLead(existingId, patch);
 
       const note = buildEnrichmentNote(input);
-      if (note) addNote(existingId, note);
+      if (note) await addNote(existingId, note);
 
       return { id: existingId, created: false };
     }
 
-    const lead = createLead({
+    const lead = await createLead({
       business: input.businessName?.trim() || input.email,
       phone: input.phone?.trim() || "",
       email: input.email.trim(),
@@ -155,7 +155,7 @@ export async function createInboundLead(
     });
 
     const note = buildEnrichmentNote(input);
-    if (note) addNote(lead.id, note);
+    if (note) await addNote(lead.id, note);
 
     return { id: lead.id, created: true };
   } catch (err) {

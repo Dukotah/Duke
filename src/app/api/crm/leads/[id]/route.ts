@@ -5,7 +5,7 @@ import type { PipelineStage } from "@/lib/crm/types";
 // GET /api/crm/leads/:id
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const lead = getLead(id);
+  const lead = await getLead(id);
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   return NextResponse.json({ lead });
 }
@@ -21,10 +21,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (typeof body.email === "string") patch.email = body.email.trim();
 
     if (typeof body.note === "string" && body.note.trim()) {
-      addNote(id, body.note.trim(), body.repId);
+      await addNote(id, body.note.trim(), body.repId);
     }
 
-    const lead = Object.keys(patch).length ? updateLead(id, patch) : getLead(id);
+    const lead = Object.keys(patch).length ? await updateLead(id, patch) : await getLead(id);
     if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     return NextResponse.json({ lead });
   } catch {

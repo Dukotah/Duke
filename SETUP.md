@@ -135,6 +135,45 @@ To send for real:
 Before all that, you can send freely in practice mode — every email is tracked
 on the lead's timeline (marked **logged · not delivered**) so nothing is lost.
 
+### Durable CRM storage (Neon Postgres) — `DATABASE_URL`
+
+By default the CRM uses a local **SQLite** database. That's perfect for local
+development, but on Vercel the filesystem is **ephemeral** — the SQLite file is
+wiped on every redeploy (and between serverless invocations), so leads, reps,
+and call activity would not persist. To keep your data safe in production, point
+the CRM at a hosted **Neon Postgres** database.
+
+1. Go to **[neon.tech](https://neon.tech)** and sign up (free tier is fine).
+2. Click **Create Project**, pick a region close to your Vercel deployment, and
+   create it.
+3. In the project, open **Connection Details** and copy the **pooled**
+   connection string (the host contains `-pooler`). It looks like:
+   `postgresql://user:pass@ep-xxx-pooler.region.aws.neon.tech/dbname?sslmode=require`
+4. On **Vercel** → your project → **Settings** → **Environment Variables**, add
+   it as **`DATABASE_URL`**.
+5. Apply the schema by running the migration **once** (from your local machine
+   with `DATABASE_URL` set, or via a one-off job):
+
+   ```bash
+   npm run db:migrate
+   ```
+
+   This runs `src/lib/crm/migrate.ts`, which applies
+   `src/lib/crm/store.schema.sql` (creating the `reps`, `leads`, and
+   `activities` tables). It is safe to re-run — the schema is idempotent.
+6. Redeploy. The CRM now reads and writes to Postgres.
+
+**Without `DATABASE_URL`**, the app falls back to the local SQLite store. That's
+fine locally, but remember it's **ephemeral on Vercel** — don't rely on it for
+real data in production.
+
+**Forcing the local store:** set **`CRM_STORE=sqlite`** to use SQLite even when
+`DATABASE_URL` is present (useful when running locally against a copy of your
+production environment). Set **`CRM_STORE=pg`** to require Postgres. Leaving
+`CRM_STORE` blank auto-selects: Postgres when `DATABASE_URL` is set, SQLite
+otherwise. See [`docs/CRM_STORAGE.md`](./docs/CRM_STORAGE.md) for how the store
+seam works under the hood.
+
 ### Faster website audits — `PAGESPEED_API_KEY`
 The audit tools work without this, but may be rate-limited. A free Google key
 raises the limits — see

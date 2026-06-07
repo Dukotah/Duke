@@ -35,7 +35,7 @@ afterAll(() => {
 
 describe("createInboundLead", () => {
   it("creates a new lead when nothing matches", async () => {
-    const before = getLeads().length;
+    const before = (await getLeads()).length;
 
     const res = await createInboundLead({
       email: "owner@acmeplumbing.com",
@@ -50,9 +50,9 @@ describe("createInboundLead", () => {
 
     expect(res.created).toBe(true);
     expect(res.id).toBeTruthy();
-    expect(getLeads().length).toBe(before + 1);
+    expect((await getLeads()).length).toBe(before + 1);
 
-    const lead = getLead(res.id);
+    const lead = await getLead(res.id);
     expect(lead?.business).toBe("Acme Plumbing");
     expect(lead?.email).toBe("owner@acmeplumbing.com");
     expect(lead?.website).toBe("https://acmeplumbing.com");
@@ -73,7 +73,7 @@ describe("createInboundLead", () => {
     });
     expect(created.created).toBe(true);
 
-    const before = getLeads().length;
+    const before = (await getLeads()).length;
     const again = await createInboundLead({
       // Same email, different casing/whitespace — must still match.
       email: "  Dedupe@Example.com ",
@@ -86,9 +86,9 @@ describe("createInboundLead", () => {
 
     expect(again.created).toBe(false);
     expect(again.id).toBe(created.id);
-    expect(getLeads().length).toBe(before); // no new row
+    expect((await getLeads()).length).toBe(before); // no new row
 
-    const lead = getLead(again.id);
+    const lead = await getLead(again.id);
     // First-touch source is preserved.
     expect(lead?.source).toBe("Free Tool");
     // Heat score reflects the fresh analysis.
@@ -107,7 +107,7 @@ describe("createInboundLead", () => {
       source: "Free Tool",
     });
 
-    const before = getLeads().length;
+    const before = (await getLeads()).length;
     const again = await createInboundLead({
       email: "different@phonematch.com",
       businessName: "Totally Different Name",
@@ -118,7 +118,7 @@ describe("createInboundLead", () => {
 
     expect(again.created).toBe(false);
     expect(again.id).toBe(created.id);
-    expect(getLeads().length).toBe(before);
+    expect((await getLeads()).length).toBe(before);
   });
 
   it("dedups by normalized business name as a last resort", async () => {
@@ -128,7 +128,7 @@ describe("createInboundLead", () => {
       source: "Free Tool",
     });
 
-    const before = getLeads().length;
+    const before = (await getLeads()).length;
     const again = await createInboundLead({
       // No email/phone overlap — only the normalized name matches.
       email: "",
@@ -138,6 +138,6 @@ describe("createInboundLead", () => {
 
     expect(again.created).toBe(false);
     expect(again.id).toBe(created.id);
-    expect(getLeads().length).toBe(before);
+    expect((await getLeads()).length).toBe(before);
   });
 });
