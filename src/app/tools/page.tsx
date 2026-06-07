@@ -637,7 +637,7 @@ export default function ToolsPage() {
   const [running, setRunning] = useState(false);
   const [auditedUrl, setAuditedUrl] = useState("");
   const [captureEmail, setCaptureEmail] = useState("");
-  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done">("idle");
+  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   // Boil the completed checks down to a one-line diagnosis so the CRM lead carries
   // the specific problems found — Duke can then open the follow-up with their issue.
@@ -657,7 +657,7 @@ export default function ToolsPage() {
     setCaptureStatus("loading");
     try {
       const summary = buildAuditSummary();
-      await fetch("/api/capture", {
+      const res = await fetch("/api/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -667,7 +667,14 @@ export default function ToolsPage() {
           context: `Website Audit Tool — ${auditedUrl}${summary ? ` (${summary})` : ""}`,
         }),
       });
-    } catch (_) {}
+      if (!res.ok) {
+        setCaptureStatus("error");
+        return;
+      }
+    } catch (_) {
+      setCaptureStatus("error");
+      return;
+    }
     setCaptureStatus("done");
   };
 
@@ -872,7 +879,11 @@ export default function ToolsPage() {
                           )}
                         </button>
                       </div>
-                      <p className="text-zinc-600 text-xs mt-2">No spam. Just your results and an offer to help.</p>
+                      {captureStatus === "error" ? (
+                        <p className="text-red-400 text-xs mt-2">Something went wrong — email us at contact@copperbaytech.com</p>
+                      ) : (
+                        <p className="text-zinc-600 text-xs mt-2">No spam. Just your results and an offer to help.</p>
+                      )}
                     </>
                   )}
                 </div>

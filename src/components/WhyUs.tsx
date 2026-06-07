@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { Check, X, Minus } from "lucide-react";
 
@@ -62,7 +62,7 @@ function Cell({ cell }: { cell: CellValue }) {
           <Check size={13} color="#F97316" strokeWidth={2.5} />
         </div>
         <span
-          className="text-xs text-white/80 leading-snug max-w-[140px]"
+          className="text-xs text-[#18181B] leading-snug max-w-[140px]"
           style={{ fontFamily: "var(--font-body)" }}
         >
           {cell.text}
@@ -101,19 +101,20 @@ function Cell({ cell }: { cell: CellValue }) {
 }
 
 export default function WhyUs() {
+  const reduce = useReducedMotion();
   return (
     <section className="py-24 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-16"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Why Copper Bay Tech
@@ -136,10 +137,10 @@ export default function WhyUs() {
 
         {/* ── Desktop table (md+) ── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6, delay: 0.1 }}
           className="hidden md:block rounded-2xl overflow-hidden border border-[#18181B]/10 shadow-sm"
         >
           {/* Column headers */}
@@ -233,10 +234,10 @@ export default function WhyUs() {
           {rows.map((row, i) => (
             <motion.div
               key={row.criterion}
-              initial={{ opacity: 0, y: 16 }}
+              initial={reduce ? false : { opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.07 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.4, delay: i * 0.07 }}
               className="rounded-xl border border-[#18181B]/10 overflow-hidden bg-white shadow-sm"
             >
               {/* Criterion label */}
@@ -334,15 +335,15 @@ export default function WhyUs() {
 
         {/* CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={reduce ? false : { opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.5, delay: 0.3 }}
           className="mt-12 text-center"
         >
           <Link
             href="/#contact"
-            className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+            className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Talk to Duke — no sales pitch

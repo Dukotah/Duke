@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowRight, Phone } from "lucide-react";
 
 type Question = {
@@ -113,6 +113,7 @@ function personalNote(answers: Record<string, string>): string {
 type Lead = { name: string; business: string; email: string; phone: string };
 
 export default function GamePlan() {
+  const reduce = useReducedMotion();
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [phase, setPhase] = useState<"questions" | "plan" | "form" | "done">("questions");
@@ -176,10 +177,10 @@ export default function GamePlan() {
     <section id="game-plan" className="py-24 bg-[#18181B]">
       <div className="max-w-2xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-12"
         >
           <p
@@ -206,9 +207,9 @@ export default function GamePlan() {
               <div className="h-1 bg-white/10">
                 <motion.div
                   className="h-full bg-[#F97316]"
-                  initial={{ width: 0 }}
+                  initial={reduce ? false : { width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.3 }}
+                  transition={reduce ? { duration: 0 } : { duration: 0.3 }}
                 />
               </div>
               <div className="p-8">
@@ -221,10 +222,10 @@ export default function GamePlan() {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={current}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={reduce ? false : { opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.25 }}
+                    exit={reduce ? {} : { opacity: 0, x: -20 }}
+                    transition={reduce ? { duration: 0 } : { duration: 0.25 }}
                   >
                     <h3
                       className="text-xl font-bold text-white mt-3 mb-6"
@@ -267,9 +268,9 @@ export default function GamePlan() {
 
           {phase === "plan" && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
+              initial={reduce ? false : { opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.4 }}
               className="p-8"
             >
               <p
@@ -328,8 +329,9 @@ export default function GamePlan() {
 
           {phase === "form" && (
             <motion.div
-              initial={{ opacity: 0 }}
+              initial={reduce ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
+              transition={reduce ? { duration: 0 } : undefined}
               className="p-8"
             >
               <h3
@@ -402,9 +404,9 @@ export default function GamePlan() {
 
           {phase === "done" && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
+              initial={reduce ? false : { opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.4 }}
               className="p-8 text-center"
             >
               <div

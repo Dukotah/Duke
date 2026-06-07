@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { MapPin, ShieldCheck, Code2 } from "lucide-react";
 
@@ -17,18 +17,19 @@ const highlights = [
 ];
 
 export default function About() {
+  const reduce = useReducedMotion();
   return (
     <section id="about" className="py-24 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 items-start">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={reduce ? false : { opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           >
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               About Copper Bay Tech
@@ -55,18 +56,21 @@ export default function About() {
                     className="object-cover"
                   />
                 ) : (
-                  <div
-                    className="flex h-full w-full items-center justify-center"
-                    style={{ background: "linear-gradient(135deg, #27272A 0%, #18181B 100%)" }}
-                    aria-hidden="true"
-                  >
-                    <span
-                      className="text-2xl font-bold text-[#F97316]"
-                      style={{ fontFamily: "var(--font-heading)" }}
+                  <>
+                    <span className="sr-only">Dukotah Hutcheon, founder of Copper Bay Tech</span>
+                    <div
+                      className="flex h-full w-full items-center justify-center"
+                      style={{ background: "linear-gradient(135deg, #27272A 0%, #18181B 100%)" }}
+                      aria-hidden="true"
                     >
-                      DH
-                    </span>
-                  </div>
+                      <span
+                        className="text-2xl font-bold text-[#F97316]"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        DH
+                      </span>
+                    </div>
+                  </>
                 )}
               </div>
               <div>
@@ -125,10 +129,10 @@ export default function About() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={reduce ? false : { opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={reduce ? { duration: 0 } : { duration: 0.6 }}
             className="rounded-2xl overflow-hidden bg-[#18181B] p-10 text-white"
           >
             <p

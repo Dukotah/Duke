@@ -76,14 +76,14 @@ export default function CityPage({
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Get a Free Consultation <ArrowRight size={15} />
               </Link>
               <a
                 href="tel:+17072396725"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <Phone size={15} aria-hidden={true} /> (707) 239-6725
@@ -103,7 +103,7 @@ export default function CityPage({
               <span className="text-[#3F3F46]/80">{city}</span>
             </nav>
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Sound familiar?
@@ -211,7 +211,7 @@ export default function CityPage({
             </p>
             <Link
               href="/#contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Book a Free Consultation <ArrowRight size={16} />

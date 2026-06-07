@@ -105,7 +105,7 @@ export default function ITQuiz() {
   const [selected, setSelected] = useState<number | null>(null);
   const [done, setDone] = useState(false);
   const [captureEmail, setCaptureEmail] = useState("");
-  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done">("idle");
+  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   const totalScore = answers.reduce((a, b) => a + b, 0);
   const result = getResult(totalScore);
@@ -136,7 +136,7 @@ export default function ITQuiz() {
     if (!captureEmail.includes("@") || captureStatus !== "idle") return;
     setCaptureStatus("loading");
     try {
-      await fetch("/api/capture", {
+      const res = await fetch("/api/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -145,7 +145,14 @@ export default function ITQuiz() {
           context: `IT Risk Quiz — ${result.label} (score: ${totalScore})`,
         }),
       });
-    } catch (_) {}
+      if (!res.ok) {
+        setCaptureStatus("error");
+        return;
+      }
+    } catch (_) {
+      setCaptureStatus("error");
+      return;
+    }
     setCaptureStatus("done");
   };
 
@@ -332,6 +339,11 @@ export default function ITQuiz() {
                         {captureStatus === "loading" ? "…" : "Send"}
                       </button>
                     </div>
+                    {captureStatus === "error" && (
+                      <p className="text-red-400 text-xs text-center mt-2" style={{ fontFamily: "var(--font-body)" }}>
+                        Something went wrong — email us at contact@copperbaytech.com
+                      </p>
+                    )}
                   </>
                 )}
               </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Globe, ShieldCheck, Cloud } from "lucide-react";
 
@@ -87,6 +87,7 @@ const PROJECTS: Project[] = [
 ];
 
 export default function Portfolio() {
+  const reduce = useReducedMotion();
   // Only render tiles backed by a real, client-approved screenshot. Until those
   // exist, show nothing rather than a wall of empty gradient "Preview" frames —
   // they read as unfinished and undercut credibility on a sales page. Drop an
@@ -99,14 +100,14 @@ export default function Portfolio() {
     <section id="portfolio" className="py-24 bg-[#FAFAF9]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="mb-14 text-center"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Our Work
@@ -133,10 +134,10 @@ export default function Portfolio() {
             return (
               <motion.div
                 key={p.title}
-                initial={{ opacity: 0, y: 15 }}
+                initial={reduce ? false : { opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
+                transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.08 }}
               >
                 <Wrapper
                   {...(p.url ? { href: p.url, target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -176,7 +177,7 @@ export default function Portfolio() {
                   <div className="flex items-start justify-between gap-3 p-5">
                     <div className="min-w-0">
                       <p
-                        className="mb-1 text-xs font-semibold uppercase tracking-widest text-[#F97316]"
+                        className="mb-1 text-xs font-semibold uppercase tracking-widest text-gold-on-light"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {p.category}
@@ -202,10 +203,10 @@ export default function Portfolio() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={reduce ? false : { opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.5, delay: 0.2 }}
           className="mt-12 text-center"
         >
           <Link

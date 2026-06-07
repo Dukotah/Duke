@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { MessageCircle, X, Send, Phone } from "lucide-react";
 
 type Message = {
@@ -32,6 +32,7 @@ export default function ChatWidget() {
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"chat" | "collect" | "done">("chat");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -93,15 +94,19 @@ export default function ChatWidget() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            id="chat-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="chat-header"
+            initial={reduce ? false : { opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.2 }}
+            exit={reduce ? undefined : { opacity: 0, scale: 0.9, y: 20 }}
+            transition={reduce ? { duration: 0 } : { duration: 0.2 }}
             className="w-80 sm:w-96 rounded-2xl shadow-2xl overflow-hidden border border-[#18181B]/10"
             style={{ backgroundColor: "#fff" }}
           >
             {/* Header */}
-            <div className="bg-[#18181B] px-5 py-4 flex items-center justify-between">
+            <div id="chat-header" className="bg-[#18181B] px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-[#F97316] flex items-center justify-center">
                   <span className="text-white text-sm font-bold" style={{ fontFamily: "var(--font-heading)" }}>D</span>
@@ -168,7 +173,7 @@ export default function ChatWidget() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#18181B]/30"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
                   style={{ fontFamily: "var(--font-body)" }}
                 />
                 <div className="flex gap-2">
@@ -177,7 +182,7 @@ export default function ChatWidget() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     type="email"
-                    className="flex-1 px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#18181B]/30"
+                    className="flex-1 px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
                     style={{ fontFamily: "var(--font-body)" }}
                     onKeyDown={(e) => e.key === "Enter" && submitContact()}
                   />
@@ -199,7 +204,7 @@ export default function ChatWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#18181B]/30"
+                  className="flex-1 px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
                   style={{ fontFamily: "var(--font-body)" }}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
                 />
@@ -233,18 +238,20 @@ export default function ChatWidget() {
       {/* Toggle button */}
       <motion.button
         onClick={() => setOpen(!open)}
-        className="relative w-14 h-14 rounded-full bg-[#F97316] text-white shadow-lg hover:bg-[#ea6c0a] transition-colors flex items-center justify-center"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Open chat"
+        className="relative w-14 h-14 rounded-full bg-[#F97316] text-white shadow-lg hover:bg-[#ea6c0a] transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+        whileHover={reduce ? undefined : { scale: 1.05 }}
+        whileTap={reduce ? undefined : { scale: 0.95 }}
+        aria-label={open ? "Close chat" : "Open chat"}
+        aria-expanded={open}
+        aria-controls="chat-panel"
       >
         <AnimatePresence mode="wait">
           {open ? (
-            <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+            <motion.span key="x" initial={reduce ? false : { rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={reduce ? undefined : { rotate: 90, opacity: 0 }} transition={reduce ? { duration: 0 } : { duration: 0.15 }}>
               <X size={22} />
             </motion.span>
           ) : (
-            <motion.span key="chat" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+            <motion.span key="chat" initial={reduce ? false : { rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={reduce ? undefined : { rotate: -90, opacity: 0 }} transition={reduce ? { duration: 0 } : { duration: 0.15 }}>
               <MessageCircle size={22} />
             </motion.span>
           )}

@@ -59,7 +59,7 @@ export default function Hero() {
             }}
           >
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#F97316] opacity-60" />
+              <span className="absolute inline-flex h-full w-full animate-ping motion-reduce:animate-none rounded-full bg-[#F97316] opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#F97316]" />
             </span>
             Sonoma County · North Bay California

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowRight, CheckCircle, Phone } from "lucide-react";
+import { PRICING, rangeLabel } from "@/config/pricing";
 
 export const metadata: Metadata = {
   title: "Custom Web Development for Sonoma County Businesses | Copper Bay Tech",
@@ -26,7 +27,7 @@ const serviceSchema = {
     "Hand-coded, fast-loading websites for Sonoma County small businesses. No templates. Local SEO included.",
   offers: {
     "@type": "Offer",
-    priceRange: "$2,500 – $6,000",
+    priceRange: rangeLabel("web"),
     priceCurrency: "USD",
   },
 };
@@ -45,7 +46,7 @@ const included = [
 const faqs = [
   {
     q: "How much does a website cost?",
-    a: "Most small business websites fall between $2,500 and $6,000 depending on complexity. You get a flat-fee proposal before we start — no surprises, no hourly billing.",
+    a: `Most small business websites fall between ${PRICING.web.startingAt} and $7,500 depending on complexity. You get a flat-fee proposal before we start — no surprises, no hourly billing.`,
   },
   {
     q: "How long does it take?",
@@ -193,9 +194,9 @@ export default function WebDevelopmentPage() {
             </p>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
-                { tier: "Business Site", price: "$2,500 – $4,000", desc: "5–8 pages, contact form, local SEO, Google Business Profile setup. Ideal for service businesses, consultants, and local shops." },
-                { tier: "Growth Site", price: "$4,000 – $6,000", desc: "Everything in Business, plus booking integrations, blog, multiple service pages, and conversion-focused copywriting." },
-                { tier: "Custom Web App", price: "$6,000+", desc: "Portals, dashboards, custom tools, e-commerce, and complex integrations. Scoped per project after discovery." },
+                { tier: "Business Site", price: "$2,500 – $4,500", desc: "5–8 pages, contact form, local SEO, Google Business Profile setup. Ideal for service businesses, consultants, and local shops." },
+                { tier: "Growth Site", price: "$4,500 – $7,500", desc: "Everything in Business, plus booking integrations, blog, multiple service pages, and conversion-focused copywriting." },
+                { tier: "Custom Web App", price: "$7,500+", desc: "Portals, dashboards, custom tools, e-commerce, and complex integrations. Scoped per project after discovery." },
               ].map((p) => (
                 <div key={p.tier} className="bg-white rounded-xl border border-[#18181B]/10 p-6 shadow-sm">
                   <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-2" style={{ fontFamily: "var(--font-heading)" }}>

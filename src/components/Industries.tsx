@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import {
   Briefcase,
@@ -57,19 +57,20 @@ const industries = [
 ];
 
 export default function Industries() {
+  const reduce = useReducedMotion();
   return (
     <section className="py-24 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-16"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Industries we serve
@@ -97,10 +98,10 @@ export default function Industries() {
             return (
               <motion.div
                 key={industry.label}
-                initial={{ opacity: 0, y: 20 }}
+                initial={reduce ? false : { opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.07 }}
+                transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.07 }}
                 className="rounded-xl border border-[#18181B]/10 bg-[#FAFAF9] p-6 flex flex-col gap-4 hover:shadow-md hover:border-[#18181B]/20 transition-all duration-200"
               >
                 {/* Icon tile */}
@@ -133,10 +134,10 @@ export default function Industries() {
 
         {/* CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={reduce ? false : { opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.5, delay: 0.4 }}
           className="mt-14 text-center"
         >
           <p

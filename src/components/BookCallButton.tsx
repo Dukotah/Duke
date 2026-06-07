@@ -10,9 +10,9 @@ type Props = {
 };
 
 const styles = {
-  primary: "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white transition-colors bg-[#F97316] hover:bg-[#ea6c0a]",
-  "outline-dark": "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold transition-colors border-2 border-[#18181B]/20 text-[#18181B] hover:border-[#18181B]/50",
-  "outline-light": "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold transition-colors border-2 border-white/30 text-white hover:border-white/60",
+  primary: "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white transition-colors bg-[#F97316] hover:bg-[#ea6c0a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+  "outline-dark": "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold transition-colors border-2 border-[#18181B]/20 text-[#18181B] hover:border-[#18181B]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+  "outline-light": "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold transition-colors border-2 border-white/30 text-white hover:border-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]",
 };
 
 export default function BookCallButton({ label = "Book a Free Call", variant = "primary", className = "" }: Props) {

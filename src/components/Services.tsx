@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { Globe, Server, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 
@@ -58,14 +58,15 @@ const tiers = [
 ];
 
 export default function Services() {
+  const reduce = useReducedMotion();
   return (
     <section id="services" className="py-24 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-16"
         >
           <h2
@@ -86,10 +87,10 @@ export default function Services() {
           {tiers.map((t, i) => (
             <motion.div
               key={t.tier}
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduce ? false : { opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.1 }}
               className={`rounded-xl p-8 flex flex-col ${
                 t.featured
                   ? "bg-[#18181B] text-white shadow-xl"
@@ -143,10 +144,10 @@ export default function Services() {
 
               <a
                 href="#contact"
-                className={`inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold transition-colors ${
+                className={`inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 ${
                   t.featured
-                    ? "bg-[#F97316] text-[#18181B] hover:bg-[#ea6c0a]"
-                    : "bg-[#18181B] text-white hover:bg-[#0d0d0f]"
+                    ? "bg-[#F97316] text-[#18181B] hover:bg-[#ea6c0a] focus-visible:ring-offset-[#18181B]"
+                    : "bg-[#18181B] text-white hover:bg-[#0d0d0f] focus-visible:ring-offset-white"
                 }`}
                 style={{ fontFamily: "var(--font-heading)" }}
               >
@@ -168,10 +169,10 @@ export default function Services() {
 
         {/* Featured: AI Integration */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.15 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.5, delay: 0.15 }}
           className="relative mt-6 overflow-hidden rounded-xl bg-[#18181B] p-8 md:p-10 shadow-xl ring-1 ring-[#F97316]/30"
         >
           <div
@@ -217,7 +218,7 @@ export default function Services() {
             <div className="flex flex-col gap-3 lg:items-end lg:flex-shrink-0">
               <Link
                 href="/ai-integration-small-business"
-                className="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] transition-colors hover:bg-[#ea6c0a]"
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] transition-colors hover:bg-[#ea6c0a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Explore AI for your business
@@ -225,7 +226,7 @@ export default function Services() {
               </Link>
               <Link
                 href="/tools/missed-call-calculator"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-md text-sm font-semibold text-white/80 transition-colors hover:text-white"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-md text-sm font-semibold text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
                 style={{ border: "1px solid rgba(255,255,255,0.2)", fontFamily: "var(--font-heading)" }}
               >
                 What are missed calls costing you?

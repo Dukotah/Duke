@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Gauge, WifiOff, HelpCircle } from "lucide-react";
 
 const problems = [
@@ -22,14 +22,15 @@ const problems = [
 ];
 
 export default function Problem() {
+  const reduce = useReducedMotion();
   return (
     <section className="py-24 bg-[#FAFAF9]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-16"
         >
           <h2
@@ -52,10 +53,10 @@ export default function Problem() {
           {problems.map((p, i) => (
             <motion.div
               key={p.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduce ? false : { opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.1 }}
               className="bg-white rounded-xl p-8 shadow-sm border border-[#18181B]/5"
             >
               <div
@@ -81,10 +82,10 @@ export default function Problem() {
         </div>
 
         <motion.p
-          initial={{ opacity: 0 }}
+          initial={reduce ? false : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6, delay: 0.3 }}
           className="text-center mt-12 text-[#3F3F46]/50 text-sm"
           style={{ fontFamily: "var(--font-body)" }}
         >

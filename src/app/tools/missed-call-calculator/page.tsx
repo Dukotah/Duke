@@ -62,7 +62,7 @@ export default function MissedCallCalculator() {
   const [closeRate, setCloseRate] = useState(40);
 
   const [captureEmail, setCaptureEmail] = useState("");
-  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done">("idle");
+  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   // ── The math ───────────────────────────────────────────────────────────────
   const missedPerMonth = callsPerWeek * (missedPct / 100) * WEEKS_PER_MONTH;
@@ -75,7 +75,7 @@ export default function MissedCallCalculator() {
     if (!captureEmail.includes("@") || captureStatus !== "idle") return;
     setCaptureStatus("loading");
     try {
-      await fetch("/api/capture", {
+      const res = await fetch("/api/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -86,8 +86,13 @@ export default function MissedCallCalculator() {
           )} missed calls/mo, ${fmtMoney(avgValue)} avg job, ${closeRate}% close)`,
         }),
       });
+      if (!res.ok) {
+        setCaptureStatus("error");
+        return;
+      }
     } catch {
-      /* non-blocking — we still confirm to the user */
+      setCaptureStatus("error");
+      return;
     }
     setCaptureStatus("done");
   };
@@ -217,7 +222,11 @@ export default function MissedCallCalculator() {
                     {captureStatus === "loading" ? <Loader2 size={15} className="animate-spin" /> : "Send Breakdown"}
                   </button>
                 </div>
-                <p className="text-zinc-600 text-xs mt-2">No spam. Just your numbers and an offer to help.</p>
+                {captureStatus === "error" ? (
+                  <p className="text-red-400 text-xs mt-2">Something went wrong — email us at contact@copperbaytech.com</p>
+                ) : (
+                  <p className="text-zinc-600 text-xs mt-2">No spam. Just your numbers and an offer to help.</p>
+                )}
               </>
             )}
           </div>

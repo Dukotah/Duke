@@ -89,7 +89,7 @@ export default function WebsiteCostEstimator() {
   const [carePlan, setCarePlan] = useState(true);
 
   const [captureEmail, setCaptureEmail] = useState("");
-  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done">("idle");
+  const [captureStatus, setCaptureStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   // ── The math ───────────────────────────────────────────────────────────────
   const featuresTotal = FEATURES.reduce((sum, f) => (features[f.key] ? sum + f.cost : sum), 0);
@@ -105,7 +105,7 @@ export default function WebsiteCostEstimator() {
     if (!captureEmail.includes("@") || captureStatus !== "idle") return;
     setCaptureStatus("loading");
     try {
-      await fetch("/api/capture", {
+      const res = await fetch("/api/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -116,8 +116,13 @@ export default function WebsiteCostEstimator() {
           } (${pages} pages; ${selectedFeatures.length ? selectedFeatures.join(", ") : "no add-ons"})`,
         }),
       });
+      if (!res.ok) {
+        setCaptureStatus("error");
+        return;
+      }
     } catch {
-      /* non-blocking — we still confirm to the user */
+      setCaptureStatus("error");
+      return;
     }
     setCaptureStatus("done");
   };
@@ -269,7 +274,11 @@ export default function WebsiteCostEstimator() {
                     {captureStatus === "loading" ? <Loader2 size={15} className="animate-spin" /> : "Send Estimate"}
                   </button>
                 </div>
-                <p className="text-zinc-600 text-xs mt-2">No spam. Just your estimate and an offer to help.</p>
+                {captureStatus === "error" ? (
+                  <p className="text-red-400 text-xs mt-2">Something went wrong — email us at contact@copperbaytech.com</p>
+                ) : (
+                  <p className="text-zinc-600 text-xs mt-2">No spam. Just your estimate and an offer to help.</p>
+                )}
               </>
             )}
           </div>

@@ -164,7 +164,7 @@ export default function ServiceCityPage({
           <div className="max-w-5xl mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-16 items-start">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What&apos;s included</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4" style={{ fontFamily: "var(--font-heading)" }}>What&apos;s included</p>
                 <h2 className="text-3xl font-bold text-[#18181B] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{includesTitle}.</h2>
                 <ul className="space-y-3">
                   {includes.map((item) => (
@@ -176,7 +176,7 @@ export default function ServiceCityPage({
                 </ul>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>Industries we support</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4" style={{ fontFamily: "var(--font-heading)" }}>Industries we support</p>
                 <h2 className="text-2xl font-bold text-[#18181B] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{industriesTitle}.</h2>
                 <div className="grid grid-cols-2 gap-3">
                   {industries.map((ind) => (
@@ -211,7 +211,7 @@ export default function ServiceCityPage({
         {otherServices.length > 0 && (
           <section className="py-14 bg-white border-t border-[#18181B]/8">
             <div className="max-w-4xl mx-auto px-6 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>More for {city} businesses</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-3" style={{ fontFamily: "var(--font-heading)" }}>More for {city} businesses</p>
               <h2 className="text-2xl md:text-3xl font-bold text-[#18181B] mb-7" style={{ fontFamily: "var(--font-heading)" }}>
                 Other services we offer in {city}.
               </h2>

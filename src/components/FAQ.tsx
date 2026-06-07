@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import JsonLd, { faqSchema } from "@/components/JsonLd";
 
@@ -38,20 +38,21 @@ const faqs = [
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
+  const reduce = useReducedMotion();
 
   return (
     <section id="faq" className="py-24 bg-white">
       <JsonLd schema={faqSchema(faqs)} />
       <div className="max-w-3xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-16"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Common questions
@@ -74,16 +75,18 @@ export default function FAQ() {
           {faqs.map((faq, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
+              initial={reduce ? false : { opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.4, delay: i * 0.05 }}
               className="border border-[#18181B]/10 rounded-xl overflow-hidden"
             >
               <button
+                id={`faq-trigger-${i}`}
                 onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between px-6 py-5 text-left bg-[#FAFAF9] hover:bg-[#F4F4F2] transition-colors"
+                className="w-full flex items-center justify-between px-6 py-5 text-left bg-[#FAFAF9] hover:bg-[#F4F4F2] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                 aria-expanded={open === i}
+                aria-controls={`faq-panel-${i}`}
               >
                 <span
                   className="text-base font-semibold text-[#18181B] pr-4"
@@ -102,13 +105,15 @@ export default function FAQ() {
               <AnimatePresence initial={false}>
                 {open === i && (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
+                    initial={reduce ? false : { height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                    transition={reduce ? { duration: 0 } : { duration: 0.25, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
                     <p
+                      id={`faq-panel-${i}`}
+                      aria-labelledby={`faq-trigger-${i}`}
                       className="px-6 py-5 text-sm text-[#3F3F46]/70 leading-relaxed border-t border-[#18181B]/8 bg-white"
                       style={{ fontFamily: "var(--font-body)" }}
                     >

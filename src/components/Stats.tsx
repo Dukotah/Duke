@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 const stats = [
   {
@@ -26,14 +26,15 @@ const stats = [
 ];
 
 export default function Stats() {
+  const reduce = useReducedMotion();
   return (
     <section className="py-20 bg-[#18181B]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={reduce ? false : { opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-14"
         >
           <p
@@ -54,10 +55,10 @@ export default function Stats() {
           {stats.map((s, i) => (
             <motion.div
               key={s.label}
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduce ? false : { opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.1 }}
               className="bg-[#18181B] px-8 py-10 flex flex-col gap-3"
             >
               <p
@@ -73,7 +74,7 @@ export default function Stats() {
                 {s.label}
               </p>
               <p
-                className="text-xs text-white/40 leading-relaxed"
+                className="text-xs text-white/60 leading-relaxed"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {s.sub}

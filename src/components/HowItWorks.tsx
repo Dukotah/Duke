@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 const steps = [
   {
@@ -21,14 +21,15 @@ const steps = [
 ];
 
 export default function HowItWorks() {
+  const reduce = useReducedMotion();
   return (
     <section id="how-it-works" className="py-24 bg-[#FAFAF9]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-16"
         >
           <h2
@@ -47,15 +48,15 @@ export default function HowItWorks() {
 
         <div className="grid md:grid-cols-3 gap-8 relative">
           {/* Connector line on desktop */}
-          <div className="hidden md:block absolute top-12 left-1/6 right-1/6 h-px bg-[#18181B]/15" />
+          <div className="hidden md:block absolute top-12 left-[16.67%] right-[16.67%] h-px bg-[#18181B]/15" />
 
           {steps.map((s, i) => (
             <motion.div
               key={s.number}
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduce ? false : { opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.15 }}
               className="text-center relative"
             >
               <div

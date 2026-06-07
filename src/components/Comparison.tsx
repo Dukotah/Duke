@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Check, X, Minus } from "lucide-react";
 
 // Positions Copper Bay against the two alternatives a Sonoma County small
@@ -46,18 +46,19 @@ function CellMark({ value }: { value: Cell }) {
 }
 
 export default function Comparison() {
+  const reduce = useReducedMotion();
   return (
     <section className="bg-white py-24">
       <div className="mx-auto max-w-5xl px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="mb-14 text-center"
         >
           <p
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-[#F97316]"
+            className="mb-4 text-xs font-semibold uppercase tracking-widest text-gold-on-light"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             How we compare
@@ -78,10 +79,10 @@ export default function Comparison() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={reduce ? false : { opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6, delay: 0.1 }}
           className="overflow-hidden rounded-2xl border border-[#18181B]/10"
         >
           {/* Header row */}

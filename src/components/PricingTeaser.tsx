@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Globe, Server, ShieldCheck, ArrowRight } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { PRICING } from "@/config/pricing";
@@ -35,18 +35,19 @@ const anchors = [
 ];
 
 export default function PricingTeaser() {
+  const reduce = useReducedMotion();
   return (
     <section className="bg-[#FAFAF9] py-24">
       <div className="mx-auto max-w-5xl px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
           className="mb-12 text-center"
         >
           <p
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-[#F97316]"
+            className="mb-4 text-xs font-semibold uppercase tracking-widest text-gold-on-light"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Straightforward Pricing
@@ -72,10 +73,10 @@ export default function PricingTeaser() {
             return (
               <motion.div
                 key={a.label}
-                initial={{ opacity: 0, y: 15 }}
+                initial={reduce ? false : { opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
+                transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.1 }}
               >
                 <Link
                   href={a.href}
@@ -119,7 +120,7 @@ export default function PricingTeaser() {
                     {a.note}
                   </p>
                   <span
-                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#F97316]"
+                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-on-light"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     See details
@@ -132,10 +133,10 @@ export default function PricingTeaser() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={reduce ? false : { opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={reduce ? { duration: 0 } : { duration: 0.5, delay: 0.3 }}
           className="mt-10 text-center"
         >
           <Link
