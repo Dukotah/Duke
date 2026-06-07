@@ -59,6 +59,9 @@ const nextConfig: NextConfig = {
       // Duplicate audit tool with no lead capture — funnel it to the real /tools
       // suite so warm prospects don't slip through uncaptured.
       { source: "/tools/health-check", destination: "/tools", permanent: true },
+      // The nav uses the /#contact anchor, but people type/​link /contact directly —
+      // send that to the homepage contact section instead of a 404.
+      { source: "/contact", destination: "/#contact", permanent: true },
       // Consolidate duplicate service pages onto one canonical URL each to stop
       // keyword cannibalization. The bare /cybersecurity, /it-support,
       // /web-development pages and the /services/* variants all targeted the

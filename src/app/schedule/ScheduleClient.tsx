@@ -115,6 +115,8 @@ export default function ScheduleClient() {
           elapsedMs: Date.now() - startedAt,
           attribution: getAttribution(),
         }),
+        // Never spin forever if the API hangs — fall through to the error state.
+        signal: AbortSignal.timeout(15000),
       });
       if (!res.ok) throw new Error("Failed");
       // Macro-conversion: a completed booking request.

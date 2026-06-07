@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { captureContactLead } from "@/lib/crm/intake";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
 import { formatAttribution } from "@/lib/attribution";
+import { withTimeout } from "@/lib/withTimeout";
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,7 +33,12 @@ export async function POST(req: NextRequest) {
     // in the /crm queue (deduped by email). Isolated + non-fatal so a CRM/Redis
     // hiccup never breaks the visitor's submission or the email notifications.
     try {
-      await captureContactLead({ name, business, email, phone, service, message, attribution: source });
+      // Timed so a hung Redis can't stall the whole submission (lead blackout).
+      await withTimeout(
+        captureContactLead({ name, business, email, phone, service, message, attribution: source }),
+        3000,
+        "captureContactLead",
+      );
     } catch (e) {
       console.error("Contact→CRM bridge failed (non-fatal):", e);
     }
@@ -60,6 +66,7 @@ export async function POST(req: NextRequest) {
       fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(10000),
         body: JSON.stringify({
           from: "Copper Bay Tech <contact@copperbaytech.com>",
           to: ["contact@copperbaytech.com"],
@@ -81,6 +88,7 @@ export async function POST(req: NextRequest) {
       fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(10000),
         body: JSON.stringify({
           from: "Duke @ Copper Bay Tech <contact@copperbaytech.com>",
           to: [email],

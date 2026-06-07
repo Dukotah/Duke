@@ -43,6 +43,8 @@ export default function Contact() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, elapsedMs: nowMs() - startedAt, attribution: getAttribution() }),
+        // Never let the UI spin forever if the API hangs — surface an error instead.
+        signal: AbortSignal.timeout(15000),
       });
       if (res.ok) {
         track("contact_form_submit");
