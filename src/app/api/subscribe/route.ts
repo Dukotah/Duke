@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimit(`subscribe:${clientIp(req)}`, { limit: 5, windowSec: 600 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests — please try again shortly." }, { status: 429 });
+    }
     const body = await req.json();
     const { email } = body;
 

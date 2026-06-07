@@ -20,7 +20,7 @@ const AI_CRAWLERS = [
   "CCBot",            // Common Crawl (feeds many LLM datasets)
 ];
 
-const DISALLOW = ["/api/", "/crm", "/thank-you"];
+const DISALLOW = ["/api/", "/crm", "/thank-you", "/report"];
 
 export default function robots(): MetadataRoute.Robots {
   const aiRules: MetadataRoute.Robots["rules"] = AI_CRAWLERS.map((bot) => ({

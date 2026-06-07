@@ -6,6 +6,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { Check, Clock, Calendar, ArrowRight, ArrowLeft } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 
 const services = [
   { id: "website", label: "Website Design / Rebuild", icon: "🌐", duration: "45 min", desc: "Discuss your current site, goals, and what a new one would look like." },
@@ -67,6 +68,10 @@ export default function ScheduleClient() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  // Spam gates, matching the contact form: a filled honeypot or a near-instant
+  // submit is dropped server-side. startedAt anchors the submit-timing check.
+  const [startedAt] = useState(() => Date.now());
+  const [honeypot, setHoneypot] = useState("");
 
   // Top of the booking funnel — fire once on mount so drop-off between
   // landing here and a completed request is measurable.
@@ -106,6 +111,9 @@ export default function ScheduleClient() {
           phone: form.phone,
           service: selectedService?.label ?? "Consultation",
           message,
+          company_website: honeypot,
+          elapsedMs: Date.now() - startedAt,
+          attribution: getAttribution(),
         }),
       });
       if (!res.ok) throw new Error("Failed");
@@ -329,6 +337,18 @@ export default function ScheduleClient() {
                   className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm resize-none"
                 />
               </div>
+
+              {/* Honeypot — hidden from humans; bots that fill it are dropped server-side. */}
+              <input
+                type="text"
+                name="company_website"
+                value={honeypot}
+                onChange={e => setHoneypot(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="absolute left-[-9999px] h-0 w-0 opacity-0"
+              />
 
               {error && <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 

@@ -56,7 +56,7 @@ export default function Contact() {
   };
 
   const inputClass =
-    "w-full px-4 py-3 rounded-md border border-[#18181B]/15 bg-white text-[#3F3F46] text-sm focus:outline-none focus:ring-2 focus:ring-[#18181B]/30 transition placeholder-[#3F3F46]/30";
+    "w-full px-4 py-3 rounded-md border border-[#18181B]/15 bg-white text-[#3F3F46] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-1 transition placeholder-[#3F3F46]/30";
 
   const labelClass = "block text-xs font-semibold uppercase tracking-widest text-[#18181B]/60 mb-1.5";
 
@@ -172,12 +172,12 @@ export default function Contact() {
                 <div>
                   <label htmlFor="contact-name" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Your Name *</label>
                   <input id="contact-name" {...register("name", { required: true })} placeholder="Jane Smith" className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.name ? "true" : undefined} aria-describedby={errors.name ? "contact-name-error" : undefined} />
-                  {errors.name && <p id="contact-name-error" className="text-red-500 text-xs mt-1">Required</p>}
+                  {errors.name && <p id="contact-name-error" role="alert" className="text-red-700 text-xs mt-1">Required</p>}
                 </div>
                 <div>
                   <label htmlFor="contact-business" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Business Name *</label>
                   <input id="contact-business" {...register("business", { required: true })} placeholder="Acme Co." className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.business ? "true" : undefined} aria-describedby={errors.business ? "contact-business-error" : undefined} />
-                  {errors.business && <p id="contact-business-error" className="text-red-500 text-xs mt-1">Required</p>}
+                  {errors.business && <p id="contact-business-error" role="alert" className="text-red-700 text-xs mt-1">Required</p>}
                 </div>
               </div>
 
@@ -185,7 +185,7 @@ export default function Contact() {
                 <div>
                   <label htmlFor="contact-email" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Email *</label>
                   <input id="contact-email" {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })} type="email" placeholder="jane@example.com" className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.email ? "true" : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} />
-                  {errors.email && <p id="contact-email-error" className="text-red-500 text-xs mt-1">{errors.email.type === "pattern" ? "Enter a valid email" : "Required"}</p>}
+                  {errors.email && <p id="contact-email-error" role="alert" className="text-red-700 text-xs mt-1">{errors.email.type === "pattern" ? "Enter a valid email" : "Required"}</p>}
                 </div>
                 <div>
                   <label htmlFor="contact-phone" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Phone (optional)</label>
@@ -204,7 +204,7 @@ export default function Contact() {
                   <option value="custom-dev">Custom Web Application</option>
                   <option value="other">Not sure — I need advice</option>
                 </select>
-                {errors.service && <p id="contact-service-error" className="text-red-500 text-xs mt-1">Please select a service</p>}
+                {errors.service && <p id="contact-service-error" role="alert" className="text-red-700 text-xs mt-1">Please select a service</p>}
               </div>
 
               <div>

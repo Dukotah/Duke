@@ -23,10 +23,9 @@ const schema = {
     name: "Copper Bay Tech",
     url: "https://copperbaytech.com",
     telephone: "+17072396725",
-    email: "duke@copperbaytech.com",
+    email: "contact@copperbaytech.com",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Petaluma",
       addressRegion: "CA",
       addressCountry: "US",
     },

@@ -284,7 +284,7 @@ export default function ITQuiz() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
                 <Link
-                  href="/#contact"
+                  href="/schedule"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >

@@ -57,7 +57,7 @@ const faqs = [
   },
   {
     q: "What does a monthly retainer cost?",
-    a: "Retainer pricing depends on team size and scope. Most small businesses (5–20 employees) fall in the $400–$900/month range. We quote flat monthly fees — no hourly billing.",
+    a: "Retainer pricing depends on team size and scope. Plans start at $550/month for teams of 1–5, and most small businesses (5–20 employees) land between $550 and $1,200/month. We quote flat monthly fees — no hourly billing.",
   },
 ];
 

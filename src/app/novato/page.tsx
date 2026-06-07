@@ -11,7 +11,7 @@ export default function NovatoPage() {
   return (
     <CityPage
       city="Novato"
-      county="Marin / Sonoma County"
+      county="Marin County"
       description="On the border of Marin and Sonoma counties, Novato is home to professional services firms, medical offices, and established local businesses. We understand the compliance requirements and professional standards that Novato clients expect."
       painPoints={[
         "Medical and dental offices with outdated IT that doesn't meet HIPAA requirements",

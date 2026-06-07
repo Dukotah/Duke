@@ -1,6 +1,26 @@
 # Handoff: Copper Bay Tech (`/duke`) — building locally, push deferred
 
-_Last updated: 2026-06-06_
+_Last updated: 2026-06-07_
+
+## Latest (2026-06-07) — 9-agent sweep + polish batch (NOT pushed)
+Ran a 9-agent fan-out (5 web-research + 4 codebase-audit). Findings + prioritized backlog
+captured in new **`IMPROVEMENTS.md`** (read it — it's the "what to improve" doc; the old
+`BROWSER_QA_TASKLIST.md` was only an empty checklist). Then applied the highest-value,
+lowest-risk fixes:
+- **Data integrity:** cyber JSON-LD `highPrice` $2,500→$1,200 (all `pricing/page.tsx`
+  AggregateOffers now reference `PRICING.*` numbers); IT prose "$400–$900"→"$550+" (2 files);
+  Novato county Marin-only.
+- **NAP:** stripped `addressLocality:"Petaluma"` from 6 schema blocks (3 `/services/*` + 3
+  hand-built city pages) per the service-area policy; fixed visible Petaluma badge + `duke@`→`contact@`.
+- **Lead reliability:** `/api/audit-lead` no longer swallows Resend errors (returns 500);
+  `/api/subscribe` rate-limited; `/schedule` now sends attribution + honeypot + submit-timing;
+  ITQuiz result CTA → `/schedule`.
+- **SEO/a11y:** `/report` noindex (new layout + robots disallow); contact-form errors
+  AA-contrast + `role="alert"` + focus-visible ring.
+- Gates: `tsc` ✓ · `eslint` ✓ · `next build` ✓. **Committed locally, not pushed.**
+- **Next up (see IMPROVEMENTS.md §3):** testimonial FTC disclaimer fix, city-page canonicals,
+  og:image coverage, blog FAQPage schema, orange-on-light contrast token, reduced-motion gating,
+  tool-widget error states.
 
 ## Latest (2026-06-06, part 10) — pages batch + DEPLOY #2
 Shipped via a 7-agent workflow + my template work: **#26** `/locations` hub (matrix of every city × services, from `serviceCities.ts`), **#17/#18** `/process` page (how-we-work + fit/not-fit), **#21** visible breadcrumbs in `ServiceCityPage` + `CityPage` (+ BreadcrumbList schema, city crumb → `/locations`), **#27** visible "Updated <date>" on blog posts that lacked one, **#24** hub FAQs (already present, no change). Wired `/locations`+`/process` into sitemap + footer. Fixed the `/process` agent's Nav bug (dark hero needs default `<Nav />`, not `light`). Build now **172 static pages**; tsc+eslint+link-audit+build clean. Pushed → Vercel (deploy #2).

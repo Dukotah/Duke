@@ -168,7 +168,7 @@ export default function Article() {
               </ul>
 
               <p className="text-[#3F3F46]/70 leading-relaxed mb-8">
-                Copper Bay Tech&apos;s IT support is month-to-month, flat-fee, and comes with a direct line — not a ticket queue. Most clients in the $400–$900/month range get the same access a large company&apos;s IT department would provide.
+                Copper Bay Tech&apos;s IT support is month-to-month, flat-fee, and comes with a direct line — not a ticket queue. Plans start at $550/month for small teams, and most clients get the same access a large company&apos;s IT department would provide.
               </p>
 
               <div className="bg-[#18181B] rounded-xl p-6 text-center">

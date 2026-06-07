@@ -23,10 +23,9 @@ const schema = {
     name: "Copper Bay Tech",
     url: "https://copperbaytech.com",
     telephone: "+17072396725",
-    email: "duke@copperbaytech.com",
+    email: "contact@copperbaytech.com",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Petaluma",
       addressRegion: "CA",
       addressCountry: "US",
     },
@@ -52,7 +51,7 @@ export default function WebDevelopmentPage() {
       <section className="bg-[#18181B] text-white pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
-            Web Development · Petaluma, CA
+            Web Development · Sonoma County, CA
           </span>
           <h1
             className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"

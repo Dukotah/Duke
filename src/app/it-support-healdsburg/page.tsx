@@ -27,7 +27,7 @@ const schema = {
     "@type": "LocalBusiness",
     name: "Copper Bay Tech",
     telephone: "+17072396725",
-    address: { "@type": "PostalAddress", addressLocality: "Petaluma", addressRegion: "CA" },
+    address: { "@type": "PostalAddress", addressRegion: "CA" },
   },
   areaServed: { "@type": "City", name: "Healdsburg", containedInPlace: { "@type": "State", name: "California" } },
   description: "Managed IT support for Healdsburg small businesses.",

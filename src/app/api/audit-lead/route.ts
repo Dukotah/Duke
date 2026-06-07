@@ -111,33 +111,46 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`;
 
-    // Send report to the visitor
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: "Duke at Copper Bay Tech <contact@copperbaytech.com>",
-        to: [email],
-        subject: `Your website scored ${score}/100 — here's what to fix`,
-        html,
+    const [reportRes, notifyRes] = await Promise.all([
+      // Send report to the visitor
+      fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: "Duke at Copper Bay Tech <contact@copperbaytech.com>",
+          to: [email],
+          subject: `Your website scored ${score}/100 — here's what to fix`,
+          html,
+        }),
       }),
-    });
+      // Also notify yourself
+      fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: "Copper Bay Tech <contact@copperbaytech.com>",
+          to: ["contact@copperbaytech.com"],
+          subject: `Audit lead: ${email} — score ${score} for ${url}`,
+          html: `<p><strong>Email:</strong> ${email}</p><p><strong>URL:</strong> ${url}</p><p><strong>Score:</strong> ${score}/100</p>`,
+        }),
+      }),
+    ]);
 
-    // Also notify yourself
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: "Copper Bay Tech <contact@copperbaytech.com>",
-        to: ["contact@copperbaytech.com"],
-        subject: `Audit lead: ${email} — score ${score} for ${url}`,
-        html: `<p><strong>Email:</strong> ${email}</p><p><strong>URL:</strong> ${url}</p><p><strong>Score:</strong> ${score}/100</p>`,
-      }),
-    });
+    // Don't silently swallow Resend failures — a bad key or outage would
+    // otherwise show the visitor "success" while the report + lead vanish.
+    // (The CRM bridge above already captured the lead independently.)
+    if (!reportRes.ok || !notifyRes.ok) {
+      console.error(
+        "Audit lead Resend error:",
+        "report", reportRes.status, !reportRes.ok ? await reportRes.text() : "",
+        "notify", notifyRes.status, !notifyRes.ok ? await notifyRes.text() : "",
+      );
+      return NextResponse.json({ error: "Failed to send report" }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Audit lead route error:", err);
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
