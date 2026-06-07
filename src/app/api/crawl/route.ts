@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validateAuditUrl } from "@/lib/validate-url";
 
 interface CrawlCheck {
   label: string;
@@ -9,20 +10,12 @@ interface CrawlCheck {
 export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
-    if (!url || typeof url !== "string") {
-      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+    const validated = validateAuditUrl(url);
+    if (!validated.ok) {
+      return NextResponse.json({ error: validated.reason }, { status: 400 });
     }
-
-    let normalizedUrl = url.trim();
-    if (!normalizedUrl.startsWith("http://") && !normalizedUrl.startsWith("https://")) {
-      normalizedUrl = "https://" + normalizedUrl;
-    }
-    let parsed: URL;
-    try {
-      parsed = new URL(normalizedUrl);
-    } catch {
-      return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
-    }
+    const normalizedUrl = validated.url;
+    const parsed = new URL(normalizedUrl);
 
     const base = `${parsed.protocol}//${parsed.host}`;
     const checks: CrawlCheck[] = [];

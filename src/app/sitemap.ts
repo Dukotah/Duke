@@ -108,6 +108,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/it-health-check`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/audit`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/business-analysis`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     // Industry pages
     { url: `${BASE}/industries`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/industries/healthcare`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
