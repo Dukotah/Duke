@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
+import { PRICING } from "@/config/pricing";
 import { track } from "@/lib/analytics";
 
 const trustSignals = [
@@ -82,6 +83,19 @@ export default function Hero() {
           >
             Custom websites, IT support, and cybersecurity for Sonoma County
             businesses. Enterprise-grade thinking — without the enterprise price tag.
+          </p>
+
+          {/* Price transparency — our biggest differentiator: every local competitor
+              hides pricing behind a call. We publish it. Numbers from config/pricing.ts. */}
+          <p
+            className="mx-auto mb-9 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-sm font-semibold text-white/85 sm:text-base"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            <span>Websites from <span className="text-[#F97316]">{PRICING.web.startingAt}</span></span>
+            <span aria-hidden className="text-white/30">·</span>
+            <span>Managed IT from <span className="text-[#F97316]">{PRICING.it.startingAt}{PRICING.it.unit}</span></span>
+            <span aria-hidden className="text-white/30">·</span>
+            <span className="font-medium text-white/55">Prices published, no hourly billing</span>
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">

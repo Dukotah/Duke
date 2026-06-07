@@ -133,7 +133,7 @@ const tiers = [
       { label: "E-commerce / booking integration", price: "+ $500–$1,500" },
       { label: "Monthly maintenance retainer", price: "$95/mo" },
     ],
-    cta: "Get a Quote",
+    cta: "Get a Fixed-Price Quote",
     ctaHref: "/#contact",
   },
   {
@@ -164,8 +164,8 @@ const tiers = [
       { label: "Cloud migration (per user)", price: "+ $75–$150" },
       { label: "Process automation build-out", price: "Quoted separately" },
     ],
-    cta: "Get a Quote",
-    ctaHref: "/#contact",
+    cta: "Get My Free IT Estimate",
+    ctaHref: "/schedule",
   },
   {
     icon: ShieldCheck,
@@ -192,8 +192,8 @@ const tiers = [
       { label: "Ongoing monthly monitoring", price: "+ $200/mo" },
       { label: "Incident response plan document", price: "+ $400" },
     ],
-    cta: "Book an Audit",
-    ctaHref: "/#contact",
+    cta: "Book a Free Security Call",
+    ctaHref: "/schedule",
   },
   {
     icon: Sparkles,
@@ -216,8 +216,8 @@ const tiers = [
       { label: "Monthly plan (AI usage + tuning)", price: "from $200/mo" },
       { label: "Extra automations / integrations", price: "Quoted separately" },
     ],
-    cta: "Book a Free AI Call",
-    ctaHref: "/#contact",
+    cta: "Book a Free AI Demo",
+    ctaHref: "/schedule",
   },
 ];
 

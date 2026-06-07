@@ -196,17 +196,19 @@ export default function AuditResults({ data }: { data: AuditData }) {
           Free Fix Consultation
         </p>
         <h4 className="text-white text-2xl font-black mb-2 tracking-tight">
-          Want us to fix this?
+          {data.score >= 90
+            ? "Want to keep it fast?"
+            : `Your site scored ${data.score}/100 — want us to fix it?`}
         </h4>
         <p className="text-pretty text-zinc-400 text-sm leading-relaxed mb-6 max-w-sm mx-auto">
-          Copper Bay Tech can resolve most performance issues in under a week. Get a
-          free 30-minute call to see exactly what we&apos;d do.
+          Copper Bay Tech can resolve most performance issues in under a week. Book a
+          free 15-minute call and we&apos;ll walk through your results together.
         </p>
         <Link
-          href="/#contact"
+          href="/schedule?ref=audit"
           className="group inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 active:scale-[0.98] text-white font-bold px-8 py-3 rounded-full transition-all text-sm shadow-lg shadow-orange-500/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-500/30"
         >
-          Get a Free Performance Review
+          Book a Free 15-min Call
           <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
