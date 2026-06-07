@@ -20,6 +20,11 @@ interface Lead {
   tier_reason: string; builder: string; industry_fit: string;
   outreach_score: number; pitch: string;
   previewUrl?: string | null;
+  demoStatus?: string | null;
+  demoFlags?: string[] | null;
+  demoCategory?: string | null;
+  claimByDate?: string | null;
+  thumbnailUrl?: string | null;
 }
 
 interface LeadState {
@@ -260,6 +265,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
     setActivityKey((k) => k + 1);
   };
 
+  const needsReview = lead.demoStatus === "needs_review";
   const tier = lead.tier;
   const todayISO = new Date().toISOString().slice(0, 10);
   const tomorrowISO = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); })();
@@ -320,7 +326,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
       {showEmail && (
         <EmailComposer
-          lead={{ id: lead.id, name: lead.name, contactName: lead.contact_name, email: lead.email, city: lead.city }}
+          lead={{ id: lead.id, name: lead.name, contactName: lead.contact_name, email: lead.email, city: lead.city, previewUrl: lead.previewUrl ?? undefined, claimByDate: lead.claimByDate ?? undefined }}
           repName={repName}
           onClose={() => setShowEmail(false)}
           onSent={handleEmailSent}
@@ -405,11 +411,19 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             {/* SEND EMAIL */}
             {lead.email && (
               <div className="px-5 py-4 border-b border-white/[0.06]">
-                <button onClick={() => setShowEmail(true)}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-bold border border-[#F97316]/30 bg-[#F97316]/10 text-[#F97316] hover:bg-[#F97316]/20 transition-all active:scale-95"
-                  style={H}>
-                  <Mail size={16} />Send Email
-                </button>
+                {needsReview ? (
+                  <div className="flex items-start gap-3 w-full py-3.5 px-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-300"
+                    style={H}>
+                    <span className="text-lg leading-none shrink-0">⚠️</span>
+                    <p className="text-sm font-semibold leading-snug">Demo needs review before sending — verify the preview first</p>
+                  </div>
+                ) : (
+                  <button onClick={() => setShowEmail(true)}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-bold border border-[#F97316]/30 bg-[#F97316]/10 text-[#F97316] hover:bg-[#F97316]/20 transition-all active:scale-95"
+                    style={H}>
+                    <Mail size={16} />Send Email
+                  </button>
+                )}
 
                 {/* Follow-up cadence: recommended next touch + the full plan */}
                 {cadence.next ? (
@@ -635,14 +649,26 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                   </div>
                 )}
                 {lead.previewUrl && (
-                  <div className="flex items-center gap-2">
-                    <Globe size={13} className="text-violet-400/70 shrink-0" />
-                    <a href={lead.previewUrl} target="_blank" rel="noopener noreferrer"
-                      className="text-sm text-violet-300 hover:text-violet-200 transition-colors flex-1 truncate" style={H}>
-                      Preview site we built
-                    </a>
-                    <span className="text-[10px] text-violet-300/60 bg-violet-400/10 border border-violet-400/20 px-2 py-0.5 rounded-full shrink-0" style={H}>Demo</span>
-                    <CopyBtn text={lead.previewUrl} />
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <Globe size={13} className="text-violet-400/70 shrink-0" />
+                      <a href={lead.previewUrl} target="_blank" rel="noopener noreferrer"
+                        className="text-sm text-violet-300 hover:text-violet-200 transition-colors flex-1 truncate" style={H}>
+                        Preview site we built
+                      </a>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 border ${
+                        needsReview
+                          ? "text-amber-300/80 bg-amber-400/10 border-amber-400/20"
+                          : "text-violet-300/60 bg-violet-400/10 border-violet-400/20"
+                      }`} style={H}>{needsReview ? "Needs Review" : "Demo"}</span>
+                      <CopyBtn text={lead.previewUrl} />
+                    </div>
+                    {lead.thumbnailUrl && (
+                      <img src={lead.thumbnailUrl} alt="Demo preview" className="w-full rounded-xl mt-2 border border-violet-400/10" loading="lazy" />
+                    )}
+                    {lead.claimByDate && (
+                      <p className="text-[11px] text-violet-300/60 mt-1" style={H}>Offer expires {lead.claimByDate}</p>
+                    )}
                   </div>
                 )}
                 {lead.address && (

@@ -45,6 +45,23 @@ Thanks,
 Copper Bay Tech`,
   },
   {
+    key: "demo_intro",
+    label: "🎁 Demo intro",
+    subject: "Here is a site I built for {business}",
+    body: `Hi {name},
+
+I put together a free demo of what a new site could look like for {business}:
+{demoUrl}
+
+Take a look and let me know what you think. If you like the direction, I can have a real version live in under two weeks.
+
+Worth a 10-minute call this week?
+
+Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
     key: "follow_up",
     label: "🔁 Follow Up 1 (bump)",
     subject: "Following up, {name}",
@@ -209,15 +226,20 @@ export interface PersonalizeVars {
   business?: string;
   city?: string;
   fromName?: string;
+  demoUrl?: string;
+  claimByDate?: string;
 }
 
 // {name} is the recipient greeting — falls back to "there" when no contact
 // person is known, so previews match what's actually sent (see lib/outreach
 // personalize). {business} is the company name.
+// Variables: {name} {business} {city} {fromName} {demoUrl} {claimByDate}
 export function personalize(text: string, vars: PersonalizeVars): string {
   return text
     .replace(/\{name\}/gi, vars.name?.trim() || "there")
     .replace(/\{business\}/gi, vars.business ?? "")
     .replace(/\{city\}/gi, vars.city ?? "")
-    .replace(/\{fromName\}/gi, vars.fromName ?? "");
+    .replace(/\{fromName\}/gi, vars.fromName ?? "")
+    .replace(/\{demoUrl\}/gi, vars.demoUrl ?? "")
+    .replace(/\{claimByDate\}/gi, vars.claimByDate ?? "");
 }

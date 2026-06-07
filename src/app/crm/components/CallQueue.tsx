@@ -12,6 +12,7 @@ interface Lead {
   industry_fit: string; outreach_score: number; pitch: string; best_contact: string;
   source?: "inbound" | "manual"; // present on custom leads; "inbound" = warm hand-raiser
   previewUrl?: string | null; // demo site built by the /websites factory, if any
+  demoStatus?: string | null; // 'ready' | 'needs_review' | 'archived'
 }
 
 interface LeadState {
@@ -171,7 +172,11 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
             {lead.phone && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Phone size={9} />{lead.phone}</span>}
             {lead.email && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Mail size={9} />{lead.email.split("@")[0]}@…</span>}
             {callCount > 0 && <span className="text-xs text-white/25 flex items-center gap-1" style={H}><PhoneCall size={9} />{callCount}x</span>}
-            {lead.previewUrl && <span className="text-xs text-violet-300 bg-violet-400/10 border border-violet-400/20 px-1.5 py-0.5 rounded-full flex items-center gap-1" style={H} title="A demo site has been built for this lead — open the lead to share it"><Globe size={9} />Demo</span>}
+            {lead.previewUrl && <span className={`text-xs px-1.5 py-0.5 rounded-full flex items-center gap-1 border ${
+              lead.demoStatus === "needs_review"
+                ? "text-amber-300 bg-amber-400/10 border-amber-400/20"
+                : "text-violet-300 bg-violet-400/10 border-violet-400/20"
+            }`} style={H} title={lead.demoStatus === "needs_review" ? "Demo needs review — verify before sharing" : "A demo site has been built for this lead — open the lead to share it"}><Globe size={9} />Demo</span>}
             {lastOutcome && <span className={`text-xs ${lastOutcome.color}`} style={H}>{lastOutcome.label}</span>}
             {isStale(state) && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full" style={H}>{getStaleDays(state)}d ago</span>}
           </div>

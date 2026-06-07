@@ -339,9 +339,18 @@ export async function getCustomLeads(userId: string): Promise<CustomLead[]> {
 // /websites manifest share. Stored in ONE global hash so the whole queue is
 // enriched with a single HGETALL.
 
+export type DemoStatus = "ready" | "needs_review" | "archived";
+
 export interface LeadPreview {
   previewUrl: string;
   linkedAt: string;
+  status?: DemoStatus;
+  flags?: string[];
+  category?: string;
+  area?: string;
+  claimByDate?: string;
+  thumbnailUrl?: string;
+  slug?: string;
 }
 
 const LEAD_PREVIEWS_KEY = "lead_previews";
@@ -354,15 +363,43 @@ export function previewKey(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
-export async function setLeadPreview(name: string, previewUrl: string): Promise<void> {
+function normalizeDemoStatus(raw: string | undefined): DemoStatus {
+  if (raw === "needs-review" || raw === "needs_review") return "needs_review";
+  if (raw === "archived") return "archived";
+  return "ready";
+}
+
+// Input type for the optional demo-package extras. status accepts any string
+// and is normalized to DemoStatus inside setLeadPreview.
+export type LeadPreviewExtras = Partial<Omit<LeadPreview, "previewUrl" | "linkedAt" | "status">> & {
+  status?: string;
+};
+
+export async function setLeadPreview(
+  name: string,
+  previewUrl: string,
+  extra: LeadPreviewExtras = {}
+): Promise<void> {
   const key = previewKey(name);
   if (!key || !previewUrl) return;
   const redis = getRedis();
-  const value: LeadPreview = { previewUrl, linkedAt: new Date().toISOString() };
+  const value: LeadPreview = {
+    previewUrl,
+    linkedAt: new Date().toISOString(),
+    status: normalizeDemoStatus(extra.status as string | undefined),
+    // Only store non-empty optional fields so old readers treat missing as absent
+    ...(extra.flags && extra.flags.length > 0 ? { flags: extra.flags } : {}),
+    ...(extra.category ? { category: extra.category } : {}),
+    ...(extra.area ? { area: extra.area } : {}),
+    ...(extra.claimByDate ? { claimByDate: extra.claimByDate } : {}),
+    ...(extra.thumbnailUrl ? { thumbnailUrl: extra.thumbnailUrl } : {}),
+    ...(extra.slug ? { slug: extra.slug } : {}),
+  };
   await redis.hset(LEAD_PREVIEWS_KEY, { [key]: JSON.stringify(value) });
 }
 
 // Returns a map of normalized-name → previewUrl for enriching the lead queue.
+// Kept intact so any future caller still compiles without changes.
 export async function getLeadPreviews(): Promise<Record<string, string>> {
   const redis = getRedis();
   const all = (await redis.hgetall(LEAD_PREVIEWS_KEY)) as Record<string, unknown> | null;
@@ -373,6 +410,31 @@ export async function getLeadPreviews(): Promise<Record<string, string>> {
       // Upstash may auto-deserialize JSON values back to objects, so accept both.
       const parsed = (typeof v === "string" ? JSON.parse(v) : v) as LeadPreview;
       if (parsed?.previewUrl) out[k] = parsed.previewUrl;
+    } catch {
+      /* skip malformed entry */
+    }
+  }
+  return out;
+}
+
+// Returns the full demo package per normalized-name key.
+// CRITICAL: tolerates legacy bare-URL string values stored before this change —
+// reconstructs { previewUrl, linkedAt: '' } so callers always get a usable object.
+export async function getLeadPreviewObjects(): Promise<Record<string, LeadPreview>> {
+  const redis = getRedis();
+  const all = (await redis.hgetall(LEAD_PREVIEWS_KEY)) as Record<string, unknown> | null;
+  if (!all) return {};
+  const out: Record<string, LeadPreview> = {};
+  for (const [k, v] of Object.entries(all)) {
+    try {
+      const parsed = typeof v === "string" ? JSON.parse(v) : v;
+      // Legacy bare-string value: wrap it into a minimal LeadPreview
+      if (typeof parsed === "string") {
+        out[k] = { previewUrl: parsed, linkedAt: "" };
+      } else if (parsed && typeof parsed === "object" && (parsed as LeadPreview).previewUrl) {
+        out[k] = parsed as LeadPreview;
+      }
+      // If neither condition applies (malformed), skip the entry
     } catch {
       /* skip malformed entry */
     }

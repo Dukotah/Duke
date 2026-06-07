@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCustomLeads, getAllClaims, getTerritory, getLeadPreviews, previewKey } from "@/lib/db";
+import { getCustomLeads, getAllClaims, getTerritory, getLeadPreviewObjects, previewKey } from "@/lib/db";
 
 export const CSV_URL =
   "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/claude/lead-data-sourcing-eyOeN/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
@@ -34,7 +34,13 @@ export interface Lead {
   pitch: string;
   is_chain: string;
   /** Demo/preview site built for this prospect by the /websites factory, if any. */
-  previewUrl?: string;
+  previewUrl?: string | null;
+  demoStatus?: string | null;
+  demoFlags?: string[] | null;
+  demoCategory?: string | null;
+  demoArea?: string | null;
+  claimByDate?: string | null;
+  thumbnailUrl?: string | null;
 }
 
 let cachedLeads: Lead[] | null = null;
@@ -255,12 +261,21 @@ export async function GET(req: NextRequest) {
     const claims = await getAllClaims();
     const claimMap: Record<string, { userId: string; repName: string }> = {};
     for (const c of claims) claimMap[c.leadId] = { userId: c.userId, repName: c.repName };
-    const previews = await getLeadPreviews();
-    const leads = pageLeads.map((l) => ({
-      ...l,
-      claimedBy: claimMap[l.id] ?? null,
-      previewUrl: previews[previewKey(l.name)] ?? null,
-    }));
+    const previews = await getLeadPreviewObjects();
+    const leads = pageLeads.map((l) => {
+      const pkg = previews[previewKey(l.name)];
+      return {
+        ...l,
+        claimedBy: claimMap[l.id] ?? null,
+        previewUrl: pkg?.previewUrl ?? null,
+        demoStatus: pkg?.status ?? null,
+        demoFlags: pkg?.flags ?? null,
+        demoCategory: pkg?.category ?? null,
+        demoArea: pkg?.area ?? null,
+        claimByDate: pkg?.claimByDate ?? null,
+        thumbnailUrl: pkg?.thumbnailUrl ?? null,
+      };
+    });
 
     const counties = [...new Set(all.map((l) => l.county).filter(Boolean))].sort();
     const niches = [...new Set(all.map((l) => l.category).filter(Boolean))].sort();

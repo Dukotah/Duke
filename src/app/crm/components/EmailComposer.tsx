@@ -20,6 +20,8 @@ interface ComposerLead {
   contactName?: string;
   email: string;
   city: string;
+  previewUrl?: string;
+  claimByDate?: string;
 }
 
 interface Props {
@@ -70,7 +72,8 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
 
   // {name} greeting uses the contact's first name when known, else falls back
   // to "there" (handled in personalize); {business} carries the company name.
-  const vars = { name: firstName(lead.contactName), business: lead.name, city: lead.city, fromName };
+  // {demoUrl} and {claimByDate} are substituted when the lead has a demo package.
+  const vars = { name: firstName(lead.contactName), business: lead.name, city: lead.city, fromName, demoUrl: lead.previewUrl ?? "", claimByDate: lead.claimByDate ?? "" };
 
   const saveEdits = () => {
     saveTemplateOverride(templateKey, subject, body);
@@ -205,7 +208,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
                     </div>
                   )}
                 </div>
-                <p className="text-xs text-white/25 mb-2" style={H}>Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
+                <p className="text-xs text-white/25 mb-2" style={H}>Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}, {"{demoUrl}"}, {"{claimByDate}"}</p>
                 <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={11}
                   placeholder="Write your message…"
                   className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50 leading-relaxed" style={H} />
