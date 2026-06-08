@@ -895,3 +895,108 @@ export async function getWeeklyCallHistory(userId: string): Promise<{ date: stri
   }
   return result;
 }
+
+// ─── A/B subject-line testing ─────────────────────────────────────────────────
+// Per-variant counters so we can compare cold-email subject lines on real
+// engagement. Each variant is a small Redis hash `abtest:<id>` with sent/opened/
+// clicked/replied tallies, indexed in the `abtest:variants` set. Opens/clicks
+// are credited from the Resend webhook, which reads the variant id stored on the
+// outreach-log entry the email was sent under.
+
+export interface AbVariantStats {
+  variantId: string;
+  subject: string;
+  sent: number;
+  opened: number;
+  clicked: number;
+  replied: number;
+}
+
+export async function recordAbSend(variantId: string, subject: string): Promise<void> {
+  if (!variantId) return;
+  const redis = getRedis();
+  await redis.sadd("abtest:variants", variantId);
+  await redis.hset(`abtest:${variantId}`, { subject });
+  await redis.hincrby(`abtest:${variantId}`, "sent", 1);
+}
+
+export async function recordAbEvent(
+  variantId: string,
+  metric: "opened" | "clicked" | "replied",
+): Promise<void> {
+  if (!variantId) return;
+  const redis = getRedis();
+  await redis.sadd("abtest:variants", variantId);
+  await redis.hincrby(`abtest:${variantId}`, metric, 1);
+}
+
+export async function getAbStats(): Promise<AbVariantStats[]> {
+  const redis = getRedis();
+  const ids = (await redis.smembers("abtest:variants")) as string[];
+  if (!ids.length) return [];
+  const stats = await Promise.all(
+    ids.map(async (variantId) => {
+      const h = (await redis.hgetall(`abtest:${variantId}`)) as Record<string, string> | null;
+      return {
+        variantId,
+        subject: h?.subject ?? variantId,
+        sent: Number(h?.sent ?? 0),
+        opened: Number(h?.opened ?? 0),
+        clicked: Number(h?.clicked ?? 0),
+        replied: Number(h?.replied ?? 0),
+      };
+    }),
+  );
+  return stats.sort((a, b) => b.sent - a.sent);
+}
+
+// ─── Testimonial / review requests ────────────────────────────────────────────
+// When a deal is marked won we enqueue a request so the rep (or Duke) remembers
+// to ask the happy client for a Google review / testimonial — the single highest-
+// leverage thing for local map-pack ranking. Surfaced in the admin dashboard.
+
+export interface TestimonialRequest {
+  id: string;
+  leadId: string;
+  leadName: string;
+  leadEmail: string;
+  repName: string;
+  dealValue: number;
+  status: "pending" | "sent" | "dismissed";
+  createdAt: string;
+}
+
+export async function enqueueTestimonialRequest(
+  data: Omit<TestimonialRequest, "id" | "status" | "createdAt">,
+): Promise<TestimonialRequest> {
+  const redis = getRedis();
+  const req: TestimonialRequest = {
+    ...data,
+    id: crypto.randomUUID(),
+    status: "pending",
+    createdAt: new Date().toISOString(),
+  };
+  await redis.hset(`testimonial:${req.id}`, req as unknown as Record<string, unknown>);
+  await redis.zadd("testimonials:index", { score: Date.now(), member: req.id });
+  return req;
+}
+
+export async function listTestimonialRequests(
+  status?: TestimonialRequest["status"],
+): Promise<TestimonialRequest[]> {
+  const redis = getRedis();
+  const ids = (await redis.zrange("testimonials:index", 0, -1, { rev: true })) as string[];
+  const rows = await Promise.all(
+    ids.map(async (id) => (await redis.hgetall(`testimonial:${id}`)) as unknown as TestimonialRequest),
+  );
+  const valid = rows.filter(Boolean);
+  return status ? valid.filter((r) => r.status === status) : valid;
+}
+
+export async function updateTestimonialRequest(
+  id: string,
+  status: TestimonialRequest["status"],
+): Promise<void> {
+  const redis = getRedis();
+  await redis.hset(`testimonial:${id}`, { status });
+}

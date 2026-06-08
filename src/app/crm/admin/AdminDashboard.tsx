@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import {
   LogOut, Users, Send, DollarSign, Check, X, Plus,
   Phone, Mail, Globe, Flame, Zap, CheckCircle2, Eye, Trash2,
-  TrendingUp, BarChart2, Megaphone, Trophy, AlertTriangle,
+  TrendingUp, BarChart2, Megaphone, Trophy, AlertTriangle, Star, Copy,
 } from "lucide-react";
 import SuppressionTab from "./SuppressionTab";
+import { variantRates } from "@/lib/crm/abtest";
+import { GOOGLE_REVIEW_URL } from "@/config/site";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -973,29 +975,220 @@ function SetupTab() {
   );
 }
 
+// ─── A/B Test Tab ─────────────────────────────────────────────────────────────
+
+interface AbVariant {
+  variantId: string; subject: string; sent: number; opened: number; clicked: number; replied: number;
+}
+
+function AbTestTab() {
+  const H = { fontFamily: "var(--font-heading)" };
+  const [variants, setVariants] = useState<AbVariant[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/crm/admin/ab-test")
+      .then((r) => r.json())
+      .then((d) => { setVariants(d.variants ?? []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const pct = (n: number) => `${Math.round(n * 100)}%`;
+
+  if (loading) return <p className="text-sm text-white/40 py-8 text-center" style={H}>Loading…</p>;
+  if (variants.length === 0) {
+    return (
+      <div className="py-12 text-center">
+        <BarChart2 size={28} className="text-white/15 mx-auto mb-3" />
+        <p className="text-sm text-white/40" style={H}>No A/B data yet.</p>
+        <p className="text-xs text-white/25 mt-1" style={H}>Send outreach with two or more subject lines to start a test.</p>
+      </div>
+    );
+  }
+
+  // Best open rate among variants with enough volume to matter.
+  const ranked = [...variants].sort((a, b) => variantRates(b).openRate - variantRates(a).openRate);
+  const winnerId = ranked.find((v) => v.sent >= 5)?.variantId;
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-white/35 border-b border-white/[0.06]">
+            <th className="py-2 pr-4 font-semibold" style={H}>Subject line</th>
+            <th className="py-2 px-3 font-semibold text-right" style={H}>Sent</th>
+            <th className="py-2 px-3 font-semibold text-right" style={H}>Open</th>
+            <th className="py-2 px-3 font-semibold text-right" style={H}>Click</th>
+            <th className="py-2 px-3 font-semibold text-right" style={H}>Reply</th>
+          </tr>
+        </thead>
+        <tbody>
+          {variants.map((v) => {
+            const r = variantRates(v);
+            const isWinner = v.variantId === winnerId;
+            return (
+              <tr key={v.variantId} className="border-b border-white/[0.04]">
+                <td className="py-2.5 pr-4 text-white/80" style={H}>
+                  {isWinner && <span className="text-[#F97316] mr-1.5" title="Best open rate">★</span>}
+                  {v.subject}
+                </td>
+                <td className="py-2.5 px-3 text-right tabular-nums text-white/60">{v.sent}</td>
+                <td className="py-2.5 px-3 text-right tabular-nums text-white/80">{pct(r.openRate)}</td>
+                <td className="py-2.5 px-3 text-right tabular-nums text-white/80">{pct(r.clickRate)}</td>
+                <td className="py-2.5 px-3 text-right tabular-nums text-green-400">{pct(r.replyRate)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <p className="text-xs text-white/25 mt-3" style={H}>★ = best open rate (needs ≥5 sends to call a winner).</p>
+    </div>
+  );
+}
+
+// ─── Reviews Tab (testimonial requests on won deals) ──────────────────────────
+
+interface TestimonialReq {
+  id: string; leadId: string; leadName: string; leadEmail: string;
+  repName: string; dealValue: number; status: "pending" | "sent" | "dismissed"; createdAt: string;
+}
+
+function ReviewsTab() {
+  const H = { fontFamily: "var(--font-heading)" };
+  const [requests, setRequests] = useState<TestimonialReq[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const load = useCallback(() => {
+    fetch("/api/crm/admin/testimonials")
+      .then((r) => r.json())
+      .then((d) => { setRequests(d.requests ?? []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const setStatus = async (id: string, status: "sent" | "dismissed" | "pending") => {
+    setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+    await fetch("/api/crm/admin/testimonials", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status }),
+    }).catch(() => {});
+  };
+
+  const askMessage = (r: TestimonialReq) =>
+    `Hi! It was a pleasure working with ${r.leadName}. If you have a minute, a quick Google review would mean a lot and helps other local businesses find us` +
+    (GOOGLE_REVIEW_URL ? `: ${GOOGLE_REVIEW_URL}` : ".") + `\n\nThank you!\n— Copper Bay Tech`;
+
+  const copyAsk = (r: TestimonialReq) => {
+    navigator.clipboard.writeText(askMessage(r));
+    setCopied(r.id);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  if (loading) return <p className="text-sm text-white/40 py-8 text-center" style={H}>Loading…</p>;
+
+  const pending = requests.filter((r) => r.status === "pending");
+  const rest = requests.filter((r) => r.status !== "pending");
+
+  if (requests.length === 0) {
+    return (
+      <div className="py-12 text-center">
+        <Star size={28} className="text-white/15 mx-auto mb-3" />
+        <p className="text-sm text-white/40" style={H}>No review requests yet.</p>
+        <p className="text-xs text-white/25 mt-1" style={H}>When you accept a won deal, we&apos;ll queue a review ask here.</p>
+      </div>
+    );
+  }
+
+  const Row = ({ r }: { r: TestimonialReq }) => (
+    <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-white/85" style={H}>{r.leadName}</p>
+          <p className="text-xs text-white/40 mt-0.5" style={H}>
+            {r.repName} · ${Number(r.dealValue).toLocaleString()} · {new Date(r.createdAt).toLocaleDateString()}
+            {r.status !== "pending" && <span className="ml-2 uppercase tracking-wider text-white/30">· {r.status}</span>}
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button onClick={() => copyAsk(r)} title="Copy review-ask message"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/[0.05] text-white/60 hover:text-white border border-white/10 text-xs font-semibold transition-colors" style={H}>
+            {copied === r.id ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
+          </button>
+          {r.leadEmail && (
+            <a href={`mailto:${r.leadEmail}?subject=${encodeURIComponent("Quick favor — a Google review?")}&body=${encodeURIComponent(askMessage(r))}`}
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#F97316]/15 text-[#F97316] border border-[#F97316]/25 hover:bg-[#F97316]/25 text-xs font-semibold transition-colors" style={H}>
+              <Mail size={12} />
+            </a>
+          )}
+          {r.status === "pending" ? (
+            <>
+              <button onClick={() => setStatus(r.id, "sent")} title="Mark sent"
+                className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-green-500/15 text-green-300 border border-green-500/25 text-xs font-semibold transition-colors" style={H}>
+                <Check size={12} />
+              </button>
+              <button onClick={() => setStatus(r.id, "dismissed")} title="Dismiss"
+                className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-white/[0.05] text-white/40 hover:text-white border border-white/10 text-xs font-semibold transition-colors" style={H}>
+                <X size={12} />
+              </button>
+            </>
+          ) : (
+            <button onClick={() => setStatus(r.id, "pending")} title="Re-open"
+              className="text-xs text-white/30 hover:text-white/60 px-2" style={H}>↺</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-4">
+      {!GOOGLE_REVIEW_URL && (
+        <p className="text-xs text-yellow-300/80 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-2" style={H}>
+          Set GOOGLE_REVIEW_URL in config/site.ts to include your review link in the ask.
+        </p>
+      )}
+      {pending.length > 0 && <div className="space-y-2">{pending.map((r) => <Row key={r.id} r={r} />)}</div>}
+      {rest.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-white/30 uppercase tracking-wider pt-2" style={H}>Handled</p>
+          {rest.map((r) => <Row key={r.id} r={r} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminDashboard({ adminName }: { adminName: string }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "suppression" | "setup">("submissions");
+  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "abtest" | "reviews" | "suppression" | "setup">("submissions");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [reps, setReps] = useState<RepWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [resolveSub, setResolveSub] = useState<Submission | null>(null);
   const [subFilter, setSubFilter] = useState<"" | "pending" | "accepted" | "rejected">("");
+  const [loadError, setLoadError] = useState<string | null>(null);
   // Lightweight setup status for the dashboard nudge. null = not yet checked.
   const [setupLeft, setSetupLeft] = useState<number | null>(null);
   const [nudgeDismissed, setNudgeDismissed] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const p = subFilter ? `?filter=${subFilter}` : "";
-    const res = await fetch(`/api/crm/admin/submissions${p}`);
-    if (res.ok) {
+    setLoadError(null);
+    try {
+      const p = subFilter ? `?filter=${subFilter}` : "";
+      const res = await fetch(`/api/crm/admin/submissions${p}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const d = await res.json();
       setSubmissions(d.submissions ?? []);
       setReps(d.repStats ?? []);
+    } catch {
+      setLoadError("Couldn't load dashboard data — check your connection and retry.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [subFilter]);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
@@ -1110,6 +1303,13 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
             </div>
           )}
 
+          {loadError && (
+            <div className="flex items-center justify-between gap-3 px-4 py-3 mb-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-200 text-sm" style={H}>
+              <span className="flex items-center gap-2"><AlertTriangle size={14} className="shrink-0" />{loadError}</span>
+              <button onClick={load} className="text-xs font-semibold underline hover:no-underline shrink-0">Retry</button>
+            </div>
+          )}
+
           {/* Tabs */}
           <div className="flex items-center gap-1 border-b border-white/[0.06] overflow-x-auto">
             {[
@@ -1117,6 +1317,8 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               { key: "territories", label: "Territories", count: 0 },
               { key: "reps", label: "Sales Reps", count: reps.length },
               { key: "email", label: "Email", count: 0 },
+              { key: "abtest", label: "A/B Tests", count: 0 },
+              { key: "reviews", label: "Reviews", count: 0 },
               { key: "suppression", label: "Suppression", count: 0 },
               { key: "leaderboard", label: "Leaderboard", count: 0 },
               { key: "revenue", label: "Revenue", count: 0 },
@@ -1301,6 +1503,10 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
 
           {/* Leaderboard tab */}
           {tab === "email" && <EmailTab />}
+
+          {tab === "abtest" && <AbTestTab />}
+
+          {tab === "reviews" && <ReviewsTab />}
 
           {tab === "suppression" && <SuppressionTab />}
 

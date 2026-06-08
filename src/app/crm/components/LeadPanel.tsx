@@ -6,10 +6,11 @@ import {
   StickyNote, Send, Star, Link, Flame, Zap,
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
   CalendarClock, Activity, Lock, UserCheck, Info,
-  ChevronDown, ChevronRight, MessageSquare, Repeat,
+  ChevronDown, ChevronRight, MessageSquare, Repeat, FileText,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
+import ProposalSection from "./ProposalSection";
 import { buildCallScript, buildObjections, callTimingFor, suggestCadence } from "@/lib/crm/playbook";
 import {
   engagementSignalsFromActivities, scoreWithEngagement, type EngagementSignals,
@@ -142,6 +143,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const [showScript, setShowScript] = useState(false);
   const [showObjections, setShowObjections] = useState(false);
   const [showCadence, setShowCadence] = useState(false);
+  const [showProposal, setShowProposal] = useState(false);
   const [calOverride, setCalOverride] = useState("");
   const [activities, setActivities] = useState<{ type: string; outcome?: string }[]>([]);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -651,6 +653,24 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                       <p className="text-sm text-white/55 leading-relaxed pr-1" style={H}>{o.response}</p>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+
+            {/* Proposal / quote generator (collapsible) */}
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+              <button onClick={() => setShowProposal((v) => !v)} className="w-full flex items-center justify-between group">
+                <span className="text-xs font-semibold text-white/35 uppercase tracking-wider flex items-center gap-1.5 group-hover:text-white/55 transition-colors" style={H}>
+                  <FileText size={11} />Proposal / Quote
+                </span>
+                {showProposal ? <ChevronDown size={14} className="text-white/30" /> : <ChevronRight size={14} className="text-white/30" />}
+              </button>
+              {showProposal && (
+                <div className="mt-3">
+                  <ProposalSection
+                    lead={{ name: lead.name, city: lead.city, contact_name: lead.contact_name, email: lead.email, tier: lead.tier }}
+                    repName={repName}
+                  />
                 </div>
               )}
             </div>

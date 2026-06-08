@@ -10,6 +10,21 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/api/crm/login")) return NextResponse.next();
   if (pathname.startsWith("/api/crm/logout")) return NextResponse.next();
 
+  // Externally-called endpoints that authenticate themselves (webhook signature
+  // or a shared/cron secret) and are hit by third parties with NO CRM session
+  // cookie — the Resend email-events webhook, inbound-reply + calendar webhooks,
+  // the GitHub webhook, and the Vercel Cron drip. They must bypass the session
+  // gate here or they'd 401 before their own verification ever runs. Each route
+  // does its own auth and never trusts the x-user-* headers.
+  const SELF_AUTHED = [
+    "/api/crm/email-events",
+    "/api/crm/inbound",
+    "/api/crm/calendar",
+    "/api/crm/webhook",
+    "/api/crm/cron/",
+  ];
+  if (SELF_AUTHED.some((p) => pathname.startsWith(p))) return NextResponse.next();
+
   const token = req.cookies.get("crm_session")?.value;
   const secret = getSessionSecret();
 

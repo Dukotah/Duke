@@ -87,6 +87,9 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const [templates, setTemplates] = useState<EmailTemplate[]>(() => loadTemplates());
   const [templateKey, setTemplateKey] = useState(templates[0].key);
   const [subject, setSubject] = useState(templates[0].subject);
+  // Optional A/B test: a second subject line. When set, the audience is split
+  // deterministically across the two and per-variant engagement is tracked.
+  const [subjectB, setSubjectB] = useState("");
   const [body, setBody] = useState(templates[0].body);
   const [fromName, setFromName] = useState(repName);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -236,7 +239,13 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
       const res = await fetch("/api/crm/outreach", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ leads: leadsPayload, subject, body: finalBody, fromName }),
+        body: JSON.stringify({
+          leads: leadsPayload,
+          subject,
+          body: finalBody,
+          fromName,
+          ...(subjectB.trim() ? { subjectVariants: [subject, subjectB.trim()] } : {}),
+        }),
       });
       const d = await res.json();
       if (!res.ok) {
@@ -520,6 +529,18 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
               className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50"
               style={H}
             />
+            <input
+              value={subjectB}
+              onChange={(e) => setSubjectB(e.target.value)}
+              placeholder="A/B test (optional) — alternate subject line B"
+              className="w-full mt-2 px-4 py-3 rounded-xl bg-[#1C1C1F] border border-dashed border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50"
+              style={H}
+            />
+            {subjectB.trim() && (
+              <p className="text-[11px] text-violet-300/80 mt-1.5" style={H}>
+                A/B on — recipients split evenly across both subjects; results show in Admin → A/B Tests.
+              </p>
+            )}
           </div>
 
           {/* Body */}

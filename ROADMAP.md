@@ -63,12 +63,28 @@ The lead-capture → outreach → tracking loop. Shipped in this iteration:
       in the score popover. A "not interested" outcome sinks the lead; replies
       and a rep "interested" flag float it to the top. Unit-tested in
       `src/lib/crm/intel.test.ts`.
-- [ ] **Calendar booking** — embed Cal.com / Calendly; auto-log "meeting booked"
-      as a CRM activity.
-- [ ] **Audit-tool → CRM bridge** — when someone runs the free site/SEO/SSL
-      audit, capture the email and create a contact pre-tagged with their score.
-- [ ] **Templated proposals & quotes** off the PricingEstimator inputs.
-- [ ] **A/B test outreach subject lines**, report open/reply rates per variant.
+- [x] **Calendar booking** — _(done)_ webhook `POST /api/crm/calendar` accepts
+      Cal.com (BOOKING_CREATED) / Calendly (invitee.created) events, matches the
+      invitee to a lead, logs "Meeting booked" on the timeline, and marks the
+      lead interested (which boosts its score AND pauses the drip). Set
+      `CALENDAR_WEBHOOK_SECRET`. (Booking links already route through `BOOKING_URL`.)
+- [x] **Audit-tool → CRM bridge** — _(done)_ `src/lib/crm/intake.ts` turns a
+      completed free audit into a tier-A warm lead pre-tagged with the score.
+- [x] **Templated proposals & quotes** — _(done)_ `src/lib/crm/proposal.ts`
+      builds a proposal from the canonical `PRICING` numbers; surfaced as a
+      "Proposal / Quote" section in `LeadPanel` (pick services → copy / email).
+      Unit-tested.
+- [x] **A/B test outreach subject lines** — _(done)_ pass `subjectVariants` to
+      `POST /api/crm/outreach` (exposed as an optional alt-subject in
+      BulkOutreach). Recipients split deterministically (`src/lib/crm/abtest.ts`),
+      the variant is stamped on the outreach log, opens/clicks/replies are
+      credited back via the webhooks, and per-variant rates show in the admin
+      "A/B Tests" tab. Unit-tested.
+- [x] **Drip auto-pause on engagement** — the cron skips any lead that has
+      replied, booked a call, or been marked interested/not-interested, plus a new
+      inbound-reply webhook `POST /api/crm/inbound` (set `INBOUND_WEBHOOK_SECRET`).
+      Also fixed: the middleware was 401-ing the self-authed webhook + cron
+      endpoints before their own verification ran — they're now allowlisted.
 
 ## Phase 3 — Site & content improvements (ongoing)
 
@@ -80,13 +96,19 @@ The lead-capture → outreach → tracking loop. Shipped in this iteration:
 - [ ] **Blog cadence** — 2 posts/month targeting Sonoma County IT keywords;
       cross-link to relevant services.
 - [ ] **Structured data** (LocalBusiness, FAQ, BreadcrumbList) for richer SERP.
-- [ ] **Testimonial/case-study capture flow** triggered after a "won" deal.
+- [x] **Testimonial/case-study capture flow** — _(done)_ accepting a won deal
+      enqueues a review request (`enqueueTestimonialRequest`); the admin "Reviews"
+      tab lists them with a one-click copy/email ask (uses `GOOGLE_REVIEW_URL`).
 
 ## Phase 4 — Platform hardening
 
 - [ ] **Tests** — unit tests for the CRM store + webhook parsing; an e2e test
       for the capture→track loop.
-- [ ] **Observability** — structured logging + error reporting (Sentry).
+- [x] **Observability** — _(done)_ `src/lib/log.ts` `reportError()` is the single
+      funnel for server errors (console always; forwards to Sentry when
+      `SENTRY_DSN` is set), wired through `handleApiError`. Silent dashboard
+      fetch failures now surface a retry banner (admin) on top of the existing
+      rep-dashboard load-error handling.
 - [ ] **CI** — lint + typecheck + build on every PR (GitHub Actions).
 - [ ] **Secrets hygiene** — document required env vars (see `docs/CRM_SETUP.md`),
       rotate keys, least-privilege Resend key.

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday } from "@/lib/db";
+import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday, recordAbSend } from "@/lib/db";
+import { toVariants, chooseVariant } from "@/lib/crm/abtest";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
 import { getSessionSecret } from "@/lib/session";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
@@ -17,6 +18,11 @@ import {
 interface OutreachBody {
   leads: OutreachLead[];
   subject: string;
+  // Optional A/B test: two or more subject lines. Each recipient is assigned one
+  // deterministically (so a person always sees the same subject), per-variant
+  // sends are tallied, and the chosen variant is stamped on the outreach-log
+  // entry so a later open/click/reply can be credited back to it.
+  subjectVariants?: string[];
   body: string;
   fromName: string;
   // When set, this is a test send: deliver/practice exactly as usual but skip
@@ -137,7 +143,7 @@ export async function POST(req: NextRequest) {
   // Track an email regardless of whether it was actually delivered. This keeps
   // the outreach log, the lead's timeline, and the follow-up schedule accurate
   // even while the delivery integration (Resend) is still being set up.
-  async function track(lead: OutreachLead, personalizedSubject: string, sentAt: string, delivered: boolean) {
+  async function track(lead: OutreachLead, personalizedSubject: string, sentAt: string, delivered: boolean, variant?: { id: string; subject: string }) {
     // Test sends never persist: no outreach log, no lead-state mutation, no
     // activity entry. The delivery-vs-practice path still runs as usual.
     if (isTest) return;
@@ -149,9 +155,11 @@ export async function POST(req: NextRequest) {
       subject: personalizedSubject,
       sentAt,
       delivered,
+      ...(variant ? { variant: variant.id } : {}),
     });
     await redis.lpush(`outreach_log:${senderId}`, logEntry);
     await redis.ltrim(`outreach_log:${senderId}`, 0, 199);
+    if (variant) await recordAbSend(variant.id, variant.subject);
 
     await addActivity(lead.id, senderId, repName, {
       type: "email",
@@ -179,10 +187,17 @@ export async function POST(req: NextRequest) {
   let delivered = 0; // subset actually delivered via Resend
   let failed = 0;
 
+  // Dedup + id-stamp any A/B subject variants once, up front.
+  const variants = toVariants(body.subjectVariants ?? []);
+
   for (const lead of toSend) {
+    // Pick this recipient's subject variant deterministically (when testing).
+    const variant = variants.length > 1 ? chooseVariant(variants, lead.email) : null;
+    const subjectTemplate = variant ? variant.subject : subject;
+
     // Personalize body & subject — replace {name}, {business}, {city}, {fromName}
     const personalizedBody = personalize(emailBody, lead, fromName);
-    const personalizedSubject = personalize(subject, lead, fromName);
+    const personalizedSubject = personalize(subjectTemplate, lead, fromName);
 
     const sentAt = new Date().toISOString();
 
@@ -192,7 +207,7 @@ export async function POST(req: NextRequest) {
       const reason = !apiKey ? "no RESEND_API_KEY" : "domain not verified (set OUTREACH_DOMAIN_VERIFIED=true once verified)";
       console.log(`[Outreach] Track-only (${reason}) — ${lead.email}: ${personalizedSubject}`);
       try {
-        await track(lead, personalizedSubject, sentAt, false);
+        await track(lead, personalizedSubject, sentAt, false, variant ?? undefined);
         sent++;
       } catch (logErr) {
         failed++;
@@ -232,7 +247,7 @@ export async function POST(req: NextRequest) {
         // and claim the address in today's cross-rep dedup set so no one re-sends.
         // Failures here must not flip a successful send into a "failed".
         try {
-          await track(lead, personalizedSubject, sentAt, true);
+          await track(lead, personalizedSubject, sentAt, true, variant ?? undefined);
           if (!isTest) await markEmailedToday(today, lead.email);
         } catch (logErr) {
           console.error(`[Outreach] Delivered to ${lead.email} but failed to log activity/follow-up:`, logErr);

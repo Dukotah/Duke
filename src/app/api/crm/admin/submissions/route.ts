@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { listSubmissions, resolveSubmission, markCommissionPaid, getRepStats, listUsers, getUserLeadCount, getUserById } from "@/lib/db";
+import { listSubmissions, resolveSubmission, markCommissionPaid, getRepStats, listUsers, getUserLeadCount, getUserById, enqueueTestimonialRequest } from "@/lib/db";
 import { parseJsonBody, handleApiError } from "@/lib/api";
 
 async function sendRepNotification(
@@ -89,6 +89,23 @@ export async function PATCH(req: NextRequest) {
 
     if (action === "accept" || action === "reject") {
       const updated = await resolveSubmission(id, action === "accept" ? "accepted" : "rejected", dealValue);
+
+      // Won deal → queue a testimonial/Google-review request so we remember to
+      // ask the happy client (highest-leverage thing for map-pack ranking).
+      if (action === "accept") {
+        try {
+          await enqueueTestimonialRequest({
+            leadId: updated.leadId,
+            leadName: updated.leadName,
+            leadEmail: updated.leadEmail ?? "",
+            repName: updated.repName,
+            dealValue: updated.dealValue ?? 0,
+          });
+        } catch (err) {
+          console.error("[CRM] Failed to enqueue testimonial request:", err);
+          // Non-fatal — never block the accept on this.
+        }
+      }
 
       // Send email notification to the rep
       try {

@@ -3,6 +3,7 @@
 // handlers so every route fails the same way — with a proper status code and
 // without ever leaking a stack trace to the client.
 import { NextResponse } from "next/server";
+import { reportError } from "@/lib/log";
 
 // Result of attempting to read a JSON request body.
 type JsonParseResult<T> =
@@ -48,6 +49,6 @@ export async function parseJsonBody<T = unknown>(
  * client — never a stack trace or internal detail.
  */
 export function handleApiError(context: string, err: unknown): NextResponse {
-  console.error(`[api] ${context}:`, err);
+  reportError(`api/${context}`, err);
   return NextResponse.json({ error: "Server error" }, { status: 500 });
 }

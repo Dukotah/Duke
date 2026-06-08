@@ -3,12 +3,15 @@
 // For each CRM user, finds custom leads whose follow-up date has arrived and
 // sends the next sequence email (up to 3 follow-ups after the initial contact).
 // Respects the suppression list, daily send cap, and domain-verification gate —
-// exactly the same guardrails the manual outreach route uses.
+// exactly the same guardrails the manual outreach route uses. Leads that have
+// engaged (replied, booked a call, or been marked interested/not-interested) are
+// auto-paused so the automation never talks over a live human conversation.
 
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { listUsers, getCustomLeads, getAllLeadStates, addActivity, getSuppressedEmails } from "@/lib/db";
+import { listUsers, getCustomLeads, getAllLeadStates, addActivity, getSuppressedEmails, getActivity } from "@/lib/db";
 import { getNextStep, personalizeSequence, MAX_SEQUENCE_STEP } from "@/lib/crm/sequences";
+import { engagementSignalsFromActivities } from "@/lib/crm/intel";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
 import { getSessionSecret } from "@/lib/session";
@@ -86,6 +89,16 @@ export async function GET(req: NextRequest) {
       const terminal = ["won", "not_interested"].includes(state.status) ||
         ["won", "lost", "submitted", "not_interested"].includes(state.stage);
       if (terminal) continue;
+
+      // Auto-pause: never drip a lead that's already engaging with a human. A
+      // logged reply, a booked meeting, or an interested/not-interested outcome
+      // all stop the automation so we don't talk over a live conversation.
+      const signals = engagementSignalsFromActivities(await getActivity(lead.id));
+      if (signals.replied || signals.interested || signals.notInterested) {
+        totalSkipped++;
+        log.push(`paused (engaged): ${lead.email}`);
+        continue;
+      }
 
       // Only sequence leads that have been contacted and have a follow-up date due.
       if (!state.followUpDate || state.followUpDate > today) continue;

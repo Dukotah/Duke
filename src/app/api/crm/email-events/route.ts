@@ -8,8 +8,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { verifyResendSignature } from "@/lib/crm/webhook";
-import { getRedis } from "@/lib/redis";
-import { setLeadState, addActivity, suppressEmail, getLeadState } from "@/lib/db";
+import { setLeadState, addActivity, suppressEmail, getLeadState, recordAbEvent } from "@/lib/db";
+import { findLeadByEmail } from "@/lib/crm/leadLookup";
 
 type ResendEvent = {
   type: string;
@@ -19,27 +19,6 @@ type ResendEvent = {
     tags?: Record<string, string>;
   };
 };
-
-// Resolve (userId, leadId) from the outreach log by matching the recipient email.
-// The outreach log key is `outreach_log:<userId>` and entries are JSON strings.
-async function findLeadByEmail(email: string): Promise<{ userId: string; leadId: string; leadName: string } | null> {
-  const redis = getRedis();
-  const keys = await redis.keys("outreach_log:*");
-  const norm = email.toLowerCase().trim();
-  for (const key of keys as string[]) {
-    const userId = (key as string).replace("outreach_log:", "");
-    const items = await redis.lrange(key as string, 0, -1) as unknown[];
-    for (const raw of items) {
-      try {
-        const entry = typeof raw === "string" ? JSON.parse(raw) : raw;
-        if (typeof entry.email === "string" && entry.email.toLowerCase().trim() === norm) {
-          return { userId, leadId: entry.leadId, leadName: entry.leadName ?? "" };
-        }
-      } catch {}
-    }
-  }
-  return null;
-}
 
 export async function POST(req: NextRequest) {
   const secret = process.env.RESEND_WEBHOOK_SECRET;
@@ -100,6 +79,10 @@ export async function POST(req: NextRequest) {
 
   const engagement = statusMap[type]; // "opened" | "clicked" | undefined
   if (engagement) {
+    // Credit the A/B subject variant this address was emailed under, if any.
+    if (match.variantId && (engagement === "opened" || engagement === "clicked")) {
+      await recordAbEvent(match.variantId, engagement);
+    }
     // Record the engagement on the lead timeline. main's status enum has no
     // "opened"/"clicked", so we don't overwrite status with those — instead we
     // nudge an untouched ("new") lead forward to "contacted" (the outreach that
