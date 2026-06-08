@@ -39,20 +39,30 @@ The lead-capture → outreach → tracking loop. Shipped in this iteration:
       dispositions now survive serverless cold starts and Vercel's read-only FS.
 - [ ] **Verify the sending domain** in Resend (SPF/DKIM/DMARC) so outreach
       lands in the inbox, not spam. Required before any real cold send.
-- [ ] **Resend webhook signature verification** is implemented; wire the real
-      `RESEND_WEBHOOK_SECRET` and register the endpoint in the Resend dashboard.
-- [ ] **Sequences / drip campaigns.** Multi-step follow-ups ("no open after 3
-      days → send variant B"). Add a `sequences` table + a cron route
-      (`/api/crm/cron/tick`) driven by Vercel Cron.
-- [ ] **Real auth** for `/admin/crm` (currently a shared token). Add a proper
-      login (NextAuth / Clerk) before exposing publicly.
+- [x] **Resend webhook signature verification** — _(done)_ implemented in
+      `src/lib/crm/webhook.ts` and enforced by `/api/crm/email-events` whenever
+      `RESEND_WEBHOOK_SECRET` is set (owner config complete).
+- [x] **Sequences / drip campaigns.** _(done)_ 3-step follow-up cadence in
+      `src/lib/crm/sequences.ts`, driven by the Vercel Cron route
+      `/api/crm/cron/tick`. Contact details (booking link / email / phone) now
+      pull from `config/site.ts` so the drip can't drift out of sync — they
+      previously hardcoded a dead `calendly.com/copperbaytech` link and a stale
+      `duke@` sign-off. Regression-tested in `__tests__/sequences.test.ts`.
+- [x] **Real auth** for `/crm` + `/crm/admin`. _(done)_ Email+password login,
+      HMAC-signed session cookie, role-gated middleware (admin vs rep). The old
+      shared-token note is obsolete.
 - [ ] **Rate limiting & batching** on outreach to respect Resend limits and
       avoid spam-trap behavior.
 
 ## Phase 2 — Conversion & growth (weeks 3–6)
 
-- [ ] **Lead scoring** — weight opens/clicks/replies + service interest into a
-      hot/warm/cold score surfaced on the dashboard.
+- [x] **Lead scoring** — _(done)_ engagement now feeds the score. The live
+      `LeadPanel` blends the scraper's static `outreach_score` with real CRM
+      activity (opens, clicks, replies, call outcomes) via
+      `scoreWithEngagement()` in `src/lib/crm/intel.ts`, with a breakdown shown
+      in the score popover. A "not interested" outcome sinks the lead; replies
+      and a rep "interested" flag float it to the top. Unit-tested in
+      `src/lib/crm/intel.test.ts`.
 - [ ] **Calendar booking** — embed Cal.com / Calendly; auto-log "meeting booked"
       as a CRM activity.
 - [ ] **Audit-tool → CRM bridge** — when someone runs the free site/SEO/SSL

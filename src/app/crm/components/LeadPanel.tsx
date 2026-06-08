@@ -11,6 +11,9 @@ import {
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
 import { buildCallScript, buildObjections, callTimingFor, suggestCadence } from "@/lib/crm/playbook";
+import {
+  engagementSignalsFromActivities, scoreWithEngagement, type EngagementSignals,
+} from "@/lib/crm/intel";
 import { readBookingOverride, resolveBookingUrl } from "@/lib/booking";
 
 interface Lead {
@@ -140,6 +143,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const [showObjections, setShowObjections] = useState(false);
   const [showCadence, setShowCadence] = useState(false);
   const [calOverride, setCalOverride] = useState("");
+  const [activities, setActivities] = useState<{ type: string; outcome?: string }[]>([]);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
@@ -180,6 +184,16 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fallback read of user id from cookie on mount
     if (match) setCurrentUserId(decodeURIComponent(match[1]));
   }, [lead.id]);
+
+  // Pull this lead's activity so the score can reflect real engagement (opens,
+  // clicks, replies, call outcomes), not just the static scraper number.
+  // Re-runs when a new activity is logged (activityKey bumps).
+  useEffect(() => {
+    fetch(`/api/crm/activity?leadId=${encodeURIComponent(lead.id)}`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows) => setActivities(Array.isArray(rows) ? rows : []))
+      .catch(() => setActivities([]));
+  }, [lead.id, activityKey]);
 
   async function handleClaim() {
     setClaimLoading(true);
@@ -277,6 +291,9 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const fullPitch = lead.pitch || `Hi, I'm reaching out to ${lead.name} in ${lead.city} — do you have 2 minutes to talk about your online presence?`;
 
   // Full multi-block call script + objection bank, tailored to this lead.
+  const engagement: EngagementSignals = engagementSignalsFromActivities(activities);
+  const scored = scoreWithEngagement(lead.outreach_score, engagement);
+
   const playbookLead = { name: lead.name, city: lead.city, category: lead.category, website: lead.website, builder: lead.builder, tier: lead.tier };
   const callScript = buildCallScript(playbookLead, repName);
   const objections = buildObjections(playbookLead);
@@ -361,14 +378,34 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                     className="text-white/25 hover:text-white/60 transition-colors flex items-center gap-1"
                     style={H}>
                     <Info size={12} />
-                    <span className="text-xs">{lead.outreach_score}</span>
+                    <span className="text-xs">{scored.score}</span>
+                    {scored.boost !== 0 && (
+                      <span className={`text-[10px] font-semibold ${scored.boost > 0 ? "text-green-400" : "text-red-400"}`}>
+                        {scored.boost > 0 ? `+${scored.boost}` : scored.boost}
+                      </span>
+                    )}
                   </button>
                   {showScorePopover && (
                     <div className="absolute left-0 top-6 z-10 w-64 bg-[#1C1C1F] border border-white/10 rounded-xl p-3 shadow-xl text-xs text-white/70 space-y-1.5" style={H}>
                       <p className="font-bold text-white/90">Why this score?</p>
                       {lead.tier_reason && <p>Tier {lead.tier}: {lead.tier_reason}</p>}
                       {lead.industry_fit && <p>Industry fit: <span className="text-green-400">{lead.industry_fit}</span></p>}
-                      <p>Outreach score: <span className="text-[#F97316] font-semibold">{lead.outreach_score}/100</span></p>
+                      <p>Base outreach score: <span className="text-[#F97316] font-semibold">{scored.base}/100</span></p>
+                      {scored.boost !== 0 ? (
+                        <>
+                          <p>Engagement: <span className={`font-semibold ${scored.boost > 0 ? "text-green-400" : "text-red-400"}`}>{scored.boost > 0 ? `+${scored.boost}` : scored.boost}</span></p>
+                          <div className="text-white/45 leading-relaxed">
+                            {engagement.replied && <span className="block">• Replied to outreach</span>}
+                            {engagement.interested && <span className="block">• Marked interested on a call</span>}
+                            {engagement.clicks > 0 && <span className="block">• Clicked {engagement.clicks} email link{engagement.clicks !== 1 ? "s" : ""}</span>}
+                            {engagement.opens > 0 && <span className="block">• Opened {engagement.opens} email{engagement.opens !== 1 ? "s" : ""}</span>}
+                            {engagement.notInterested && <span className="block">• Marked not interested</span>}
+                          </div>
+                          <p className="border-t border-white/10 pt-1.5">Adjusted score: <span className="text-[#F97316] font-semibold">{scored.score}/100</span></p>
+                        </>
+                      ) : (
+                        <p className="text-white/45">No engagement logged yet — score is the base.</p>
+                      )}
                       <button onClick={() => setShowScorePopover(false)} className="text-white/30 hover:text-white/60 pt-1">✕ close</button>
                     </div>
                   )}

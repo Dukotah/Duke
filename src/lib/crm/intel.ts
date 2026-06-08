@@ -298,6 +298,83 @@ export function buildEmailDraft(
   return { subject, body: lines.join("\n") };
 }
 
+// ─── Engagement-aware scoring ─────────────────────────────────────────────────
+// The queue's static score (the scraper's `outreach_score`, 0-100) says nothing
+// about whether the prospect has actually engaged. Two leads can share a score
+// of 70 while one has opened three emails and asked a question and the other has
+// never been touched — the first should rank far higher. These helpers fold real
+// CRM activity (opens, clicks, replies, call outcomes) into a single adjusted
+// score so warm, engaged leads float to the top of the dialer.
+
+export interface EngagementSignals {
+  opens: number;
+  clicks: number;
+  calls: number;
+  replied: boolean;
+  interested: boolean; // a call/note/status outcome the rep marked "interested"
+  notInterested: boolean;
+}
+
+// Minimal shape we read off a CRM activity entry (matches db.ts ActivityEntry).
+interface ActivityLike {
+  type: string;
+  outcome?: string;
+}
+
+export function engagementSignalsFromActivities(activities: ActivityLike[]): EngagementSignals {
+  let opens = 0,
+    clicks = 0,
+    calls = 0;
+  let replied = false,
+    interested = false,
+    notInterested = false;
+
+  for (const a of activities) {
+    const o = (a.outcome || "").toLowerCase();
+    if (a.type === "email") {
+      if (o === "opened") opens++;
+      else if (o === "clicked") clicks++;
+      else if (o === "replied") replied = true;
+    } else if (a.type === "call") {
+      calls++;
+      if (o === "interested") interested = true;
+      else if (o === "not_interested") notInterested = true;
+    } else if (a.type === "status_change") {
+      if (o === "interested") interested = true;
+      else if (o === "not_interested") notInterested = true;
+    }
+  }
+
+  return { opens, clicks, calls, replied, interested, notInterested };
+}
+
+// Bounded boost applied on top of the base score. A clear "not interested"
+// sinks the lead (effectively zeroes it); replies and a rep "interested" flag
+// are the strongest positive intent signals; clicks beat opens. Opens/clicks
+// are capped so a single over-eager inbox prefetch can't dominate the ranking.
+export function engagementBoost(s: EngagementSignals): number {
+  if (s.notInterested) return -100; // outranked by everything still in play
+  let b = 0;
+  if (s.replied) b += 30;
+  if (s.interested) b += 25;
+  b += Math.min(s.clicks, 3) * 6;
+  b += Math.min(s.opens, 3) * 3;
+  return b;
+}
+
+export interface ScoredLead {
+  base: number; // the scraper's outreach_score, clamped 0-100
+  boost: number; // engagement delta (can be negative)
+  score: number; // base + boost, clamped 0-100
+}
+
+// Combine a base score with live engagement into the number the queue ranks on.
+export function scoreWithEngagement(base: number, signals: EngagementSignals): ScoredLead {
+  const b = Math.max(0, Math.min(100, Math.round(base || 0)));
+  const boost = engagementBoost(signals);
+  return { base: b, boost, score: Math.max(0, Math.min(100, b + boost)) };
+}
+
 function clamp01(n: number) {
   return Math.max(0, Math.min(1, n));
 }

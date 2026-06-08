@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { getNextStep, personalizeSequence, MAX_SEQUENCE_STEP, SEQUENCE } from "@/lib/crm/sequences";
+import { getNextStep, personalizeSequence, MAX_SEQUENCE_STEP, SEQUENCE, BOOKING_LINK } from "@/lib/crm/sequences";
+import { EMAIL, PHONE } from "@/config/site";
 
 describe("drip sequences", () => {
   it("returns step 1 when currentStep is 0", () => {
@@ -57,5 +58,22 @@ describe("drip sequences", () => {
       expect(step.subject.trim().length).toBeGreaterThan(0);
       expect(step.body.trim().length).toBeGreaterThan(0);
     }
+  });
+
+  // Regression guard: the drip used to hardcode a dead calendly link and the
+  // wrong sign-off address. Contact details must now come from config/site.
+  describe("contact details stay in sync with config", () => {
+    const allBodies = SEQUENCE.map((s) => s.body).join("\n");
+
+    it("never ships the stale hardcoded calendly link or duke@ address", () => {
+      expect(allBodies).not.toContain("calendly.com/copperbaytech");
+      expect(allBodies).not.toContain("duke@copperbaytech.com");
+    });
+
+    it("uses the configured booking link, email, and phone", () => {
+      expect(allBodies).toContain(BOOKING_LINK);
+      expect(allBodies).toContain(EMAIL);
+      expect(allBodies).toContain(PHONE);
+    });
   });
 });

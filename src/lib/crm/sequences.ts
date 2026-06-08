@@ -4,6 +4,25 @@
 // Step 1 (day 3): gentle check-in
 // Step 2 (day 7): social-proof angle
 // Step 3 (day 14): breakup email — last touch before archiving
+//
+// Contact details (booking link, email, phone, domain) are pulled from
+// `@/config/site` so the drip never drifts from the rest of the site. These
+// used to be hardcoded — and were stale: the booking link pointed at a dead
+// `calendly.com/copperbaytech` and the sign-off used `duke@` instead of the
+// real `contact@` address. Edit the constants in `config/site.ts` once and
+// every follow-up email stays correct.
+
+import { SITE_URL, BOOKING_URL, EMAIL, PHONE } from "@/config/site";
+
+// An absolute, clickable booking link for use inside an email. BOOKING_URL is a
+// site-relative path (e.g. "/schedule") today, but if it's ever swapped for an
+// absolute Calendly/Cal.com URL this still produces the right link.
+export const BOOKING_LINK = BOOKING_URL.startsWith("http")
+  ? BOOKING_URL
+  : `${SITE_URL}${BOOKING_URL}`;
+
+// Bare host for plain-text sign-offs, e.g. "copperbaytech.com".
+const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
 export interface SequenceStep {
   step: number;
@@ -25,10 +44,10 @@ I work with small businesses in Sonoma County on websites, IT support, and cyber
 
 Would a 15-minute call this week work? No slides, no pitch deck — just a real conversation.
 
-Reply here or grab a time directly: https://calendly.com/copperbaytech
+Reply here or grab a time directly: ${BOOKING_LINK}
 
 — Duke
-Copper Bay Tech | (707) 239-6725`,
+Copper Bay Tech | ${PHONE}`,
   },
   {
     step: 2,
@@ -44,10 +63,10 @@ Most of the issues we find are straightforward to fix — they just get ignored 
 
 I'd love to take a look at {business} and tell you exactly what I see. Free, no strings.
 
-15 minutes — worth it?
+15 minutes — worth it? ${BOOKING_LINK}
 
 — Duke
-Copper Bay Tech | copperbaytech.com`,
+Copper Bay Tech | ${SITE_HOST}`,
   },
   {
     step: 3,
@@ -59,7 +78,7 @@ I've reached out a couple of times and I don't want to keep cluttering your inbo
 
 This is my last note. If timing just isn't right, I completely understand — small business is full on.
 
-If things change down the road — website, IT support, cybersecurity — feel free to reach out directly at duke@copperbaytech.com or (707) 239-6725. We're local, we're fast, and we don't do long contracts.
+If things change down the road — website, IT support, cybersecurity — feel free to reach out directly at ${EMAIL} or ${PHONE}. We're local, we're fast, and we don't do long contracts.
 
 Wishing {business} a great rest of the year.
 
