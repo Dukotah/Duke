@@ -222,4 +222,22 @@ describe("personalize", () => {
   it("leaves text without placeholders untouched", () => {
     expect(personalize("No tokens here", { name: "X", city: "Y" }, "Z")).toBe("No tokens here");
   });
+
+  it("substitutes the demo site link and claim date (the demo-intro send path)", () => {
+    const out = personalize(
+      "A free demo for {business}: {demoUrl} — claim it by {claimByDate}.",
+      { name: "Joe's Diner", city: "Sonoma", previewUrl: "https://demos.cbt.com/p/joes", claimByDate: "Jun 20" },
+      "Duke",
+    );
+    expect(out).toBe("A free demo for Joe's Diner: https://demos.cbt.com/p/joes — claim it by Jun 20.");
+  });
+
+  it("blanks {demoUrl}/{claimByDate} when the lead has no demo (matches composer preview)", () => {
+    const out = personalize(
+      "demo: {demoUrl}{claimByDate}",
+      { name: "Joe's Diner", city: "Sonoma" },
+      "Duke",
+    );
+    expect(out).toBe("demo: ");
+  });
 });

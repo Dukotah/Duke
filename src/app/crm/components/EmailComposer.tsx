@@ -75,6 +75,11 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
   // {demoUrl} and {claimByDate} are substituted when the lead has a demo package.
   const vars = { name: firstName(lead.contactName), business: lead.name, city: lead.city, fromName, demoUrl: lead.previewUrl ?? "", claimByDate: lead.claimByDate ?? "" };
 
+  // A template that links a demo ({demoUrl}) is broken if no demo has been built
+  // for this lead — it would send "here's your demo:" with a blank link. Block the
+  // send and tell the rep to attach a demo first.
+  const needsDemo = /\{demoUrl\}/i.test(subject + body) && !lead.previewUrl?.trim();
+
   const saveEdits = () => {
     saveTemplateOverride(templateKey, subject, body);
     setTemplates((prev) => prev.map((t) => (t.key === templateKey ? { ...t, subject, body } : t)));
@@ -94,7 +99,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
   };
 
   const handleSend = async () => {
-    if (!subject.trim() || !body.trim() || atCap) return;
+    if (!subject.trim() || !body.trim() || atCap || needsDemo) return;
     setSending(true);
     setError("");
     try {
@@ -102,7 +107,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          leads: [{ id: lead.id, name: lead.name, contactName: lead.contactName, email: lead.email, city: lead.city }],
+          leads: [{ id: lead.id, name: lead.name, contactName: lead.contactName, email: lead.email, city: lead.city, previewUrl: lead.previewUrl, claimByDate: lead.claimByDate }],
           subject,
           body,
           fromName,
@@ -223,6 +228,16 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
                 </div>
               )}
 
+              {needsDemo && (
+                <div className="flex items-start gap-2.5 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-amber-300" style={H}>
+                  <span className="text-base leading-none shrink-0">⚠️</span>
+                  <p className="text-sm leading-snug">
+                    This template links a demo site, but no demo has been built for <span className="font-semibold">{lead.name}</span> yet.
+                    Build one in the /websites factory and sync it first, or pick a different template.
+                  </p>
+                </div>
+              )}
+
               {error && <p className="text-sm text-red-400 px-1" style={H}>{error}</p>}
             </div>
 
@@ -238,10 +253,10 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
               )}
               <div className="flex items-center gap-3">
                 <button onClick={onClose} className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors" style={H}>Cancel</button>
-                <button onClick={handleSend} disabled={sending || !subject.trim() || !body.trim() || atCap}
+                <button onClick={handleSend} disabled={sending || !subject.trim() || !body.trim() || atCap || needsDemo}
                   className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-opacity"
                   style={{ backgroundColor: "#F97316", ...H }}>
-                  <Send size={14} />{sending ? "Sending…" : atCap ? "Daily cap reached" : `Send to ${lead.name}`}
+                  <Send size={14} />{sending ? "Sending…" : atCap ? "Daily cap reached" : needsDemo ? "No demo built yet" : `Send to ${lead.name}`}
                 </button>
               </div>
             </div>

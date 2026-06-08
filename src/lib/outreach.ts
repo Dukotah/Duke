@@ -8,6 +8,8 @@ export interface OutreachLead {
   contactName?: string; // person to greet, when known
   email: string;
   city: string;
+  previewUrl?: string; // demo site built by the /websites factory → {demoUrl}
+  claimByDate?: string; // demo "claim by" date for urgency → {claimByDate}
 }
 
 // First name for an email greeting, or "" when no usable contact person is known.
@@ -124,15 +126,19 @@ export function canDeliver(
 }
 
 // Personalize a subject or body template with the lead's details. Placeholders
-// are case-insensitive: {name}, {business}, {city}, {fromName}.
+// are case-insensitive: {name}, {business}, {city}, {fromName}, {demoUrl},
+// {claimByDate}. MUST stay in sync with the client-side personalize in
+// emailTemplates.ts so the composer preview matches what actually gets sent.
 //
 // {name} is the recipient GREETING — a contact person's first name when we know
 // it, otherwise a neutral "there" so emails read "Hi there," instead of the
 // dead-giveaway "Hi Acme Plumbing,". {business} is always the company name.
 // Scraped leads rarely carry a contact person, so most sends fall back to "there".
+// {demoUrl}/{claimByDate} come from the demo site built by the /websites factory
+// (attached via /api/crm/admin/preview-url); empty when no demo exists.
 export function personalize(
   template: string,
-  lead: Pick<OutreachLead, "name" | "city"> & { contactName?: string },
+  lead: Pick<OutreachLead, "name" | "city" | "previewUrl" | "claimByDate"> & { contactName?: string },
   fromName: string,
 ): string {
   const greeting = firstName(lead.contactName) || "there";
@@ -140,5 +146,7 @@ export function personalize(
     .replace(/\{name\}/gi, greeting)
     .replace(/\{business\}/gi, lead.name)
     .replace(/\{city\}/gi, lead.city)
-    .replace(/\{fromName\}/gi, fromName);
+    .replace(/\{fromName\}/gi, fromName)
+    .replace(/\{demoUrl\}/gi, lead.previewUrl ?? "")
+    .replace(/\{claimByDate\}/gi, lead.claimByDate ?? "");
 }
