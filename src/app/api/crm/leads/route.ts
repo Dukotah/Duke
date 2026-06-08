@@ -64,6 +64,7 @@ export interface Lead {
   /** Site audit signals. */
   site_quality?: string; // good | thin | dead | "" (no site)
   digital_presence?: string; // none | weak | ok
+  site_load_ms?: string; // homepage load time in ms (slow load = sales angle)
   /** 0–100 enriched lead score. */
   lead_score?: number;
   /** A | B | C | D — enriched grade bucket. */
@@ -72,6 +73,7 @@ export interface Lead {
   need_signal?: string; // human-readable need reason
   reach_channel?: string; // email+phone | email | phone | none
   recommended_action?: string; // plain-English next step
+  score_why?: string; // "; "-joined breakdown of what drove the score
   /** Stable dedup key across re-runs. */
   fingerprint?: string;
   /** Demo/preview site built for this prospect by the /websites factory, if any. */
@@ -217,12 +219,14 @@ async function getLeads(): Promise<Lead[]> {
       owner_phone: col(row, "owner_phone"),
       site_quality: col(row, "site_quality"),
       digital_presence: col(row, "digital_presence"),
+      site_load_ms: col(row, "site_load_ms"),
       lead_score: hasLeadScore ? leadScore : undefined,
       grade: col(row, "lead_grade"),
       category_value: col(row, "category_value"),
       need_signal: needSignal,
       reach_channel: col(row, "reach_channel"),
       recommended_action: col(row, "recommended_action"),
+      score_why: col(row, "score_why"),
       fingerprint: col(row, "fingerprint"),
     });
   }

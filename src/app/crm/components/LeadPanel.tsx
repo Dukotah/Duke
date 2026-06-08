@@ -23,9 +23,9 @@ interface Lead {
   email_status?: string; email_role?: string; email_free?: string; all_emails?: string;
   phone_e164?: string; phone_valid?: string; phone_type?: string;
   owner_name?: string; owner_title?: string; owner_email?: string; owner_phone?: string;
-  site_quality?: string; digital_presence?: string;
+  site_quality?: string; digital_presence?: string; site_load_ms?: string;
   lead_score?: number; grade?: string; category_value?: string;
-  need_signal?: string; reach_channel?: string; recommended_action?: string;
+  need_signal?: string; reach_channel?: string; recommended_action?: string; score_why?: string;
   previewUrl?: string | null;
   demoStatus?: string | null;
   demoFlags?: string[] | null;
@@ -400,9 +400,21 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                   {showScorePopover && (
                     <div className="absolute left-0 top-6 z-10 w-64 bg-[#1C1C1F] border border-white/10 rounded-xl p-3 shadow-xl text-xs text-white/70 space-y-1.5" style={H}>
                       <p className="font-bold text-white/90">Why this score?</p>
-                      {lead.tier_reason && <p>Tier {lead.tier}: {lead.tier_reason}</p>}
-                      {lead.industry_fit && <p>Industry fit: <span className="text-green-400">{lead.industry_fit}</span></p>}
-                      <p>Outreach score: <span className="text-[#F97316] font-semibold">{lead.outreach_score}/100</span></p>
+                      {lead.grade && <p>Grade <span className="font-semibold text-white/90">{lead.grade}</span>{lead.lead_score != null ? <> · <span className="text-[#F97316] font-semibold">{lead.lead_score}/100</span></> : null}</p>}
+                      {/* Enriched breakdown — what actually drove the score */}
+                      {lead.score_why ? (
+                        <ul className="space-y-0.5 pl-0.5">
+                          {lead.score_why.split(";").map((part) => part.trim()).filter(Boolean).map((part, i) => (
+                            <li key={i} className="flex items-start gap-1.5"><span className="text-[#F97316]/70 mt-px">•</span><span className="capitalize">{part}</span></li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <>
+                          {lead.tier_reason && <p>Tier {lead.tier}: {lead.tier_reason}</p>}
+                          {lead.industry_fit && <p>Industry fit: <span className="text-green-400">{lead.industry_fit}</span></p>}
+                          <p>Outreach score: <span className="text-[#F97316] font-semibold">{lead.outreach_score}/100</span></p>
+                        </>
+                      )}
                       <button onClick={() => setShowScorePopover(false)} className="text-white/30 hover:text-white/60 pt-1">✕ close</button>
                     </div>
                   )}
@@ -674,6 +686,56 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                 </div>
               )}
             </div>
+
+            {/* Their website — quick look + audit signals (enriched) */}
+            {(lead.website || lead.site_quality || lead.digital_presence) && (
+              <div className="px-5 py-4 border-b border-white/[0.06]">
+                <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Their Website</p>
+                {lead.website ? (
+                  <a href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl text-sm font-bold border border-white/15 bg-white/[0.04] text-white/85 hover:bg-white/[0.08] hover:border-white/25 transition-all active:scale-95"
+                    style={H}>
+                    <Globe size={15} className="text-[#F97316]" />Open their site<ExternalLink size={13} className="text-white/40" />
+                  </a>
+                ) : (
+                  <div className="flex items-center gap-2 w-full py-3 px-4 rounded-2xl border border-orange-400/25 bg-orange-400/[0.07] text-orange-300" style={H}>
+                    <Flame size={14} className="shrink-0" /><span className="text-sm font-semibold">No website found — that&apos;s the pitch</span>
+                  </div>
+                )}
+                {lead.website && websiteHost && (
+                  <p className="text-[11px] text-white/30 text-center mt-1.5 truncate" style={H}>{websiteHost}</p>
+                )}
+                {/* Audit signal chips — the redesign-opportunity tells */}
+                {(lead.site_quality || lead.digital_presence || lead.builder || lead.site_load_ms) && (
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {lead.site_quality && (() => {
+                      const q = lead.site_quality.toLowerCase();
+                      const cls = q === "dead" ? "text-red-400 bg-red-400/10 border-red-400/20"
+                        : q === "thin" ? "text-amber-400 bg-amber-400/10 border-amber-400/20"
+                        : q === "good" ? "text-green-400 bg-green-400/10 border-green-400/20"
+                        : "text-zinc-400 bg-zinc-400/10 border-zinc-400/20";
+                      const label = q === "dead" ? "Site dead" : q === "thin" ? "Thin / placeholder" : q === "good" ? "Real site" : lead.site_quality;
+                      return <span className={`text-[11px] px-2 py-0.5 rounded-full border ${cls}`} style={H}>{label}</span>;
+                    })()}
+                    {lead.digital_presence && (
+                      <span className="text-[11px] px-2 py-0.5 rounded-full border border-white/[0.08] bg-white/[0.04] text-white/45" style={H}>
+                        {lead.digital_presence === "none" ? "No online presence" : lead.digital_presence === "weak" ? "Weak presence" : "OK presence"}
+                      </span>
+                    )}
+                    {lead.builder && (
+                      <span className="text-[11px] px-2 py-0.5 rounded-full border border-yellow-400/20 bg-yellow-400/10 text-yellow-400/80" style={H}>{lead.builder}</span>
+                    )}
+                    {(() => {
+                      const ms = parseInt(lead.site_load_ms ?? "", 10);
+                      if (!Number.isFinite(ms) || ms <= 0) return null;
+                      const slow = ms > 3000;
+                      return <span className={`text-[11px] px-2 py-0.5 rounded-full border ${slow ? "text-red-400 bg-red-400/10 border-red-400/20" : "text-white/45 bg-white/[0.04] border-white/[0.08]"}`} style={H}>Loads in {(ms / 1000).toFixed(1)}s{slow ? " · slow" : ""}</span>;
+                    })()}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Contact info */}
             <div className="px-5 py-4 border-b border-white/[0.06]">
