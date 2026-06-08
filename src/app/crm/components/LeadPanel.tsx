@@ -19,6 +19,13 @@ interface Lead {
   address: string; city: string; county: string; tier: string;
   tier_reason: string; builder: string; industry_fit: string;
   outreach_score: number; pitch: string;
+  // Deep-enrichment fields (optional — empty on legacy leads).
+  email_status?: string; email_role?: string; email_free?: string; all_emails?: string;
+  phone_e164?: string; phone_valid?: string; phone_type?: string;
+  owner_name?: string; owner_title?: string; owner_email?: string; owner_phone?: string;
+  site_quality?: string; digital_presence?: string;
+  lead_score?: number; grade?: string; category_value?: string;
+  need_signal?: string; reach_channel?: string; recommended_action?: string;
   previewUrl?: string | null;
   demoStatus?: string | null;
   demoFlags?: string[] | null;
@@ -59,6 +66,28 @@ function CopyBtn({ text }: { text: string }) {
       {ok ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
     </button>
   );
+}
+
+// Email deliverability badge styling, keyed off the enriched MX-verified status.
+// Returns null when no status is known (legacy leads) so nothing renders.
+function emailStatusBadge(status?: string): { label: string; cls: string } | null {
+  switch ((status ?? "").toLowerCase()) {
+    case "valid": return { label: "Deliverable", cls: "text-green-400 bg-green-400/10 border-green-400/20" };
+    case "risky": return { label: "Risky", cls: "text-amber-400 bg-amber-400/10 border-amber-400/20" };
+    case "unknown": return { label: "Unverified", cls: "text-zinc-400 bg-zinc-400/10 border-zinc-400/20" };
+    case "invalid": return { label: "Invalid", cls: "text-red-400 bg-red-400/10 border-red-400/20" };
+    default: return null;
+  }
+}
+
+// Grade pill colour (lead_grade A–D), the enriched score bucket.
+function gradeCls(grade?: string): string {
+  switch ((grade ?? "").toUpperCase()) {
+    case "A": return "text-orange-400 bg-orange-400/10 border-orange-400/20";
+    case "B": return "text-yellow-400 bg-yellow-400/10 border-yellow-400/20";
+    case "C": return "text-zinc-400 bg-zinc-400/10 border-zinc-400/20";
+    default: return "text-zinc-500 bg-zinc-500/10 border-zinc-500/20";
+  }
 }
 
 function SubmitModal({ lead, state, onClose, onSubmitted }: {
@@ -326,7 +355,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
       {showEmail && (
         <EmailComposer
-          lead={{ id: lead.id, name: lead.name, contactName: lead.contact_name, email: lead.email, city: lead.city, previewUrl: lead.previewUrl ?? undefined, claimByDate: lead.claimByDate ?? undefined }}
+          lead={{ id: lead.id, name: lead.name, contactName: lead.contact_name, email: lead.email, city: lead.city, previewUrl: lead.previewUrl ?? undefined, claimByDate: lead.claimByDate ?? undefined, emailStatus: lead.email_status }}
           repName={repName}
           onClose={() => setShowEmail(false)}
           onSent={handleEmailSent}
@@ -353,6 +382,11 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                    tier === "B" ? <><Zap size={9} className="inline mr-1" />DIY Site</> :
                    <><Globe size={9} className="inline mr-1" />Has Site</>}
                 </span>
+                {lead.grade && (
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${gradeCls(lead.grade)}`} style={H}>
+                    Grade {lead.grade}{lead.lead_score != null ? ` · ${lead.lead_score}` : ""}
+                  </span>
+                )}
                 {state.callCount ? (
                   <span className="text-xs text-white/30 flex items-center gap-1" style={H}><PhoneCall size={9} />{state.callCount} call{state.callCount !== 1 ? "s" : ""}</span>
                 ) : null}
@@ -380,6 +414,29 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
 
           {/* Scrollable body */}
           <div className="flex-1 overflow-y-auto">
+
+            {/* Recommended next step (enriched) — the plain-English play for this lead */}
+            {lead.recommended_action && (
+              <div className="px-5 py-3 border-b border-white/[0.06] bg-[#F97316]/[0.06]">
+                <div className="flex items-start gap-2.5">
+                  <Zap size={13} className="text-[#F97316] shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-white/90 leading-snug" style={H}>{lead.recommended_action}</p>
+                    <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+                      {lead.category_value && (
+                        <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.category_value} value</span>
+                      )}
+                      {lead.reach_channel && (
+                        <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.reach_channel}</span>
+                      )}
+                      {lead.need_signal && (
+                        <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.need_signal}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* CALL NOW */}
             {lead.phone && (
@@ -622,19 +679,69 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             <div className="px-5 py-4 border-b border-white/[0.06]">
               <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Contact Info</p>
               <div className="space-y-2.5">
+                {/* Decision-maker (enriched, sparse) — who to ask for by name */}
+                {(lead.owner_name || lead.owner_email || lead.owner_phone) && (
+                  <div className="rounded-xl border border-[#F97316]/20 bg-[#F97316]/[0.06] p-3 space-y-1.5">
+                    <p className="text-[11px] font-semibold text-[#F97316]/80 uppercase tracking-wider flex items-center gap-1.5" style={H}>
+                      <UserCheck size={11} />Decision-maker
+                    </p>
+                    {lead.owner_name && (
+                      <p className="text-sm text-white/85 font-semibold" style={H}>
+                        {lead.owner_name}{lead.owner_title ? <span className="text-white/40 font-normal"> · {lead.owner_title}</span> : null}
+                      </p>
+                    )}
+                    {lead.owner_email && (
+                      <div className="flex items-center gap-2">
+                        <Mail size={12} className="text-[#F97316]/60 shrink-0" />
+                        <a href={`mailto:${lead.owner_email}`} className="text-xs text-white/70 hover:text-[#F97316] transition-colors flex-1 min-w-0 truncate" style={H}>{lead.owner_email}</a>
+                        <CopyBtn text={lead.owner_email} />
+                      </div>
+                    )}
+                    {lead.owner_phone && (
+                      <div className="flex items-center gap-2">
+                        <Phone size={12} className="text-[#F97316]/60 shrink-0" />
+                        <a href={`tel:${lead.owner_phone}`} className="text-xs text-white/70 hover:text-[#F97316] transition-colors flex-1" style={H}>{lead.owner_phone}</a>
+                        <CopyBtn text={lead.owner_phone} />
+                      </div>
+                    )}
+                  </div>
+                )}
                 {lead.phone && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <Phone size={13} className="text-[#F97316]/60 shrink-0" />
                     <a href={`tel:${lead.phone}`} className="text-sm text-white/75 hover:text-[#F97316] transition-colors flex-1" style={H}>{lead.phone}</a>
+                    {lead.phone_type && lead.phone_type !== "fixed-line-or-mobile" && (
+                      <span className="text-[10px] uppercase tracking-wider text-white/40 bg-white/[0.06] border border-white/[0.08] px-1.5 py-0.5 rounded-md shrink-0" style={H}>{lead.phone_type.replace(/-/g, " ")}</span>
+                    )}
+                    {lead.phone_valid === "False" && (
+                      <span className="text-[10px] text-red-400/80 bg-red-400/10 border border-red-400/20 px-1.5 py-0.5 rounded-md shrink-0" style={H}>unverified #</span>
+                    )}
                     <CopyBtn text={lead.phone} />
                   </div>
                 )}
                 {lead.email && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Mail size={13} className="text-[#F97316]/60 shrink-0" />
-                    <a href={`mailto:${lead.email}`} className="text-sm text-white/75 hover:text-[#F97316] transition-colors flex-1 min-w-0 truncate" style={H}>{lead.email}</a>
-                    {lead.email_owned === "1" && <span className="text-xs text-green-400/70 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded-full shrink-0" style={H}>Business</span>}
-                    <CopyBtn text={lead.email} />
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Mail size={13} className="text-[#F97316]/60 shrink-0" />
+                      <a href={`mailto:${lead.email}`} className="text-sm text-white/75 hover:text-[#F97316] transition-colors flex-1 min-w-0 truncate" style={H}>{lead.email}</a>
+                      {(() => {
+                        const b = emailStatusBadge(lead.email_status);
+                        return b
+                          ? <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ${b.cls}`} style={H}>{b.label}</span>
+                          : lead.email_owned === "1" ? <span className="text-xs text-green-400/70 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded-full shrink-0" style={H}>Business</span> : null;
+                      })()}
+                      <CopyBtn text={lead.email} />
+                    </div>
+                    {/* Free/role are NOT disqualifiers for a web-design pitch — show as
+                        context, not warnings; plus any additional emails found. */}
+                    {(lead.email_role === "True" || lead.email_free === "True" || lead.all_emails) && (
+                      <p className="text-[11px] text-white/30 mt-1 ml-[21px]" style={H}>
+                        {lead.email_role === "True" && <span>Role inbox</span>}
+                        {lead.email_role === "True" && lead.email_free === "True" && <span> · </span>}
+                        {lead.email_free === "True" && <span>Personal (free) provider</span>}
+                        {lead.all_emails && <span>{(lead.email_role === "True" || lead.email_free === "True") ? " · " : ""}Also: {lead.all_emails.split("|").filter(Boolean).slice(0, 2).join(", ")}</span>}
+                      </p>
+                    )}
                   </div>
                 )}
                 {lead.website && (

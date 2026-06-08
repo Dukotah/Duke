@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCustomLeads, getAllClaims, getTerritory, getLeadPreviewObjects, previewKey } from "@/lib/db";
 
+// Lead source CSV. Defaults to the national deduped export, but can be pointed at
+// a per-region deep-enriched export (e.g. santa_rosa_ENRICHED_crm.csv hosted on
+// the scraper repo) via LEADS_CSV_URL with no code change. The parser below
+// handles both schemas.
 export const CSV_URL =
+  process.env.LEADS_CSV_URL?.trim() ||
   "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/claude/lead-data-sourcing-eyOeN/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
 
 export interface Lead {
@@ -33,6 +38,42 @@ export interface Lead {
   score: number;
   pitch: string;
   is_chain: string;
+  // ── Deep-enrichment fields (per-region enriched export). All optional/empty on
+  // the legacy national CSV, so the rest of the app keeps working unchanged. ──
+  /** MX-verified deliverability: valid | risky | invalid | unknown. */
+  email_status?: string;
+  /** "True"/"False" — role inbox (info@…). NOT a disqualifier for this vertical. */
+  email_role?: string;
+  /** "True"/"False" — free provider (gmail). NOT a disqualifier. */
+  email_free?: string;
+  /** "True"/"False" — throwaway domain. */
+  email_disposable?: string;
+  /** Additional emails found, "|"-joined. */
+  all_emails?: string;
+  /** Normalized E.164 phone (+1707…) for dialing. */
+  phone_e164?: string;
+  /** "True"/"False" — offline libphonenumber validation. */
+  phone_valid?: string;
+  /** mobile | fixed-line | fixed-line-or-mobile | toll-free | … */
+  phone_type?: string;
+  /** Decision-maker contact when found (sparse). */
+  owner_name?: string;
+  owner_title?: string;
+  owner_email?: string;
+  owner_phone?: string;
+  /** Site audit signals. */
+  site_quality?: string; // good | thin | dead | "" (no site)
+  digital_presence?: string; // none | weak | ok
+  /** 0–100 enriched lead score. */
+  lead_score?: number;
+  /** A | B | C | D — enriched grade bucket. */
+  grade?: string;
+  category_value?: string; // premium | solid | modest | low
+  need_signal?: string; // human-readable need reason
+  reach_channel?: string; // email+phone | email | phone | none
+  recommended_action?: string; // plain-English next step
+  /** Stable dedup key across re-runs. */
+  fingerprint?: string;
   /** Demo/preview site built for this prospect by the /websites factory, if any. */
   previewUrl?: string | null;
   demoStatus?: string | null;
@@ -81,11 +122,39 @@ async function getLeads(): Promise<Lead[]> {
   const text = await res.text();
   const lines = text.split("\n").filter(Boolean);
   const rawHeaders = parseCSVLine(lines[0]);
-  const headers = rawHeaders.map((h) => h.trim().toLowerCase().replace(/\s+/g, "_"));
+
+  // Build a normalized-key → column-index map. The enriched export carries BOTH a
+  // legacy Title-Case column and a canonical snake_case one for a few fields
+  // (e.g. "Email status" AND "email_status", "Digital presence" AND
+  // "digital_presence"). They normalize to the same key, so on a collision prefer
+  // the column whose RAW header is already snake_case — that's the canonical,
+  // MX-verified value the handoff says to use (a naive indexOf would grab the
+  // earlier, legacy column).
+  const norm = (h: string) => h.trim().toLowerCase().replace(/\s+/g, "_");
+  const isCanonical = (raw: string) => /^[a-z0-9_]+$/.test(raw.trim());
+  const headerIndex: Record<string, number> = {};
+  rawHeaders.forEach((raw, i) => {
+    const key = norm(raw);
+    if (!(key in headerIndex) || (isCanonical(raw) && !isCanonical(rawHeaders[headerIndex[key]]))) {
+      headerIndex[key] = i;
+    }
+  });
 
   const col = (row: string[], key: string) => {
-    const idx = headers.indexOf(key);
+    const idx = headerIndex[key] ?? -1;
     return idx >= 0 ? (row[idx] ?? "").trim() : "";
+  };
+
+  // Website-status tier (the A/B/C "No Website / DIY / Has Site" badge). The
+  // enriched export's legacy "Tier" column is noise here (mostly "A"), so derive
+  // the badge from the need signal when present; otherwise use the legacy CSV's
+  // own tier column.
+  const tierFromNeed = (need: string, fallback: string) => {
+    const n = need.toLowerCase();
+    if (!n) return fallback;
+    if (n.includes("no website")) return "A"; // no site at all
+    if (n.includes("modern") || n.includes("good")) return "C"; // already has a real site
+    return "B"; // dead / thin / weak / DIY
   };
 
   const leads: Lead[] = [];
@@ -94,18 +163,26 @@ async function getLeads(): Promise<Lead[]> {
     const name = col(row, "name") || col(row, "business") || col(row, "business_name");
     if (!name) continue;
 
+    const needSignal = col(row, "need_signal");
+    const leadScore = parseFloat(col(row, "lead_score"));
+    const hasLeadScore = Number.isFinite(leadScore);
+    // Discrete socials (facebook/instagram) only exist on the enriched export;
+    // synthesize the pipe-joined `socials` the UI already renders when absent.
+    const fb = col(row, "facebook");
+    const ig = col(row, "instagram");
+
     leads.push({
-      id: col(row, "id") || String(i),
+      id: col(row, "id") || col(row, "fingerprint") || String(i),
       name,
       contact_name: col(row, "contact_name") || col(row, "contact") || col(row, "owner_name") || col(row, "owner") || col(row, "contact_person"),
       category: col(row, "category") || col(row, "niche"),
       alt_categories: col(row, "alt_categories"),
-      phone: col(row, "phone_fmt") || col(row, "phone"),
+      phone: col(row, "phone_fmt") || col(row, "phone") || col(row, "phone_e164"),
       phone_fmt: col(row, "phone_fmt"),
       email: col(row, "email"),
       email_owned: col(row, "email_owned"),
-      website: col(row, "website"),
-      socials: col(row, "socials"),
+      website: col(row, "website") || col(row, "discovered_website"),
+      socials: col(row, "socials") || [fb, ig].filter(Boolean).join("|"),
       social_platforms: col(row, "social_platforms"),
       best_contact: col(row, "best_contact"),
       address: col(row, "address"),
@@ -115,14 +192,38 @@ async function getLeads(): Promise<Lead[]> {
       county: col(row, "county"),
       lat: col(row, "lat"),
       lon: col(row, "lon"),
-      tier: col(row, "tier"),
-      tier_reason: col(row, "tier_reason"),
-      builder: col(row, "builder"),
+      tier: tierFromNeed(needSignal, col(row, "tier")),
+      tier_reason: col(row, "tier_reason") || needSignal,
+      builder: col(row, "builder") || col(row, "site_builder"),
       industry_fit: col(row, "industry_fit"),
-      outreach_score: parseFloat(col(row, "outreach_score")) || 0,
-      score: parseFloat(col(row, "score")) || 0,
+      // Sort axis. The enriched export's lead_score (0–100) is the primary score;
+      // fall back to the legacy outreach_score otherwise.
+      outreach_score: parseFloat(col(row, "outreach_score")) || (hasLeadScore ? leadScore : 0),
+      score: parseFloat(col(row, "score")) || (hasLeadScore ? leadScore : 0),
       pitch: col(row, "pitch"),
       is_chain: col(row, "is_chain"),
+      // Enriched fields (empty on the legacy CSV).
+      email_status: col(row, "email_status"),
+      email_role: col(row, "email_role"),
+      email_free: col(row, "email_free"),
+      email_disposable: col(row, "email_disposable"),
+      all_emails: col(row, "all_emails") || col(row, "other_emails"),
+      phone_e164: col(row, "phone_e164"),
+      phone_valid: col(row, "phone_valid"),
+      phone_type: col(row, "phone_type"),
+      owner_name: col(row, "owner_name"),
+      owner_title: col(row, "owner_title"),
+      owner_email: col(row, "owner_email"),
+      owner_phone: col(row, "owner_phone"),
+      site_quality: col(row, "site_quality"),
+      digital_presence: col(row, "digital_presence"),
+      lead_score: hasLeadScore ? leadScore : undefined,
+      grade: col(row, "lead_grade"),
+      category_value: col(row, "category_value"),
+      need_signal: needSignal,
+      reach_channel: col(row, "reach_channel"),
+      recommended_action: col(row, "recommended_action"),
+      fingerprint: col(row, "fingerprint"),
     });
   }
 
@@ -142,6 +243,10 @@ export async function GET(req: NextRequest) {
     const bestContact = sp.get("bestContact") ?? "";
     const hasEmail = sp.get("hasEmail") ?? "";
     const hasWebsite = sp.get("hasWebsite") ?? "";
+    // Enriched filters (no-op on the legacy CSV where these fields are empty).
+    const emailStatus = sp.get("emailStatus") ?? ""; // valid|risky|invalid|unknown|deliverable
+    const grade = sp.get("grade") ?? ""; // A|B|C|D
+    const reachChannel = sp.get("reachChannel") ?? "";
     const hotLeads = sp.get("hotLeads") === "1";
     const allTerritories = sp.get("allTerritories") === "1";
     const sortBy = sp.get("sortBy") ?? "outreach_score";
@@ -186,6 +291,12 @@ export async function GET(req: NextRequest) {
     if (hasEmail === "no") filtered = filtered.filter((l) => !l.email);
     if (hasWebsite === "no") filtered = filtered.filter((l) => !l.website);
     if (hasWebsite === "yes") filtered = filtered.filter((l) => !!l.website);
+    // "deliverable" = anything we'd actually email: has an address that isn't
+    // MX-invalid. (email_status=invalid is mostly "no email present".)
+    if (emailStatus === "deliverable") filtered = filtered.filter((l) => !!l.email && (l.email_status ?? "").toLowerCase() !== "invalid");
+    else if (emailStatus) filtered = filtered.filter((l) => (l.email_status ?? "").toLowerCase() === emailStatus.toLowerCase());
+    if (grade) filtered = filtered.filter((l) => (l.grade ?? "").toUpperCase() === grade.toUpperCase());
+    if (reachChannel) filtered = filtered.filter((l) => (l.reach_channel ?? "") === reachChannel);
     if (hotLeads) filtered = filtered.filter((l) => l.tier === "A" && l.industry_fit === "high");
 
     // Sort
