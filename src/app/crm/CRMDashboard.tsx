@@ -136,6 +136,19 @@ interface Lead {
   address: string; city: string; state: string; zip: string; county: string;
   tier: string; tier_reason: string; builder: string; industry_fit: string;
   outreach_score: number; pitch: string; alt_categories: string;
+  // Enriched (optional) — rendered in the list; passed through to LeadPanel.
+  email_status?: string; grade?: string; lead_score?: number;
+}
+
+// Dot colour for enriched email deliverability status.
+function deliverabilityDot(status?: string): string {
+  switch ((status ?? "").toLowerCase()) {
+    case "valid": return "bg-green-400";
+    case "risky": return "bg-amber-400";
+    case "invalid": return "bg-red-400";
+    case "unknown": return "bg-zinc-500";
+    default: return "bg-transparent";
+  }
 }
 
 interface LeadState {
@@ -231,6 +244,8 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
   const [niche, setNiche] = useState("");
   const [tier, setTier] = useState("");
   const [hasEmail, setHasEmail] = useState("");
+  const [grade, setGrade] = useState("");
+  const [emailStatus, setEmailStatus] = useState("");
   const [sortBy, setSortBy] = useState("outreach_score");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
@@ -242,21 +257,22 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
       const p = new URLSearchParams({ page: String(page), limit: String(LIMIT), sortBy,
         ...(q && { q }), ...(county && { county }), ...(niche && { niche }),
         ...(tier && { tier }), ...(hasEmail && { hasEmail }),
+        ...(grade && { grade }), ...(emailStatus && { emailStatus }),
         ...(allTerritories && { allTerritories: "1" }) });
       const res = await fetch(`/api/crm/leads?${p}`);
       if (!res.ok) throw new Error();
       setData(await res.json());
     } catch { setError("Could not load leads."); }
     finally { setLoading(false); }
-  }, [q, county, niche, tier, hasEmail, sortBy, page, allTerritories]);
+  }, [q, county, niche, tier, hasEmail, grade, emailStatus, sortBy, page, allTerritories]);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { fetch_(); }, [fetch_]);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset pagination when filters change
-  useEffect(() => { setPage(1); }, [q, county, niche, tier, hasEmail, sortBy, allTerritories]);
+  useEffect(() => { setPage(1); }, [q, county, niche, tier, hasEmail, grade, emailStatus, sortBy, allTerritories]);
 
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
-  const activeFilters = [q, county, niche, tier, hasEmail].filter(Boolean).length;
+  const activeFilters = [q, county, niche, tier, hasEmail, grade, emailStatus].filter(Boolean).length;
   const territory = data?.territory;
 
   return (
@@ -306,13 +322,27 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
             <option value="yes">Has email</option>
             <option value="no">No email</option>
           </Select>
+          <Select value={grade} onChange={setGrade}>
+            <option value="">All Grades</option>
+            <option value="A">Grade A</option>
+            <option value="B">Grade B</option>
+            <option value="C">Grade C</option>
+            <option value="D">Grade D</option>
+          </Select>
+          <Select value={emailStatus} onChange={setEmailStatus} icon={Mail}>
+            <option value="">Any deliverability</option>
+            <option value="deliverable">Deliverable</option>
+            <option value="valid">Verified email</option>
+            <option value="risky">Risky</option>
+            <option value="invalid">Invalid</option>
+          </Select>
           <Select value={sortBy} onChange={setSortBy} icon={ArrowUpDown}>
             <option value="outreach_score">Best score</option>
             <option value="name">Name A–Z</option>
             <option value="city">City A–Z</option>
           </Select>
           {activeFilters > 0 && (
-            <button onClick={() => { setQ(""); setCounty(""); setNiche(""); setTier(""); setHasEmail(""); }}
+            <button onClick={() => { setQ(""); setCounty(""); setNiche(""); setTier(""); setHasEmail(""); setGrade(""); setEmailStatus(""); }}
               className="inline-flex items-center gap-1 text-xs text-white/30 hover:text-white/60 px-2" style={H}>
               <X size={11} />Clear
             </button>
@@ -387,6 +417,13 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
                     <p className="text-sm font-bold text-white truncate group-hover:text-[#F97316] transition-colors" style={H}>{lead.name}</p>
                     {lead.tier === "A" && <Flame size={11} className="text-orange-400 shrink-0" />}
                     {lead.tier === "B" && <Zap size={11} className="text-yellow-400 shrink-0" />}
+                    {lead.grade && (
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${
+                        lead.grade === "A" ? "text-orange-400 bg-orange-400/10 border-orange-400/20" :
+                        lead.grade === "B" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
+                        "text-zinc-400 bg-zinc-400/10 border-zinc-400/20"
+                      }`} style={H}>{lead.grade}</span>
+                    )}
                   </div>
                   <p className="text-xs text-white/40 mt-0.5 capitalize" style={H}>{lead.city} · {lead.category.replace(/_/g, " ")}</p>
                   <div className="flex items-center gap-3 mt-2">
@@ -396,7 +433,12 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   {lead.phone && <span className="text-xs text-white/35 hidden sm:flex items-center gap-1 tabular-nums" style={H}><Phone size={9} />{lead.phone}</span>}
-                  {lead.email && <span className="text-xs text-white/25 hidden sm:flex items-center gap-1" style={H}><Mail size={9} />email</span>}
+                  {lead.email && (
+                    <span className="text-xs text-white/25 hidden sm:flex items-center gap-1.5" style={H}>
+                      {lead.email_status && <span className={`w-1.5 h-1.5 rounded-full ${deliverabilityDot(lead.email_status)}`} title={`Email: ${lead.email_status}`} />}
+                      <Mail size={9} />email
+                    </span>
+                  )}
                   <ChevronRight size={15} className="text-white/20 group-hover:text-[#F97316] group-hover:translate-x-0.5 transition-all" />
                 </div>
               </div>

@@ -10,6 +10,10 @@ export interface OutreachLead {
   city: string;
   previewUrl?: string; // demo site built by the /websites factory → {demoUrl}
   claimByDate?: string; // demo "claim by" date for urgency → {claimByDate}
+  // Enriched MX-verified deliverability: valid | risky | invalid | unknown.
+  // When "invalid", the address won't deliver — gateLeads drops it so a fragile
+  // warm-up domain never accrues hard bounces. Absent on legacy leads (not dropped).
+  emailStatus?: string;
 }
 
 // First name for an email greeting, or "" when no usable contact person is known.
@@ -37,9 +41,19 @@ export interface GateResult {
   skipped: number;
 }
 
+// An MX-verified status of "invalid" means the address won't deliver. Dropping
+// these protects the warm-up domain from hard bounces. Role/free providers are
+// deliberately NOT treated as undeliverable — for a web-design pitch an info@ or
+// gmail address is a perfectly good (often the only) way to reach a contractor.
+// Unknown/risky are kept here (surfaced as a warn-with-override in the composer).
+export function isUndeliverableStatus(status?: string): boolean {
+  return (status ?? "").toLowerCase() === "invalid";
+}
+
 // Given the full request batch and the suppression set, decide which leads are
 // eligible to receive an email. A lead is dropped when it has no email, the
-// email is malformed, or the address has unsubscribed.
+// email is malformed, the address has unsubscribed, or the enriched status marks
+// it undeliverable.
 export function gateLeads(
   leads: OutreachLead[],
   suppressed: Iterable<string>,
@@ -51,6 +65,7 @@ export function gateLeads(
     (l) =>
       Boolean(l.email) &&
       isValidEmail(l.email) &&
+      !isUndeliverableStatus(l.emailStatus) &&
       !suppressedSet.has(normalizeEmail(l.email)),
   );
 

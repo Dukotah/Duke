@@ -79,6 +79,37 @@ describe("gateLeads", () => {
   it("handles an empty batch", () => {
     expect(gateLeads([], [])).toEqual({ sendable: [], skipped: 0 });
   });
+
+  it("drops leads whose enriched status is invalid (warm-up protection)", () => {
+    const leads = [
+      lead({ id: "1", email: "ok@x.com", emailStatus: "valid" }),
+      lead({ id: "2", email: "bad@x.com", emailStatus: "invalid" }),
+    ];
+    const result = gateLeads(leads, []);
+    expect(result.sendable.map((l) => l.id)).toEqual(["1"]);
+    expect(result.skipped).toBe(1);
+  });
+
+  it("keeps risky/unknown statuses (composer warns; gate does not drop)", () => {
+    const leads = [
+      lead({ id: "1", email: "a@x.com", emailStatus: "risky" }),
+      lead({ id: "2", email: "b@x.com", emailStatus: "unknown" }),
+      lead({ id: "3", email: "c@x.com" }), // legacy, no status
+    ];
+    const result = gateLeads(leads, []);
+    expect(result.sendable.map((l) => l.id)).toEqual(["1", "2", "3"]);
+    expect(result.skipped).toBe(0);
+  });
+
+  it("does not treat role or free-provider addresses as undeliverable", () => {
+    const leads = [
+      lead({ id: "1", email: "info@x.com", emailStatus: "valid" }),
+      lead({ id: "2", email: "owner@gmail.com", emailStatus: "valid" }),
+    ];
+    const result = gateLeads(leads, []);
+    expect(result.sendable.map((l) => l.id)).toEqual(["1", "2"]);
+    expect(result.skipped).toBe(0);
+  });
 });
 
 describe("remainingDailyCapacity", () => {

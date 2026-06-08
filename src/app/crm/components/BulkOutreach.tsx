@@ -25,6 +25,20 @@ interface Lead {
   state: string;
   tier: string;
   outreach_score: number;
+  // Enriched (optional): MX-verified deliverability + grade bucket.
+  email_status?: string;
+  grade?: string;
+}
+
+// Dot colour for the enriched email deliverability status.
+function deliverabilityDot(status?: string): string {
+  switch ((status ?? "").toLowerCase()) {
+    case "valid": return "bg-green-400";
+    case "risky": return "bg-amber-400";
+    case "invalid": return "bg-red-400";
+    case "unknown": return "bg-zinc-500";
+    default: return "bg-transparent";
+  }
 }
 
 interface LeadsResponse {
@@ -78,6 +92,9 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const [county, setCounty] = useState("");
   const [niche, setNiche] = useState("");
   const [tier, setTier] = useState("");
+  // Deliverability filter — default to "deliverable" so the warm-up batch never
+  // includes MX-invalid (mostly no-email) addresses.
+  const [emailStatus, setEmailStatus] = useState("deliverable");
   const [sortBy, setSortBy] = useState("outreach_score");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -118,6 +135,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
         ...(county && { county }),
         ...(niche && { niche }),
         ...(tier && { tier }),
+        ...(emailStatus && { emailStatus }),
       });
       const res = await fetch(`/api/crm/leads?${p}`);
       if (!res.ok) throw new Error();
@@ -127,12 +145,12 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
     } finally {
       setLoading(false);
     }
-  }, [q, county, niche, tier, sortBy, page]);
+  }, [q, county, niche, tier, emailStatus, sortBy, page]);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader; setState runs after fetch resolves
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset pagination when filters change
-  useEffect(() => { setPage(1); }, [q, county, niche, tier, sortBy]);
+  useEffect(() => { setPage(1); }, [q, county, niche, tier, emailStatus, sortBy]);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved booking link on mount
   useEffect(() => { const saved = readBookingOverride(); setCalendlyLink(saved); setCalendlyDraft(saved); }, []);
   // Load today's sending capacity on mount.
@@ -229,6 +247,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
         contactName: l.contact_name,
         email: l.email,
         city: l.city,
+        emailStatus: l.email_status,
       }));
       // Opt-in: only append a booking CTA when the rep has set a personal link,
       // so templates that already mention scheduling don't get a duplicate.
@@ -380,6 +399,11 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                 <option value="B">⚡ DIY Site</option>
                 <option value="C">Has Site</option>
               </Select>
+              <Select value={emailStatus} onChange={setEmailStatus} icon={Mail}>
+                <option value="deliverable">Deliverable</option>
+                <option value="valid">Verified only</option>
+                <option value="">Any email</option>
+              </Select>
               <Select value={sortBy} onChange={setSortBy} icon={ArrowUpDown}>
                 <option value="outreach_score">Best score</option>
                 <option value="name">Name A–Z</option>
@@ -435,9 +459,11 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                         </p>
                       </div>
                       <div className="shrink-0 text-right">
-                        <span className="text-xs text-white/25 flex items-center gap-1" style={H}>
+                        <span className="text-xs text-white/25 flex items-center gap-1.5" style={H}>
+                          {lead.email_status && <span className={`w-1.5 h-1.5 rounded-full ${deliverabilityDot(lead.email_status)}`} title={`Email: ${lead.email_status}`} />}
                           <Mail size={9} />{lead.email.length > 20 ? lead.email.slice(0, 18) + "…" : lead.email}
                         </span>
+                        {lead.grade && <span className="block text-[10px] text-white/20 mt-0.5" style={H}>Grade {lead.grade}</span>}
                       </div>
                     </div>
                   );

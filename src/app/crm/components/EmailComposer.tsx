@@ -22,6 +22,8 @@ interface ComposerLead {
   city: string;
   previewUrl?: string;
   claimByDate?: string;
+  // Enriched MX-verified deliverability: valid | risky | invalid | unknown.
+  emailStatus?: string;
 }
 
 interface Props {
@@ -44,6 +46,13 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
   const [done, setDone] = useState(false);
   const [delivered, setDelivered] = useState(true);
   const [savedFlash, setSavedFlash] = useState(false);
+  // Deliverability guard: warn-with-override for any non-valid address so a rep
+  // doesn't unknowingly hard-bounce the warm-up domain. A "valid" (MX-verified)
+  // address needs no confirmation; legacy leads (no status) are treated as valid.
+  const [overrideRisky, setOverrideRisky] = useState(false);
+  const emailStatus = (lead.emailStatus ?? "").toLowerCase();
+  const riskyEmail = emailStatus === "invalid" || emailStatus === "risky" || emailStatus === "unknown";
+  const blockedByDeliverability = riskyEmail && !overrideRisky;
 
   // Today's sending capacity (warm-up ramp) so a rep can't blow past the daily cap.
   const [capacity, setCapacity] = useState<{ sentToday: number; dailyCap: number; remaining: number; live: boolean } | null>(null);
@@ -99,7 +108,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
   };
 
   const handleSend = async () => {
-    if (!subject.trim() || !body.trim() || atCap || needsDemo) return;
+    if (!subject.trim() || !body.trim() || atCap || needsDemo || blockedByDeliverability) return;
     setSending(true);
     setError("");
     try {
@@ -107,7 +116,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          leads: [{ id: lead.id, name: lead.name, contactName: lead.contactName, email: lead.email, city: lead.city, previewUrl: lead.previewUrl, claimByDate: lead.claimByDate }],
+          leads: [{ id: lead.id, name: lead.name, contactName: lead.contactName, email: lead.email, city: lead.city, previewUrl: lead.previewUrl, claimByDate: lead.claimByDate, emailStatus: lead.emailStatus }],
           subject,
           body,
           fromName,
@@ -238,6 +247,25 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
                 </div>
               )}
 
+              {riskyEmail && (
+                <div className={`rounded-xl border px-4 py-3 ${emailStatus === "invalid" ? "border-red-400/30 bg-red-400/10 text-red-300" : "border-amber-400/30 bg-amber-400/10 text-amber-300"}`} style={H}>
+                  <div className="flex items-start gap-2.5">
+                    <span className="text-base leading-none shrink-0">{emailStatus === "invalid" ? "⛔" : "⚠️"}</span>
+                    <p className="text-sm leading-snug">
+                      {emailStatus === "invalid"
+                        ? <>This address <span className="font-semibold">failed verification</span> — it likely has no working inbox. Sending risks a hard bounce, which hurts the warm-up domain.</>
+                        : emailStatus === "risky"
+                          ? <>This address looks <span className="font-semibold">risky</span> (catch-all or low-quality). It may bounce.</>
+                          : <>This address <span className="font-semibold">couldn&apos;t be verified</span>. It may or may not deliver.</>}
+                    </p>
+                  </div>
+                  <label className="flex items-center gap-2 mt-2.5 ml-[26px] cursor-pointer select-none">
+                    <input type="checkbox" checked={overrideRisky} onChange={(e) => setOverrideRisky(e.target.checked)} className="accent-current" />
+                    <span className="text-xs font-semibold">Send anyway</span>
+                  </label>
+                </div>
+              )}
+
               {error && <p className="text-sm text-red-400 px-1" style={H}>{error}</p>}
             </div>
 
@@ -253,10 +281,10 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
               )}
               <div className="flex items-center gap-3">
                 <button onClick={onClose} className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors" style={H}>Cancel</button>
-                <button onClick={handleSend} disabled={sending || !subject.trim() || !body.trim() || atCap || needsDemo}
+                <button onClick={handleSend} disabled={sending || !subject.trim() || !body.trim() || atCap || needsDemo || blockedByDeliverability}
                   className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-opacity"
                   style={{ backgroundColor: "#F97316", ...H }}>
-                  <Send size={14} />{sending ? "Sending…" : atCap ? "Daily cap reached" : needsDemo ? "No demo built yet" : `Send to ${lead.name}`}
+                  <Send size={14} />{sending ? "Sending…" : atCap ? "Daily cap reached" : needsDemo ? "No demo built yet" : blockedByDeliverability ? "Confirm address to send" : `Send to ${lead.name}`}
                 </button>
               </div>
             </div>
