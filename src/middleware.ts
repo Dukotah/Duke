@@ -9,6 +9,10 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/crm/login")) return NextResponse.next();
   if (pathname.startsWith("/api/crm/login")) return NextResponse.next();
   if (pathname.startsWith("/api/crm/logout")) return NextResponse.next();
+  // Resend delivery-event webhook — must be public (no session cookie). It is
+  // authenticated by its Svix signature inside the route handler, not by the
+  // CRM session, so it has to bypass the auth gate like login/logout do.
+  if (pathname.startsWith("/api/crm/email-events")) return NextResponse.next();
 
   const token = req.cookies.get("crm_session")?.value;
   const secret = getSessionSecret();
