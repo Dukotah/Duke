@@ -70,11 +70,9 @@ export default function Hero() {
             className="mb-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Your website, IT, and security —
+            Custom websites for Sonoma County business —
             <br />
-            <span className="bg-gradient-to-r from-[#F97316] to-[#fbb46a] bg-clip-text text-transparent">
-              one local partner, one invoice.
-            </span>
+            <span className="font-semibold text-white/80">one local partner, one invoice.</span>
           </h1>
 
           <p
