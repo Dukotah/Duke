@@ -41,7 +41,7 @@ export default function Stats() {
             className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            By the numbers
+            What to expect
           </p>
           <h2
             className="text-3xl md:text-4xl font-bold text-white"

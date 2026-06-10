@@ -14,7 +14,7 @@ const aiHighlights = [
 const tiers = [
   {
     icon: Globe,
-    tier: "Tier 1 — Foundation",
+    tier: "Start here",
     headline: "Your digital front door, done right.",
     items: [
       "Custom-coded business websites",
@@ -28,7 +28,7 @@ const tiers = [
   },
   {
     icon: Server,
-    tier: "Tier 2 — Core Operations",
+    tier: "Grow with confidence",
     headline: "IT that just works, every day.",
     items: [
       "Network setup & management",
@@ -43,7 +43,7 @@ const tiers = [
   },
   {
     icon: ShieldCheck,
-    tier: "Tier 3 — Security & Custom Dev",
+    tier: "Stay protected",
     headline: "Protect what you've built.",
     items: [
       "Cybersecurity audits & reporting",
@@ -73,7 +73,7 @@ export default function Services() {
             className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            What we do
+            One partner, from launch to locked-down.
           </h2>
           <p
             className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
@@ -154,7 +154,7 @@ export default function Services() {
                 {t.cta}
               </a>
 
-              {t.tier === "Tier 1 — Foundation" && (
+              {t.tier === "Start here" && (
                 <Link
                   href="/tools/website-cost-estimator"
                   className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B]/70 transition-colors hover:text-[#18181B] mt-2"

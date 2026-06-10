@@ -70,10 +70,10 @@ export default function Hero() {
             className="mb-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Built for local business.
+            Your website, IT, and security —
             <br />
             <span className="bg-gradient-to-r from-[#F97316] to-[#fbb46a] bg-clip-text text-transparent">
-              Built to last.
+              one local partner, one invoice.
             </span>
           </h1>
 
@@ -81,8 +81,8 @@ export default function Hero() {
             className="mx-auto mb-10 max-w-2xl text-pretty text-lg leading-relaxed text-white/70 md:text-xl"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Custom websites, IT support, and cybersecurity for Sonoma County
-            businesses. Enterprise-grade thinking — without the enterprise price tag.
+            Enterprise-grade thinking — without the enterprise price tag. Serving
+            Sonoma County small businesses from Santa Rosa.
           </p>
 
           {/* Price transparency — our biggest differentiator: every local competitor
@@ -105,7 +105,7 @@ export default function Hero() {
               className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#F97316] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#F97316]/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#ea6c0a] hover:shadow-xl hover:shadow-[#F97316]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B] sm:w-auto"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Book a Free Call
+              Book a free call with Duke
               <svg
                 className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
                 viewBox="0 0 16 16"

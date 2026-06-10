@@ -36,7 +36,7 @@ export default function ToolsTeaser() {
 
         <Link
           href="/tools"
-          className="inline-block bg-[#F97316] hover:bg-[#ea6c0a] text-white font-bold px-10 py-4 rounded-full transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+          className="inline-block bg-[#F97316] hover:bg-[#ea6c0a] text-white font-bold px-10 py-4 rounded-lg transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
         >
           Run Free Audit →
         </Link>

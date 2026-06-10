@@ -255,7 +255,7 @@ export default function WhyUs() {
                 {/* Copper Bay */}
                 <div className="px-3 py-4 bg-[#F97316]/5 flex flex-col items-center gap-2 text-center">
                   <p
-                    className="text-[10px] font-bold uppercase tracking-wider text-[#F97316]"
+                    className="text-[10px] font-bold uppercase tracking-wider text-gold-on-light"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Copper Bay

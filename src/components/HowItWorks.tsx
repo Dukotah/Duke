@@ -5,18 +5,18 @@ import { motion, useReducedMotion } from "framer-motion";
 const steps = [
   {
     number: "01",
-    title: "Free Consultation",
-    body: "We learn your situation — your current setup, what's frustrating you, and what you actually need. No obligation, no sales pitch.",
+    title: "30-Minute Call",
+    body: "We assess your current setup and document what we find — website, IT, and security gaps included. No obligation, no sales pitch.",
   },
   {
     number: "02",
-    title: "Clear Proposal",
-    body: "You get a flat-fee or retainer proposal in plain English. No surprise invoices, no scope creep without conversation.",
+    title: "Flat-Fee Proposal",
+    body: "Within 48 hours you receive a written proposal with fixed pricing in plain English. No hourly billing surprises, no scope creep without your sign-off.",
   },
   {
     number: "03",
     title: "Ongoing Partnership",
-    body: "You get a real person — not a ticket number. We're reachable, we show up, and we stay involved as your business grows.",
+    body: "You get Duke directly — not a ticket system. Calls back same day, on-site when needed, and proactively ahead of issues before they cost you.",
   },
 ];
 

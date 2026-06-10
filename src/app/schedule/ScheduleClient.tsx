@@ -142,11 +142,11 @@ export default function ScheduleClient() {
             Free · No Pressure
           </span>
           <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
-            Book a Free{" "}
-            <span className="text-orange-400">Consultation</span>
+            Request a Free{" "}
+            <span className="text-orange-400">Call with Duke</span>
           </h1>
           <p className="text-zinc-400 text-lg mb-8">
-            30–45 minutes. We talk about your business, your tech problems, and whether we&apos;re a good fit. Zero obligation.
+            Tell us your preferred time and we&apos;ll confirm within a few hours. 30–45 minutes on your business, your tech, and whether we&apos;re a good fit. Zero obligation.
           </p>
 
           {/* Progress */}
@@ -204,7 +204,7 @@ export default function ScheduleClient() {
                 <button onClick={() => setStep("service")} aria-label="Go back to service selection" className="text-zinc-400 hover:text-white transition-colors">
                   <ArrowLeft size={18} />
                 </button>
-                <h2 className="text-white font-bold text-lg">Pick a preferred date & time</h2>
+                <h2 className="text-white font-bold text-lg">Pick your preferred date & time</h2>
               </div>
 
               <p className="text-zinc-500 text-xs">
@@ -359,7 +359,7 @@ export default function ScheduleClient() {
                 disabled={submitting}
                 className="w-full bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white font-bold py-4 rounded-full transition-colors text-sm"
               >
-                {submitting ? "Booking…" : "Confirm Consultation Request"}
+                {submitting ? "Sending request…" : "Send Call Request"}
               </button>
               <p className="text-zinc-600 text-xs text-center">
                 We&apos;ll confirm your time by email within a few hours. A Zoom or phone call link will be included.

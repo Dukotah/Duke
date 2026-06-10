@@ -74,7 +74,7 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
           >
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Get in touch
@@ -238,7 +238,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="w-full py-3.5 rounded-md text-sm font-semibold text-white bg-[#18181B] hover:bg-[#111113] transition-colors disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#18181B] focus-visible:ring-offset-2"
+                className="w-full py-3.5 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 active:scale-[0.98]"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {status === "loading" ? "Sending..." : "Send Message"}
