@@ -3,11 +3,13 @@ import {
   canDeliver,
   gateLeads,
   isValidEmail,
+  isVerifiedValidStatus,
   normalizeEmail,
   type OutreachLead,
   personalize,
   rampedDailyCap,
   remainingDailyCapacity,
+  requireValidEmail,
   resolveDailyCap,
 } from "./outreach";
 
@@ -109,6 +111,48 @@ describe("gateLeads", () => {
     const result = gateLeads(leads, []);
     expect(result.sendable.map((l) => l.id)).toEqual(["1", "2"]);
     expect(result.skipped).toBe(0);
+  });
+
+  it("strict warm-up mode (requireValidStatus) sends ONLY to MX-valid addresses", () => {
+    const leads = [
+      lead({ id: "1", email: "a@x.com", emailStatus: "valid" }),
+      lead({ id: "2", email: "b@x.com", emailStatus: "risky" }),
+      lead({ id: "3", email: "c@x.com", emailStatus: "unknown" }),
+      lead({ id: "4", email: "d@x.com" }), // legacy/unverified, no status
+    ];
+    const result = gateLeads(leads, [], { requireValidStatus: true });
+    expect(result.sendable.map((l) => l.id)).toEqual(["1"]);
+    expect(result.skipped).toBe(3);
+  });
+
+  it("strict mode default-off leaves legacy behavior unchanged", () => {
+    const leads = [
+      lead({ id: "1", email: "a@x.com", emailStatus: "valid" }),
+      lead({ id: "2", email: "b@x.com", emailStatus: "unknown" }),
+    ];
+    expect(gateLeads(leads, []).sendable.map((l) => l.id)).toEqual(["1", "2"]);
+  });
+});
+
+describe("isVerifiedValidStatus", () => {
+  it("is true only for an explicit valid status", () => {
+    expect(isVerifiedValidStatus("valid")).toBe(true);
+    expect(isVerifiedValidStatus("VALID")).toBe(true);
+    expect(isVerifiedValidStatus("risky")).toBe(false);
+    expect(isVerifiedValidStatus("unknown")).toBe(false);
+    expect(isVerifiedValidStatus("invalid")).toBe(false);
+    expect(isVerifiedValidStatus(undefined)).toBe(false);
+    expect(isVerifiedValidStatus("")).toBe(false);
+  });
+});
+
+describe("requireValidEmail", () => {
+  it("parses the env flag (only 'true' enables strict mode)", () => {
+    expect(requireValidEmail("true")).toBe(true);
+    expect(requireValidEmail(" TRUE ")).toBe(true);
+    expect(requireValidEmail("false")).toBe(false);
+    expect(requireValidEmail("1")).toBe(false);
+    expect(requireValidEmail(undefined)).toBe(false);
   });
 });
 

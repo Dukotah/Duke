@@ -11,6 +11,7 @@ import {
   personalize,
   rampedDailyCap,
   remainingDailyCapacity,
+  requireValidEmail,
   resolveDailyCap,
 } from "@/lib/outreach";
 
@@ -110,7 +111,11 @@ export async function POST(req: NextRequest) {
   // the daily-dedup set so they can be repeated freely.
   const suppressed = await getSuppressedEmails();
   const emailedToday = isTest ? [] : await getEmailedToday(today);
-  const { sendable, skipped } = gateLeads(leads, [...suppressed, ...emailedToday]);
+  // Warm-up strict mode: when OUTREACH_REQUIRE_VALID_EMAIL=true, only MX-verified
+  // "valid" addresses are sendable — unknown/risky/unverified are dropped so a
+  // fragile new domain never accrues bounces from an unverified address.
+  const requireValidStatus = requireValidEmail(process.env.OUTREACH_REQUIRE_VALID_EMAIL);
+  const { sendable, skipped } = gateLeads(leads, [...suppressed, ...emailedToday], { requireValidStatus });
 
   const canSend = remainingDailyCapacity(sendable.length, sentToday, maxPerDay);
   if (canSend <= 0) {

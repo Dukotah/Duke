@@ -50,13 +50,35 @@ export function isUndeliverableStatus(status?: string): boolean {
   return (status ?? "").toLowerCase() === "invalid";
 }
 
+// Strict warm-up gate: an address is only sendable when MX-verification positively
+// marked it "valid". Unlike isUndeliverableStatus (a denylist that drops just
+// "invalid"), this is an allowlist — unknown, risky, AND legacy-unverified (empty
+// status) are all excluded. Used only when OUTREACH_REQUIRE_VALID_EMAIL is on, so a
+// fragile new sending domain never emails an address we haven't positively verified.
+export function isVerifiedValidStatus(status?: string): boolean {
+  return (status ?? "").toLowerCase() === "valid";
+}
+
+// Read the strict-valid warm-up flag from its env var.
+export function requireValidEmail(raw: string | undefined): boolean {
+  return (raw ?? "").trim().toLowerCase() === "true";
+}
+
+export interface GateOptions {
+  // When true, only MX-verified "valid" addresses pass (warm-up strict mode).
+  // Default false preserves the legacy behavior (keep unknown/risky, drop invalid).
+  requireValidStatus?: boolean;
+}
+
 // Given the full request batch and the suppression set, decide which leads are
 // eligible to receive an email. A lead is dropped when it has no email, the
 // email is malformed, the address has unsubscribed, or the enriched status marks
-// it undeliverable.
+// it undeliverable. In strict mode (requireValidStatus) it is additionally dropped
+// unless its MX-verified status is "valid".
 export function gateLeads(
   leads: OutreachLead[],
   suppressed: Iterable<string>,
+  opts: GateOptions = {},
 ): GateResult {
   const suppressedSet = new Set<string>();
   for (const e of suppressed) suppressedSet.add(normalizeEmail(e));
@@ -66,6 +88,7 @@ export function gateLeads(
       Boolean(l.email) &&
       isValidEmail(l.email) &&
       !isUndeliverableStatus(l.emailStatus) &&
+      (!opts.requireValidStatus || isVerifiedValidStatus(l.emailStatus)) &&
       !suppressedSet.has(normalizeEmail(l.email)),
   );
 

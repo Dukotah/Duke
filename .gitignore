@@ -42,3 +42,10 @@ next-env.d.ts
 
 # Claude Code
 .claude/
+
+# Local file-backed Redis stand-in (dev only)
+.local-db.json
+.devserver*.log
+
+# Lead-data CSVs are never committed (contain PII; app loads leads from a remote URL)
+public/*.csv
