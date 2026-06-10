@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { MapPin, ShieldCheck, Code2 } from "lucide-react";
+import { MapPin, ShieldCheck, Code2, X } from "lucide-react";
 
 // Drop a real headshot at this /public path and the photo replaces the monogram
 // automatically — no other change needed. A real founder photo is the single
@@ -11,9 +11,15 @@ import { MapPin, ShieldCheck, Code2 } from "lucide-react";
 const FOUNDER_HEADSHOT = "";
 
 const highlights = [
-  { icon: MapPin, text: "Based in Sonoma County — we show up in person when it matters" },
+  { icon: MapPin, text: "Based in Sonoma County — shows up in person when it matters" },
   { icon: ShieldCheck, text: "Cybersecurity-aware approach to every engagement" },
   { icon: Code2, text: "Custom-coded solutions, no cookie-cutter templates" },
+];
+
+const wontDo = [
+  "No hourly billing surprises — scoped work with a fixed price",
+  "No lock-in contracts — you own everything we build",
+  "No handoff-and-disappear — ongoing support is part of every engagement",
 ];
 
 export default function About() {
@@ -44,20 +50,21 @@ export default function About() {
             </h2>
 
             {/* Headshot / Avatar — shows a real photo when FOUNDER_HEADSHOT is set,
-                otherwise a polished monogram so the section never looks unfinished. */}
+                otherwise a polished monogram so the section never looks unfinished.
+                To enable: set FOUNDER_HEADSHOT to e.g. "/team/duke-hutcheon.jpg" */}
             <div className="flex items-center gap-4 mb-6">
               <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[#F97316]/40 ring-offset-2 ring-offset-white">
                 {FOUNDER_HEADSHOT ? (
                   <Image
                     src={FOUNDER_HEADSHOT}
-                    alt="Duke Hutcheon, founder of Copper Bay Tech"
+                    alt="Duke Hutcheon — founder of Copper Bay Tech, Sonoma County"
                     fill
                     sizes="64px"
                     className="object-cover"
                   />
                 ) : (
                   <>
-                    <span className="sr-only">Dukotah Hutcheon, founder of Copper Bay Tech</span>
+                    <span className="sr-only">Duke Hutcheon, founder of Copper Bay Tech — Sonoma County</span>
                     <div
                       className="flex h-full w-full items-center justify-center"
                       style={{ background: "linear-gradient(135deg, #27272A 0%, #18181B 100%)" }}
@@ -89,24 +96,49 @@ export default function About() {
               </div>
             </div>
 
+            {/* Lead with the real client backstory — this is the opener that
+                resonates immediately with the right prospect. */}
             <p
               className="text-[#3F3F46]/60 leading-relaxed mb-6"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              I started Copper Bay Tech because local businesses deserve the same quality
-              of technology that larger companies take for granted — without the overhead
-              or the runaround. My background spans custom application development,
-              network infrastructure, and cybersecurity principles.
+              Most of my clients come to me after being burned by a template agency or
+              left hanging by a big IT firm — slow to respond, quick to upsell, and gone
+              the moment the contract ends. I started Copper Bay Tech because small
+              businesses in Sonoma County deserve a real technology partner: someone who
+              picks up the phone, knows your name, and builds things that actually last.
             </p>
             <p
-              className="text-[#3F3F46]/60 leading-relaxed mb-8"
+              className="text-[#3F3F46]/60 leading-relaxed mb-6"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Most of my clients come to me after being burned by a template agency or
-              left hanging by a big IT firm. What they get instead is a real partner —
-              someone who knows the North Bay, picks up the phone, and builds things
-              that actually last.
+              My work spans custom web development, network infrastructure, and
+              cybersecurity — all under one roof, without the overhead of an agency
+              or the guesswork of a generalist freelancer.
             </p>
+
+            {/* What I won&apos;t do — reinforces differentiators honestly */}
+            <div className="mb-8 rounded-xl border border-[#18181B]/8 bg-[#FAFAF9] p-5">
+              <p
+                className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#3F3F46]/40"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                What I won&apos;t do
+              </p>
+              <ul className="space-y-2">
+                {wontDo.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <X size={13} className="mt-0.5 flex-shrink-0 text-[#F97316]" aria-hidden="true" />
+                    <span
+                      className="text-sm text-[#3F3F46]/70 leading-relaxed"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <ul className="space-y-4">
               {highlights.map((h) => (

@@ -7,17 +7,26 @@ import JsonLd from "@/components/JsonLd";
 import { GOOGLE_REVIEW_URL } from "@/config/site";
 import { REAL_REVIEWS, hasRealReviews, aggregateRating, reviewsSchema } from "@/lib/reviews";
 
+// Noindex guard: while only illustrative/sample reviews exist the page must
+// not rank in search — showing disclosed-fake proof to organic visitors is
+// worse than no reviews page at all. Once REAL_REVIEWS is populated the
+// robots tag flips to index automatically (see conditional below).
+const _hasReal = hasRealReviews();
+
 export const metadata: Metadata = {
   title: "Client Reviews | Copper Bay Tech — Sonoma County IT & Web",
   description:
     "Reviews of Copper Bay Tech's IT support, web development, and cybersecurity work for Sonoma County small businesses.",
+  // Noindex until real reviews exist so sample content never ranks in search.
+  robots: _hasReal
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
 };
 
-// Illustrative samples shown ONLY until real, client-approved reviews exist in
-// src/lib/reviews.ts (REAL_REVIEWS). Once that array is populated, the page
-// renders the real reviews instead and emits Review/AggregateRating schema.
-// We never emit rating schema for these samples — see src/lib/reviews.ts.
-const SAMPLE_REVIEWS = [
+// Illustrative samples kept here as DRAFTS for client outreach only — they
+// are NEVER rendered on the page (see ReviewsPage below). Once a client
+// approves a quote, move it to src/lib/reviews.ts (REAL_REVIEWS).
+const _SAMPLE_REVIEW_DRAFTS = [
   {
     name: "Maria Santos",
     business: "Petaluma Bakery",
@@ -95,10 +104,12 @@ export default function ReviewsPage() {
   const live = hasRealReviews();
   const agg = aggregateRating();
   const schema = reviewsSchema();
-  // Normalize to one display shape whether real or sample.
+  // Only render real reviews. Sample reviews are kept above for reference when
+  // writing outreach to clients, but are never shown to site visitors — even
+  // with a disclaimer, fake-looking proof undercuts rather than builds trust.
   const displayReviews = live
     ? REAL_REVIEWS.map((r) => ({ name: r.author, business: r.business, city: r.city, quote: r.quote, rating: r.rating }))
-    : SAMPLE_REVIEWS.map((r) => ({ ...r, rating: 5 }));
+    : [];
 
   return (
     <>
@@ -123,57 +134,76 @@ export default function ReviewsPage() {
               <span style={{ color: "#F97316" }}>looks like.</span>
             </h1>
             <p className="text-white/60 text-lg max-w-2xl mx-auto mb-6" style={{ fontFamily: "var(--font-body)" }}>
-              Copper Bay Tech helps Sonoma County business owners with IT support, cybersecurity, and web development.{live ? " Here's what they say." : " The examples below illustrate the kind of work and outcomes we aim for."}
+              Copper Bay Tech helps Sonoma County business owners with IT support, cybersecurity, and web development.{live ? " Here's what they say." : " Reviews from happy clients are coming — check back soon."}
             </p>
-            {live && agg ? (
+            {live && agg && (
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-white/80" style={{ fontFamily: "var(--font-body)" }}>
                 <StarRow rating={Math.round(agg.ratingValue)} />
                 <span className="font-semibold text-white">{agg.ratingValue.toFixed(1)}</span>
                 <span className="text-white/55">· {agg.reviewCount} review{agg.reviewCount === 1 ? "" : "s"}</span>
               </div>
-            ) : (
-              <p className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-white/55" style={{ fontFamily: "var(--font-body)" }}>
-                Illustrative sample feedback — not verified client reviews.
-              </p>
             )}
           </div>
         </section>
 
-        {/* Reviews grid */}
-        <section className="py-20 bg-[#FAFAF9]">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              {displayReviews.map((review) => (
-                <div
-                  key={review.name}
-                  className="rounded-2xl bg-white border border-[#18181B]/10 p-7 shadow-sm flex flex-col gap-4"
-                >
-                  <StarRow rating={review.rating} />
-                  <p
-                    className="text-[#3F3F46]/80 leading-relaxed text-sm flex-1"
-                    style={{ fontFamily: "var(--font-body)" }}
+        {/* Reviews grid — only shown when real reviews exist */}
+        {live && displayReviews.length > 0 && (
+          <section className="py-20 bg-[#FAFAF9]">
+            <div className="max-w-6xl mx-auto px-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                {displayReviews.map((review) => (
+                  <div
+                    key={review.name}
+                    className="rounded-2xl bg-white border border-[#18181B]/10 p-7 shadow-sm flex flex-col gap-4"
                   >
-                    &ldquo;{review.quote}&rdquo;
-                  </p>
-                  <div>
+                    <StarRow rating={review.rating} />
                     <p
-                      className="font-bold text-[#18181B] text-sm"
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
-                      {review.name}
-                    </p>
-                    <p
-                      className="text-xs text-[#F97316]"
+                      className="text-[#3F3F46]/80 leading-relaxed text-sm flex-1"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
-                      {review.business} &mdash; {review.city}
+                      &ldquo;{review.quote}&rdquo;
                     </p>
+                    <div>
+                      <p
+                        className="font-bold text-[#18181B] text-sm"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {review.name}
+                      </p>
+                      <p
+                        className="text-xs text-gold-on-light"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {review.business} &mdash; {review.city}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+
+        {/* Holding state — shown until real reviews are collected */}
+        {!live && (
+          <section className="py-20 bg-[#FAFAF9]">
+            <div className="max-w-2xl mx-auto px-6 text-center">
+              <p
+                className="text-[#3F3F46]/60 text-base leading-relaxed mb-6"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                We&apos;re collecting reviews from current clients. In the meantime, feel free to reach out directly — Duke is happy to connect you with past clients for a real conversation about what working together is like.
+              </p>
+              <Link
+                href="/schedule"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Book a free call with Duke <ArrowRight size={15} />
+              </Link>
+            </div>
+          </section>
+        )}
 
         {/* CTA */}
         <section className="py-20 bg-[#18181B]">
@@ -182,18 +212,18 @@ export default function ReviewsPage() {
               className="text-3xl font-bold text-white mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Ready to become our next success story?
+              {live ? "Ready to become our next success story?" : "Ready to get started?"}
             </h2>
             <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
-              Get a free consultation and see what Copper Bay Tech can do for your Sonoma County business.
+              Get a free 30-minute call and see what Copper Bay Tech can do for your Sonoma County business.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
-                href="/#contact"
+                href="/schedule"
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Get a Free Consultation <ArrowRight size={15} />
+                Book a free call with Duke <ArrowRight size={15} />
               </Link>
               {GOOGLE_REVIEW_URL && (
                 <a

@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Globe, ShieldCheck, Cloud } from "lucide-react";
+import { BOOKING_URL } from "@/config/site";
 
 /**
  * ⚠️ PLACEHOLDER PORTFOLIO — NO REAL PROJECT SCREENSHOTS YET.
@@ -39,9 +40,35 @@ type Project = {
   gradient: string;
   /** Leave true until this tile holds a real, approved screenshot. */
   sample: boolean;
+  /** Optional one-liner shown below the title. */
+  description?: string;
 };
 
 const PROJECTS: Project[] = [
+  /**
+   * Self-showcase entry — this is a truthful, first-party example.
+   * copperbaytech.com is built and maintained by Copper Bay Tech on the same
+   * custom Next.js + Tailwind stack used for client sites. The OG image at
+   * /public/og-image.png is the real brand asset; no screenshot is fabricated.
+   * `sample` is false because this is not a placeholder — it's real work.
+   *
+   * HOW TO ADD CLIENT PROJECTS:
+   *   1. Export a screenshot and save it under /public/portfolio/<name>.jpg
+   *   2. Add an entry below with `image` pointing to that path and `sample: false`
+   *   3. Set `url` to the live site if the client has approved linking
+   */
+  {
+    title: "copperbaytech.com — this site",
+    category: "Web Development",
+    icon: Globe,
+    image: "/og-image.png",
+    url: "https://copperbaytech.com",
+    gradient: "linear-gradient(135deg, #18181B 0%, #3F3F46 100%)",
+    sample: false,
+    description: "Built with the same custom stack we build for clients — Next.js, Tailwind, edge-deployed, Lighthouse 95+.",
+  },
+  // Sample entries below are hidden until real client screenshots are added.
+  // Drop in an `image` path and set `sample: false` to publish a tile.
   {
     title: "Service business website rebuild",
     category: "Web Development",
@@ -88,11 +115,11 @@ const PROJECTS: Project[] = [
 
 export default function Portfolio() {
   const reduce = useReducedMotion();
-  // Only render tiles backed by a real, client-approved screenshot. Until those
-  // exist, show nothing rather than a wall of empty gradient "Preview" frames —
-  // they read as unfinished and undercut credibility on a sales page. Drop an
-  // `image` onto any project (see the header note) and the section returns
-  // automatically.
+  // Render only tiles that have a real image — either the self-showcase (which
+  // uses the brand OG image) or client projects with an approved screenshot.
+  // Sample-only tiles without an image stay hidden so the section never shows
+  // empty gradient placeholders on a sales page. The self-showcase entry above
+  // always satisfies this filter, so the section is always present.
   const liveProjects = PROJECTS.filter((p) => p.image);
   if (liveProjects.length === 0) return null;
 
@@ -122,8 +149,9 @@ export default function Portfolio() {
             className="mx-auto mt-4 max-w-xl text-[#3F3F46]/60"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Project previews across web, IT, and security. Screenshots of live
-            client work are on the way.
+            Starting with this site — built on the same custom stack we deliver
+            for every client. Client project screenshots are added as work is
+            approved for publication.
           </p>
         </motion.div>
 
@@ -188,6 +216,14 @@ export default function Portfolio() {
                       >
                         {p.title}
                       </p>
+                      {p.description && (
+                        <p
+                          className="mt-1.5 text-xs leading-relaxed text-[#3F3F46]/55"
+                          style={{ fontFamily: "var(--font-body)" }}
+                        >
+                          {p.description}
+                        </p>
+                      )}
                     </div>
                     {p.url && (
                       <ArrowUpRight
@@ -210,11 +246,11 @@ export default function Portfolio() {
           className="mt-12 text-center"
         >
           <Link
-            href="/#contact"
+            href={BOOKING_URL}
             className="inline-flex items-center gap-2 rounded-md bg-[#F97316] px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#ea6c0a]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Start your project <ArrowRight size={15} />
+            Book a free call with Duke <ArrowRight size={15} />
           </Link>
         </motion.div>
       </div>
