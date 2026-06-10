@@ -878,6 +878,13 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                     )}
                   </div>
                 )}
+                {/* Astro's dev server caches its route table at startup, so a
+                    just-generated demo only resolves after the gallery restarts. */}
+                {genResult && (
+                  <p className="text-[11px] text-amber-300/70" style={H}>
+                    Restart your gallery dev server (:4321) to load this new demo.
+                  </p>
+                )}
                 {/* Local-only: build a demo site for this lead with the /websites factory.
                     Hidden in production builds; the API route also hard-blocks prod. */}
                 {!effPreviewUrl && process.env.NODE_ENV === "development" && (
