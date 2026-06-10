@@ -127,7 +127,7 @@ export default function BlogTOC() {
               "text-left w-full text-sm leading-snug py-0.5 transition-colors",
               item.level === 2 ? "font-medium" : "font-normal",
               activeId === item.id
-                ? "text-[#F97316]"
+                ? "text-gold-on-light"
                 : "text-[#3F3F46]/60 hover:text-[#18181B]",
             ].join(" ")}
             style={{ fontFamily: "var(--font-body)" }}

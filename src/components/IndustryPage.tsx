@@ -107,7 +107,7 @@ export default function IndustryPage({
         <section className="py-16 bg-white">
           <div className="max-w-4xl mx-auto px-6">
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Sound familiar?
@@ -137,7 +137,7 @@ export default function IndustryPage({
         <section className="py-16 bg-[#FAFAF9]">
           <div className="max-w-4xl mx-auto px-6">
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               How we help
@@ -176,7 +176,7 @@ export default function IndustryPage({
         <section className="py-16 bg-white border-t border-[#18181B]/8">
           <div className="max-w-4xl mx-auto px-6">
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Related resources
@@ -211,7 +211,7 @@ export default function IndustryPage({
                     {title}
                   </p>
                   <span
-                    className="inline-flex items-center gap-1 mt-3 text-xs text-[#F97316] font-semibold group-hover:gap-2 transition-all"
+                    className="inline-flex items-center gap-1 mt-3 text-xs text-gold-on-light font-semibold group-hover:gap-2 transition-all"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Read <ArrowRight size={12} />

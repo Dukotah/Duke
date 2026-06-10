@@ -233,7 +233,7 @@ export default function ServiceCityPage({
               Also serving{" "}
               {nearby.map((n, i) => (
                 <span key={n.href}>
-                  <Link href={n.href} className="text-[#F97316] font-semibold hover:underline">{n.label}</Link>
+                  <Link href={n.href} className="text-gold-on-light font-semibold hover:underline">{n.label}</Link>
                   {i < nearby.length - 1 ? (i === nearby.length - 2 ? ", and " : ", ") : "."}
                 </span>
               ))}

@@ -499,7 +499,7 @@ export default function Pricing() {
           <div className="mx-auto max-w-3xl px-6">
             <div className="mb-14 text-center">
               <p
-                className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#F97316]"
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gold-on-light"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Pricing FAQ

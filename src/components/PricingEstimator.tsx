@@ -142,7 +142,7 @@ export default function PricingEstimator() {
           className="text-center mb-12"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Transparent Pricing
@@ -246,7 +246,7 @@ export default function PricingEstimator() {
               className="p-8 text-center"
             >
               <p
-                className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3"
+                className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Rough Estimate

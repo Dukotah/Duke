@@ -113,7 +113,7 @@ export default function LocationsPage() {
                           <li key={key}>
                             <Link
                               href={href}
-                              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#F97316] hover:text-[#ea6c0a] transition-colors"
+                              className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-on-light hover:text-[#ea6c0a] transition-colors"
                               style={{ fontFamily: "var(--font-heading)" }}
                             >
                               <ArrowRight size={12} />

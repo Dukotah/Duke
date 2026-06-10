@@ -32,12 +32,12 @@ export const metadata: Metadata = {
     creator: "Copper Bay Tech",
     publisher: "Copper Bay Tech",
     manifest: "/manifest.webmanifest",
+    // File-based icon conventions (src/app/favicon.ico, icon.png, apple-icon.png)
+    // are auto-served by Next.js and generate their own <link> tags without
+    // explicit metadata. The entry below adds only the SVG favicon from /public
+    // (SVG is supported by all modern browsers and has no file-size constraints).
     icons: {
-          icon: [
-            { url: "/favicon.ico", sizes: "any" },
-            { url: "/icon.png", type: "image/png" },
-          ],
-          apple: [{ url: "/apple-icon.png" }],
+          icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     },
     // NOTE: no global `alternates.canonical` here. A site-wide canonical of "/"
     // is inherited by every route that doesn't override it, telling Google every
@@ -88,7 +88,19 @@ export default function RootLayout({
     return (
           <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
                   <body className="min-h-full flex flex-col">
-          {children}
+          {/* WCAG 2.4.1 — skip link: first focusable element, hidden until focused */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-[#18181B] focus:text-white focus:font-semibold focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:outline focus:outline-2 focus:outline-[#F97316]"
+          >
+            Skip to main content
+          </a>
+          {/* Content wrapper — skip-link target. Pages supply their own <main>;
+              this div avoids double-nesting a second <main> in the layout while
+              still giving keyboard users a landmark to jump to. */}
+          <div id="main-content" className="flex flex-col flex-1">
+            {children}
+          </div>
           {/* Shared mobile bottom spacer so the fixed StickyCTA never covers footer content. */}
           <div className="h-16 md:hidden" aria-hidden="true" />
           {/* One-tap call/book bar on mobile — site-wide, hidden on /crm + utility routes. */}

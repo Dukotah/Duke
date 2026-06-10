@@ -121,7 +121,7 @@ export default function IndustriesPage() {
                   </p>
                   <Link
                     href={industry.href}
-                    className="inline-flex items-center gap-1 text-sm font-semibold text-[#F97316] hover:text-[#ea6c0a] transition-colors"
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-gold-on-light hover:text-[#ea6c0a] transition-colors"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Learn more <ArrowRight size={13} />

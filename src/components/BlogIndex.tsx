@@ -57,7 +57,7 @@ function Card({ post }: { post: Post }) {
           {post.excerpt}
         </p>
         <span
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#F97316] group-hover:gap-2.5 transition-all mt-auto"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-on-light group-hover:gap-2.5 transition-all mt-auto"
           style={HEAD}
         >
           Read article <ArrowRight size={14} aria-hidden />
@@ -130,7 +130,7 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
                 {featured.excerpt}
               </p>
               <span
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#F97316] group-hover:gap-2.5 transition-all"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-on-light group-hover:gap-2.5 transition-all"
                 style={HEAD}
               >
                 Read article <ArrowRight size={15} aria-hidden />

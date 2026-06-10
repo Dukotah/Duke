@@ -136,7 +136,7 @@ export default function Comparison() {
           className="mt-5 text-center text-xs text-[#3F3F46]/40"
           style={{ fontFamily: "var(--font-body)" }}
         >
-          <span className="font-semibold text-[#F97316]">✓</span> full &nbsp;·&nbsp;
+          <span className="font-semibold text-gold-on-light">✓</span> full &nbsp;·&nbsp;
           <span className="font-semibold">—</span> partial / varies &nbsp;·&nbsp;
           <span className="font-semibold">✕</span> not typically
         </p>

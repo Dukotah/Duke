@@ -192,7 +192,7 @@ export default function ProcessPage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-14">
               <p
-                className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3"
+                className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Honest counter-signaling

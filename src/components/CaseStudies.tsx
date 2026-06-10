@@ -137,7 +137,7 @@ export default function CaseStudies() {
           className="mb-16"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Client Results
@@ -204,7 +204,7 @@ export default function CaseStudies() {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <span
-                        className="text-xs font-semibold uppercase tracking-widest text-[#F97316]"
+                        className="text-xs font-semibold uppercase tracking-widest text-gold-on-light"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {c.tag}

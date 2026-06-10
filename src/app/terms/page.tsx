@@ -80,7 +80,7 @@ export default function TermsPage() {
       <main className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Legal
@@ -116,7 +116,7 @@ export default function TermsPage() {
           </div>
 
           <div className="mt-16 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <Link href="/" className="text-sm text-[#F97316] hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
+            <Link href="/" className="text-sm text-gold-on-light hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
               ← Back to home
             </Link>
             <Link href="/privacy" className="text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>

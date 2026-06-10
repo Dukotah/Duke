@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
       <main className="max-w-3xl mx-auto px-6 py-24 pt-32">
       <Link
         href="/"
-        className="text-sm text-[#F97316] hover:underline mb-8 inline-block"
+        className="text-sm text-gold-on-light hover:underline mb-8 inline-block"
         style={{ fontFamily: "var(--font-heading)" }}
       >
         ← Back to home
@@ -42,7 +42,7 @@ export default function PrivacyPolicy() {
         <p>
           Copper Bay Tech is an IT consulting and web development firm serving businesses in Sonoma
           County, California. You can reach us at{" "}
-          <a href="mailto:contact@copperbaytech.com" className="text-[#F97316] hover:underline">
+          <a href="mailto:contact@copperbaytech.com" className="text-gold-on-light hover:underline">
             contact@copperbaytech.com
           </a>
           .
@@ -93,7 +93,7 @@ export default function PrivacyPolicy() {
         <p>
           You may request to access, correct, or delete any personal information we hold about you
           at any time by contacting us at{" "}
-          <a href="mailto:contact@copperbaytech.com" className="text-[#F97316] hover:underline">
+          <a href="mailto:contact@copperbaytech.com" className="text-gold-on-light hover:underline">
             contact@copperbaytech.com
           </a>
           . We will respond within a reasonable timeframe.
@@ -130,7 +130,7 @@ export default function PrivacyPolicy() {
         </h2>
         <p>
           If you have any questions about this Privacy Policy, please contact us at{" "}
-          <a href="mailto:contact@copperbaytech.com" className="text-[#F97316] hover:underline">
+          <a href="mailto:contact@copperbaytech.com" className="text-gold-on-light hover:underline">
             contact@copperbaytech.com
           </a>
           .
