@@ -169,6 +169,10 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const [showObjections, setShowObjections] = useState(false);
   const [showCadence, setShowCadence] = useState(false);
   const [calOverride, setCalOverride] = useState("");
+  // Local-only demo-site generation (see /api/crm/leads/generate-site).
+  const [genState, setGenState] = useState<"idle" | "loading" | "error">("idle");
+  const [genError, setGenError] = useState("");
+  const [genResult, setGenResult] = useState<{ previewUrl: string; status?: string; flags?: string[] } | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
@@ -295,6 +299,40 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   };
 
   const needsReview = lead.demoStatus === "needs_review";
+  // A demo URL either already attached to the lead, or just generated locally.
+  const effPreviewUrl = genResult?.previewUrl ?? lead.previewUrl;
+  const effNeedsReview = genResult ? genResult.status === "needs-review" : needsReview;
+  // Generate a demo site for this one lead via the local /websites factory.
+  // Dev-only on both sides; the API route hard-blocks production.
+  async function generateSite() {
+    setGenState("loading");
+    setGenError("");
+    try {
+      const res = await fetch("/api/crm/leads/generate-site", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: lead.name,
+          website: lead.website,
+          category: lead.category,
+          city: lead.city,
+          phone: lead.phone,
+          email: lead.email,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setGenState("error");
+        setGenError(data.error || "Generation failed.");
+        return;
+      }
+      setGenResult({ previewUrl: data.previewUrl, status: data.status, flags: data.flags });
+      setGenState("idle");
+    } catch {
+      setGenState("error");
+      setGenError("Couldn't reach the generator.");
+    }
+  }
   const tier = lead.tier;
   const todayISO = new Date().toISOString().slice(0, 10);
   const tomorrowISO = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); })();
@@ -817,26 +855,47 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                     </a>
                   </div>
                 )}
-                {lead.previewUrl && (
+                {effPreviewUrl && (
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
                       <Globe size={13} className="text-violet-400/70 shrink-0" />
-                      <a href={lead.previewUrl} target="_blank" rel="noopener noreferrer"
+                      <a href={effPreviewUrl} target="_blank" rel="noopener noreferrer"
                         className="text-sm text-violet-300 hover:text-violet-200 transition-colors flex-1 truncate" style={H}>
                         Preview site we built
                       </a>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 border ${
-                        needsReview
+                        effNeedsReview
                           ? "text-amber-300/80 bg-amber-400/10 border-amber-400/20"
                           : "text-violet-300/60 bg-violet-400/10 border-violet-400/20"
-                      }`} style={H}>{needsReview ? "Needs Review" : "Demo"}</span>
-                      <CopyBtn text={lead.previewUrl} />
+                      }`} style={H}>{effNeedsReview ? "Needs Review" : "Demo"}</span>
+                      <CopyBtn text={effPreviewUrl} />
                     </div>
                     {lead.thumbnailUrl && (
                       <img src={lead.thumbnailUrl} alt="Demo preview" className="w-full rounded-xl mt-2 border border-violet-400/10" loading="lazy" />
                     )}
                     {lead.claimByDate && (
                       <p className="text-[11px] text-violet-300/60 mt-1" style={H}>Offer expires {lead.claimByDate}</p>
+                    )}
+                  </div>
+                )}
+                {/* Local-only: build a demo site for this lead with the /websites factory.
+                    Hidden in production builds; the API route also hard-blocks prod. */}
+                {!effPreviewUrl && process.env.NODE_ENV === "development" && (
+                  <div className="space-y-1.5">
+                    <button
+                      onClick={generateSite}
+                      disabled={genState === "loading"}
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-500/15 text-violet-200 border border-violet-400/25 hover:bg-violet-500/25 disabled:opacity-60 text-xs transition-colors"
+                      style={H}
+                    >
+                      <Globe size={13} />
+                      {genState === "loading" ? "Generating demo… (1–3 min)" : "Generate demo site"}
+                    </button>
+                    {genState === "loading" && (
+                      <p className="text-[11px] text-white/40" style={H}>Scraping the business + building the site locally…</p>
+                    )}
+                    {genState === "error" && (
+                      <p className="text-[11px] text-red-400/80" style={H}>{genError}</p>
                     )}
                   </div>
                 )}
