@@ -7,7 +7,7 @@ import ArticleHeader from "@/components/ArticleHeader";
 export const metadata: Metadata = {
   title: "Why Your Google Business Profile Is the Most Important Page You Don't Own | Copper Bay Tech",
   description: "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search, and exactly what to fix today.",
-  alternates: { canonical: "https://copperbaytech.com/blog/why-your-google-business-profile-matters" },
+  alternates: { canonical: "https://copperbaytech.com/blog/google-business-profile-setup-sonoma-county" },
   openGraph: {
     title: "Why Your Google Business Profile Is the Most Important Page You Don't Own | Copper Bay Tech",
     description: "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search, and exactly what to fix today.",

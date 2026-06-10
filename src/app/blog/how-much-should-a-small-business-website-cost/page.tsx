@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "How Much Should a Small Business Website Cost? (Honest Answer) | Copper Bay Tech",
   description: "Website pricing ranges wildly — from $500 DIY to $50,000 agency builds. Here's what actually drives the cost and what Sonoma County small businesses should realistically expect to pay.",
   alternates: {
-    canonical: "https://copperbaytech.com/blog/how-much-should-a-small-business-website-cost",
+    canonical: "https://copperbaytech.com/blog/how-much-does-a-website-cost-sonoma-county",
   },
   openGraph: {
     title: "How Much Should a Small Business Website Cost? (Honest Answer) | Copper Bay Tech",

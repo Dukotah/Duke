@@ -4,6 +4,8 @@ import { SITE_URL } from "@/config/site";
 const BASE = SITE_URL;
 
 const blogPosts: Array<{ slug: string; lastModified: string; priority: number }> = [
+  // June 2026 — AI content
+  { slug: "ai-automations-sonoma-county-small-business", lastModified: "2026-06-10", priority: 0.8 },
   // June 2026 — comparison guides
   { slug: "squarespace-vs-custom-website-for-small-business", lastModified: "2026-06-04", priority: 0.8 },
   { slug: "local-it-company-vs-national-msp", lastModified: "2026-06-04", priority: 0.8 },

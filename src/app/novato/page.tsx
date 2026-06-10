@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description:
     "Copper Bay Tech provides IT support, HIPAA-compliant cybersecurity, and professional web development for Novato businesses and medical offices. Serving the Marin–Sonoma border area.",
   alternates: { canonical: "https://copperbaytech.com/novato" },
+  robots: { index: false, follow: true },
   openGraph: {
     title: "IT Support & Web Development in Novato, CA | Copper Bay Tech",
     description:

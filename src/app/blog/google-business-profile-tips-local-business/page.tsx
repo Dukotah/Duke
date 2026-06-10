@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Google Business Profile Tips That Actually Get You Found Locally | Copper Bay Tech",
   description:
     "Most local businesses leave their Google Business Profile half-filled. Here's exactly what to do to show up when customers are searching nearby.",
-  alternates: { canonical: "https://copperbaytech.com/blog/google-business-profile-tips-local-business" },
+  alternates: { canonical: "https://copperbaytech.com/blog/google-business-profile-setup-sonoma-county" },
   openGraph: {
     title: "Google Business Profile Tips That Actually Get You Found Locally | Copper Bay Tech",
     description:

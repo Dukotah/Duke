@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "DIY builders, freelancers, agencies, custom dev — the honest price ranges, what drives costs up, and what you should expect to pay in Sonoma County.",
   alternates: {
-    canonical: "https://copperbaytech.com/blog/small-business-website-cost-guide",
+    canonical: "https://copperbaytech.com/blog/how-much-does-a-website-cost-sonoma-county",
   },
   openGraph: {
     title: "How Much Does a Business Website Cost in 2026? A Plain-English Guide | Copper Bay Tech",
