@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import JsonLd, { serviceSchema, faqSchema, breadcrumbSchema } from "@/components/JsonLd";
 import { ArrowRight, PhoneCall, Zap, Star, FileText, MessageCircle, RefreshCw, Search, Wrench, TrendingUp } from "lucide-react";
+import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "AI for Small Business | Copper Bay Tech | Sonoma County",
@@ -120,11 +121,11 @@ export default function AiIntegrationSmallBusiness() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/#contact"
+                href={BOOKING_URL}
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white"
                 style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
               >
-                Book a Free AI Consultation <ArrowRight size={16} />
+                Book a free call with Duke <ArrowRight size={16} />
               </Link>
               <Link
                 href="/tools/missed-call-calculator"
@@ -144,7 +145,7 @@ export default function AiIntegrationSmallBusiness() {
         {/* The reality */}
         <section className="py-16 bg-[#FAFAF9]">
           <div className="max-w-5xl mx-auto px-6">
-            <p className="text-center text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-8" style={{ fontFamily: "var(--font-heading)" }}>Why speed wins the job</p>
+            <p className="text-center text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-8" style={{ fontFamily: "var(--font-heading)" }}>Why speed wins the job</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {stats.map((s) => (
                 <div key={s.label} className="text-center bg-white rounded-xl p-6 border border-[#18181B]/8">
@@ -160,7 +161,7 @@ export default function AiIntegrationSmallBusiness() {
         <section className="py-24 bg-white">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What we put to work</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4" style={{ fontFamily: "var(--font-heading)" }}>What we put to work</p>
               <h2 className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 AI that earns its keep.
               </h2>
@@ -186,7 +187,7 @@ export default function AiIntegrationSmallBusiness() {
         <section className="py-24 bg-[#FAFAF9]">
           <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>How we roll it out</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4" style={{ fontFamily: "var(--font-heading)" }}>How we roll it out</p>
               <h2 className="text-4xl md:text-5xl font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>
                 Start small. Prove it. Grow.
               </h2>
@@ -266,18 +267,18 @@ export default function AiIntegrationSmallBusiness() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/#contact"
+                href={BOOKING_URL}
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white"
                 style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
               >
-                Book a Free AI Consultation <ArrowRight size={16} />
+                Book a free call with Duke <ArrowRight size={16} />
               </Link>
               <a
-                href="tel:+17072396725"
+                href={PHONE_HREF}
                 className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold"
                 style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}
               >
-                Call (707) 239-6725
+                Call {PHONE}
               </a>
             </div>
           </div>

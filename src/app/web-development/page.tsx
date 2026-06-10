@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowRight, CheckCircle, Phone } from "lucide-react";
 import { PRICING, rangeLabel } from "@/config/pricing";
+import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Custom Web Development for Sonoma County Businesses | Copper Bay Tech",
@@ -14,6 +15,9 @@ export const metadata: Metadata = {
     description:
       "Custom websites built for Petaluma, Santa Rosa, Sebastopol, and the greater North Bay. Fast, mobile-first, and built to rank locally.",
     url: "https://copperbaytech.com/web-development",
+  },
+  alternates: {
+    canonical: "https://copperbaytech.com/web-design-sonoma-county",
   },
 };
 
@@ -119,9 +123,11 @@ export default function WebDevelopmentPage() {
               className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Websites that work as hard
+              Custom-coded, fast-loading,
               <br />
-              <span style={{ color: "#F97316" }}>as your business does.</span>
+              <span style={{ color: "#F97316" }}>built to rank in Sonoma County.</span>
+              <br />
+              No templates.
             </h1>
             <p
               className="text-white/60 text-lg max-w-2xl mb-8"
@@ -131,18 +137,18 @@ export default function WebDevelopmentPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
-                href="/#contact"
+                href={BOOKING_URL}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Get a Free Quote <ArrowRight size={15} />
+                Book a free call with Duke <ArrowRight size={15} />
               </Link>
               <a
-                href="tel:+17072396725"
+                href={PHONE_HREF}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                <Phone size={15} /> (707) 239-6725
+                <Phone size={15} /> {PHONE}
               </a>
             </div>
           </div>
@@ -187,7 +193,7 @@ export default function WebDevelopmentPage() {
             </p>
             <p className="text-sm text-[#3F3F46]/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
               Not sure which tier fits your project?{" "}
-              <Link href="/tools/website-cost-estimator" className="text-[#F97316] hover:underline font-medium">
+              <Link href="/tools/website-cost-estimator" className="text-gold-on-light hover:text-[#F97316] hover:underline font-medium">
                 Try our free website cost estimator
               </Link>{" "}
               to get a ballpark in under two minutes.
@@ -199,7 +205,7 @@ export default function WebDevelopmentPage() {
                 { tier: "Custom Web App", price: "$7,500+", desc: "Portals, dashboards, custom tools, e-commerce, and complex integrations. Scoped per project after discovery." },
               ].map((p) => (
                 <div key={p.tier} className="bg-white rounded-xl border border-[#18181B]/10 p-6 shadow-sm">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                     {p.tier}
                   </p>
                   <p className="text-2xl font-bold text-[#18181B] mb-3" style={{ fontFamily: "var(--font-heading)" }}>
@@ -245,11 +251,11 @@ export default function WebDevelopmentPage() {
               Free 30-minute consultation. We&apos;ll review your current site, tell you what we&apos;d build, and give you a flat-fee quote — no obligation.
             </p>
             <Link
-              href="/#contact"
+              href={BOOKING_URL}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Get a Free Consultation <ArrowRight size={16} />
+              Book a free call with Duke <ArrowRight size={16} />
             </Link>
           </div>
         </section>

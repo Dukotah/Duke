@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowRight, CheckCircle, Phone, ShieldAlert } from "lucide-react";
+import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Cybersecurity for Small Business | Sonoma County | Copper Bay Tech",
@@ -13,6 +14,9 @@ export const metadata: Metadata = {
     description:
       "Security audits and hardening for Petaluma, Santa Rosa, and North Bay businesses. Plain-English reports, prioritized fixes.",
     url: "https://copperbaytech.com/cybersecurity",
+  },
+  alternates: {
+    canonical: "https://copperbaytech.com/cybersecurity-small-business",
   },
 };
 
@@ -118,18 +122,18 @@ export default function CybersecurityPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
-                href="/#contact"
+                href={BOOKING_URL}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a Security Audit <ArrowRight size={15} />
+                Book a free call with Duke <ArrowRight size={15} />
               </Link>
               <a
-                href="tel:+17072396725"
+                href={PHONE_HREF}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                <Phone size={15} /> (707) 239-6725
+                <Phone size={15} /> {PHONE}
               </a>
             </div>
           </div>
@@ -185,11 +189,11 @@ export default function CybersecurityPage() {
               Book a free 15-minute call. We&apos;ll ask a few questions and tell you whether a full audit makes sense for your situation — no pressure.
             </p>
             <Link
-              href="/#contact"
+              href={BOOKING_URL}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Book a Free Call <ArrowRight size={16} />
+              Book a free call with Duke <ArrowRight size={16} />
             </Link>
           </div>
         </section>

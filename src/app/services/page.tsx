@@ -3,6 +3,8 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { rangeLabel } from "@/config/pricing";
+import { Globe, Server, ShieldCheck, MapPin, User, Receipt, CalendarOff } from "lucide-react";
+import { BOOKING_URL } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "IT Services for Sonoma County Businesses | Copper Bay Tech",
@@ -26,7 +28,7 @@ export const metadata: Metadata = {
 const services = [
   {
     slug: "web-development",
-    emoji: "🖥️",
+    Icon: Globe,
     title: "Web Development",
     tagline: "Websites that load fast, rank locally, and convert visitors.",
     desc: "Custom-built with React and Next.js. No templates, no page builders. Every site includes performance optimization, local SEO foundations, SSL, analytics, and 30 days of post-launch support.",
@@ -41,7 +43,7 @@ const services = [
   },
   {
     slug: "it-support",
-    emoji: "🔧",
+    Icon: Server,
     title: "IT Support & Managed Services",
     tagline: "Your outsourced IT department — without the overhead.",
     desc: "Flat-rate monthly support covering workstations, servers, network, cloud accounts, and helpdesk. No surprise invoices. No waiting two days for a callback. Just reliable support from someone who knows your setup.",
@@ -56,7 +58,7 @@ const services = [
   },
   {
     slug: "cybersecurity",
-    emoji: "🛡️",
+    Icon: ShieldCheck,
     title: "Cybersecurity",
     tagline: "Practical protection for businesses that can't afford a breach.",
     desc: "Security assessments, endpoint protection, backup and disaster recovery, employee training, and email security hardening. Designed for businesses with 2–50 employees who want real protection without enterprise complexity.",
@@ -71,6 +73,29 @@ const services = [
   },
 ];
 
+const whyUs = [
+  {
+    Icon: MapPin,
+    title: "Actually local",
+    desc: "Local to Sonoma County. On-site support across the North Bay within the same day for most clients.",
+  },
+  {
+    Icon: User,
+    title: "One point of contact",
+    desc: "You talk to the same person every time — not a ticketing system or a different tech each call.",
+  },
+  {
+    Icon: Receipt,
+    title: "Flat-fee pricing",
+    desc: "No hourly billing. You know what you'll pay before work starts. No surprises on your invoice.",
+  },
+  {
+    Icon: CalendarOff,
+    title: "No long-term contracts",
+    desc: "Month-to-month for support and maintenance. We earn your business every month, not just at signing.",
+  },
+];
+
 export default function ServicesPage() {
   return (
     <>
@@ -80,7 +105,7 @@ export default function ServicesPage() {
       <section className="bg-[#18181B] text-white pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           <span
-            className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20"
+            className="inline-block bg-[#F97316]/10 text-[#F97316] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-[#F97316]/20"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Serving Sonoma County Since 2022
@@ -90,7 +115,7 @@ export default function ServicesPage() {
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Technology that works for your business —{" "}
-            <span className="text-orange-400">not the other way around.</span>
+            <span className="text-[#F97316]">not the other way around.</span>
           </h1>
           <p
             className="text-lg md:text-xl text-white/70 max-w-2xl leading-relaxed"
@@ -109,46 +134,49 @@ export default function ServicesPage() {
           {services.map((service) => (
             <div
               key={service.slug}
-              className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden"
+              className="bg-white rounded-2xl border border-[#18181B]/8 shadow-sm overflow-hidden"
             >
               <div className="p-8 md:p-10">
                 <div className="flex flex-col md:flex-row md:items-start gap-6">
-                  <div className="text-5xl">{service.emoji}</div>
+                  {/* Icon */}
+                  <div className="w-14 h-14 rounded-xl bg-[#18181B]/8 flex items-center justify-center flex-shrink-0">
+                    <service.Icon size={28} color="#18181B" />
+                  </div>
                   <div className="flex-1">
                     <h2
-                      className="text-2xl font-bold text-zinc-900 mb-1"
+                      className="text-2xl font-bold text-[#18181B] mb-1"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {service.title}
                     </h2>
                     <p
-                      className="text-orange-500 font-semibold mb-4"
+                      className="text-gold-on-light font-semibold mb-4"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {service.tagline}
                     </p>
                     <p
-                      className="text-zinc-600 leading-relaxed mb-6"
+                      className="text-[#3F3F46]/70 leading-relaxed mb-6"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
                       {service.desc}
                     </p>
                     <ul className="space-y-2 mb-6">
                       {service.bullets.map((b) => (
-                        <li key={b} className="flex items-center gap-2 text-zinc-700 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                          <span className="text-orange-400 font-bold">✓</span> {b}
+                        <li key={b} className="flex items-center gap-2 text-[#3F3F46]/70 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#18181B] flex-shrink-0" /> {b}
                         </li>
                       ))}
                     </ul>
                     <div className="flex flex-wrap items-center gap-6">
                       <Link
                         href={`/services/${service.slug}`}
-                        className="inline-flex items-center gap-1 text-orange-500 hover:text-orange-600 font-semibold transition-colors"
+                        className="inline-flex items-center gap-1 text-gold-on-light hover:text-[#F97316] font-semibold transition-colors"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {service.cta}
                       </Link>
-                      <span className="text-zinc-400 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+                      <span className="text-[#3F3F46]/40 text-sm" style={{ fontFamily: "var(--font-body)" }}>
                         Starting at {service.range}
                       </span>
                     </div>
@@ -164,34 +192,31 @@ export default function ServicesPage() {
       <section className="bg-white py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-4"
+            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Why Sonoma County businesses work with Copper Bay Tech
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-[#3F3F46]/60 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             There are national IT and web firms that will take your money. Here&apos;s why local
             matters.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: "📍", title: "Actually local", desc: "Local to Sonoma County. On-site support across the North Bay within the same day for most clients." },
-              { icon: "💬", title: "One point of contact", desc: "You talk to the same person every time — not a ticketing system or a different tech each call." },
-              { icon: "📋", title: "Flat-fee pricing", desc: "No hourly billing. You know what you'll pay before work starts. No surprises on your invoice." },
-              { icon: "🚫", title: "No long-term contracts", desc: "Month-to-month for support and maintenance. We earn your business every month, not just at signing." },
-            ].map((item) => (
+            {whyUs.map((item) => (
               <div key={item.title} className="text-center p-6">
-                <div className="text-3xl mb-3">{item.icon}</div>
+                <div className="w-12 h-12 rounded-xl bg-[#18181B]/8 flex items-center justify-center mx-auto mb-3">
+                  <item.Icon size={22} color="#18181B" />
+                </div>
                 <h3
-                  className="font-bold text-zinc-900 mb-2"
+                  className="font-bold text-[#18181B] mb-2"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.title}
                 </h3>
-                <p className="text-zinc-500 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-[#3F3F46]/60 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {item.desc}
                 </p>
               </div>
@@ -204,16 +229,16 @@ export default function ServicesPage() {
       <section className="bg-[#FAFAF9] py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2
-            className="text-2xl font-bold text-zinc-900 mb-4"
+            className="text-2xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Serving all of Sonoma County
           </h2>
-          <p className="text-zinc-500 text-base mb-6" style={{ fontFamily: "var(--font-body)" }}>
+          <p className="text-[#3F3F46]/60 text-base mb-6" style={{ fontFamily: "var(--font-body)" }}>
             Petaluma · Santa Rosa · Sebastopol · Rohnert Park · Sonoma · Windsor · Healdsburg ·
             Cotati · Bodega Bay · Cloverdale · Guerneville
           </p>
-          <p className="text-zinc-400 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+          <p className="text-[#3F3F46]/40 text-sm" style={{ fontFamily: "var(--font-body)" }}>
             Remote work is available everywhere. On-site visits are available throughout the North
             Bay.
           </p>
@@ -238,11 +263,11 @@ export default function ServicesPage() {
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
-              href="/#contact"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              href={BOOKING_URL}
+              className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#ea6c0a] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Book a Free Consultation →
+              Book a free call with Duke →
             </Link>
             <Link
               href="/pricing"

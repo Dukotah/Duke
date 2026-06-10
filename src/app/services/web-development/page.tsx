@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { BOOKING_URL } from "@/config/site";
+import { Zap, Smartphone, Lock, Search, BarChart2, LifeBuoy, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Web Development Sonoma County | Custom Websites | Copper Bay Tech",
@@ -38,6 +40,57 @@ const schema = {
   serviceType: "Web Development",
 };
 
+const problemCards = [
+  {
+    Icon: Clock,
+    title: "Slow Load Times Are Killing Conversions",
+    desc: "Google research shows that 53% of mobile users abandon a page that takes longer than 3 seconds to load. A one-second delay in page response can result in a 7% reduction in conversions. If your site was built on a drag-and-drop platform or an old WordPress theme, it's almost certainly too slow — and you're losing real money every single day.",
+  },
+  {
+    Icon: Smartphone,
+    title: "Mobile-Unfriendly Sites Lose Google Rank",
+    desc: "Over 60% of web searches now happen on mobile devices. Google uses mobile-first indexing, meaning your mobile site's performance directly determines where you rank in search results — even for desktop searches. If your Sonoma County competitor's site loads cleanly on a phone and yours doesn't, they will outrank you. It's that simple.",
+  },
+  {
+    Icon: Lock,
+    title: "Outdated CMS = Open Security Vulnerabilities",
+    desc: "WordPress powers 43% of the web — which makes it the #1 target for automated attacks. Outdated plugins and themes are exploited within hours of a vulnerability being published. A hacked business website gets flagged by Google, loses search ranking, and sometimes serves malware to your customers. The cleanup cost averages $5,000–$50,000. Prevention is dramatically cheaper.",
+  },
+];
+
+const included = [
+  {
+    Icon: Zap,
+    title: "Performance-First Build",
+    desc: "Built with Next.js and React — the same stack used by Vercel, Netflix, and Hulu. Pages load in under 2 seconds. Core Web Vitals scores in the green. Fast sites rank higher and convert better.",
+  },
+  {
+    Icon: Smartphone,
+    title: "Mobile-First Responsive Design",
+    desc: "Every layout is designed starting from the smallest screen and scaled up. Your site will look polished and function perfectly on iPhones, Androids, tablets, and every desktop size.",
+  },
+  {
+    Icon: Lock,
+    title: "SSL + Security Hardening",
+    desc: "HTTPS everywhere, secure headers, no unnecessary plugins, and a deployment architecture that limits attack surface. Your site won't be the one leaking customer data.",
+  },
+  {
+    Icon: Search,
+    title: "SEO Foundation Built In",
+    desc: "Semantic HTML structure, proper heading hierarchy, meta tags, Open Graph, sitemap.xml, robots.txt, and structured data (Schema.org). We set you up to rank — you provide the great content.",
+  },
+  {
+    Icon: BarChart2,
+    title: "Analytics + Search Console",
+    desc: "Google Analytics 4 and Google Search Console connected before launch. You'll see who visits, where they come from, what they click, and what search queries bring them in.",
+  },
+  {
+    Icon: LifeBuoy,
+    title: "30-Day Post-Launch Support",
+    desc: "After launch, you get 30 days of included support for bug fixes, copy tweaks, and questions. You're not alone the moment the site goes live.",
+  },
+];
+
 export default function WebDevelopmentPage() {
   return (
     <>
@@ -50,7 +103,7 @@ export default function WebDevelopmentPage() {
       {/* Hero */}
       <section className="bg-[#18181B] text-white pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
-          <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
+          <span className="inline-block bg-[#F97316]/10 text-[#F97316] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-[#F97316]/20">
             Web Development · Sonoma County, CA
           </span>
           <h1
@@ -72,7 +125,7 @@ export default function WebDevelopmentPage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#ea6c0a] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Get a Free Estimate →
@@ -92,13 +145,13 @@ export default function WebDevelopmentPage() {
       <section className="bg-[#FAFAF9] py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6"
+            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-6"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Most Small Business Websites Are Quietly Losing You Customers
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-[#3F3F46]/60 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             A bad website doesn&apos;t announce itself. It just quietly bounces visitors, tanks your
@@ -106,54 +159,22 @@ export default function WebDevelopmentPage() {
             what&apos;s likely happening right now:
           </p>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-zinc-100">
-              <div className="text-3xl mb-4">⏱️</div>
-              <h3
-                className="text-xl font-bold text-zinc-900 mb-3"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Slow Load Times Are Killing Conversions
-              </h3>
-              <p className="text-zinc-600 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-                Google research shows that 53% of mobile users abandon a page that takes longer than
-                3 seconds to load. A one-second delay in page response can result in a 7% reduction
-                in conversions. If your site was built on a drag-and-drop platform or an old
-                WordPress theme, it&apos;s almost certainly too slow — and you&apos;re losing real
-                money every single day.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-zinc-100">
-              <div className="text-3xl mb-4">📱</div>
-              <h3
-                className="text-xl font-bold text-zinc-900 mb-3"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Mobile-Unfriendly Sites Lose Google Rank
-              </h3>
-              <p className="text-zinc-600 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-                Over 60% of web searches now happen on mobile devices. Google uses mobile-first
-                indexing, meaning your mobile site&apos;s performance directly determines where you
-                rank in search results — even for desktop searches. If your Sonoma County
-                competitor&apos;s site loads cleanly on a phone and yours doesn&apos;t, they will
-                outrank you. It&apos;s that simple.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-zinc-100">
-              <div className="text-3xl mb-4">🔓</div>
-              <h3
-                className="text-xl font-bold text-zinc-900 mb-3"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Outdated CMS = Open Security Vulnerabilities
-              </h3>
-              <p className="text-zinc-600 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-                WordPress powers 43% of the web — which makes it the #1 target for automated
-                attacks. Outdated plugins and themes are exploited within hours of a vulnerability
-                being published. A hacked business website gets flagged by Google, loses search
-                ranking, and sometimes serves malware to your customers. The cleanup cost averages
-                $5,000–$50,000. Prevention is dramatically cheaper.
-              </p>
-            </div>
+            {problemCards.map((item) => (
+              <div key={item.title} className="bg-white rounded-xl p-6 shadow-sm border border-[#18181B]/8">
+                <div className="w-10 h-10 rounded-lg bg-[#18181B]/8 flex items-center justify-center mb-4">
+                  <item.Icon size={20} color="#18181B" />
+                </div>
+                <h3
+                  className="text-xl font-bold text-[#18181B] mb-3"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  {item.title}
+                </h3>
+                <p className="text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                  {item.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -162,64 +183,35 @@ export default function WebDevelopmentPage() {
       <section className="bg-white py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-4"
+            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What a Copper Bay Tech Website Includes
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-[#3F3F46]/60 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Every website we build is a complete, professional package — not a bare minimum that
             requires upsells to function. Here&apos;s what&apos;s standard in every engagement:
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: "⚡",
-                title: "Performance-First Build",
-                desc: "Built with Next.js and React — the same stack used by Vercel, Netflix, and Hulu. Pages load in under 2 seconds. Core Web Vitals scores in the green. Fast sites rank higher and convert better.",
-              },
-              {
-                icon: "📐",
-                title: "Mobile-First Responsive Design",
-                desc: "Every layout is designed starting from the smallest screen and scaled up. Your site will look polished and function perfectly on iPhones, Androids, tablets, and every desktop size.",
-              },
-              {
-                icon: "🔐",
-                title: "SSL + Security Hardening",
-                desc: "HTTPS everywhere, secure headers, no unnecessary plugins, and a deployment architecture that limits attack surface. Your site won't be the one leaking customer data.",
-              },
-              {
-                icon: "🔍",
-                title: "SEO Foundation Built In",
-                desc: "Semantic HTML structure, proper heading hierarchy, meta tags, Open Graph, sitemap.xml, robots.txt, and structured data (Schema.org). We set you up to rank — you provide the great content.",
-              },
-              {
-                icon: "📊",
-                title: "Analytics + Search Console",
-                desc: "Google Analytics 4 and Google Search Console connected before launch. You'll see who visits, where they come from, what they click, and what search queries bring them in.",
-              },
-              {
-                icon: "🛟",
-                title: "30-Day Post-Launch Support",
-                desc: "After launch, you get 30 days of included support for bug fixes, copy tweaks, and questions. You're not alone the moment the site goes live.",
-              },
-            ].map((item) => (
+            {included.map((item) => (
               <div
                 key={item.title}
-                className="bg-[#FAFAF9] rounded-xl p-6 border border-zinc-100"
+                className="bg-[#FAFAF9] rounded-xl p-6 border border-[#18181B]/8"
               >
-                <div className="text-3xl mb-3">{item.icon}</div>
+                <div className="w-10 h-10 rounded-lg bg-[#18181B]/8 flex items-center justify-center mb-3">
+                  <item.Icon size={20} color="#18181B" />
+                </div>
                 <h3
-                  className="font-bold text-zinc-900 mb-2"
+                  className="font-bold text-[#18181B] mb-2"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.title}
                 </h3>
                 <p
-                  className="text-zinc-600 text-sm leading-relaxed"
+                  className="text-[#3F3F46]/60 text-sm leading-relaxed"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {item.desc}
@@ -251,7 +243,7 @@ export default function WebDevelopmentPage() {
               {
                 num: "01",
                 title: "Discovery Call",
-                desc: "We start with a 30-minute conversation about your business, your goals, and your current situation. No sales pressure — just a genuine exploration of what you need and whether we&apos;re a good fit.",
+                desc: "We start with a 30-minute conversation about your business, your goals, and your current situation. No sales pressure — just a genuine exploration of what you need and whether we're a good fit.",
               },
               {
                 num: "02",
@@ -271,7 +263,7 @@ export default function WebDevelopmentPage() {
             ].map((step) => (
               <div key={step.num} className="flex gap-5">
                 <div
-                  className="text-orange-400 text-4xl font-bold leading-none pt-1"
+                  className="text-[#F97316] text-4xl font-bold leading-none pt-1"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {step.num}
@@ -287,7 +279,7 @@ export default function WebDevelopmentPage() {
                     className="text-white/70 leading-relaxed"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
-                    {step.desc.replace(/&apos;/g, "'")}
+                    {step.desc}
                   </p>
                 </div>
               </div>
@@ -300,13 +292,13 @@ export default function WebDevelopmentPage() {
       <section className="bg-[#FAFAF9] py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-4"
+            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What Does a Website Cost?
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-10 max-w-2xl leading-relaxed"
+            className="text-[#3F3F46]/60 text-lg mb-10 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             We believe in transparent, honest pricing. Here are the ranges for the most common
@@ -336,28 +328,28 @@ export default function WebDevelopmentPage() {
             ].map((tier) => (
               <div
                 key={tier.type}
-                className="bg-white rounded-xl p-6 border border-zinc-200 shadow-sm"
+                className="bg-white rounded-xl p-6 border border-[#18181B]/10 shadow-sm"
               >
                 <h3
-                  className="font-bold text-zinc-900 mb-1"
+                  className="font-bold text-[#18181B] mb-1"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {tier.type}
                 </h3>
                 <div
-                  className="text-orange-500 text-2xl font-bold mb-3"
+                  className="text-[#F97316] text-2xl font-bold mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {tier.range}
                 </div>
                 <p
-                  className="text-zinc-600 text-sm mb-3 leading-relaxed"
+                  className="text-[#3F3F46]/60 text-sm mb-3 leading-relaxed"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {tier.desc}
                 </p>
                 <p
-                  className="text-zinc-400 text-xs italic"
+                  className="text-[#3F3F46]/40 text-xs italic"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {tier.examples}
@@ -365,9 +357,9 @@ export default function WebDevelopmentPage() {
               </div>
             ))}
           </div>
-          <p className="text-zinc-500 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+          <p className="text-[#3F3F46]/60 text-sm" style={{ fontFamily: "var(--font-body)" }}>
             Want a personalized estimate?{" "}
-            <Link href="/pricing" className="text-orange-500 hover:text-orange-600 font-semibold">
+            <Link href="/pricing" className="text-gold-on-light hover:text-[#F97316] font-semibold">
               Use our interactive pricing estimator →
             </Link>
           </p>
@@ -378,7 +370,7 @@ export default function WebDevelopmentPage() {
       <section className="bg-white py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-10"
+            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-10"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Frequently Asked Questions
@@ -410,14 +402,14 @@ export default function WebDevelopmentPage() {
                 a: "Squarespace and Wix are great for getting something online quickly with zero technical knowledge. But they come with real trade-offs: slower performance due to bloated platform code, limited ability to customize beyond their templates, recurring subscription costs that add up over time, and — critically — you don't own the underlying code. If the platform changes pricing or shuts down, you have to start over. A custom-built site is an asset you own outright, performs better in search, and can grow exactly as your business grows.",
               },
             ].map((item) => (
-              <div key={item.q} className="border-b border-zinc-100 pb-8">
+              <div key={item.q} className="border-b border-[#18181B]/8 pb-8">
                 <h3
-                  className="text-lg font-bold text-zinc-900 mb-3"
+                  className="text-lg font-bold text-[#18181B] mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.q}
                 </h3>
-                <p className="text-zinc-600 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {item.a}
                 </p>
               </div>
@@ -445,11 +437,11 @@ export default function WebDevelopmentPage() {
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
-              href="/pricing"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              href={BOOKING_URL}
+              className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#ea6c0a] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Get a Free Estimate →
+              Book a free call with Duke →
             </Link>
             <Link
               href="/tools"
