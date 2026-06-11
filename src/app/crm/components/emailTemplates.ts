@@ -45,17 +45,36 @@ Thanks,
 Copper Bay Tech`,
   },
   {
-    key: "demo_intro",
-    label: "🎁 Demo intro",
-    subject: "Here is a site I built for {business}",
+    key: "winery_demo",
+    label: "🍷 Winery demo",
+    subject: "I built {business} a new website",
     body: `Hi {name},
 
-I put together a free demo of what a new site could look like for {business}:
+I'm {fromName}, and I build websites for small businesses around Sonoma County. I came across {business} in {city}, spent some time on your current site, and figured a winery like yours deserved one that matches the quality of what you pour. So I went ahead and built you a sample. It is already live here:
+
 {demoUrl}
 
-Take a look and let me know what you think. If you like the direction, I can have a real version live in under two weeks.
+I put it together from your real story, your wines, and your tasting details. It loads fast, looks right on a phone, and it is ready to point at your own domain if you like it. No charge to take a look, and no pressure either way.
 
-Worth a 10-minute call this week?
+I will try you by phone tomorrow to hear what you think, but feel free to just reply here first. Worth a quick look?
+
+Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
+    key: "demo_intro",
+    label: "🎁 Demo intro",
+    subject: "I built {business} a new website",
+    body: `Hi {name},
+
+I build websites for local businesses around Sonoma County, and I put together a free sample of what a new site could look like for {business}:
+
+{demoUrl}
+
+It is built from what is already public about you, so it is a real preview and not a blank template. It loads fast, looks right on a phone, and I can have a polished version pointed at your own domain in under two weeks if you like the direction.
+
+No charge to look and no pressure either way. Worth a quick 10 minute call this week?
 
 Thanks,
 {fromName}
