@@ -50,13 +50,13 @@ Copper Bay Tech`,
     subject: "I built {business} a new website",
     body: `Hi {name},
 
-I'm {fromName}, and I build websites for small businesses around Sonoma County. I came across {business} in {city}, spent some time on your current site, and figured a winery like yours deserved one that matches the quality of what you pour. So I went ahead and built you a sample. It is already live here:
+I'm {fromName}, and I build websites for small businesses around Sonoma County. I came across {business} in {city}, spent some time on your current site, and figured a winery like yours deserved one that matches the quality of what you pour. So I built you a sample to show what is possible. It is already live here:
 
 {demoUrl}
 
-I put it together from your real story, your wines, and your tasting details. It loads fast, looks right on a phone, and it is ready to point at your own domain if you like it. No charge to take a look, and no pressure either way.
+This is just a demo to give you the idea. Nothing is set in stone. We can change the wording, the photos, the colors, or take it in a completely different direction if you have something else in mind. It is built from what is already public about you, loads fast, looks right on a phone, and it is ready to point at your own domain whenever you are.
 
-I will try you by phone tomorrow to hear what you think, but feel free to just reply here first. Worth a quick look?
+I would genuinely love to talk it through with you. The easiest thing is to call or text me at (707) 239-6725, or just reply here. I will also try you by phone tomorrow. Worth a quick look?
 
 Thanks,
 {fromName}
@@ -68,13 +68,13 @@ Copper Bay Tech`,
     subject: "I built {business} a new website",
     body: `Hi {name},
 
-I build websites for local businesses around Sonoma County, and I put together a free sample of what a new site could look like for {business}:
+I build websites for local businesses around Sonoma County, and I put together a sample of what a new site could look like for {business}:
 
 {demoUrl}
 
-It is built from what is already public about you, so it is a real preview and not a blank template. It loads fast, looks right on a phone, and I can have a polished version pointed at your own domain in under two weeks if you like the direction.
+This is just a demo to show what is possible. Nothing is locked in. We can change the wording, the photos, the layout, or go in a totally different direction if you have something else in mind. It is built from what is already public about you, loads fast, looks right on a phone, and it is ready to point at your own domain whenever you are.
 
-No charge to look and no pressure either way. Worth a quick 10 minute call this week?
+I would love to talk it through with you. The easiest thing is to call or text me at (707) 239-6725, or just reply here. Worth a quick look?
 
 Thanks,
 {fromName}
