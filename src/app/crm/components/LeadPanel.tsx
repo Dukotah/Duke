@@ -390,6 +390,155 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   // on-site /schedule funnel made absolute so it works in email/SMS.
   const bookingUrl = resolveBookingUrl(calOverride);
 
+  // ── Reusable blocks ──────────────────────────────────────────────────────
+  // In inline (desktop cockpit) mode these render in a pinned zone so the
+  // primary actions stay on-screen; in overlay mode they render in the body.
+
+  const recommendedBlock = lead.recommended_action ? (
+    <div className="px-5 py-3 border-b border-white/[0.06] bg-[#F97316]/[0.06]">
+      <div className="flex items-start gap-2.5">
+        <Zap size={13} className="text-[#F97316] shrink-0 mt-0.5" />
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-white/90 leading-snug" style={H}>{lead.recommended_action}</p>
+          <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+            {lead.category_value && (
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.category_value} value</span>
+            )}
+            {lead.reach_channel && (
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.reach_channel}</span>
+            )}
+            {lead.need_signal && (
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.need_signal}</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
+  const emailBlock = lead.email ? (
+    <div className="px-5 py-4 border-b border-white/[0.06] bg-[#F97316]/5">
+      {needsReview ? (
+        <div className="flex items-start gap-3 w-full py-3.5 px-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-300"
+          style={H}>
+          <span className="text-lg leading-none shrink-0">⚠️</span>
+          <p className="text-sm font-semibold leading-snug">Demo needs review before sending — verify the preview first</p>
+        </div>
+      ) : (
+        <button onClick={() => setShowEmail(true)}
+          className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl text-base font-bold text-white transition-all active:scale-95"
+          style={{ backgroundColor: "#F97316", ...H }}>
+          <Mail size={18} />Send Email
+        </button>
+      )}
+
+      {/* Follow-up cadence: recommended next touch + the full plan */}
+      {cadence.next ? (
+        <>
+          <button onClick={() => setShowCadence((v) => !v)} className="w-full flex items-center justify-between group mt-3">
+            <span className="text-xs text-white/40 flex items-center gap-1.5 group-hover:text-white/60 transition-colors" style={H}>
+              <Repeat size={11} className="text-[#F97316]/50 shrink-0" />
+              Next: <span className="text-white/70 font-semibold">{cadence.next.label}</span>
+              <span className="text-white/30">· {cadenceDueText}</span>
+            </span>
+            {showCadence ? <ChevronDown size={13} className="text-white/30" /> : <ChevronRight size={13} className="text-white/30" />}
+          </button>
+          {showCadence && (
+            <div className="mt-2.5 space-y-1.5">
+              {cadence.cadence.map((t) => {
+                const isNext = cadence.next?.step === t.step;
+                return (
+                  <div key={t.step} className={`rounded-xl border px-3 py-2 ${isNext ? "border-[#F97316]/40 bg-[#F97316]/[0.07]" : "border-white/[0.06] bg-[#1C1C1F]"}`}>
+                    <p className="text-xs font-semibold text-white/80 flex items-center gap-2" style={H}>
+                      <span className="text-white/40">Day {t.day}</span>{t.label}
+                      {isNext && <span className="text-[10px] text-[#F97316] uppercase tracking-wider">recommended</span>}
+                    </p>
+                    <p className="text-xs text-white/35 mt-0.5" style={H}>{t.purpose}</p>
+                  </div>
+                );
+              })}
+              <p className="text-[11px] text-white/20 leading-relaxed pt-0.5" style={H}>Timing is a guide — open Send Email and pick the matching template.</p>
+            </div>
+          )}
+        </>
+      ) : (
+        <p className="text-xs text-white/30 mt-3 flex items-center gap-1.5" style={H}>
+          <Repeat size={11} className="shrink-0" />Full 4-touch cadence sent — time to move on or call.
+        </p>
+      )}
+    </div>
+  ) : null;
+
+  const callBlock = lead.phone ? (
+    <div className="px-5 py-3 border-b border-white/[0.06]">
+      <a href={`tel:${lead.phone}`}
+        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold border border-white/15 bg-white/[0.04] text-white/80 hover:bg-white/[0.08] hover:text-white transition-all active:scale-95"
+        style={H}>
+        <Phone size={15} className="text-[#F97316]" />Call {lead.phone}
+      </a>
+      <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
+        <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
+          callTiming.status === "good" ? "text-green-400 bg-green-400/10 border-green-400/20" :
+          callTiming.status === "ok" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
+          "text-zinc-400 bg-zinc-400/10 border-zinc-400/20"
+        }`} style={H}>
+          {callTiming.status === "good" ? "🟢" : callTiming.status === "ok" ? "🟡" : "🔴"} {callTiming.label}
+        </span>
+        {state.lastContacted && (
+          <span className="text-xs text-white/30" style={H}>Last: {state.lastContacted}</span>
+        )}
+      </div>
+    </div>
+  ) : null;
+
+  const outcomeBlock = (
+    <div className="px-5 py-4 border-b border-white/[0.06]">
+      <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Log Outcome</p>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {OUTCOMES.map((o) => (
+          <button key={o.key} onClick={() => logOutcome(o)}
+            className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold border transition-all active:scale-95 ${o.color} ${o.bg} ${o.border} hover:opacity-80`}
+            style={H}>
+            <o.icon size={13} className="shrink-0" />{o.label}
+          </button>
+        ))}
+        {!isSubmitted && (
+          <button onClick={() => setShowSubmit(true)}
+            className="col-span-2 sm:col-span-3 flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-bold text-white border border-[#F97316]/30 bg-[#F97316]/10 hover:bg-[#F97316]/20 transition-all"
+            style={H}>
+            <Send size={13} />They&apos;re In — Push to Duke
+          </button>
+        )}
+        {isSubmitted && (
+          <div className={`col-span-2 sm:col-span-3 flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-semibold border ${
+            submission?.status === "accepted" ? "text-green-400 bg-green-400/10 border-green-400/20" :
+            submission?.status === "rejected" ? "text-red-400 bg-red-400/10 border-red-400/20" :
+            "text-[#F97316] bg-[#F97316]/10 border-[#F97316]/20"
+          }`} style={H}>
+            {submission?.status === "accepted" ? `✓ Accepted${submission?.commissionAmount ? ` — $${submission.commissionAmount.toFixed(2)} commission` : ""}` :
+             submission?.status === "rejected" ? "✕ Passed — try a different angle" :
+             "⏳ Submitted — waiting on Duke"}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // Notes — two rows when pinned inline, five in the overlay body. Exactly one
+  // notes box renders per path (pinned for inline, body for overlay).
+  const notesBlock = (
+    <div className="px-5 py-4 border-b border-white/[0.06]">
+      <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
+        <StickyNote size={11} />Your Notes
+      </p>
+      <textarea value={notes} onChange={(e) => handleNotes(e.target.value)} onBlur={handleNotesBlur} rows={inline ? 2 : 5}
+        placeholder="What did they say? Are they coming back? What's their situation?"
+        className="w-full bg-[#1C1C1F] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/80 placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/40 transition-colors"
+        style={H} />
+      <p className="text-xs text-white/20 mt-1.5" style={H}>Auto-saved as you type</p>
+    </div>
+  );
+
   return (
     <>
       {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
@@ -466,108 +615,30 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             <button onClick={onClose} className="p-2 rounded-lg text-white/30 hover:text-white hover:bg-white/5 transition-colors shrink-0"><X size={18} /></button>
           </div>
 
+          {/* Pinned primary zone (inline cockpit only) — keeps Email/Call/Outcomes/
+              Notes on-screen. Capped + internally scrollable as a last resort on
+              short viewports so the secondary body still scrolls independently. */}
+          {inline && (
+            <div className="shrink-0 overflow-y-auto border-b border-white/[0.06]" style={{ maxHeight: "55vh" }}>
+              {recommendedBlock}
+              {emailBlock}
+              {callBlock}
+              {outcomeBlock}
+              {notesBlock}
+            </div>
+          )}
+
           {/* Scrollable body */}
           <div className="flex-1 overflow-y-auto">
 
             {/* Recommended next step (enriched) — the plain-English play for this lead */}
-            {lead.recommended_action && (
-              <div className="px-5 py-3 border-b border-white/[0.06] bg-[#F97316]/[0.06]">
-                <div className="flex items-start gap-2.5">
-                  <Zap size={13} className="text-[#F97316] shrink-0 mt-0.5" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-white/90 leading-snug" style={H}>{lead.recommended_action}</p>
-                    <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
-                      {lead.category_value && (
-                        <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.category_value} value</span>
-                      )}
-                      {lead.reach_channel && (
-                        <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.reach_channel}</span>
-                      )}
-                      {lead.need_signal && (
-                        <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.need_signal}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {!inline && recommendedBlock}
 
             {/* SEND EMAIL — primary action */}
-            {lead.email && (
-              <div className="px-5 py-4 border-b border-white/[0.06] bg-[#F97316]/5">
-                {needsReview ? (
-                  <div className="flex items-start gap-3 w-full py-3.5 px-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-300"
-                    style={H}>
-                    <span className="text-lg leading-none shrink-0">⚠️</span>
-                    <p className="text-sm font-semibold leading-snug">Demo needs review before sending — verify the preview first</p>
-                  </div>
-                ) : (
-                  <button onClick={() => setShowEmail(true)}
-                    className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl text-base font-bold text-white transition-all active:scale-95"
-                    style={{ backgroundColor: "#F97316", ...H }}>
-                    <Mail size={18} />Send Email
-                  </button>
-                )}
-
-                {/* Follow-up cadence: recommended next touch + the full plan */}
-                {cadence.next ? (
-                  <>
-                    <button onClick={() => setShowCadence((v) => !v)} className="w-full flex items-center justify-between group mt-3">
-                      <span className="text-xs text-white/40 flex items-center gap-1.5 group-hover:text-white/60 transition-colors" style={H}>
-                        <Repeat size={11} className="text-[#F97316]/50 shrink-0" />
-                        Next: <span className="text-white/70 font-semibold">{cadence.next.label}</span>
-                        <span className="text-white/30">· {cadenceDueText}</span>
-                      </span>
-                      {showCadence ? <ChevronDown size={13} className="text-white/30" /> : <ChevronRight size={13} className="text-white/30" />}
-                    </button>
-                    {showCadence && (
-                      <div className="mt-2.5 space-y-1.5">
-                        {cadence.cadence.map((t) => {
-                          const isNext = cadence.next?.step === t.step;
-                          return (
-                            <div key={t.step} className={`rounded-xl border px-3 py-2 ${isNext ? "border-[#F97316]/40 bg-[#F97316]/[0.07]" : "border-white/[0.06] bg-[#1C1C1F]"}`}>
-                              <p className="text-xs font-semibold text-white/80 flex items-center gap-2" style={H}>
-                                <span className="text-white/40">Day {t.day}</span>{t.label}
-                                {isNext && <span className="text-[10px] text-[#F97316] uppercase tracking-wider">recommended</span>}
-                              </p>
-                              <p className="text-xs text-white/35 mt-0.5" style={H}>{t.purpose}</p>
-                            </div>
-                          );
-                        })}
-                        <p className="text-[11px] text-white/20 leading-relaxed pt-0.5" style={H}>Timing is a guide — open Send Email and pick the matching template.</p>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-xs text-white/30 mt-3 flex items-center gap-1.5" style={H}>
-                    <Repeat size={11} className="shrink-0" />Full 4-touch cadence sent — time to move on or call.
-                  </p>
-                )}
-              </div>
-            )}
+            {!inline && emailBlock}
 
             {/* CALL — secondary (dials from your phone) */}
-            {lead.phone && (
-              <div className="px-5 py-3 border-b border-white/[0.06]">
-                <a href={`tel:${lead.phone}`}
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold border border-white/15 bg-white/[0.04] text-white/80 hover:bg-white/[0.08] hover:text-white transition-all active:scale-95"
-                  style={H}>
-                  <Phone size={15} className="text-[#F97316]" />Call {lead.phone}
-                </a>
-                <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
-                  <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
-                    callTiming.status === "good" ? "text-green-400 bg-green-400/10 border-green-400/20" :
-                    callTiming.status === "ok" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
-                    "text-zinc-400 bg-zinc-400/10 border-zinc-400/20"
-                  }`} style={H}>
-                    {callTiming.status === "good" ? "🟢" : callTiming.status === "ok" ? "🟡" : "🔴"} {callTiming.label}
-                  </span>
-                  {state.lastContacted && (
-                    <span className="text-xs text-white/30" style={H}>Last: {state.lastContacted}</span>
-                  )}
-                </div>
-              </div>
-            )}
+            {!inline && callBlock}
 
             {/* Claim status */}
             <div className="px-5 py-3 border-b border-white/[0.06]">
@@ -598,36 +669,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             </div>
 
             {/* Quick outcome log */}
-            <div className="px-5 py-4 border-b border-white/[0.06]">
-              <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Log Outcome</p>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {OUTCOMES.map((o) => (
-                  <button key={o.key} onClick={() => logOutcome(o)}
-                    className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold border transition-all active:scale-95 ${o.color} ${o.bg} ${o.border} hover:opacity-80`}
-                    style={H}>
-                    <o.icon size={13} className="shrink-0" />{o.label}
-                  </button>
-                ))}
-                {!isSubmitted && (
-                  <button onClick={() => setShowSubmit(true)}
-                    className="col-span-2 sm:col-span-3 flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-bold text-white border border-[#F97316]/30 bg-[#F97316]/10 hover:bg-[#F97316]/20 transition-all"
-                    style={H}>
-                    <Send size={13} />They&apos;re In — Push to Duke
-                  </button>
-                )}
-                {isSubmitted && (
-                  <div className={`col-span-2 sm:col-span-3 flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-semibold border ${
-                    submission?.status === "accepted" ? "text-green-400 bg-green-400/10 border-green-400/20" :
-                    submission?.status === "rejected" ? "text-red-400 bg-red-400/10 border-red-400/20" :
-                    "text-[#F97316] bg-[#F97316]/10 border-[#F97316]/20"
-                  }`} style={H}>
-                    {submission?.status === "accepted" ? `✓ Accepted${submission?.commissionAmount ? ` — $${submission.commissionAmount.toFixed(2)} commission` : ""}` :
-                     submission?.status === "rejected" ? "✕ Passed — try a different angle" :
-                     "⏳ Submitted — waiting on Duke"}
-                  </div>
-                )}
-              </div>
-            </div>
+            {!inline && outcomeBlock}
 
             {/* Follow-up date picker (shown after Call Back) */}
             {showFollowUp && (
@@ -958,17 +1000,8 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
               </div>
             </div>
 
-            {/* Notes */}
-            <div className="px-5 py-4 border-b border-white/[0.06]">
-              <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
-                <StickyNote size={11} />Your Notes
-              </p>
-              <textarea value={notes} onChange={(e) => handleNotes(e.target.value)} onBlur={handleNotesBlur} rows={5}
-                placeholder="What did they say? Are they coming back? What's their situation?"
-                className="w-full bg-[#1C1C1F] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/80 placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/40 transition-colors"
-                style={H} />
-              <p className="text-xs text-white/20 mt-1.5" style={H}>Auto-saved as you type</p>
-            </div>
+            {/* Notes — pinned above in inline mode; here only in the overlay */}
+            {!inline && notesBlock}
 
             {/* Activity Timeline */}
             <div className="px-5 py-4">

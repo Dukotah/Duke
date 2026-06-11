@@ -234,7 +234,7 @@ function Select({ value, onChange, children, icon: Icon }: {
 
 // ─── All Leads table view ─────────────────────────────────────────────────────
 
-function AllLeads({ states, onSelectLead, userName }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string }) {
+function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string; selectedLeadId?: string | null }) {
   const [data, setData] = useState<LeadsResponse | null>(null);
   const [showBulkOutreach, setShowBulkOutreach] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -411,7 +411,7 @@ function AllLeads({ states, onSelectLead, userName }: { states: Record<string, L
             return (
               <div key={lead.id} onClick={() => onSelectLead(lead)} role="button" tabIndex={0}
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelectLead(lead); } }}
-                className="crm-surface crm-surface-hover flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-pointer active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/40">
+                className={`crm-surface crm-surface-hover flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-pointer active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/40 ${selectedLeadId === lead.id ? "ring-2 ring-[#F97316]/50 bg-[#F97316]/[0.06]" : ""}`}>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-bold text-white truncate group-hover:text-[#F97316] transition-colors" style={H}>{lead.name}</p>
@@ -635,7 +635,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
         />
       )}
 
-      <div className="min-h-screen crm-backdrop flex flex-col text-white/80" style={H}>
+      <div className="h-[100dvh] overflow-hidden crm-backdrop flex flex-col text-white/80" style={H}>
 
         {loadError && (
           <div role="alert" className="flex items-center justify-between gap-3 px-4 py-2.5 bg-red-500/15 border-b border-red-500/30 text-red-200 text-sm">
@@ -704,7 +704,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
             )}
             {tab === "leads" && (
-              <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} />
+              <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} selectedLeadId={selectedLead?.id} />
             )}
             {tab === "scripts" && <ScriptsGuide />}
             {tab === "earnings" && (
@@ -715,16 +715,27 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
             )}
           </div>
 
-          {/* Docked lead detail (desktop cockpit). Renders inline beside the list. */}
-          {isDesktop && selectedLead && (
-            <aside className="hidden lg:flex w-[440px] xl:w-[520px] shrink-0 flex-col border-l border-white/[0.07] overflow-hidden pb-[72px]">
-              <LeadPanel inline lead={selectedLead}
-                state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
-                submission={submissions.find((s) => s.leadId === selectedLead.id)}
-                repName={userName}
-                onClose={() => setSelectedLead(null)}
-                onUpdate={(patch) => updateState(selectedLead.id, patch)}
-                onSubmitted={refreshSubs} />
+          {/* Docked lead detail (desktop cockpit). Always rendered on desktop so the
+              two-pane frame is fixed; shows the empty state until a lead is picked. */}
+          {isDesktop && (
+            <aside className="hidden lg:flex w-[480px] xl:w-[560px] 2xl:w-[640px] shrink-0 flex-col border-l border-white/[0.07] bg-[#111113] overflow-hidden pb-[72px]">
+              {selectedLead ? (
+                <LeadPanel inline lead={selectedLead}
+                  state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
+                  submission={submissions.find((s) => s.leadId === selectedLead.id)}
+                  repName={userName}
+                  onClose={() => setSelectedLead(null)}
+                  onUpdate={(patch) => updateState(selectedLead.id, patch)}
+                  onSubmitted={refreshSubs} />
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center gap-3 px-8 text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center">
+                    <List size={24} className="text-white/25" />
+                  </div>
+                  <p className="text-sm font-bold text-white/55" style={H}>Select a lead to start</p>
+                  <p className="text-xs text-white/30 max-w-[16rem] leading-relaxed" style={H}>Pick a lead from the list and their full workspace — email, call, outcomes and notes — opens here.</p>
+                </div>
+              )}
             </aside>
           )}
         </div>
