@@ -5,6 +5,7 @@ import { Phone, Mail, Flame, Zap, ChevronRight, RefreshCw, Star, PhoneCall, Spar
 import DailyGoals from "./DailyGoals";
 import MetricsCards from "./MetricsCards";
 import FollowUpBanner from "./FollowUpBanner";
+import { RecencyBadges, type LeadAction } from "./RecencyBadges";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -13,6 +14,8 @@ interface Lead {
   source?: "inbound" | "manual"; // present on custom leads; "inbound" = warm hand-raiser
   previewUrl?: string | null; // demo site built by the /websites factory, if any
   demoStatus?: string | null; // 'ready' | 'needs_review' | 'archived'
+  // Durable cross-rep action stamps attached by the leads API.
+  actions?: LeadAction | null;
   // Passed through to the inline email composer (all optional — sparse on legacy leads).
   contact_name?: string; email_status?: string; claimByDate?: string | null;
 }
@@ -189,6 +192,8 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
               {lastOutcome && <span className={`text-xs ${lastOutcome.color}`} style={H}>{lastOutcome.label}</span>}
               {isStale(state) && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full" style={H}>{getStaleDays(state)}d ago</span>}
             </div>
+            {/* Durable cross-rep recency badges — what's been done, by whom. */}
+            <RecencyBadges actions={lead.actions} state={state} today={new Date(now).toISOString().slice(0, 10)} previewUrl={lead.previewUrl} className="mt-1.5" />
           </div>
 
           <ChevronRight size={16} className="text-white/20 group-hover:text-[#F97316]/60 transition-colors shrink-0" />

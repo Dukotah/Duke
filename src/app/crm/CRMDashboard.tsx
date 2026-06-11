@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
 import AddLeadModal from "./components/AddLeadModal";
 import CallTimer from "./components/CallTimer";
+import { RecencyBadges, deriveTags, TAG_DEFS, type LeadAction, type TagKey } from "./components/RecencyBadges";
 
 // ─── Broadcast Banner ─────────────────────────────────────────────────────────
 
@@ -140,6 +141,8 @@ interface Lead {
   email_status?: string; grade?: string; lead_score?: number;
   // Demo package (optional) — lets the inline email composer attach a built demo.
   previewUrl?: string | null; claimByDate?: string | null; demoCategory?: string | null;
+  // Durable cross-rep action stamps (emailedAt/calledAt/lastOutcome/who…).
+  actions?: LeadAction | null;
 }
 
 // Dot colour for enriched email deliverability status.
@@ -248,6 +251,11 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [allTerritories, setAllTerritories] = useState(false);
+  // Action tag filter — client-side over the current page's leads (the durable
+  // cross-rep stamps the leads API already attaches), composable with search +
+  // server filters + the view-chips. null = no tag filter.
+  const [tagFilter, setTagFilter] = useState<TagKey | null>(null);
+  const todayISO = new Date().toISOString().slice(0, 10);
 
   const fetch_ = useCallback(async () => {
     setLoading(true); setError("");
@@ -272,6 +280,14 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
   const activeFilters = [q, county, niche, tier, hasEmail, grade, emailStatus].filter(Boolean).length;
   const territory = data?.territory;
+
+  // Apply the action-tag filter client-side over the loaded page. Composable with
+  // every server-side filter and the search above — those already shaped `data`.
+  const visibleLeads = (data?.leads ?? []).filter((lead) => {
+    if (!tagFilter) return true;
+    const tags = deriveTags(lead.actions ?? null, states[lead.id] ?? null, todayISO, { previewUrl: lead.previewUrl });
+    return tags.has(tagFilter);
+  });
 
   return (
     <div className="space-y-3">
@@ -358,6 +374,27 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
           style={H}><Mail size={10} />Has Email</button>
       </div>
 
+      {/* Action tags — one click finds a group ("Emailed", "Follow-up due", …).
+          Composable with the search/filters above and the view-chips. */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {TAG_DEFS.map((t) => {
+          const active = tagFilter === t.key;
+          return (
+            <button key={t.key} onClick={() => setTagFilter(active ? null : t.key)}
+              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all ${active ? "bg-[#F97316]/15 text-[#F97316] border-[#F97316]/35" : "bg-white/[0.03] text-white/40 border-white/10 hover:text-white/70 hover:border-white/20"}`}
+              style={H}>
+              <t.icon size={10} />{t.label}
+            </button>
+          );
+        })}
+        {tagFilter && (
+          <button onClick={() => setTagFilter(null)}
+            className="inline-flex items-center gap-1 text-[11px] text-white/30 hover:text-white/60 px-1.5" style={H}>
+            <X size={10} />Clear tag
+          </button>
+        )}
+      </div>
+
       {/* Territory badge + toggle */}
       {territory && (
         <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -377,7 +414,12 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
       {/* Results count */}
       {data && (
         <p className="text-xs text-white/30" style={H}>
-          <span className="text-white font-semibold">{data.total.toLocaleString()}</span> leads · page {page} of {totalPages}
+          {tagFilter ? (
+            <><span className="text-white font-semibold">{visibleLeads.length.toLocaleString()}</span> tagged on this page · </>
+          ) : (
+            <><span className="text-white font-semibold">{data.total.toLocaleString()}</span> leads · </>
+          )}
+          page {page} of {totalPages}
           · 🔥 {data.tierCounts.A.toLocaleString()} no-site
         </p>
       )}
@@ -404,7 +446,7 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
         </div>
       ) : (
         <div className="space-y-1.5">
-          {data?.leads.map((lead) => {
+          {visibleLeads.map((lead) => {
             const state = states[lead.id];
             return (
               <div key={lead.id} onClick={() => onSelectLead(lead)} role="button" tabIndex={0}
@@ -428,6 +470,8 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
                     <ScoreBar score={lead.outreach_score} />
                     {state && <StatusBadge stage={state.stage} status={state.status} />}
                   </div>
+                  {/* Durable cross-rep recency badges — what's been done, by whom. */}
+                  <RecencyBadges actions={lead.actions} state={state} today={todayISO} previewUrl={lead.previewUrl} className="mt-2" />
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   {lead.phone && <span className="text-xs text-white/35 hidden sm:flex items-center gap-1 tabular-nums" style={H}><Phone size={9} />{lead.phone}</span>}
@@ -442,11 +486,13 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
               </div>
             );
           })}
-          {data?.leads.length === 0 && (
+          {visibleLeads.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-2 py-14 crm-surface rounded-2xl text-center px-6">
               <Search size={22} className="text-white/20" />
               <p className="text-sm font-semibold text-white/50" style={H}>No leads match your filters</p>
-              <p className="text-xs text-white/30" style={H}>Try clearing a filter or widening your territory.</p>
+              <p className="text-xs text-white/30" style={H}>
+                {tagFilter ? "No leads on this page carry that tag — try another tag or clear it." : "Try clearing a filter or widening your territory."}
+              </p>
             </div>
           )}
         </div>
@@ -579,6 +625,17 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ leadId, ...patch, callCount: ((states[leadId]?.callCount ?? 0) + 1) }),
     });
+    // Mirror the durable, cross-rep action stamp (mirrors LeadPanel.logOutcome
+    // and CallReminders.logDisposition). /api/crm/state is PER-USER only, so
+    // without this the CallTimer dialer — the primary call path — never stamps
+    // the global lead_actions hash and other reps see no Called/Voicemail mark.
+    try {
+      await fetch("/api/crm/activity", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId, type: "call", outcome }),
+      });
+    } catch { /* state already persisted above; stamp is additive */ }
   }, [activeLead, states]);
 
   async function handleLogout() {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday } from "@/lib/db";
+import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday, stampLeadAction } from "@/lib/db";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
 import { getSessionSecret } from "@/lib/session";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
@@ -177,6 +177,24 @@ export async function POST(req: NextRequest) {
         lastContacted: sentAt,
         followUpDate: addDays(FOLLOW_UP_DAYS),
       });
+    }
+
+    // Durable, cross-rep action stamp (separate global hash; never expires).
+    // Failures here must never break a send/track, so swallow them.
+    try {
+      await stampLeadAction(
+        lead.id,
+        {
+          emailedAt: sentAt,
+          _incEmail: true,
+          lastOutcome: delivered ? "sent" : "logged",
+          lastOutcomeAt: sentAt,
+          ...(terminal ? {} : { followUpDate: addDays(FOLLOW_UP_DAYS) }),
+        },
+        { userId: senderId, repName }
+      );
+    } catch (stampErr) {
+      console.error(`[Outreach] Failed to stamp lead action for ${lead.id}:`, stampErr);
     }
   }
 

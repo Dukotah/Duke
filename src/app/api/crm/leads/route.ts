@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCustomLeads, getAllClaims, getTerritory, getLeadPreviewObjects, previewKey } from "@/lib/db";
+import { getCustomLeads, getAllClaims, getTerritory, getLeadPreviewObjects, previewKey, getLeadActions, type LeadActions } from "@/lib/db";
 
 // Lead source CSV. Defaults to the national deduped export, but can be pointed at
 // a per-region deep-enriched export (e.g. santa_rosa_ENRICHED_crm.csv hosted on
@@ -84,6 +84,8 @@ export interface Lead {
   demoArea?: string | null;
   claimByDate?: string | null;
   thumbnailUrl?: string | null;
+  /** Durable, cross-rep action stamps (emailedAt/calledAt/lastOutcome/who…). */
+  actions?: LeadActions | null;
 }
 
 let cachedLeads: Lead[] | null = null;
@@ -377,6 +379,8 @@ export async function GET(req: NextRequest) {
     const claimMap: Record<string, { userId: string; repName: string }> = {};
     for (const c of claims) claimMap[c.leadId] = { userId: c.userId, repName: c.repName };
     const previews = await getLeadPreviewObjects();
+    // Durable cross-rep action stamps — one HGETALL enriches the whole page.
+    const actionsMap = await getLeadActions();
     const leads = pageLeads.map((l) => {
       const pkg = previews[previewKey(l.name)];
       return {
@@ -389,6 +393,7 @@ export async function GET(req: NextRequest) {
         demoArea: pkg?.area ?? null,
         claimByDate: pkg?.claimByDate ?? null,
         thumbnailUrl: pkg?.thumbnailUrl ?? null,
+        actions: actionsMap[l.id] ?? null,
       };
     });
 

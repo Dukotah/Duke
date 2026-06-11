@@ -442,6 +442,111 @@ export async function getLeadPreviewObjects(): Promise<Record<string, LeadPrevie
   return out;
 }
 
+// ─── Durable per-lead action stamps (GLOBAL, cross-rep) ───────────────────────
+// LeadState is keyed PER USER, so it can't answer "what was done to this lead"
+// across the whole team. This is a single GLOBAL hash (one per-lead JSON value),
+// mirroring the proven lead_previews pattern: one HGETALL enriches an entire page
+// of the queue. Stamped on email send and call outcome so any rep sees, durably,
+// the last touch on every lead — no 2-day TTL, never expires.
+
+export interface LeadActions {
+  emailedAt?: string;       // ISO — last time anyone emailed this lead
+  calledAt?: string;        // ISO — last time anyone logged a call outcome
+  emailCount?: number;      // total emails sent across all reps
+  callCount?: number;       // total call outcomes logged across all reps
+  lastOutcome?: string;     // last call/email outcome (no_answer|voicemail|interested|sent|…)
+  lastOutcomeAt?: string;   // ISO — when lastOutcome was recorded
+  interestedAt?: string;    // ISO — set-once when any rep first logs "interested"; sticky, never cleared
+  notInterestedAt?: string; // ISO — set-once when any rep marks the lead not-interested; sticky
+  lastTouchedBy?: string;   // userId of the rep who last touched it
+  lastTouchedName?: string; // display name of that rep (for row initials)
+  lastTouchedAt?: string;   // ISO — last touch of any kind
+  followUpDate?: string;    // YYYY-MM-DD — shared follow-up date
+  status?: string;          // mirrors LeadState.status when known (won|not_interested|…)
+}
+
+const LEAD_ACTIONS_KEY = "lead_actions";
+
+// Patch type accepted by stampLeadAction. `_incEmail` / `_incCall` are sentinel
+// flags: when true, bump the respective counter (read-modify-write) instead of
+// the caller having to know the current value.
+export type LeadActionPatch = Partial<LeadActions> & {
+  _incEmail?: boolean;
+  _incCall?: boolean;
+};
+
+// Single lead's actions, tolerant of Upstash auto-deserialization and legacy
+// shapes. Returns null when absent.
+export async function getLeadAction(leadId: string): Promise<LeadActions | null> {
+  const redis = getRedis();
+  const raw = await redis.hget(LEAD_ACTIONS_KEY, leadId);
+  if (raw == null) return null;
+  try {
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (parsed && typeof parsed === "object") return parsed as LeadActions;
+  } catch {
+    /* skip malformed */
+  }
+  return null;
+}
+
+// Whole map of leadId → LeadActions for enriching a page of the queue with one
+// HGETALL. Tolerates both string and pre-parsed object values.
+export async function getLeadActions(): Promise<Record<string, LeadActions>> {
+  const redis = getRedis();
+  const all = (await redis.hgetall(LEAD_ACTIONS_KEY)) as Record<string, unknown> | null;
+  if (!all) return {};
+  const out: Record<string, LeadActions> = {};
+  for (const [k, v] of Object.entries(all)) {
+    try {
+      const parsed = typeof v === "string" ? JSON.parse(v) : v;
+      if (parsed && typeof parsed === "object") out[k] = parsed as LeadActions;
+    } catch {
+      /* skip malformed entry */
+    }
+  }
+  return out;
+}
+
+// Additively merge a patch into a lead's global action record (read-modify-write
+// of the one JSON value). Counters bump via the `_inc*` sentinels. Never expires.
+// Only non-undefined fields are written, so an old reader treats missing as absent.
+export async function stampLeadAction(
+  leadId: string,
+  patch: LeadActionPatch,
+  touchedBy?: { userId?: string; repName?: string }
+): Promise<void> {
+  if (!leadId) return;
+  const redis = getRedis();
+  const current = (await getLeadAction(leadId)) ?? {};
+
+  const { _incEmail, _incCall, ...rest } = patch;
+  const next: LeadActions = { ...current };
+
+  // Sticky, set-once fields: once a high-value signal is recorded, a later
+  // outcome (e.g. a follow-up "no_answer") must never clear it. We keep the
+  // first non-empty value so cross-rep Interested/Not-interested membership
+  // does not silently vanish on a subsequent touch.
+  const STICKY_ONCE = new Set(["interestedAt", "notInterestedAt"]);
+
+  for (const [k, val] of Object.entries(rest)) {
+    if (val !== undefined && val !== null && val !== "") {
+      if (STICKY_ONCE.has(k) && (current as Record<string, unknown>)[k]) continue;
+      (next as Record<string, unknown>)[k] = val;
+    }
+  }
+
+  if (_incEmail) next.emailCount = (current.emailCount ?? 0) + 1;
+  if (_incCall) next.callCount = (current.callCount ?? 0) + 1;
+
+  const nowISO = new Date().toISOString();
+  next.lastTouchedAt = nowISO;
+  if (touchedBy?.userId) next.lastTouchedBy = touchedBy.userId;
+  if (touchedBy?.repName) next.lastTouchedName = touchedBy.repName;
+
+  await redis.hset(LEAD_ACTIONS_KEY, { [leadId]: JSON.stringify(next) });
+}
+
 // ─── Lead Claims ─────────────────────────────────────────────────────────────
 
 export interface LeadClaim {

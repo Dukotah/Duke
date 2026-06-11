@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { listSubmissions, resolveSubmission, markCommissionPaid, getRepStats, listUsers, getUserLeadCount, getUserById } from "@/lib/db";
+import { listSubmissions, resolveSubmission, markCommissionPaid, getRepStats, listUsers, getUserLeadCount, getUserById, stampLeadAction } from "@/lib/db";
 import { parseJsonBody, handleApiError } from "@/lib/api";
 
 async function sendRepNotification(
@@ -89,6 +89,23 @@ export async function PATCH(req: NextRequest) {
 
     if (action === "accept" || action === "reject") {
       const updated = await resolveSubmission(id, action === "accept" ? "accepted" : "rejected", dealValue);
+
+      // Durably stamp the WON status into the global cross-rep action hash on
+      // accept. This is the canonical "lead marked won" mutation point — without
+      // it, a.status is never set globally and the Won tag is only visible to the
+      // rep who submitted (per-user state fallback). Additive; never fail the req.
+      if (action === "accept" && updated.leadId) {
+        try {
+          const nowISO = new Date().toISOString();
+          await stampLeadAction(
+            updated.leadId,
+            { status: "won", lastOutcome: "won", lastOutcomeAt: nowISO },
+            { userId: updated.userId, repName: updated.repName }
+          );
+        } catch (stampErr) {
+          console.error("[CRM] Failed to stamp won status on accept:", stampErr);
+        }
+      }
 
       // Send email notification to the rep
       try {
