@@ -152,9 +152,11 @@ function SubmitModal({ lead, state, onClose, onSubmitted }: {
   );
 }
 
-export default function LeadPanel({ lead, state, submission, repName, onClose, onUpdate, onSubmitted }: {
+export default function LeadPanel({ lead, state, submission, repName, onClose, onUpdate, onSubmitted, inline = false }: {
   lead: Lead; state: LeadState; submission?: Submission; repName: string;
   onClose: () => void; onUpdate: (patch: Partial<LeadState>) => void; onSubmitted: () => void;
+  // inline = docked beside the list (desktop cockpit). Default = right slide-over overlay.
+  inline?: boolean;
 }) {
   const [notes, setNotes] = useState(state.notes ?? "");
   const [showSubmit, setShowSubmit] = useState(false);
@@ -400,9 +402,11 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
         />
       )}
 
-      <div className="fixed inset-0 z-50 flex items-end sm:items-stretch sm:justify-end" onClick={onClose}>
-        <div className="absolute inset-0 bg-black/50 sm:bg-black/30 backdrop-blur-sm sm:backdrop-blur-none" />
-        <div className="relative bg-[#111113] border-t sm:border-t-0 sm:border-l border-white/[0.07] w-full sm:w-[480px] h-[92vh] sm:h-full flex flex-col shadow-2xl overflow-hidden rounded-t-2xl sm:rounded-none"
+      <div className={inline ? "h-full w-full flex" : "fixed inset-0 z-50 flex items-end sm:items-stretch sm:justify-end"} onClick={inline ? undefined : onClose}>
+        {!inline && <div className="absolute inset-0 bg-black/50 sm:bg-black/30 backdrop-blur-sm sm:backdrop-blur-none" />}
+        <div className={inline
+            ? "relative bg-[#111113] w-full h-full flex flex-col overflow-hidden"
+            : "relative bg-[#111113] border-t sm:border-t-0 sm:border-l border-white/[0.07] w-full sm:w-[480px] h-[92vh] sm:h-full flex flex-col shadow-2xl overflow-hidden rounded-t-2xl sm:rounded-none"}
           onClick={(e) => e.stopPropagation()}>
 
           {/* Header */}

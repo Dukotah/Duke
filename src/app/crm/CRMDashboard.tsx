@@ -485,6 +485,17 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const [emailLead, setEmailLead] = useState<Lead | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  // Desktop = dock the lead detail beside the list (cockpit). Mobile keeps the
+  // slide-over overlay. Default false so SSR/first paint matches the mobile path.
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   // Load all state + submissions once
   useEffect(() => {
@@ -594,7 +605,9 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           onAdded={() => { setQueueRefreshKey((k) => k + 1); setShowAddLead(false); }}
         />
       )}
-      {selectedLead && (
+      {/* Mobile: lead detail as a right slide-over overlay. On desktop it docks
+          inline beside the list (rendered in the main row below). */}
+      {selectedLead && !isDesktop && (
         <LeadPanel lead={selectedLead}
           state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
           submission={submissions.find((s) => s.leadId === selectedLead.id)}
@@ -632,7 +645,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
 
         {/* Top bar */}
         <header className="border-b border-white/[0.06] crm-chrome sticky top-0 z-30 shrink-0">
-          <div className="max-w-3xl mx-auto px-4 h-15 py-2.5 flex items-center justify-between">
+          <div className="max-w-[1800px] mx-auto px-4 h-15 py-2.5 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <span className="text-[17px] font-bold text-white tracking-tight">Copper Bay<span className="text-[#F97316]">Tech</span></span>
               <span className="hidden sm:inline-flex items-center text-[11px] uppercase tracking-[0.14em] text-white/30 font-semibold border-l border-white/10 pl-2.5">Sales</span>
@@ -663,39 +676,55 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           </div>
         </header>
 
-        {/* Main content */}
-        <div key={tab} className="crm-rise flex-1 max-w-3xl mx-auto w-full px-4 pt-5 pb-28 overflow-y-auto">
-          <BroadcastBanners />
-          {tab === "queue" && (
-            <CallQueue
-              key={queueRefreshKey}
-              states={states}
-              onSelectLead={(l) => setSelectedLead(l as Lead)}
-              onRefresh={refreshSubs}
-              onDialerStart={(l) => setActiveLead(l as Lead)}
-              onEmailLead={(l) => setEmailLead(l as Lead)}
-            />
-          )}
-          {tab === "reminders" && (
-            <CallReminders
-              states={states}
-              allLeads={allLeads}
-              onSelectLead={(l) => setSelectedLead(l as Lead)}
-              onUpdateState={updateState}
-            />
-          )}
-          {tab === "pipeline" && (
-            <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
-          )}
-          {tab === "leads" && (
-            <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} />
-          )}
-          {tab === "scripts" && <ScriptsGuide />}
-          {tab === "earnings" && (
-            <>
-              <EarningsView states={states} repName={userName} />
-              <LeaderboardPeek userId={userId} />
-            </>
+        {/* Main row — full-width cockpit. On desktop the lead detail docks in the
+            aside on the right; the list/work pane flexes to fill the rest. */}
+        <div className="flex-1 flex min-h-0 w-full max-w-[1800px] mx-auto">
+          <div key={tab} className="crm-rise flex-1 min-w-0 px-4 pt-5 pb-28 overflow-y-auto">
+            <BroadcastBanners />
+            {tab === "queue" && (
+              <CallQueue
+                key={queueRefreshKey}
+                states={states}
+                onSelectLead={(l) => setSelectedLead(l as Lead)}
+                onRefresh={refreshSubs}
+                onDialerStart={(l) => setActiveLead(l as Lead)}
+                onEmailLead={(l) => setEmailLead(l as Lead)}
+              />
+            )}
+            {tab === "reminders" && (
+              <CallReminders
+                states={states}
+                allLeads={allLeads}
+                onSelectLead={(l) => setSelectedLead(l as Lead)}
+                onUpdateState={updateState}
+              />
+            )}
+            {tab === "pipeline" && (
+              <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
+            )}
+            {tab === "leads" && (
+              <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} />
+            )}
+            {tab === "scripts" && <ScriptsGuide />}
+            {tab === "earnings" && (
+              <>
+                <EarningsView states={states} repName={userName} />
+                <LeaderboardPeek userId={userId} />
+              </>
+            )}
+          </div>
+
+          {/* Docked lead detail (desktop cockpit). Renders inline beside the list. */}
+          {isDesktop && selectedLead && (
+            <aside className="hidden lg:flex w-[440px] xl:w-[520px] shrink-0 flex-col border-l border-white/[0.07] overflow-hidden pb-[72px]">
+              <LeadPanel inline lead={selectedLead}
+                state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
+                submission={submissions.find((s) => s.leadId === selectedLead.id)}
+                repName={userName}
+                onClose={() => setSelectedLead(null)}
+                onUpdate={(patch) => updateState(selectedLead.id, patch)}
+                onSubmitted={refreshSubs} />
+            </aside>
           )}
         </div>
 
@@ -708,7 +737,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
 
         {/* Bottom tab bar — always visible */}
         <nav className="fixed bottom-0 left-0 right-0 z-30 crm-chrome border-t border-white/[0.07] pb-safe">
-          <div className="max-w-3xl mx-auto flex">
+          <div className="max-w-[1800px] mx-auto flex">
             {TABS.map((t) => {
               const active = tab === t.key;
               const badge =
