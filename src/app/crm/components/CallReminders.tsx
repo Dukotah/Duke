@@ -98,6 +98,30 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
             if (!map[l.id]) map[l.id] = l;
           }
         }
+
+        // Custom (manually-added / inbound) leads aren't in the scored CSV feed,
+        // so resolve any still-missing `custom:` ids straight from the
+        // custom-leads endpoint — otherwise their cards show a raw id.
+        if (items.some((it) => !map[it.leadId] && it.leadId.startsWith("custom:"))) {
+          try {
+            const cr = await fetch("/api/crm/custom-leads");
+            if (cr.ok) {
+              const customs = await cr.json();
+              for (const c of (Array.isArray(customs) ? customs : []) as Array<Record<string, string>>) {
+                const cid = `custom:${c.id}`;
+                if (!map[cid]) {
+                  map[cid] = {
+                    id: cid, name: c.name || "Lead", category: c.niche || "custom",
+                    phone: c.phone || "", email: c.email || "", website: c.website || "",
+                    city: c.city || "", county: c.county || "", tier: "A",
+                    industry_fit: "high", outreach_score: 100, pitch: c.notes || "",
+                    best_contact: c.phone ? "phone" : c.email ? "email" : "",
+                  };
+                }
+              }
+            }
+          } catch { /* best effort — leaves the id visible if it fails */ }
+        }
         setLeadMap(map);
       } else {
         setLeadMap({});
