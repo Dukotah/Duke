@@ -395,7 +395,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
       {showEmail && (
         <EmailComposer
-          lead={{ id: lead.id, name: lead.name, contactName: lead.contact_name, email: lead.email, city: lead.city, previewUrl: lead.previewUrl ?? undefined, claimByDate: lead.claimByDate ?? undefined, emailStatus: lead.email_status }}
+          lead={{ id: lead.id, name: lead.name, contactName: lead.contact_name, email: lead.email, city: lead.city, previewUrl: lead.previewUrl ?? undefined, claimByDate: lead.claimByDate ?? undefined, demoCategory: lead.demoCategory ?? undefined, emailStatus: lead.email_status }}
           repName={repName}
           onClose={() => setShowEmail(false)}
           onSent={handleEmailSent}

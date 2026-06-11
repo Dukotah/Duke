@@ -22,8 +22,23 @@ interface ComposerLead {
   city: string;
   previewUrl?: string;
   claimByDate?: string;
+  // Demo package category (e.g. "winery") — used to pick the best default template.
+  demoCategory?: string;
   // Enriched MX-verified deliverability: valid | risky | invalid | unknown.
   emailStatus?: string;
+}
+
+// When a lead already has a demo built, open straight to the matching demo
+// template (link pre-filled) instead of the generic first template — so the rep
+// sees a ready-to-send email, not a blank pitch they have to swap out.
+function pickInitialTemplate(templates: EmailTemplate[], lead: ComposerLead): EmailTemplate {
+  const find = (k: string) => templates.find((t) => t.key === k);
+  if (lead.previewUrl) {
+    const cat = (lead.demoCategory ?? "").toLowerCase();
+    if (cat === "winery") { const w = find("winery_demo"); if (w) return w; }
+    const d = find("demo_intro"); if (d) return d;
+  }
+  return templates[0];
 }
 
 interface Props {
@@ -36,9 +51,10 @@ interface Props {
 
 export default function EmailComposer({ lead, repName, onClose, onSent }: Props) {
   const [templates, setTemplates] = useState<EmailTemplate[]>(() => loadTemplates());
-  const [templateKey, setTemplateKey] = useState(templates[0].key);
-  const [subject, setSubject] = useState(templates[0].subject);
-  const [body, setBody] = useState(templates[0].body);
+  const initialTemplate = pickInitialTemplate(templates, lead);
+  const [templateKey, setTemplateKey] = useState(initialTemplate.key);
+  const [subject, setSubject] = useState(initialTemplate.subject);
+  const [body, setBody] = useState(initialTemplate.body);
   const [fromName, setFromName] = useState(repName);
 
   const [sending, setSending] = useState(false);

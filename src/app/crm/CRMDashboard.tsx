@@ -139,7 +139,7 @@ interface Lead {
   // Enriched (optional) — rendered in the list; passed through to LeadPanel.
   email_status?: string; grade?: string; lead_score?: number;
   // Demo package (optional) — lets the inline email composer attach a built demo.
-  previewUrl?: string | null; claimByDate?: string | null;
+  previewUrl?: string | null; claimByDate?: string | null; demoCategory?: string | null;
 }
 
 // Dot colour for enriched email deliverability status.
@@ -626,6 +626,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
             city: emailLead.city,
             previewUrl: emailLead.previewUrl ?? undefined,
             claimByDate: emailLead.claimByDate ?? undefined,
+            demoCategory: emailLead.demoCategory ?? undefined,
             emailStatus: emailLead.email_status,
           }}
           repName={userName}
