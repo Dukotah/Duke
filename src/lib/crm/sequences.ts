@@ -2,7 +2,7 @@
 //
 // Step 0: initial outreach (sent by rep manually — not handled here)
 // Step 1 (day 3): gentle check-in
-// Step 2 (day 7): social-proof angle
+// Step 2 (day 7): value angle — the common issues found on small-business sites
 // Step 3 (day 14): breakup email — last touch before archiving
 
 export interface SequenceStep {
@@ -21,11 +21,11 @@ export const SEQUENCE: SequenceStep[] = [
 
 Just wanted to follow up in case my last note got buried.
 
-I work with small businesses in Sonoma County on websites, IT support, and cybersecurity. I reached out because I think there's a quick win for {business} — and I'd hate for it to slip by.
+I work with small businesses on websites, IT support, and cybersecurity. I reached out because I think there's a quick win for {business} — and I'd hate for it to slip by.
 
 Would a 15-minute call this week work? No slides, no pitch deck — just a real conversation.
 
-Reply here or grab a time directly: https://calendly.com/copperbaytech
+Reply here, or grab a time: https://copperbaytech.com/schedule
 
 — Duke
 Copper Bay Tech | (707) 239-6725`,
@@ -33,16 +33,16 @@ Copper Bay Tech | (707) 239-6725`,
   {
     step: 2,
     delayDays: 7,
-    subject: "What a Healdsburg winery told us last month",
+    subject: "The 3 things I usually find on a site like {business}'s",
     body: `Hi {name},
 
 I'll keep this short.
 
-Last month we helped a local winery in Healdsburg cut their website load time by 60% and fix a security gap that had been sitting open for two years. Their words after: "I wish we'd done this sooner."
+When I look at a small-business website, the same handful of issues come up again and again: slow load times that quietly cost you visitors, an SSL or security gap that's been sitting open, and forms or mobile layouts that don't quite work.
 
-Most of the issues we find are straightforward to fix — they just get ignored because there's no one flagging them.
+Most of them are straightforward to fix — they just get missed because no one's flagging them.
 
-I'd love to take a look at {business} and tell you exactly what I see. Free, no strings.
+I'd be glad to look at {business} and tell you exactly what I see. Free, no strings.
 
 15 minutes — worth it?
 
@@ -59,7 +59,7 @@ I've reached out a couple of times and I don't want to keep cluttering your inbo
 
 This is my last note. If timing just isn't right, I completely understand — small business is full on.
 
-If things change down the road — website, IT support, cybersecurity — feel free to reach out directly at duke@copperbaytech.com or (707) 239-6725. We're local, we're fast, and we don't do long contracts.
+If things change down the road — website, IT support, cybersecurity — feel free to reach out directly at contact@copperbaytech.com or (707) 239-6725. We're fast, straightforward, and we don't do long contracts.
 
 Wishing {business} a great rest of the year.
 
