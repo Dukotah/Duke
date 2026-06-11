@@ -463,6 +463,10 @@ export interface LeadActions {
   lastTouchedAt?: string;   // ISO — last touch of any kind
   followUpDate?: string;    // YYYY-MM-DD — shared follow-up date
   status?: string;          // mirrors LeadState.status when known (won|not_interested|…)
+  openedAt?: string;        // ISO — last time this lead opened an outreach email (Resend webhook)
+  openedCount?: number;     // total opens across all sends — engagement signal
+  clickedAt?: string;       // ISO — last time this lead clicked a link (e.g. the demo) — hottest signal
+  clickedCount?: number;    // total link clicks
 }
 
 const LEAD_ACTIONS_KEY = "lead_actions";
@@ -473,6 +477,8 @@ const LEAD_ACTIONS_KEY = "lead_actions";
 export type LeadActionPatch = Partial<LeadActions> & {
   _incEmail?: boolean;
   _incCall?: boolean;
+  _incOpen?: boolean;
+  _incClick?: boolean;
 };
 
 // Single lead's actions, tolerant of Upstash auto-deserialization and legacy
@@ -520,7 +526,7 @@ export async function stampLeadAction(
   const redis = getRedis();
   const current = (await getLeadAction(leadId)) ?? {};
 
-  const { _incEmail, _incCall, ...rest } = patch;
+  const { _incEmail, _incCall, _incOpen, _incClick, ...rest } = patch;
   const next: LeadActions = { ...current };
 
   // Sticky, set-once fields: once a high-value signal is recorded, a later
@@ -538,6 +544,8 @@ export async function stampLeadAction(
 
   if (_incEmail) next.emailCount = (current.emailCount ?? 0) + 1;
   if (_incCall) next.callCount = (current.callCount ?? 0) + 1;
+  if (_incOpen) next.openedCount = (current.openedCount ?? 0) + 1;
+  if (_incClick) next.clickedCount = (current.clickedCount ?? 0) + 1;
 
   const nowISO = new Date().toISOString();
   next.lastTouchedAt = nowISO;

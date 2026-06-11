@@ -8,7 +8,7 @@
 
 import {
   Mail, Phone, Voicemail, Star, CalendarClock, XCircle, Trophy,
-  Globe, PhoneOff, CircleDashed,
+  Globe, PhoneOff, CircleDashed, MailOpen, MousePointerClick,
 } from "lucide-react";
 
 const H = { fontFamily: "var(--font-heading)" };
@@ -28,6 +28,10 @@ export interface LeadAction {
   lastTouchedAt?: string;
   followUpDate?: string;
   status?: string;
+  openedAt?: string;
+  openedCount?: number;
+  clickedAt?: string;
+  clickedCount?: number;
 }
 
 // Minimal shape of the per-user LeadState used as a fallback for the current rep.
@@ -81,6 +85,8 @@ function dayOf(s?: string): string {
 export type TagKey =
   | "not_contacted"
   | "emailed"
+  | "opened"
+  | "clicked"
   | "called"
   | "voicemail"
   | "interested"
@@ -93,6 +99,8 @@ export type TagKey =
 export const TAG_DEFS: { key: TagKey; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: "not_contacted", label: "Not contacted", icon: CircleDashed },
   { key: "emailed", label: "Emailed", icon: Mail },
+  { key: "opened", label: "Opened email", icon: MailOpen },
+  { key: "clicked", label: "Clicked demo", icon: MousePointerClick },
   { key: "called", label: "Called", icon: Phone },
   { key: "voicemail", label: "Voicemail", icon: Voicemail },
   { key: "interested", label: "Interested", icon: Star },
@@ -122,8 +130,10 @@ export function deriveTags(
   const status = (a.status ?? s.status ?? "").toLowerCase();
   const stage = (s.stage ?? "").toLowerCase();
 
-  if (a.emailedAt) tags.add("emailed");
+  if (a.emailedAt || a.openedAt || a.clickedAt) tags.add("emailed");
   else if (emailed) tags.add("emailed");
+  if (a.openedAt) tags.add("opened");
+  if (a.clickedAt) tags.add("clicked");
   if (called) tags.add("called");
 
   if (lastOutcome === "voicemail" || stage === "voicemail") tags.add("voicemail");
@@ -188,6 +198,20 @@ export function RecencyBadges({
   }
   if (tags.has("follow_up_due")) {
     pills.push(<Pill key="fu" icon={CalendarClock} text="Follow-up due" cls="text-amber-300 bg-amber-400/10 border-amber-400/25" />);
+  }
+
+  // Engagement signals — a click on the demo link is the hottest buying signal,
+  // so it gets a prominent pill. Opened shows only when there's no click yet.
+  if (tags.has("clicked")) {
+    pills.push(<Pill key="clk" icon={MousePointerClick}
+      text={a?.clickedAt ? `Clicked ${relTime(a.clickedAt)}` : "Clicked"}
+      cls="text-emerald-300 bg-emerald-400/10 border-emerald-400/30"
+      title="Clicked a link in the email (e.g. the demo)" />);
+  } else if (tags.has("opened")) {
+    const oc = a?.openedCount && a.openedCount > 1 ? ` ${a.openedCount}×` : "";
+    pills.push(<Pill key="opn" icon={MailOpen} text={`Opened${oc}`}
+      cls="text-sky-300 bg-sky-400/10 border-sky-400/20"
+      title={a?.openedAt ? `Last opened ${relTime(a.openedAt)}` : undefined} />);
   }
 
   if (a?.emailedAt) {

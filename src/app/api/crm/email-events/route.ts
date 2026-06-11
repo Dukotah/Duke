@@ -9,7 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyResendSignature } from "@/lib/crm/webhook";
 import { getRedis } from "@/lib/redis";
-import { setLeadState, addActivity, suppressEmail, getLeadState } from "@/lib/db";
+import { setLeadState, addActivity, suppressEmail, getLeadState, stampLeadAction } from "@/lib/db";
 
 type ResendEvent = {
   type: string;
@@ -114,6 +114,18 @@ export async function POST(req: NextRequest) {
       outcome: engagement,
       note: `Email ${engagement}`,
     });
+    // Durable, cross-rep engagement stamp so opens/clicks surface as row badges +
+    // tags for every rep (a click on the demo link is the hottest buying signal).
+    try {
+      const nowISO = new Date().toISOString();
+      await stampLeadAction(
+        match.leadId,
+        engagement === "clicked"
+          ? { clickedAt: nowISO, _incClick: true }
+          : { openedAt: nowISO, _incOpen: true },
+        { userId: match.userId, repName: "system" },
+      );
+    } catch { /* engagement already logged to the timeline; stamp is additive */ }
   }
 
   return NextResponse.json({ ok: true, type, leadId: match.leadId });
