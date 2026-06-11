@@ -23,7 +23,7 @@ const steps = [
 export default function HowItWorks() {
   const reduce = useReducedMotion();
   return (
-    <section id="how-it-works" className="py-24 bg-[#FAFAF9]">
+    <section id="how-it-works" className="py-16 sm:py-20 bg-[#FAFAF9]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 20 }}

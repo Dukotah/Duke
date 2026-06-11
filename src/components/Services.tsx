@@ -60,7 +60,7 @@ const tiers = [
 export default function Services() {
   const reduce = useReducedMotion();
   return (
-    <section id="services" className="py-24 bg-white">
+    <section id="services" className="py-16 sm:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 20 }}

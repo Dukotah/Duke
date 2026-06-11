@@ -63,7 +63,7 @@ export default function Contact() {
   const labelClass = "block text-xs font-semibold uppercase tracking-widest text-[#18181B]/60 mb-1.5";
 
   return (
-    <section id="contact" className="py-24 bg-white">
+    <section id="contact" className="py-16 sm:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16">
           {/* Left: Info */}

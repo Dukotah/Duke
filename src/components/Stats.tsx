@@ -28,7 +28,7 @@ const stats = [
 export default function Stats() {
   const reduce = useReducedMotion();
   return (
-    <section className="py-20 bg-[#18181B]">
+    <section className="py-14 sm:py-16 bg-[#18181B]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 16 }}
