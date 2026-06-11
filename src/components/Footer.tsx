@@ -71,9 +71,7 @@ export default function Footer() {
     { label: "Services", href: "/#services" },
     { label: "Pricing", href: "/pricing" },
     { label: "How We Work", href: "/process" },
-    { label: "Locations", href: "/locations" },
     { label: "Work", href: "/work" },
-    { label: "Free IT Health Check", href: "/it-health-check" },
     { label: "Tools", href: "/tools" },
     { label: "About", href: "/about" },
     { label: "Resources", href: "/blog" },
@@ -81,19 +79,15 @@ export default function Footer() {
     { label: "Contact", href: "/#contact" },
   ];
 
+  // Core service pages only. The per-city landing pages (web-design-<city>,
+  // it-support-<city>, …) live in the sitemap and are linked from the /locations
+  // hub — no need to stuff every permutation into a sitewide footer.
   const serviceLinks = [
-    { label: "Web Design — Sonoma County", href: "/web-design-sonoma-county" },
-    { label: "Web Design — Santa Rosa", href: "/web-design-santa-rosa" },
-    { label: "Web Design — Petaluma", href: "/web-design-petaluma" },
-    { label: "Web Design — Rohnert Park", href: "/web-design-rohnert-park" },
-    { label: "IT Support — Sonoma County", href: "/it-support-sonoma-county" },
-    { label: "IT Support — Santa Rosa", href: "/it-support-santa-rosa" },
-    { label: "IT Support — Petaluma", href: "/it-support-petaluma" },
-    { label: "IT Support — Windsor", href: "/it-support-windsor" },
-    { label: "IT Support — Healdsburg", href: "/it-support-healdsburg" },
-    { label: "Cybersecurity for Small Business", href: "/cybersecurity-small-business" },
+    { label: "Web Design", href: "/web-development" },
+    { label: "IT Support", href: "/it-support" },
+    { label: "Cybersecurity", href: "/cybersecurity-small-business" },
     { label: "AI Integration", href: "/ai-integration-small-business" },
-    { label: "Our Work", href: "/work" },
+    { label: "Browse all service areas", href: "/locations" },
   ];
 
   const linkClass =

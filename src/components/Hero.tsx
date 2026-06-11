@@ -41,7 +41,7 @@ export default function Hero() {
         style={{ background: "radial-gradient(circle, rgba(200,169,110,0.12) 0%, transparent 70%)" }}
       />
 
-      <div className="relative z-10 mx-auto max-w-5xl px-6 pt-28 pb-24 text-center">
+      <div className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-16 sm:pt-28 sm:pb-24 text-center">
         <motion.div
           // Start mostly-visible (not from 0) and finish fast so the headline is
           // legible almost immediately — a slow fade from black read as a
@@ -67,7 +67,7 @@ export default function Hero() {
           </span>
 
           <h1
-            className="mb-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl"
+            className="mb-6 text-balance text-4xl font-bold leading-[1.07] tracking-tight text-white sm:text-6xl sm:leading-[1.05] md:text-7xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Custom websites for growing small businesses —
