@@ -563,7 +563,7 @@ export default function Pricing() {
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#F97316] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#F97316]/25 transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-xl hover:shadow-[#F97316]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Get a Free Quote <ArrowRight size={16} />
+                Book a Free Consultation <ArrowRight size={16} />
               </Link>
               <a
                 href="tel:+17072396725"

@@ -95,7 +95,7 @@ export default function Post() {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Book a free call
+            Book a free consultation
           </Link>
         </div>
 

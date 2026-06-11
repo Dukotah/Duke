@@ -15,7 +15,7 @@ const styles = {
   "outline-light": "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold transition-colors border-2 border-white/30 text-white hover:border-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]",
 };
 
-export default function BookCallButton({ label = "Book a Free Call", variant = "primary", className = "" }: Props) {
+export default function BookCallButton({ label = "Book a Free Consultation", variant = "primary", className = "" }: Props) {
   return (
     <a
       href={BOOKING_URL}

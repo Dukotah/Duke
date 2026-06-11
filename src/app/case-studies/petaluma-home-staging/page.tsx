@@ -179,7 +179,7 @@ export default function PetalumaHomeStaging() {
                 Free Speed Audit
               </a>
               <a href="/schedule" className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
-                Book a Free Call
+                Book a Free Consultation
               </a>
             </div>
           </div>

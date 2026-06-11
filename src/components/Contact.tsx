@@ -103,7 +103,7 @@ export default function Contact() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>
-                  Book a free 30-minute call
+                  Book a free consultation
                 </p>
                 <p className="text-xs text-[#3F3F46]/50" style={{ fontFamily: "var(--font-body)" }}>
                   Pick a time that works — no back and forth

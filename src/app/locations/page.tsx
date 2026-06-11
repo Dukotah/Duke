@@ -161,7 +161,7 @@ export default function LocationsPage() {
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <CalendarDays size={16} />
-                Book a Free Call
+                Book a Free Consultation
               </a>
             </div>
           </div>

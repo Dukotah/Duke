@@ -765,13 +765,13 @@ function ReportPageInner() {
                 <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">Free Consultation</p>
                 <h4 className="text-white text-xl font-black mb-2">Want us to fix these issues?</h4>
                 <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
-                  Copper Bay Tech can resolve most issues in under a week. Book a free 30-minute call.
+                  Copper Bay Tech can resolve most issues in under a week. Book a free consultation.
                 </p>
                 <Link
                   href="/#contact"
                   className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
                 >
-                  Book a Free Call
+                  Book a Free Consultation
                 </Link>
               </div>
             )}

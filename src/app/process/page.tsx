@@ -304,7 +304,7 @@ export default function ProcessPage() {
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <CalendarDays size={16} />
-                Book a free call
+                Book a free consultation
               </a>
               <Link
                 href="/#contact"

@@ -42,7 +42,7 @@ export default function StickyCTA() {
           style={{ fontFamily: "var(--font-heading)" }}
         >
           <CalendarDays size={16} />
-          Book a Free Call
+          Book a Free Consultation
         </a>
       </div>
     </div>

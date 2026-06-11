@@ -130,7 +130,7 @@ export default function Nav({ light = false }: { light?: boolean }) {
             className="group inline-flex items-center gap-1.5 px-5 py-2 rounded-md text-sm font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:translate-y-0 active:scale-[0.98]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Book a free call
+            Book a free consultation
             <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
           </Link>
         </div>
@@ -197,7 +197,7 @@ export default function Nav({ light = false }: { light?: boolean }) {
             className="mt-3 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:scale-[0.98]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Book a free call
+            Book a free consultation
             <ArrowRight size={16} />
           </Link>
         </nav>
