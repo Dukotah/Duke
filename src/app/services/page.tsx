@@ -267,7 +267,7 @@ export default function ServicesPage() {
               className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#ea6c0a] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Book a free call with Duke →
+              Book a free consultation →
             </Link>
             <Link
               href="/pricing"

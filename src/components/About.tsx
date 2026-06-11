@@ -11,7 +11,7 @@ import { MapPin, ShieldCheck, Code2, X } from "lucide-react";
 const FOUNDER_HEADSHOT = "";
 
 const highlights = [
-  { icon: MapPin, text: "Based in Sonoma County — shows up in person when it matters" },
+  { icon: MapPin, text: "Based in Santa Rosa, CA — working with clients across the U.S." },
   { icon: ShieldCheck, text: "Cybersecurity-aware approach to every engagement" },
   { icon: Code2, text: "Custom-coded solutions, no cookie-cutter templates" },
 ];
@@ -44,7 +44,7 @@ export default function About() {
               className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Local expertise.
+              Personal service.
               <br />
               Enterprise-grade standards.
             </h2>
@@ -105,7 +105,7 @@ export default function About() {
               Most of my clients come to me after being burned by a template agency or
               left hanging by a big IT firm — slow to respond, quick to upsell, and gone
               the moment the contract ends. I started Copper Bay Tech because small
-              businesses in Sonoma County deserve a real technology partner: someone who
+              businesses deserve a real technology partner: someone who
               picks up the phone, knows your name, and builds things that actually last.
             </p>
             <p
@@ -171,14 +171,14 @@ export default function About() {
               className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Service Area
+              Where We Work
             </p>
             <p
               className="text-white/80 leading-relaxed mb-6"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Serving businesses throughout Sonoma County and the greater North Bay,
-              including:
+              Based in Sonoma County, we work with clients across the U.S. — with
+              on-site service throughout the North Bay, including:
             </p>
             <div className="grid grid-cols-2 gap-3">
               {[
@@ -201,7 +201,7 @@ export default function About() {
               className="mt-6 text-white/40 text-xs"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Remote engagements available throughout California.
+              Remote engagements available nationwide.
             </p>
           </motion.div>
         </div>

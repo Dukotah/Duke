@@ -125,7 +125,7 @@ export default function AiIntegrationSmallBusiness() {
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white"
                 style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
               >
-                Book a free call with Duke <ArrowRight size={16} />
+                Book a free consultation <ArrowRight size={16} />
               </Link>
               <Link
                 href="/tools/missed-call-calculator"
@@ -271,7 +271,7 @@ export default function AiIntegrationSmallBusiness() {
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white"
                 style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
               >
-                Book a free call with Duke <ArrowRight size={16} />
+                Book a free consultation <ArrowRight size={16} />
               </Link>
               <a
                 href={PHONE_HREF}

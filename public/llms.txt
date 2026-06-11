@@ -1,8 +1,8 @@
 # Copper Bay Tech
 
-> IT consulting, web development, and cybersecurity for Sonoma County small businesses. Enterprise-grade thinking without the enterprise price tag.
+> Custom websites, IT support, and cybersecurity for small businesses across the U.S. Enterprise-grade thinking without the enterprise price tag — based in Sonoma County, CA.
 
-Copper Bay Tech is a locally owned technology company based in Petaluma, California, serving small and medium-sized businesses across Sonoma County and the North Bay. We build custom-coded websites, provide managed IT support, and deliver practical cybersecurity and AI integration services — with a real person behind every project.
+Copper Bay Tech is an independently owned technology company based in Sonoma County, California, working with small and medium-sized businesses across the United States. We build custom-coded websites, provide managed IT support, and deliver practical cybersecurity and AI integration services — with a real person behind every project. Web design, cybersecurity, and remote IT support are delivered fully remote nationwide; hands-on, on-site service is available throughout the North Bay.
 
 ## Services
 
@@ -13,7 +13,7 @@ Copper Bay Tech is a locally owned technology company based in Petaluma, Califor
 
 ## Service Areas
 
-Petaluma, Santa Rosa, Sebastopol, Rohnert Park, Sonoma, Bodega Bay, Cotati, Windsor, Healdsburg — all of Sonoma County and the North Bay, California. On-site visits available throughout the region.
+Remote nationwide across the United States. On-site service is available throughout Sonoma County and the North Bay, California — including Petaluma, Santa Rosa, Sebastopol, Rohnert Park, Sonoma, Bodega Bay, Cotati, Windsor, and Healdsburg.
 
 ## Industries Served
 
@@ -44,7 +44,7 @@ Petaluma, Santa Rosa, Sebastopol, Rohnert Park, Sonoma, Bodega Bay, Cotati, Wind
 
 - **Phone / Text:** (707) 239-6725
 - **Email:** contact@copperbaytech.com
-- **Location:** Petaluma, CA 94952
+- **Location:** Santa Rosa, CA (serving clients nationwide)
 - **Book a free 30-minute call:** https://copperbaytech.com/schedule
 - **Response time:** Within one business day
 

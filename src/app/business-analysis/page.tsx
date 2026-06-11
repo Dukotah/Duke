@@ -448,7 +448,7 @@ export default function BusinessAnalysisPage() {
                     {improvement.ctaLabel} →
                   </Link>
                   <Link href="/#contact" className="inline-flex items-center justify-center border border-zinc-700 hover:border-zinc-500 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
-                    Talk it through with Duke
+                    Talk it through with our team
                   </Link>
                 </div>
               </div>

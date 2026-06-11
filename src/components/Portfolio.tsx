@@ -250,7 +250,7 @@ export default function Portfolio() {
             className="inline-flex items-center gap-2 rounded-md bg-[#F97316] px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#ea6c0a]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Book a free call with Duke <ArrowRight size={15} />
+            Book a free consultation <ArrowRight size={15} />
           </Link>
         </motion.div>
       </div>

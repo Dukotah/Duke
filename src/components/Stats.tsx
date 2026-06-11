@@ -19,9 +19,9 @@ const stats = [
     sub: "Every site is hand-built for your business. No page builders, no shared themes.",
   },
   {
-    value: "Local",
-    label: "Sonoma County based",
-    sub: "We serve the North Bay in person and show up on-site when it matters.",
+    value: "Nationwide",
+    label: "Remote-friendly, locally rooted",
+    sub: "Based in Sonoma County, CA — we work remotely across the U.S. and show up on-site in the North Bay when it matters.",
   },
 ];
 

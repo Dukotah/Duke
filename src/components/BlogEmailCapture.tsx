@@ -35,7 +35,7 @@ export default function BlogEmailCapture() {
         className="text-lg font-bold text-white mb-2"
         style={{ fontFamily: "var(--font-heading)" }}
       >
-        Get practical tech tips for Sonoma County businesses.
+        Get practical tech tips for small businesses.
       </h3>
       <p
         className="text-sm text-white/50 mb-6"

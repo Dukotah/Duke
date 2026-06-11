@@ -33,7 +33,7 @@ export function localBusinessSchema(): Json {
     "@id": `${SITE}/#business`,
     name: BUSINESS_NAME,
     description:
-      "IT consulting, web development, and cybersecurity for Sonoma County businesses.",
+      "IT consulting, web development, and cybersecurity for small businesses — based in Sonoma County, CA, serving clients nationwide.",
     url: SITE,
     telephone: PHONE,
     email: EMAIL,
@@ -59,7 +59,10 @@ export function localBusinessSchema(): Json {
         closes: "18:00",
       },
     ],
+    // Nationwide (remote) plus the North Bay cities we also cover on-site — the
+    // city list keeps local-pack relevance while "United States" signals reach.
     areaServed: [
+      "United States",
       "Petaluma",
       "Santa Rosa",
       "Sebastopol",
@@ -215,21 +218,16 @@ export function organizationSchema(): Json {
     },
     telephone: PHONE,
     email: EMAIL,
-    // Service-area business — no public storefront address; we serve a radius
-    // (see areaServed below). Omitting addressLocality avoids asserting an HQ city.
+    // Service-area business — no public storefront address. Based in CA, working
+    // remotely with clients nationwide, so areaServed is the whole country.
     address: {
       "@type": "PostalAddress",
       addressRegion: "CA",
       addressCountry: "US",
     },
     areaServed: {
-      "@type": "GeoCircle",
-      geoMidpoint: {
-        "@type": "GeoCoordinates",
-        latitude: 38.4405,
-        longitude: -122.7144,
-      },
-      geoRadius: "80000",
+      "@type": "Country",
+      name: "United States",
     },
     // Only emit sameAs once real profile URLs are configured in config/site.ts —
     // linking to profiles that 404 or aren't ours corrupts the entity graph.
@@ -238,7 +236,7 @@ export function organizationSchema(): Json {
       "@type": "ContactPoint",
       telephone: PHONE,
       contactType: "customer service",
-      areaServed: "US-CA",
+      areaServed: "US",
       availableLanguage: "English",
     },
   };

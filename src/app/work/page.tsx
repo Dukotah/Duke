@@ -221,7 +221,7 @@ export default function Work() {
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a free call with Duke <ArrowRight size={15} />
+                Book a free consultation <ArrowRight size={15} />
               </Link>
             </div>
           </section>
@@ -238,7 +238,7 @@ export default function Work() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href={BOOKING_URL} className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
-                Book a free call with Duke <ArrowRight size={16} />
+                Book a free consultation <ArrowRight size={16} />
               </Link>
               <Link href="/pricing" className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold" style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}>
                 See Pricing

@@ -143,7 +143,7 @@ export default function ScheduleClient() {
           </span>
           <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
             Request a Free{" "}
-            <span className="text-orange-400">Call with Duke</span>
+            <span className="text-orange-400">Consultation</span>
           </h1>
           <p className="text-zinc-400 text-lg mb-8">
             Tell us your preferred time and we&apos;ll confirm within a few hours. 30–45 minutes on your business, your tech, and whether we&apos;re a good fit. Zero obligation.

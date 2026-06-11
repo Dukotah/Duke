@@ -79,15 +79,15 @@ export default function Industries() {
             className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Built for Sonoma County
-            <br className="hidden md:block" /> businesses like yours
+            Built for small businesses
+            <br className="hidden md:block" /> like yours
           </h2>
           <p
             className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            We work across the industries that make the North Bay run — from winery
-            tasting rooms to dental offices to independent contractors.
+            We work across the industries we know best — from winery tasting rooms
+            to dental offices to independent contractors.
           </p>
         </motion.div>
 

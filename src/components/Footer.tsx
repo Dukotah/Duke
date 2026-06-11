@@ -50,7 +50,7 @@ export default function Footer() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "Copper Bay Tech",
-    description: "IT consulting, web development, and cybersecurity for Sonoma County businesses.",
+    description: "IT consulting, web development, and cybersecurity for small businesses — based in Sonoma County, CA, serving clients nationwide.",
     url: "https://copperbaytech.com",
     telephone: "+17072396725",
     email: "contact@copperbaytech.com",
@@ -60,7 +60,7 @@ export default function Footer() {
       addressRegion: "CA",
       addressCountry: "US",
     },
-    areaServed: ["Petaluma","Santa Rosa","Sebastopol","Rohnert Park","Sonoma","Bodega Bay","Cotati","Windsor","Healdsburg"],
+    areaServed: ["United States","Petaluma","Santa Rosa","Sebastopol","Rohnert Park","Sonoma","Bodega Bay","Cotati","Windsor","Healdsburg"],
     serviceType: ["Web Development","IT Consulting","Cybersecurity","Network Setup","Process Automation"],
     // Only emitted when at least one social profile URL is configured.
     ...(SOCIAL_URLS.length > 0 ? { sameAs: SOCIAL_URLS } : {}),
@@ -125,7 +125,7 @@ export default function Footer() {
               <span>Copper Bay<span className="text-[#F97316]">Tech</span></span>
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-white/55 max-w-xs text-pretty" style={{ fontFamily: "var(--font-body)" }}>
-              Custom-built technology for Sonoma County businesses. Websites, IT support, and cybersecurity — done right.
+              Custom-built technology for small businesses. Websites, IT support, and cybersecurity — done right.
             </p>
             {socials.length > 0 && (
               <ul className="mt-6 flex items-center gap-3">
@@ -196,7 +196,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-1 text-sm text-white/55" style={{ fontFamily: "var(--font-heading)" }}>
                 <MapPin size={15} className="mt-0.5 shrink-0 text-[#F97316]" />
-                Serving Sonoma County, CA
+                Based in Sonoma County, CA · Serving the U.S.
               </li>
             </ul>
           </div>

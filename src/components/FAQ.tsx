@@ -23,8 +23,8 @@ const faqs = [
     a: "Absolutely. Whether it's a speed problem, a broken form, an outdated design, or SEO work — we can usually assess your existing site and give you a clear improvement plan within 24 hours.",
   },
   {
-    q: "Do you only work with businesses in Sonoma County?",
-    a: "We prioritize local Sonoma County businesses because in-person support matters for IT work. That said, web development and remote IT support are available to clients throughout California.",
+    q: "Do you work with businesses outside Sonoma County?",
+    a: "Yes — we work with small businesses across the U.S. Web design, cybersecurity, and remote IT support are fully remote, so where you're located doesn't matter. We're based in Sonoma County, CA, so North Bay clients also get on-site, in-person support when hands-on IT work calls for it.",
   },
   {
     q: "What does IT support actually include?",

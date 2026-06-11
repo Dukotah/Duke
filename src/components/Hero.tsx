@@ -63,24 +63,24 @@ export default function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping motion-reduce:animate-none rounded-full bg-[#F97316] opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#F97316]" />
             </span>
-            Sonoma County · North Bay California
+            Remote-friendly · Based in Sonoma County, CA
           </span>
 
           <h1
             className="mb-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Custom websites for Sonoma County business —
+            Custom websites for growing small businesses —
             <br />
-            <span className="font-semibold text-white/80">one local partner, one invoice.</span>
+            <span className="font-semibold text-white/80">one partner, one invoice.</span>
           </h1>
 
           <p
             className="mx-auto mb-10 max-w-2xl text-pretty text-lg leading-relaxed text-white/70 md:text-xl"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Enterprise-grade thinking — without the enterprise price tag. Serving
-            Sonoma County small businesses from Santa Rosa.
+            Enterprise-grade thinking — without the enterprise price tag. We work
+            with small businesses across the U.S., based in Santa Rosa, California.
           </p>
 
           {/* Price transparency — our biggest differentiator: every local competitor
@@ -103,7 +103,7 @@ export default function Hero() {
               className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#F97316] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#F97316]/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#ea6c0a] hover:shadow-xl hover:shadow-[#F97316]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B] sm:w-auto"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Book a free call with Duke
+              Book a free consultation
               <svg
                 className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
                 viewBox="0 0 16 16"

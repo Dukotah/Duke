@@ -159,7 +159,7 @@ export default function ITSupportPage() {
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a free call with Duke <ArrowRight size={15} />
+                Book a free consultation <ArrowRight size={15} />
               </Link>
               <a
                 href={PHONE_HREF}
@@ -271,7 +271,7 @@ export default function ITSupportPage() {
               className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Book a free call with Duke <ArrowRight size={16} />
+              Book a free consultation <ArrowRight size={16} />
             </Link>
           </div>
         </section>

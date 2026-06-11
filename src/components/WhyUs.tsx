@@ -130,7 +130,7 @@ export default function WhyUs() {
             className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Here&apos;s how we compare to the alternatives most Sonoma County businesses end up
+            Here&apos;s how we compare to the alternatives most small businesses end up
             regretting.
           </p>
         </motion.div>

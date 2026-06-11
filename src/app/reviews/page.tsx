@@ -199,7 +199,7 @@ export default function ReviewsPage() {
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a free call with Duke <ArrowRight size={15} />
+                Book a free consultation <ArrowRight size={15} />
               </Link>
             </div>
           </section>
@@ -223,7 +223,7 @@ export default function ReviewsPage() {
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a free call with Duke <ArrowRight size={15} />
+                Book a free consultation <ArrowRight size={15} />
               </Link>
               {GOOGLE_REVIEW_URL && (
                 <a
