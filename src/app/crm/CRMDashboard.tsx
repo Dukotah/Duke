@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail,
   Flame, Zap, ArrowUpDown, X, LayoutGrid,
-  BookOpen, DollarSign, List,
+  BookOpen, List, DollarSign,
   AlertCircle, Plus, CalendarClock,
 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -178,15 +178,13 @@ interface LeadsResponse {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-type Tab = "queue" | "reminders" | "pipeline" | "leads" | "scripts" | "earnings";
+type View = "due" | "new" | "all" | "pipeline";
 
-const TABS: { key: Tab; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
-  { key: "queue", label: "Queue", icon: Phone },
-  { key: "reminders", label: "Follow-ups", icon: CalendarClock },
+const CHIPS: { key: View; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
+  { key: "due", label: "Due today", icon: CalendarClock },
+  { key: "new", label: "New", icon: Phone },
+  { key: "all", label: "All", icon: List },
   { key: "pipeline", label: "Pipeline", icon: LayoutGrid },
-  { key: "leads", label: "Leads", icon: List },
-  { key: "scripts", label: "Scripts", icon: BookOpen },
-  { key: "earnings", label: "Earnings", icon: DollarSign },
 ];
 
 const LIMIT = 50;
@@ -474,7 +472,10 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
 
 export default function CRMDashboard({ userId, userName, role }: { userId: string; userName: string; role: "admin" | "rep" }) {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>("queue");
+  const [view, setView] = useState<View>("due");
+  const [showScripts, setShowScripts] = useState(false);
+  const [showEarnings, setShowEarnings] = useState(false);
+  const [loggedToday, setLoggedToday] = useState<number | null>(null);
   const [states, setStates] = useState<Record<string, LeadState>>({});
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -505,6 +506,10 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
       setLoadError("Couldn't load your lead queue — check your connection and refresh.");
     });
     fetch("/api/crm/submit").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setSubmissions(d); }).catch((e) => console.error("CRM: failed to load submissions", e));
+    // Read-only: today's logged calls for the stats strip (Today N/50).
+    fetch("/api/crm/goals").then((r) => r.json()).then((d) => {
+      if (typeof d?.dailyStats?.callsLogged === "number") setLoggedToday(d.dailyStats.callsLogged);
+    }).catch((e) => console.error("CRM: failed to load goals", e));
   }, []);
 
   // Load leads for pipeline (needs all touched leads)
@@ -582,6 +587,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   }
 
   const pendingCount = submissions.filter((s) => s.status === "pending").length;
+  const earnedTotal = submissions.filter((s) => s.status === "accepted").reduce((sum, s) => sum + (s.commissionAmount ?? 0), 0);
   const interestedCount = Object.values(states).filter((s) => s.stage === "interested").length;
   // Due follow-ups — mirrors the /api/crm/reminders filter so the tab badge
   // matches the Follow-ups view without an extra fetch.
@@ -635,6 +641,39 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
         />
       )}
 
+      {/* Scripts reference — right slide-over */}
+      {showScripts && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowScripts(false)} />
+          <div className="relative w-full sm:w-[560px] lg:w-[640px] bg-[#111113] border-l border-white/[0.08] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-5 h-15 py-3 border-b border-white/[0.07] shrink-0">
+              <span className="text-sm font-bold text-white tracking-tight flex items-center gap-2" style={H}><BookOpen size={15} className="text-[#F97316]" />Scripts &amp; Guide</span>
+              <button onClick={() => setShowScripts(false)} className="text-white/30 hover:text-white/70 transition-colors"><X size={16} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-4 py-5">
+              <ScriptsGuide />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Earnings breakdown — right slide-over */}
+      {showEarnings && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowEarnings(false)} />
+          <div className="relative w-full sm:w-[560px] lg:w-[640px] bg-[#111113] border-l border-white/[0.08] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-5 h-15 py-3 border-b border-white/[0.07] shrink-0">
+              <span className="text-sm font-bold text-white tracking-tight flex items-center gap-2" style={H}>💰 Earnings</span>
+              <button onClick={() => setShowEarnings(false)} className="text-white/30 hover:text-white/70 transition-colors"><X size={16} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-4 py-5">
+              <EarningsView states={states} repName={userName} />
+              <LeaderboardPeek userId={userId} />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="h-[100dvh] overflow-hidden crm-backdrop flex flex-col text-white/80" style={H}>
 
         {loadError && (
@@ -652,13 +691,46 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               <span className="hidden sm:inline-flex items-center text-[11px] uppercase tracking-[0.14em] text-white/30 font-semibold border-l border-white/10 pl-2.5">Sales</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-2.5">
+              {/* Stats strip — hidden below md; Due survives below md as the chip badge */}
+              <div className="hidden md:flex items-center gap-2 mr-1">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-white/55 bg-white/[0.04] border border-white/10 px-2.5 py-1.5 rounded-full" style={H}>
+                  <span className="text-white/35">Today</span>
+                  <span className="text-white tabular-nums">{loggedToday ?? "—"}<span className="text-white/30">/50</span></span>
+                </span>
+                <button onClick={() => setView("due")}
+                  className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-full border transition-colors ${dueCount > 0 ? "text-amber-300 bg-amber-400/10 border-amber-400/25 hover:bg-amber-400/15" : "text-white/45 bg-white/[0.04] border-white/10 hover:text-white/70"}`}
+                  style={H}>
+                  <CalendarClock size={11} />
+                  <span className="tabular-nums">{dueCount}</span><span className="text-white/35 hidden lg:inline">due</span>
+                </button>
+                <button onClick={() => setShowEarnings(true)}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-green-300 bg-green-400/10 border border-green-400/25 px-2.5 py-1.5 rounded-full hover:bg-green-400/15 transition-colors"
+                  style={H} title="View earnings breakdown">
+                  ${earnedTotal.toLocaleString()}
+                  {pendingCount > 0 && <span className="text-white/35 font-medium hidden lg:inline">· {pendingCount} pending</span>}
+                </button>
+              </div>
               {interestedCount > 0 && (
-                <button onClick={() => setTab("pipeline")}
+                <button onClick={() => setView("pipeline")}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/25 px-2.5 py-1.5 rounded-full hover:bg-[#F97316]/15 transition-colors"
                   style={H}>
                   🔥 {interestedCount} interested
                 </button>
               )}
+              {/* Earnings — mobile/below-md fallback for the green stats button (which is md:hidden above). Carries the pending badge so the signal survives on phones. */}
+              <button onClick={() => setShowEarnings(true)}
+                className="md:hidden relative inline-flex items-center gap-1.5 text-xs font-semibold text-green-300 bg-green-400/10 border border-green-400/25 px-2.5 py-1.5 rounded-full hover:bg-green-400/15 transition-colors"
+                style={H} title="View earnings breakdown" aria-label="View earnings">
+                <DollarSign size={12} /><span className="hidden sm:inline tabular-nums">{earnedTotal.toLocaleString()}</span>
+                {pendingCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-amber-400 text-black text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center" aria-label={`${pendingCount} pending`}>{pendingCount}</span>
+                )}
+              </button>
+              <button onClick={() => setShowScripts(true)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 px-2.5 py-1.5 rounded-full transition-colors"
+                style={H} title="Scripts & guide">
+                <BookOpen size={12} /><span className="hidden sm:inline">Scripts</span>
+              </button>
               {role === "admin" && (
                 <button onClick={() => router.push("/crm/admin")}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 px-2.5 py-1.5 rounded-full transition-colors"
@@ -677,12 +749,41 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           </div>
         </header>
 
+        {/* View chips — drive the left list in place; no page navigation */}
+        <div className="border-b border-white/[0.06] crm-chrome shrink-0">
+          <div className="max-w-[1800px] mx-auto px-4 py-2 flex gap-2 overflow-x-auto">
+            {CHIPS.map((c) => {
+              const active = view === c.key;
+              const badge = c.key === "due" && dueCount > 0 ? dueCount : null;
+              return (
+                <button key={c.key} onClick={() => setView(c.key)} aria-current={active ? "true" : undefined}
+                  className={`shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-all ${active ? "bg-[#F97316]/12 text-[#F97316] border-[#F97316]/40" : "bg-white/[0.03] text-white/50 border-white/10 hover:text-white/80 hover:border-white/20"}`}
+                  style={H}>
+                  <c.icon size={13} />
+                  {c.label}
+                  {badge && (
+                    <span className="bg-[#F97316] text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center">{badge}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Main row — full-width cockpit. On desktop the lead detail docks in the
             aside on the right; the list/work pane flexes to fill the rest. */}
         <div className="flex-1 flex min-h-0 w-full max-w-[1800px] mx-auto">
-          <div key={tab} className="crm-rise flex-1 min-w-0 px-4 pt-5 pb-28 overflow-y-auto">
+          <div key={view} className="crm-rise flex-1 min-w-0 px-4 pt-5 pb-24 overflow-y-auto">
             <BroadcastBanners />
-            {tab === "queue" && (
+            {view === "due" && (
+              <CallReminders
+                states={states}
+                allLeads={allLeads}
+                onSelectLead={(l) => setSelectedLead(l as Lead)}
+                onUpdateState={updateState}
+              />
+            )}
+            {view === "new" && (
               <CallQueue
                 key={queueRefreshKey}
                 states={states}
@@ -692,33 +793,18 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
                 onEmailLead={(l) => setEmailLead(l as Lead)}
               />
             )}
-            {tab === "reminders" && (
-              <CallReminders
-                states={states}
-                allLeads={allLeads}
-                onSelectLead={(l) => setSelectedLead(l as Lead)}
-                onUpdateState={updateState}
-              />
-            )}
-            {tab === "pipeline" && (
-              <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
-            )}
-            {tab === "leads" && (
+            {view === "all" && (
               <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} selectedLeadId={selectedLead?.id} />
             )}
-            {tab === "scripts" && <ScriptsGuide />}
-            {tab === "earnings" && (
-              <>
-                <EarningsView states={states} repName={userName} />
-                <LeaderboardPeek userId={userId} />
-              </>
+            {view === "pipeline" && (
+              <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
             )}
           </div>
 
           {/* Docked lead detail (desktop cockpit). Always rendered on desktop so the
               two-pane frame is fixed; shows the empty state until a lead is picked. */}
           {isDesktop && (
-            <aside className="hidden lg:flex w-[480px] xl:w-[560px] 2xl:w-[640px] shrink-0 flex-col border-l border-white/[0.07] bg-[#111113] overflow-hidden pb-[72px]">
+            <aside className="hidden lg:flex w-[480px] xl:w-[560px] 2xl:w-[640px] shrink-0 flex-col border-l border-white/[0.07] bg-[#111113] overflow-hidden pb-4">
               {selectedLead ? (
                 <LeadPanel inline lead={selectedLead}
                   state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
@@ -740,40 +826,14 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           )}
         </div>
 
-        {/* FAB — add lead */}
+        {/* FAB — add lead. On lg+ the lead detail docks in the right aside
+            (480/560/640px wide); offset the FAB left of it so it floats over the
+            list pane and never lands on the LeadPanel's footer/action region. */}
         <button onClick={() => setShowAddLead(true)}
-          className="crm-glow-brand fixed bottom-[88px] right-4 z-30 w-[54px] h-[54px] rounded-full flex items-center justify-center bg-[#F97316] transition-all duration-200 active:scale-95 hover:brightness-110 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e0e10]"
+          className="crm-glow-brand fixed bottom-5 right-4 lg:right-[504px] xl:right-[584px] 2xl:right-[664px] z-40 w-[54px] h-[54px] rounded-full flex items-center justify-center bg-[#F97316] transition-all duration-200 active:scale-95 hover:brightness-110 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e0e10]"
           aria-label="Add lead">
           <Plus size={22} className="text-white" strokeWidth={2.4} />
         </button>
-
-        {/* Bottom tab bar — always visible */}
-        <nav className="fixed bottom-0 left-0 right-0 z-30 crm-chrome border-t border-white/[0.07] pb-safe">
-          <div className="max-w-[1800px] mx-auto flex">
-            {TABS.map((t) => {
-              const active = tab === t.key;
-              const badge =
-                t.key === "earnings" && pendingCount > 0 ? pendingCount :
-                t.key === "reminders" && dueCount > 0 ? dueCount : null;
-              return (
-                <button key={t.key} onClick={() => setTab(t.key)} aria-current={active ? "page" : undefined}
-                  className={`flex-1 flex flex-col items-center gap-1 py-2.5 transition-colors relative focus-visible:outline-none ${active ? "text-[#F97316]" : "text-white/35 hover:text-white/70"}`}
-                  style={H}>
-                  {active && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#F97316] rounded-full shadow-[0_0_10px_rgba(249,115,22,0.7)]" />}
-                  <div className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all ${active ? "bg-[#F97316]/12" : ""}`}>
-                    <t.icon size={19} />
-                  </div>
-                  <span className="text-[10px] font-semibold tracking-wide -mt-0.5">{t.label}</span>
-                  {badge && (
-                    <span className="absolute top-1.5 right-[28%] bg-[#F97316] text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center ring-2 ring-[#0e0e10]">
-                      {badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </nav>
       </div>
     </>
   );
