@@ -406,7 +406,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
         {!inline && <div className="absolute inset-0 bg-black/50 sm:bg-black/30 backdrop-blur-sm sm:backdrop-blur-none" />}
         <div className={inline
             ? "relative bg-[#111113] w-full h-full flex flex-col overflow-hidden"
-            : "relative bg-[#111113] border-t sm:border-t-0 sm:border-l border-white/[0.07] w-full sm:w-[480px] h-[92vh] sm:h-full flex flex-col shadow-2xl overflow-hidden rounded-t-2xl sm:rounded-none"}
+            : "relative bg-[#111113] border-t sm:border-t-0 sm:border-l border-white/[0.07] w-full sm:w-[560px] lg:w-[680px] h-[92vh] sm:h-full flex flex-col shadow-2xl overflow-hidden rounded-t-2xl sm:rounded-none"}
           onClick={(e) => e.stopPropagation()}>
 
           {/* Header */}
@@ -492,36 +492,9 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
               </div>
             )}
 
-            {/* CALL NOW */}
-            {lead.phone && (
-              <div className="px-5 py-4 border-b border-white/[0.06] bg-[#F97316]/5">
-                <a href={`tel:${lead.phone}`}
-                  className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl text-base font-bold text-white transition-all active:scale-95"
-                  style={{ backgroundColor: "#F97316", ...H }}>
-                  <Phone size={18} />{lead.phone}
-                </a>
-                {state.lastContacted && (
-                  <p className="text-xs text-white/30 text-center mt-2" style={H}>Last contacted: {state.lastContacted}</p>
-                )}
-                <div className="mt-2 flex flex-col items-center gap-1">
-                  <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
-                    callTiming.status === "good" ? "text-green-400 bg-green-400/10 border-green-400/20" :
-                    callTiming.status === "ok" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
-                    "text-zinc-400 bg-zinc-400/10 border-zinc-400/20"
-                  }`} style={H}>
-                    {callTiming.status === "good" ? "🟢" : callTiming.status === "ok" ? "🟡" : "🔴"} {callTiming.label}
-                  </span>
-                  <p className="text-xs text-white/40 text-center flex items-center justify-center gap-1.5" style={H}>
-                    <CalendarClock size={11} className="text-[#F97316]/50 shrink-0" />
-                    <span>{callTiming.detail}</span>
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* SEND EMAIL */}
+            {/* SEND EMAIL — primary action */}
             {lead.email && (
-              <div className="px-5 py-4 border-b border-white/[0.06]">
+              <div className="px-5 py-4 border-b border-white/[0.06] bg-[#F97316]/5">
                 {needsReview ? (
                   <div className="flex items-start gap-3 w-full py-3.5 px-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-300"
                     style={H}>
@@ -530,9 +503,9 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                   </div>
                 ) : (
                   <button onClick={() => setShowEmail(true)}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-bold border border-[#F97316]/30 bg-[#F97316]/10 text-[#F97316] hover:bg-[#F97316]/20 transition-all active:scale-95"
-                    style={H}>
-                    <Mail size={16} />Send Email
+                    className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl text-base font-bold text-white transition-all active:scale-95"
+                    style={{ backgroundColor: "#F97316", ...H }}>
+                    <Mail size={18} />Send Email
                   </button>
                 )}
 
@@ -570,6 +543,29 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                     <Repeat size={11} className="shrink-0" />Full 4-touch cadence sent — time to move on or call.
                   </p>
                 )}
+              </div>
+            )}
+
+            {/* CALL — secondary (dials from your phone) */}
+            {lead.phone && (
+              <div className="px-5 py-3 border-b border-white/[0.06]">
+                <a href={`tel:${lead.phone}`}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold border border-white/15 bg-white/[0.04] text-white/80 hover:bg-white/[0.08] hover:text-white transition-all active:scale-95"
+                  style={H}>
+                  <Phone size={15} className="text-[#F97316]" />Call {lead.phone}
+                </a>
+                <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
+                  <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
+                    callTiming.status === "good" ? "text-green-400 bg-green-400/10 border-green-400/20" :
+                    callTiming.status === "ok" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
+                    "text-zinc-400 bg-zinc-400/10 border-zinc-400/20"
+                  }`} style={H}>
+                    {callTiming.status === "good" ? "🟢" : callTiming.status === "ok" ? "🟡" : "🔴"} {callTiming.label}
+                  </span>
+                  {state.lastContacted && (
+                    <span className="text-xs text-white/30" style={H}>Last: {state.lastContacted}</span>
+                  )}
+                </div>
               </div>
             )}
 
