@@ -467,6 +467,7 @@ export interface LeadActions {
   openedCount?: number;     // total opens across all sends — engagement signal
   clickedAt?: string;       // ISO — last time this lead clicked a link (e.g. the demo) — hottest signal
   clickedCount?: number;    // total link clicks
+  bouncedAt?: string;       // ISO — email hard-bounced or was marked spam; address suppressed. Don't re-email.
 }
 
 const LEAD_ACTIONS_KEY = "lead_actions";

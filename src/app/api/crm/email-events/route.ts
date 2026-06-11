@@ -90,6 +90,11 @@ export async function POST(req: NextRequest) {
         outcome: type === "email.bounced" ? "bounced" : "complained",
         note: `Email ${type === "email.bounced" ? "hard bounced" : "marked as spam"} — suppressed`,
       });
+      // Durable cross-rep "bad email" stamp so the row badge warns every rep off
+      // re-emailing this address.
+      try {
+        await stampLeadAction(match.leadId, { bouncedAt: new Date().toISOString() }, { userId: match.userId, repName: "system" });
+      } catch { /* suppression already applied; stamp is additive */ }
     }
     return NextResponse.json({ ok: true, action: "suppressed", email: recipientEmail });
   }
