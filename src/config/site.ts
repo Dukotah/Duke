@@ -22,7 +22,7 @@ export const MAILING_ADDRESS = "Copper Bay Tech, 422 Larkfield Ctr, Santa Rosa, 
 // When set, a "Leave a review" CTA appears on /reviews to funnel happy clients
 // to Google — the single highest-leverage thing for local map-pack ranking.
 // Leave "" until your GBP is live so we never link to a dead page.
-export const GOOGLE_REVIEW_URL = "";
+export const GOOGLE_REVIEW_URL = "https://g.page/r/CXQuv4G7yohZEBM/review";
 
 // Social profiles. Paste a full URL to make that icon appear in the footer (and
 // feed Google's LocalBusiness `sameAs`). Leave "" to hide it — we never render a

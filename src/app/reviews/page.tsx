@@ -215,7 +215,7 @@ export default function ReviewsPage() {
               {live ? "Ready to become our next success story?" : "Ready to get started?"}
             </h2>
             <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
-              Get a free 30-minute call and see what Copper Bay Tech can do for your Sonoma County business.
+              Book a free consultation and see what Copper Bay Tech can do for your business.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
