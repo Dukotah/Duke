@@ -8,7 +8,7 @@ import { MapPin, ShieldCheck, Code2, X } from "lucide-react";
 // automatically — no other change needed. A real founder photo is the single
 // biggest trust lift for this section, so add one as soon as you have it.
 // e.g. FOUNDER_HEADSHOT = "/team/duke-hutcheon.jpg"
-const FOUNDER_HEADSHOT = "";
+const FOUNDER_HEADSHOT = "/team/duke-hutcheon.png";
 
 const highlights = [
   { icon: MapPin, text: "Based in Santa Rosa, CA — working with clients across the U.S." },
