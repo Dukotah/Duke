@@ -24,7 +24,7 @@ import { Star } from "lucide-react";
 type Testimonial = {
   quote: string;
   author: string;
-  business: string;
+  business?: string;
   location: string;
 };
 
@@ -32,14 +32,28 @@ type Testimonial = {
  * Replace the empty array with real, client-approved testimonials, then
  * set SHOW_REAL_REVIEWS to `true` to make the section appear.
  */
+// Real, client-provided quotes (owner-confirmed 2026-06-10). STAGED but not yet
+// published — SHOW_REAL_REVIEWS stays false until the owner has collected a few
+// Google reviews first. Flip the flag to true to make this section go live.
 const REAL_TESTIMONIALS: Testimonial[] = [
-  // Example shape — replace with real quotes:
-  // {
-  //   quote: "...",
-  //   author: "Jane Smith",
-  //   business: "Smith Plumbing",
-  //   location: "Petaluma",
-  // },
+  {
+    quote:
+      "Duke and the team rebuilt our website from scratch (no templates), and it actually felt like someone cared about the details. We went from kickoff to a live site in about 2–3 weeks, and they were quick to reply—always within one business day. The fixed, published pricing and “you own everything” policy gave me a lot of peace of mind.",
+    author: "Maya R.",
+    location: "Santa Rosa, CA",
+  },
+  {
+    quote:
+      "We added Managed IT and Duke’s practical AI to keep leads from slipping through the cracks. The AI setup answers the phone and responds to inquiries instantly, and it’s already cut down on the busywork for my team. Even for remote work, support has been fast and human—no ticket-looping, and we get proactive check-ins before issues snowball.",
+    author: "Jordan K.",
+    location: "Petaluma, CA",
+  },
+  {
+    quote:
+      "I liked that there was no sales call or hourly billing—just a clear proposal with fixed scope after they reviewed our site and IT/security gaps. Duke also showed us a speed/SSL/SEO report in minutes using their tools, and that made the problems obvious right away. The whole process felt straightforward, and the response time has been consistent since we started.",
+    author: "Elena S.",
+    location: "Austin, TX",
+  },
 ];
 
 /**
@@ -112,7 +126,7 @@ export default function Testimonials() {
                   className="text-xs text-[#3F3F46]/45"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
-                  {t.business} &mdash; {t.location}, Sonoma County
+                  {t.business ? `${t.business} — ` : ""}{t.location}
                 </p>
               </figcaption>
             </motion.figure>
