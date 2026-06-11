@@ -1,12 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { X, Send, Save, RotateCcw, Check, Mail } from "lucide-react";
+import { X, Send, Mail } from "lucide-react";
 import {
   loadTemplates,
-  saveTemplateOverride,
-  resetTemplateOverride,
-  hasOverride,
   personalize,
   type EmailTemplate,
 } from "./emailTemplates";
@@ -50,18 +47,21 @@ interface Props {
 }
 
 export default function EmailComposer({ lead, repName, onClose, onSent }: Props) {
-  const [templates, setTemplates] = useState<EmailTemplate[]>(() => loadTemplates());
+  const [templates] = useState<EmailTemplate[]>(() => loadTemplates());
   const initialTemplate = pickInitialTemplate(templates, lead);
+  // The editable fields hold the FINAL personalized text for this lead (tokens
+  // already filled in), so what the rep sees is exactly what sends — one message,
+  // no separate preview.
+  const initialVars = { name: firstName(lead.contactName), business: lead.name, city: lead.city, fromName: repName, demoUrl: lead.previewUrl ?? "", claimByDate: lead.claimByDate ?? "" };
   const [templateKey, setTemplateKey] = useState(initialTemplate.key);
-  const [subject, setSubject] = useState(initialTemplate.subject);
-  const [body, setBody] = useState(initialTemplate.body);
+  const [subject, setSubject] = useState(() => personalize(initialTemplate.subject, initialVars));
+  const [body, setBody] = useState(() => personalize(initialTemplate.body, initialVars));
   const [fromName, setFromName] = useState(repName);
 
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [delivered, setDelivered] = useState(true);
-  const [savedFlash, setSavedFlash] = useState(false);
   // Deliverability guard: warn-with-override for any non-valid address so a rep
   // doesn't unknowingly hard-bounce the warm-up domain. A "valid" (MX-verified)
   // address needs no confirmation; legacy leads (no status) are treated as valid.
@@ -83,45 +83,27 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
 
   const atCap = !!capacity && capacity.remaining < 1;
 
-  const editable = templateKey !== "custom";
-  const overridden = editable && hasOverride(templateKey);
+  // Switching templates re-fills the editable fields with the personalized text
+  // for THIS lead (real name, city, demo link), so the box is always ready to send.
+  const vars = { name: firstName(lead.contactName), business: lead.name, city: lead.city, fromName, demoUrl: lead.previewUrl ?? "", claimByDate: lead.claimByDate ?? "" };
 
   const applyTemplate = (key: string) => {
     setTemplateKey(key);
     const tmpl = templates.find((t) => t.key === key);
     if (tmpl && key !== "custom") {
-      setSubject(tmpl.subject);
-      setBody(tmpl.body);
+      setSubject(personalize(tmpl.subject, vars));
+      setBody(personalize(tmpl.body, vars));
+    } else if (key === "custom") {
+      setSubject("");
+      setBody("");
     }
   };
 
-  // {name} greeting uses the contact's first name when known, else falls back
-  // to "there" (handled in personalize); {business} carries the company name.
-  // {demoUrl} and {claimByDate} are substituted when the lead has a demo package.
-  const vars = { name: firstName(lead.contactName), business: lead.name, city: lead.city, fromName, demoUrl: lead.previewUrl ?? "", claimByDate: lead.claimByDate ?? "" };
-
-  // A template that links a demo ({demoUrl}) is broken if no demo has been built
-  // for this lead — it would send "here's your demo:" with a blank link. Block the
-  // send and tell the rep to attach a demo first.
-  const needsDemo = /\{demoUrl\}/i.test(subject + body) && !lead.previewUrl?.trim();
-
-  const saveEdits = () => {
-    saveTemplateOverride(templateKey, subject, body);
-    setTemplates((prev) => prev.map((t) => (t.key === templateKey ? { ...t, subject, body } : t)));
-    setSavedFlash(true);
-    setTimeout(() => setSavedFlash(false), 1500);
-  };
-
-  const resetEdits = () => {
-    resetTemplateOverride(templateKey);
-    const fresh = loadTemplates();
-    setTemplates(fresh);
-    const tmpl = fresh.find((t) => t.key === templateKey);
-    if (tmpl) {
-      setSubject(tmpl.subject);
-      setBody(tmpl.body);
-    }
-  };
+  // A demo template is broken if no demo exists for this lead (it would send a
+  // blank link). Check the RAW template, since the editable body already has the
+  // link substituted in.
+  const activeTemplate = templates.find((t) => t.key === templateKey);
+  const needsDemo = !!activeTemplate && /\{demoUrl\}/i.test(activeTemplate.subject + activeTemplate.body) && !lead.previewUrl?.trim();
 
   const handleSend = async () => {
     if (!subject.trim() || !body.trim() || atCap || needsDemo || blockedByDeliverability) return;
@@ -217,41 +199,18 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
               <div>
                 <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Subject</label>
                 <input value={subject} onChange={(e) => setSubject(e.target.value)}
-                  placeholder="Subject — use {name}, {business}, {city}"
+                  placeholder="Subject"
                   className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50" style={H} />
               </div>
 
-              {/* Body */}
+              {/* Body — already personalized for this lead; this is what sends. */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-semibold text-white/40 uppercase tracking-wider" style={H}>Message</label>
-                  {editable && (
-                    <div className="flex items-center gap-3">
-                      <button onClick={saveEdits} className="text-xs font-semibold text-white/40 hover:text-[#F97316] flex items-center gap-1 transition-colors" style={H}>
-                        {savedFlash ? <><Check size={11} className="text-green-400" />Saved</> : <><Save size={11} />Save edits</>}
-                      </button>
-                      {overridden && (
-                        <button onClick={resetEdits} className="text-xs font-semibold text-white/30 hover:text-white/60 flex items-center gap-1 transition-colors" style={H}>
-                          <RotateCcw size={11} />Reset
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <p className="text-xs text-white/25 mb-2" style={H}>Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}, {"{demoUrl}"}, {"{claimByDate}"}</p>
-                <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={11}
+                <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Message</label>
+                <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={15}
                   placeholder="Write your message…"
                   className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50 leading-relaxed" style={H} />
+                <p className="text-xs text-white/25 mt-2" style={H}>Already filled in for {lead.name} — edit anything you like, then send. This is exactly what goes out.</p>
               </div>
-
-              {/* Preview */}
-              {(subject.trim() || body.trim()) && (
-                <div className="bg-[#111113] rounded-xl border border-white/[0.06] p-4 space-y-2">
-                  <p className="text-xs text-white/35 font-semibold uppercase tracking-wider" style={H}>Preview for {lead.name}</p>
-                  <p className="text-sm text-white font-semibold" style={H}>{personalize(subject, vars)}</p>
-                  <pre className="text-sm text-white/75 whitespace-pre-wrap leading-relaxed font-sans" style={H}>{personalize(body, vars)}</pre>
-                </div>
-              )}
 
               {needsDemo && (
                 <div className="flex items-start gap-2.5 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-amber-300" style={H}>

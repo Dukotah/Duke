@@ -6,6 +6,7 @@ import { Gauge, Globe, Loader2, Zap, BarChart3, Wrench, AlertCircle } from "luci
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import AuditResults from "@/components/AuditResults";
+import { track } from "@/lib/analytics";
 
 interface AuditData {
   url: string;
@@ -64,6 +65,8 @@ function AuditPageInner() {
         setError(json.error || "Audit failed. Please try again.");
       } else {
         setData(json);
+        // Top-of-funnel engagement signal — a visitor ran the flagship free tool.
+        track("audit_run", { score: typeof json.score === "number" ? json.score : null });
         setTimeout(() => {
           resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
