@@ -289,15 +289,33 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
 
   // The outreach API already logs the email and schedules a follow-up server
   // side; mirror that in local state so the panel updates without a refetch.
+  // Next-day follow-up (matches FOLLOW_UP_DAYS=1) so it lands in "Due today"
+  // tomorrow. If the lead has a built demo, the sent email is the demo template,
+  // so record a "demo_emailed" outcome.
   const handleEmailSent = () => {
     const nowDisplay = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-    const fu = new Date(); fu.setDate(fu.getDate() + 3);
+    const fu = new Date(); fu.setDate(fu.getDate() + 1);
+    const fuISO = fu.toISOString().slice(0, 10);
+    const terminal = state.status === "won" || state.status === "not_interested";
+    const hasDemo = !!(genResult?.previewUrl ?? lead.previewUrl);
+    onUpdate(terminal
+      ? { lastContacted: nowDisplay, ...(hasDemo ? { lastOutcome: "demo_emailed" } : {}) }
+      : { status: "contacted", lastContacted: nowDisplay, followUpDate: fuISO, ...(hasDemo ? { lastOutcome: "demo_emailed" } : {}) });
+    setActivityKey((k) => k + 1);
+  };
+
+  // Manual "demo email sent" log — for when the rep sends the demo template from
+  // outside the composer. Records it on the timeline (stamps emailedAt globally)
+  // and sets the next-day follow-up so it surfaces in Due today.
+  const logDemoEmailed = () => {
+    const nowDisplay = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const fu = new Date(); fu.setDate(fu.getDate() + 1);
     const fuISO = fu.toISOString().slice(0, 10);
     const terminal = state.status === "won" || state.status === "not_interested";
     onUpdate(terminal
-      ? { lastContacted: nowDisplay }
-      : { status: "contacted", lastContacted: nowDisplay, followUpDate: fuISO });
-    setActivityKey((k) => k + 1);
+      ? { lastContacted: nowDisplay, lastOutcome: "demo_emailed" }
+      : { status: "contacted", stage: "contacted", lastContacted: nowDisplay, followUpDate: fuISO, lastOutcome: "demo_emailed" });
+    postActivity({ type: "email", outcome: "demo_emailed", note: "Sent demo email with their site link" });
   };
 
   const needsReview = lead.demoStatus === "needs_review";
@@ -469,6 +487,44 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
     </div>
   ) : null;
 
+  const demoBlock = effPreviewUrl ? (
+    <div className="px-5 py-3 border-b border-white/[0.06]">
+      <div className="flex items-center gap-2">
+        <a href={effPreviewUrl} target="_blank" rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold border border-[#F97316]/30 bg-[#F97316]/10 text-[#F97316] hover:bg-[#F97316]/20 transition-all active:scale-95"
+          style={H}>
+          <Globe size={15} />View demo site<ExternalLink size={12} className="opacity-60" />
+        </a>
+        <CopyBtn text={effPreviewUrl} />
+      </div>
+      {lead.thumbnailUrl && (
+        <a href={effPreviewUrl} target="_blank" rel="noopener noreferrer" className="block mt-2">
+          <img src={lead.thumbnailUrl} alt="Demo preview" loading="lazy"
+            className="w-full rounded-xl border border-white/10 hover:border-[#F97316]/30 transition-colors" />
+        </a>
+      )}
+      <button onClick={logDemoEmailed}
+        className={`mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-semibold border transition-all active:scale-95 ${
+          state.lastOutcome === "demo_emailed"
+            ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+            : "border-white/15 bg-white/[0.04] text-white/70 hover:bg-white/[0.08]"
+        }`}
+        style={H}>
+        {state.lastOutcome === "demo_emailed"
+          ? <><Check size={13} />Demo email sent</>
+          : <><Mail size={13} />Mark demo email sent</>}
+      </button>
+      {effNeedsReview && (
+        <p className="mt-1.5 text-[11px] text-amber-300/80 flex items-center gap-1.5" style={H}>
+          <span>⚠️</span>Demo flagged needs-review — verify before sending.
+        </p>
+      )}
+      {lead.claimByDate && (
+        <p className="mt-1 text-[11px] text-white/35" style={H}>Offer expires {lead.claimByDate}</p>
+      )}
+    </div>
+  ) : null;
+
   const callBlock = lead.phone ? (
     <div className="px-5 py-3 border-b border-white/[0.06]">
       <a href={`tel:${lead.phone}`}
@@ -622,6 +678,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             <div className="shrink-0 overflow-y-auto border-b border-white/[0.06]" style={{ maxHeight: "55vh" }}>
               {recommendedBlock}
               {emailBlock}
+              {demoBlock}
               {callBlock}
               {outcomeBlock}
               {notesBlock}
@@ -636,6 +693,9 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
 
             {/* SEND EMAIL — primary action */}
             {!inline && emailBlock}
+
+            {/* DEMO — view the built site + log "demo emailed" */}
+            {!inline && demoBlock}
 
             {/* CALL — secondary (dials from your phone) */}
             {!inline && callBlock}
@@ -897,29 +957,8 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                     </a>
                   </div>
                 )}
-                {effPreviewUrl && (
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <Globe size={13} className="text-violet-400/70 shrink-0" />
-                      <a href={effPreviewUrl} target="_blank" rel="noopener noreferrer"
-                        className="text-sm text-violet-300 hover:text-violet-200 transition-colors flex-1 truncate" style={H}>
-                        Preview site we built
-                      </a>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 border ${
-                        effNeedsReview
-                          ? "text-amber-300/80 bg-amber-400/10 border-amber-400/20"
-                          : "text-violet-300/60 bg-violet-400/10 border-violet-400/20"
-                      }`} style={H}>{effNeedsReview ? "Needs Review" : "Demo"}</span>
-                      <CopyBtn text={effPreviewUrl} />
-                    </div>
-                    {lead.thumbnailUrl && (
-                      <img src={lead.thumbnailUrl} alt="Demo preview" className="w-full rounded-xl mt-2 border border-violet-400/10" loading="lazy" />
-                    )}
-                    {lead.claimByDate && (
-                      <p className="text-[11px] text-violet-300/60 mt-1" style={H}>Offer expires {lead.claimByDate}</p>
-                    )}
-                  </div>
-                )}
+                {/* Demo preview + actions now live in the pinned demoBlock above
+                    (View demo site / Mark demo emailed), so it stays visible. */}
                 {/* The attached link is the public gallery URL; the demo only
                     resolves there once the Websites repo is pushed/deployed. */}
                 {genResult && (
