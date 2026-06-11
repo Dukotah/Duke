@@ -29,7 +29,7 @@ export const GOOGLE_REVIEW_URL = "https://g.page/r/CXQuv4G7yohZEBM/review";
 // link to a profile that doesn't exist. LinkedIn alone is worth adding for a
 // tech company; the rest are optional.
 export const SOCIAL = {
-  linkedin: "",
+  linkedin: "https://www.linkedin.com/in/dukotahhutcheon/",
   facebook: "",
   instagram: "",
   x: "",
