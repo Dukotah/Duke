@@ -126,7 +126,7 @@ const Pipeline = dynamic(() => import("./components/Pipeline"), { ssr: false });
 const ScriptsGuide = dynamic(() => import("./components/ScriptsGuide"), { ssr: false });
 const EarningsView = dynamic(() => import("./components/Earnings"), { ssr: false });
 const BulkOutreach = dynamic(() => import("./components/BulkOutreach"), { ssr: false });
-const OutreachTemplates = dynamic(() => import("./components/OutreachTemplates"), { ssr: false });
+const EmailComposer = dynamic(() => import("./components/EmailComposer"), { ssr: false });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -138,6 +138,8 @@ interface Lead {
   outreach_score: number; pitch: string; alt_categories: string;
   // Enriched (optional) — rendered in the list; passed through to LeadPanel.
   email_status?: string; grade?: string; lead_score?: number;
+  // Demo package (optional) — lets the inline email composer attach a built demo.
+  previewUrl?: string | null; claimByDate?: string | null;
 }
 
 // Dot colour for enriched email deliverability status.
@@ -177,14 +179,12 @@ interface LeadsResponse {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 type Tab = "queue" | "reminders" | "pipeline" | "leads" | "scripts" | "earnings";
-type NavKey = Tab | "email";
 
-const TABS: { key: NavKey; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
+const TABS: { key: Tab; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: "queue", label: "Queue", icon: Phone },
   { key: "reminders", label: "Follow-ups", icon: CalendarClock },
   { key: "pipeline", label: "Pipeline", icon: LayoutGrid },
   { key: "leads", label: "Leads", icon: List },
-  { key: "email", label: "Email", icon: Mail },
   { key: "scripts", label: "Scripts", icon: BookOpen },
   { key: "earnings", label: "Earnings", icon: DollarSign },
 ];
@@ -483,8 +483,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   const [showAddLead, setShowAddLead] = useState(false);
   const [queueRefreshKey, setQueueRefreshKey] = useState(0);
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
-  const [showBulkEmail, setShowBulkEmail] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
+  const [emailLead, setEmailLead] = useState<Lead | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // Load all state + submissions once
@@ -522,6 +521,22 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   const refreshSubs = useCallback(() => {
     fetch("/api/crm/submit").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setSubmissions(d); }).catch((e) => console.error("CRM: failed to refresh submissions", e));
   }, []);
+
+  // Email sent from a queue card. The outreach API already logs the email and
+  // schedules a follow-up server-side; mirror that in local state (mirrors
+  // LeadPanel.handleEmailSent) so the queue updates without a refetch.
+  const handleQueueEmailSent = useCallback(() => {
+    if (!emailLead) return;
+    const leadId = emailLead.id;
+    const nowDisplay = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const fu = new Date(); fu.setDate(fu.getDate() + 3);
+    const fuISO = fu.toISOString().slice(0, 10);
+    const cur = states[leadId];
+    const terminal = cur?.status === "won" || cur?.status === "not_interested";
+    updateState(leadId, terminal
+      ? { lastContacted: nowDisplay }
+      : { status: "contacted", lastContacted: nowDisplay, followUpDate: fuISO });
+  }, [emailLead, states, updateState]);
 
   const handleCallOutcome = useCallback(async (outcome: string) => {
     if (!activeLead) return;
@@ -588,12 +603,21 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           onUpdate={(patch) => updateState(selectedLead.id, patch)}
           onSubmitted={refreshSubs} />
       )}
-      {showBulkEmail && <BulkOutreach repName={userName} onClose={() => setShowBulkEmail(false)} />}
-      {showTemplates && (
-        <OutreachTemplates
+      {emailLead && emailLead.email && (
+        <EmailComposer
+          lead={{
+            id: emailLead.id,
+            name: emailLead.name,
+            contactName: emailLead.contact_name,
+            email: emailLead.email,
+            city: emailLead.city,
+            previewUrl: emailLead.previewUrl ?? undefined,
+            claimByDate: emailLead.claimByDate ?? undefined,
+            emailStatus: emailLead.email_status,
+          }}
           repName={userName}
-          onClose={() => setShowTemplates(false)}
-          onBulkSend={() => { setShowTemplates(false); setShowBulkEmail(true); }}
+          onClose={() => setEmailLead(null)}
+          onSent={handleQueueEmailSent}
         />
       )}
 
@@ -649,6 +673,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               onSelectLead={(l) => setSelectedLead(l as Lead)}
               onRefresh={refreshSubs}
               onDialerStart={(l) => setActiveLead(l as Lead)}
+              onEmailLead={(l) => setEmailLead(l as Lead)}
             />
           )}
           {tab === "reminders" && (
@@ -689,9 +714,8 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               const badge =
                 t.key === "earnings" && pendingCount > 0 ? pendingCount :
                 t.key === "reminders" && dueCount > 0 ? dueCount : null;
-              const onClick = t.key === "email" ? () => setShowTemplates(true) : () => setTab(t.key as Tab);
               return (
-                <button key={t.key} onClick={onClick} aria-current={active ? "page" : undefined}
+                <button key={t.key} onClick={() => setTab(t.key)} aria-current={active ? "page" : undefined}
                   className={`flex-1 flex flex-col items-center gap-1 py-2.5 transition-colors relative focus-visible:outline-none ${active ? "text-[#F97316]" : "text-white/35 hover:text-white/70"}`}
                   style={H}>
                   {active && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#F97316] rounded-full shadow-[0_0_10px_rgba(249,115,22,0.7)]" />}

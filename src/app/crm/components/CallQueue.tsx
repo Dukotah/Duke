@@ -13,6 +13,8 @@ interface Lead {
   source?: "inbound" | "manual"; // present on custom leads; "inbound" = warm hand-raiser
   previewUrl?: string | null; // demo site built by the /websites factory, if any
   demoStatus?: string | null; // 'ready' | 'needs_review' | 'archived'
+  // Passed through to the inline email composer (all optional — sparse on legacy leads).
+  contact_name?: string; email_status?: string; claimByDate?: string | null;
 }
 
 interface LeadState {
@@ -26,6 +28,8 @@ interface Props {
   onSelectLead: (lead: Lead) => void;
   onRefresh: () => void;
   onDialerStart?: (lead: Lead) => void;
+  // Open the email composer for this lead straight from the queue card.
+  onEmailLead?: (lead: Lead) => void;
 }
 
 const OUTCOME_LABEL: Record<string, { label: string; color: string }> = {
@@ -36,7 +40,7 @@ const OUTCOME_LABEL: Record<string, { label: string; color: string }> = {
   interested: { label: "Interested!", color: "text-green-400" },
 };
 
-export default function CallQueue({ states, onSelectLead, onRefresh, onDialerStart }: Props) {
+export default function CallQueue({ states, onSelectLead, onRefresh, onDialerStart, onEmailLead }: Props) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [powerDialer, setPowerDialer] = useState(false);
@@ -139,50 +143,79 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
       }
     }
 
+    // Stop the card's open/dialer handler from firing when a quick-action is tapped.
+    const stop = (e: React.MouseEvent) => e.stopPropagation();
+    const demoBlocksEmail = lead.demoStatus === "needs_review";
+
     return (
       <div onClick={handleCardClick}
-        className={`group flex items-center gap-4 px-4 py-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.99] hover:border-[#F97316]/30 hover:bg-[#F97316]/5 ${
+        className={`group flex flex-col px-4 py-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.99] hover:border-[#F97316]/30 hover:bg-[#F97316]/5 ${
           priority ? "bg-[#F97316]/5 border-[#F97316]/20" : "bg-[#1C1C1F] border-white/[0.06]"
         }`}>
 
-        {/* Score circle */}
-        <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-base font-bold ${
-          lead.outreach_score >= 80 ? "bg-[#F97316]/15 text-[#F97316]" :
-          lead.outreach_score >= 60 ? "bg-yellow-400/15 text-yellow-400" :
-          "bg-white/5 text-white/40"
-        }`} style={H}>
-          {lead.outreach_score}
+        <div className="flex items-center gap-4 w-full">
+          {/* Score circle */}
+          <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-base font-bold ${
+            lead.outreach_score >= 80 ? "bg-[#F97316]/15 text-[#F97316]" :
+            lead.outreach_score >= 60 ? "bg-yellow-400/15 text-yellow-400" :
+            "bg-white/5 text-white/40"
+          }`} style={H}>
+            {lead.outreach_score}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="font-bold text-white text-sm leading-tight truncate" style={H}>{lead.name}</p>
+              {lead.source === "inbound"
+                ? <span className="shrink-0 inline-flex items-center gap-0.5 text-[10px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-full" style={H}><Sparkles size={9} />Inbound</span>
+                : <>
+                    {lead.tier === "A" && <Flame size={12} className="text-orange-400 shrink-0" />}
+                    {lead.tier === "B" && <Zap size={12} className="text-yellow-400 shrink-0" />}
+                  </>}
+            </div>
+            <p className="text-xs text-white/40 mt-0.5 truncate" style={H}>
+              {lead.city} · {lead.category.replace(/_/g, " ")}
+            </p>
+            <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+              {lead.phone && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Phone size={9} />{lead.phone}</span>}
+              {lead.email && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Mail size={9} />{lead.email.split("@")[0]}@…</span>}
+              {callCount > 0 && <span className="text-xs text-white/25 flex items-center gap-1" style={H}><PhoneCall size={9} />{callCount}x</span>}
+              {lead.previewUrl && <span className={`text-xs px-1.5 py-0.5 rounded-full flex items-center gap-1 border ${
+                lead.demoStatus === "needs_review"
+                  ? "text-amber-300 bg-amber-400/10 border-amber-400/20"
+                  : "text-violet-300 bg-violet-400/10 border-violet-400/20"
+              }`} style={H} title={lead.demoStatus === "needs_review" ? "Demo needs review — verify before sharing" : "A demo site has been built for this lead — open the lead to share it"}><Globe size={9} />Demo</span>}
+              {lastOutcome && <span className={`text-xs ${lastOutcome.color}`} style={H}>{lastOutcome.label}</span>}
+              {isStale(state) && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full" style={H}>{getStaleDays(state)}d ago</span>}
+            </div>
+          </div>
+
+          <ChevronRight size={16} className="text-white/20 group-hover:text-[#F97316]/60 transition-colors shrink-0" />
         </div>
 
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="font-bold text-white text-sm leading-tight truncate" style={H}>{lead.name}</p>
-            {lead.source === "inbound"
-              ? <span className="shrink-0 inline-flex items-center gap-0.5 text-[10px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-full" style={H}><Sparkles size={9} />Inbound</span>
-              : <>
-                  {lead.tier === "A" && <Flame size={12} className="text-orange-400 shrink-0" />}
-                  {lead.tier === "B" && <Zap size={12} className="text-yellow-400 shrink-0" />}
-                </>}
+        {/* Inline quick actions — call or email without leaving the home screen. */}
+        {(lead.phone || lead.email) && (
+          <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.05]">
+            {lead.phone && (
+              <a href={`tel:${lead.phone}`} onClick={stop}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/25 hover:bg-[#F97316]/20 transition-all active:scale-95"
+                style={H}>
+                <Phone size={13} />Call
+              </a>
+            )}
+            {lead.email && (
+              <button
+                onClick={(e) => { stop(e); if (!demoBlocksEmail) onEmailLead?.(lead); }}
+                disabled={demoBlocksEmail}
+                title={demoBlocksEmail ? "Demo needs review before emailing — open the lead to verify it" : undefined}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-white/70 bg-white/[0.04] border border-white/10 hover:text-white hover:bg-white/[0.08] hover:border-white/20 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/[0.04]"
+                style={H}>
+                <Mail size={13} />Email
+              </button>
+            )}
           </div>
-          <p className="text-xs text-white/40 mt-0.5 truncate" style={H}>
-            {lead.city} · {lead.category.replace(/_/g, " ")}
-          </p>
-          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-            {lead.phone && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Phone size={9} />{lead.phone}</span>}
-            {lead.email && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Mail size={9} />{lead.email.split("@")[0]}@…</span>}
-            {callCount > 0 && <span className="text-xs text-white/25 flex items-center gap-1" style={H}><PhoneCall size={9} />{callCount}x</span>}
-            {lead.previewUrl && <span className={`text-xs px-1.5 py-0.5 rounded-full flex items-center gap-1 border ${
-              lead.demoStatus === "needs_review"
-                ? "text-amber-300 bg-amber-400/10 border-amber-400/20"
-                : "text-violet-300 bg-violet-400/10 border-violet-400/20"
-            }`} style={H} title={lead.demoStatus === "needs_review" ? "Demo needs review — verify before sharing" : "A demo site has been built for this lead — open the lead to share it"}><Globe size={9} />Demo</span>}
-            {lastOutcome && <span className={`text-xs ${lastOutcome.color}`} style={H}>{lastOutcome.label}</span>}
-            {isStale(state) && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full" style={H}>{getStaleDays(state)}d ago</span>}
-          </div>
-        </div>
-
-        <ChevronRight size={16} className="text-white/20 group-hover:text-[#F97316]/60 transition-colors shrink-0" />
+        )}
       </div>
     );
   }
