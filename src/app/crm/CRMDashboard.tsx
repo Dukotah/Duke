@@ -140,7 +140,7 @@ interface Lead {
   // Enriched (optional) — rendered in the list; passed through to LeadPanel.
   email_status?: string; grade?: string; lead_score?: number;
   // Demo package (optional) — lets the inline email composer attach a built demo.
-  previewUrl?: string | null; claimByDate?: string | null; demoCategory?: string | null;
+  previewUrl?: string | null; claimByDate?: string | null; demoCategory?: string | null; thumbnailUrl?: string | null;
   // Durable cross-rep action stamps (emailedAt/calledAt/lastOutcome/who…).
   actions?: LeadAction | null;
 }
@@ -452,6 +452,11 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
               <div key={lead.id} onClick={() => onSelectLead(lead)} role="button" tabIndex={0}
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelectLead(lead); } }}
                 className={`crm-surface crm-surface-hover flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-pointer active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/40 ${selectedLeadId === lead.id ? "ring-2 ring-[#F97316]/50 bg-[#F97316]/[0.06]" : ""}`}>
+                {lead.thumbnailUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={lead.thumbnailUrl} alt="" loading="lazy"
+                    className="hidden sm:block w-16 h-9 rounded-md object-cover border border-white/10 shrink-0" />
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-bold text-white truncate group-hover:text-[#F97316] transition-colors" style={H}>{lead.name}</p>
