@@ -27,7 +27,9 @@ interface OutreachBody {
 }
 
 const MAX_PER_REQUEST = 50;
-const FOLLOW_UP_DAYS = 3;
+// Next-day follow-up: the workflow is "email today, then call/text tomorrow", so
+// an emailed lead must surface in "Due today" the following day.
+const FOLLOW_UP_DAYS = 1;
 
 // Effective daily cap for `today` (YYYY-MM-DD). The configured value (or the
 // conservative 200 default) is the hard ceiling; the warm-up ramp scales it down
