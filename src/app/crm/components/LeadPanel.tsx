@@ -7,9 +7,11 @@ import {
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
   CalendarClock, Activity, Lock, UserCheck, Info,
   ChevronDown, ChevronRight, MessageSquare, Repeat,
+  MailOpen, MousePointerClick, AlertTriangle,
 } from "lucide-react";
 import ActivityTimeline from "./ActivityTimeline";
 import EmailComposer from "./EmailComposer";
+import { relTime, type LeadAction } from "./RecencyBadges";
 import { buildCallScript, buildObjections, callTimingFor, suggestCadence } from "@/lib/crm/playbook";
 import { readBookingOverride, resolveBookingUrl } from "@/lib/booking";
 
@@ -26,6 +28,7 @@ interface Lead {
   site_quality?: string; digital_presence?: string; site_load_ms?: string;
   lead_score?: number; grade?: string; category_value?: string;
   need_signal?: string; reach_channel?: string; recommended_action?: string; score_why?: string;
+  actions?: LeadAction | null;
   previewUrl?: string | null;
   demoStatus?: string | null;
   demoFlags?: string[] | null;
@@ -487,6 +490,35 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
     </div>
   ) : null;
 
+  // Email progress funnel (Sent -> Opened -> Clicked) from the durable global
+  // lead_actions stamp. Shows once the lead has been emailed.
+  const act = lead.actions ?? null;
+  const wasEmailed = !!act?.emailedAt || (!!state.lastContacted && (state.status === "contacted" || state.stage === "contacted"));
+  const engagementBlock = wasEmailed ? (
+    <div className="px-5 py-3 border-b border-white/[0.06]">
+      <p className="text-[11px] uppercase tracking-wider text-white/35 font-semibold mb-2" style={H}>Email progress</p>
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border text-blue-300 bg-blue-400/10 border-blue-400/20" style={H}>
+          <Mail size={12} />Sent{act?.emailedAt ? ` · ${relTime(act.emailedAt)}` : ""}
+        </span>
+        <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border ${act?.openedAt ? "text-sky-300 bg-sky-400/10 border-sky-400/20" : "text-white/30 bg-white/[0.03] border-white/10"}`} style={H}>
+          <MailOpen size={12} />{act?.openedAt ? `Opened${act.openedCount && act.openedCount > 1 ? ` ${act.openedCount}×` : ""} · ${relTime(act.openedAt)}` : "Not opened yet"}
+        </span>
+        <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border ${act?.clickedAt ? "text-emerald-300 bg-emerald-400/10 border-emerald-400/30" : "text-white/30 bg-white/[0.03] border-white/10"}`} style={H}>
+          <MousePointerClick size={12} />{act?.clickedAt ? `Clicked · ${relTime(act.clickedAt)}` : "No clicks yet"}
+        </span>
+        {act?.bouncedAt && (
+          <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border text-red-300 bg-red-400/10 border-red-400/30" style={H}>
+            <AlertTriangle size={12} />Bounced
+          </span>
+        )}
+      </div>
+      {!act?.openedAt && !act?.clickedAt && (
+        <p className="text-[10px] text-white/25 mt-1.5" style={H}>Open &amp; click tracking populates once the Resend email webhook is live.</p>
+      )}
+    </div>
+  ) : null;
+
   const demoBlock = effPreviewUrl ? (
     <div className="px-5 py-3 border-b border-white/[0.06]">
       <div className="flex items-center gap-2">
@@ -678,6 +710,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             <div className="shrink-0 overflow-y-auto border-b border-white/[0.06]" style={{ maxHeight: "55vh" }}>
               {recommendedBlock}
               {emailBlock}
+              {engagementBlock}
               {demoBlock}
               {callBlock}
               {outcomeBlock}
@@ -693,6 +726,9 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
 
             {/* SEND EMAIL — primary action */}
             {!inline && emailBlock}
+
+            {/* EMAIL PROGRESS — sent / opened / clicked funnel */}
+            {!inline && engagementBlock}
 
             {/* DEMO — view the built site + log "demo emailed" */}
             {!inline && demoBlock}

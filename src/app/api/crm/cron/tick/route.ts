@@ -51,6 +51,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Auto follow-up sequencing is OPT-IN. By default the cron does nothing, so a
+  // due follow-up STAYS PUT in "Due today" until a rep handles it manually — it
+  // is never auto-emailed or auto-bumped out of view. Set OUTREACH_AUTO_SEQUENCE=
+  // true to re-enable the automatic 4-touch sequence.
+  if (process.env.OUTREACH_AUTO_SEQUENCE !== "true") {
+    return NextResponse.json({ ok: true, skipped: "auto-sequence disabled (follow-ups stay put until handled)" });
+  }
+
   const redis = getRedis();
   const today = todayStr();
   const apiKey = process.env.RESEND_API_KEY;
