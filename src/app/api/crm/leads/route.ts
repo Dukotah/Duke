@@ -7,7 +7,10 @@ import { getCustomLeads, getAllClaims, getTerritory, getLeadPreviewObjects, prev
 // handles both schemas.
 export const CSV_URL =
   process.env.LEADS_CSV_URL?.trim() ||
-  "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/claude/lead-data-sourcing-eyOeN/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
+  // The old `claude/lead-data-sourcing-eyOeN` branch was deleted; the file lives
+  // on `main`. The repo is PRIVATE, so production needs GITHUB_TOKEN set (see
+  // getLeads) to read this raw URL — otherwise it 404s and we fall back to cache.
+  "https://raw.githubusercontent.com/dukotah/sonoma-lead-scraper/main/lead-tracker/data/export/ALL_COUNTIES_dedup.csv";
 
 export interface Lead {
   id: string;
