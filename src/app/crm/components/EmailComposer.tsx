@@ -21,13 +21,21 @@ interface ComposerLead {
   claimByDate?: string;
   // Demo package category (e.g. "winery") — used to pick the best default template.
   demoCategory?: string;
+  // Their existing site + its enriched quality ("dead"/"thin"/"ok"/…) — used to
+  // pick between the No-Website and Site-Upgrade pitches for no-demo leads.
+  website?: string;
+  siteQuality?: string;
   // Enriched MX-verified deliverability: valid | risky | invalid | unknown.
   emailStatus?: string;
 }
 
-// When a lead already has a demo built, open straight to the matching demo
-// template (link pre-filled) instead of the generic first template — so the rep
-// sees a ready-to-send email, not a blank pitch they have to swap out.
+// Open straight to the template the lead's DATA calls for, so the rep sees a
+// ready-to-send email instead of a wrong pitch they have to swap out:
+//   1. Demo built       → the matching demo template (winery script / demo intro).
+//   2. Live website, no demo → the Site-Upgrade pitch.
+//   3. No (or dead) site → the No-Website pitch.
+// It only ever opens to a demo template when a real demo exists, and only to
+// No-Website when there's genuinely no live site to talk about.
 function pickInitialTemplate(templates: EmailTemplate[], lead: ComposerLead): EmailTemplate {
   const find = (k: string) => templates.find((t) => t.key === k);
   if (lead.previewUrl) {
@@ -35,7 +43,10 @@ function pickInitialTemplate(templates: EmailTemplate[], lead: ComposerLead): Em
     if (cat === "winery") { const w = find("winery_demo"); if (w) return w; }
     const d = find("demo_intro"); if (d) return d;
   }
-  return templates[0];
+  const hasSite = (lead.website ?? "").trim().length > 0;
+  const deadSite = ["dead", "none", "no site", "broken", "down", "offline"].includes((lead.siteQuality ?? "").toLowerCase());
+  if (hasSite && !deadSite) { const u = find("diy_upgrade"); if (u) return u; }
+  return find("no_website") ?? templates[0];
 }
 
 interface Props {
