@@ -6,7 +6,7 @@ import {
   Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail,
   Flame, Zap, ArrowUpDown, X, LayoutGrid,
   BookOpen, List, DollarSign,
-  AlertCircle, Plus, CalendarClock,
+  AlertCircle, Plus, CalendarClock, Sparkles,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
@@ -121,7 +121,7 @@ function LeaderboardPeek({ userId }: { userId: string }) {
   );
 }
 
-const CallQueue = dynamic(() => import("./components/CallQueue"), { ssr: false });
+const DemoQueue = dynamic(() => import("./components/DemoQueue"), { ssr: false });
 const CallReminders = dynamic(() => import("./components/CallReminders"), { ssr: false });
 const Pipeline = dynamic(() => import("./components/Pipeline"), { ssr: false });
 const ScriptsGuide = dynamic(() => import("./components/ScriptsGuide"), { ssr: false });
@@ -185,7 +185,7 @@ type View = "due" | "new" | "all" | "pipeline";
 
 const CHIPS: { key: View; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: "due", label: "Due today", icon: CalendarClock },
-  { key: "new", label: "New", icon: Phone },
+  { key: "new", label: "New", icon: Sparkles },
   { key: "all", label: "All", icon: List },
   { key: "pipeline", label: "Pipeline", icon: LayoutGrid },
 ];
@@ -846,13 +846,10 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               />
             )}
             {view === "new" && (
-              <CallQueue
+              <DemoQueue
                 key={queueRefreshKey}
                 states={states}
-                onSelectLead={(l) => setSelectedLead(l as Lead)}
-                onRefresh={refreshSubs}
-                onDialerStart={(l) => setActiveLead(l as Lead)}
-                onEmailLead={(l) => setEmailLead(l as Lead)}
+                onSelectLead={(l) => setSelectedLead(l as unknown as Lead)}
               />
             )}
             {view === "all" && (
