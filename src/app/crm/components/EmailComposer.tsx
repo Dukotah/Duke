@@ -41,12 +41,12 @@ function pickInitialTemplate(templates: EmailTemplate[], lead: ComposerLead): Em
   if (lead.previewUrl) {
     const cat = (lead.demoCategory ?? "").toLowerCase();
     if (cat === "winery") { const w = find("winery_demo"); if (w) return w; }
-    const d = find("demo_intro"); if (d) return d;
+    return find("student_demo") ?? find("demo_intro") ?? templates[0];
   }
   const hasSite = (lead.website ?? "").trim().length > 0;
   const deadSite = ["dead", "none", "no site", "broken", "down", "offline"].includes((lead.siteQuality ?? "").toLowerCase());
   if (hasSite && !deadSite) { const u = find("diy_upgrade"); if (u) return u; }
-  return find("no_website") ?? templates[0];
+  return find("student_no_website") ?? find("no_website") ?? templates[0];
 }
 
 interface Props {

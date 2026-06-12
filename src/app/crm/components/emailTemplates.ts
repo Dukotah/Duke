@@ -29,6 +29,40 @@ Thanks,
 Copper Bay Tech`,
   },
   {
+    key: "student_demo",
+    label: "🎓 Student demo",
+    subject: "I built {business} a sample website",
+    body: `Hi {name},
+
+I will be upfront with you. I am a student here in {city} and I started a small website company to help pay my way through school. Rather than just cold emailing you, I figured I would do the work first, so I went ahead and built {business} a sample site to show what I mean:
+
+{demoUrl}
+
+It is put together from what is already public about you, it loads fast, and it looks right on a phone. None of it is locked in. We can change the wording, the photos, the colors, or start over completely if you picture something different.
+
+I am local and I am real, and I would be grateful for even ten minutes of your time. You can call or text me at (707) 239-6725, or just reply here. If it is not for you there are no hard feelings, and any feedback would mean a lot.
+
+Thanks for giving a local student a shot,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
+    key: "student_no_website",
+    label: "🎓 Local student",
+    subject: "A local student reaching out about {business}",
+    body: `Hi {name},
+
+I will be honest with you. I am a student here in {city}, and I started a small website company to help pay for school. I went looking for {business} online and could not find a website, and for a local business that is usually costing you calls you never even hear about.
+
+I build simple, fast sites that look right on a phone, and since I am just starting out and local, I keep the price easy. I would much rather do great work for a few businesses near me than blast a hundred strangers.
+
+Would you be open to a quick ten minute call this week? Even a no is completely fine. I would just be grateful for the chance.
+
+Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
     key: "diy_upgrade",
     label: "⚡ Site Upgrade",
     subject: "An idea for the {business} website",
