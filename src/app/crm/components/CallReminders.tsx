@@ -25,6 +25,12 @@ interface DueItem {
   followUpDate: string;
   stage: string;
   lastContacted?: string;
+  // Server-resolved details for custom leads (so no raw uuid ever shows).
+  name?: string;
+  city?: string;
+  phone?: string;
+  email?: string;
+  category?: string;
 }
 
 interface Props {
@@ -267,10 +273,14 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-white text-sm leading-tight truncate" style={H}>
-                      {lead ? lead.name : item.leadId}
+                      {item.name ?? lead?.name ?? "Lead"}
                     </p>
                     <p className="text-xs text-white/40 mt-0.5 truncate" style={H}>
-                      {lead ? `${lead.city} · ${lead.category.replace(/_/g, " ")}` : "Lead details unavailable"}
+                      {(() => {
+                        const city = item.city ?? lead?.city ?? "";
+                        const cat = (item.category ?? lead?.category ?? "").replace(/_/g, " ");
+                        return [city, cat].filter(Boolean).join(" · ") || "Follow-up due";
+                      })()}
                     </p>
                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                       <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full border ${tone}`} style={H}>
