@@ -120,8 +120,28 @@ function parseCSVLine(line: string): string[] {
 async function getLeads(): Promise<Lead[]> {
   if (cachedLeads && Date.now() - cacheTime < CACHE_TTL) return cachedLeads;
 
-  const res = await fetch(CSV_URL, { next: { revalidate: 3600 } });
-  if (!res.ok) throw new Error(`Failed to fetch CSV: ${res.status}`);
+  // Resilient load: the base lead list comes from an external CSV. If that source
+  // is unreachable (deleted branch, repo turned private → 404, network error), we
+  // must NOT throw — that would 500 /api/crm/leads and break the ENTIRE CRM (All
+  // view, Pipeline, reminder name-resolution). Instead serve the last cached copy,
+  // or an empty list so custom leads still load. GITHUB_TOKEN (optional) lets the
+  // fetch read a private repo's raw content.
+  let res: Response;
+  try {
+    res = await fetch(CSV_URL, {
+      next: { revalidate: 3600 },
+      ...(process.env.GITHUB_TOKEN
+        ? { headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` } }
+        : {}),
+    });
+  } catch (err) {
+    console.error("[leads] CSV fetch failed — serving cached/empty so the CRM stays up:", err);
+    return cachedLeads ?? [];
+  }
+  if (!res.ok) {
+    console.error(`[leads] CSV source returned ${res.status} — serving cached/empty (custom leads still load). Fix CSV_URL or set GITHUB_TOKEN.`);
+    return cachedLeads ?? [];
+  }
 
   const text = await res.text();
   const lines = text.split("\n").filter(Boolean);
