@@ -78,6 +78,14 @@ export const metadata: Metadata = {
             "max-video-preview": -1,
           },
     },
+    // INTENTIONAL pentest marker for our own authorized self-scan (tyto engagement
+    // CBT-SELF-001). This is NOT a real credential — the value is a benign string
+    // shaped like an AWS access-key ID so our secret-scanner has a known "flag" to
+    // find on a live run, proving end-to-end scanning works. Spells TYTO-LIVE-SCAN-FLAG.
+    // Safe to remove once the scanner is validated. Renders an invisible <meta> tag.
+    other: {
+          "x-tyto-authorized-scan-flag": "AKIATYTOLIVESCANFLAG",
+    },
 };
 
 export default function RootLayout({
