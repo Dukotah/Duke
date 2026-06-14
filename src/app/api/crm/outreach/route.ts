@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday, stampLeadAction } from "@/lib/db";
+import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday, stampLeadAction, getLeadPreviewObjects, previewKey } from "@/lib/db";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
 import { getSessionSecret } from "@/lib/session";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
@@ -118,6 +118,28 @@ export async function POST(req: NextRequest) {
   // fragile new domain never accrues bounces from an unverified address.
   const requireValidStatus = requireValidEmail(process.env.OUTREACH_REQUIRE_VALID_EMAIL);
   const { sendable, skipped } = gateLeads(leads, [...suppressed, ...emailedToday], { requireValidStatus });
+
+  // Server-side needs-review gate: never send to a lead whose attached demo is
+  // flagged for review. The UI hides the Send button for these, but the API is
+  // the real authority — a stale client, the bulk composer, or a direct call
+  // must not slip an unreviewed demo into a recipient's inbox. Demo status lives
+  // server-side in lead_previews (keyed by normalized name), so we read it here
+  // rather than trusting the request body. Persisted status is "needs_review";
+  // the live generate-site flow surfaces "needs-review" — block both.
+  const previews = await getLeadPreviewObjects();
+  const reviewBlocked = sendable.filter((lead) => {
+    const status = previews[previewKey(lead.name)]?.status as string | undefined;
+    return status === "needs_review" || status === "needs-review";
+  });
+  if (reviewBlocked.length > 0) {
+    return NextResponse.json({
+      error: `Cannot send: ${reviewBlocked.length} lead(s) have a demo flagged needs-review — verify the demo before sending`,
+      sent: 0,
+      failed: 0,
+      skipped,
+      needsReview: reviewBlocked.map((l) => l.id),
+    }, { status: 422 });
+  }
 
   const canSend = remainingDailyCapacity(sendable.length, sentToday, maxPerDay);
   if (canSend <= 0) {
