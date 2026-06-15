@@ -12,12 +12,21 @@
  *   - data/research/<slug>.json  (_lead: phone, city, address — fills gaps)
  * Writes to the same Upstash store the CRM uses (creds from Duke/.env.local).
  *
+ * QUALITY GATE (default): ONLY status:"ready" demos are synced. A needs-review
+ * demo NEVER lands in the CRM New tab — the website factory's 95% self-gate holds
+ * anything below the AVISP bar as needs-review, and that verdict is honored here
+ * so an unreviewed/sub-bar site can't be attached to a lead or emailed. The CRM's
+ * own send gate is a second line of defense; this sync simply never imports the
+ * needs-review entries in the first place. Pass --include-needs-review to override
+ * (e.g. to populate the dashboard for manual review) — off by default.
+ *
  * Usage:
- *   node scripts/sync-demos-to-crm.mjs                 # dry-run
- *   node scripts/sync-demos-to-crm.mjs --commit        # write
- *   node scripts/sync-demos-to-crm.mjs --owner you@x   # whose New tab they land in
+ *   node scripts/sync-demos-to-crm.mjs                       # dry-run (ready-only)
+ *   node scripts/sync-demos-to-crm.mjs --commit              # write (ready-only)
+ *   node scripts/sync-demos-to-crm.mjs --owner you@x         # whose New tab they land in
  *   node scripts/sync-demos-to-crm.mjs --websites <dir>
- *   node scripts/sync-demos-to-crm.mjs --only-ready    # skip needs-review demos
+ *   node scripts/sync-demos-to-crm.mjs --include-needs-review  # ALSO sync needs-review
+ *   node scripts/sync-demos-to-crm.mjs --only-ready          # (legacy no-op; ready-only is the default)
  */
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
@@ -39,7 +48,11 @@ const argv = process.argv.slice(2);
 const has = (f) => argv.includes(f);
 const val = (f, d) => { const i = argv.indexOf(f); return i >= 0 ? argv[i + 1] : d; };
 const COMMIT = has("--commit");
-const ONLY_READY = has("--only-ready");
+// READY-ONLY IS THE DEFAULT (the quality gate): needs-review demos are excluded
+// from the CRM unless the caller explicitly opts in with --include-needs-review.
+// --only-ready is kept as an accepted (now redundant) flag for back-compat.
+const INCLUDE_NEEDS_REVIEW = has("--include-needs-review");
+const ONLY_READY = !INCLUDE_NEEDS_REVIEW; // default true
 const OWNER_EMAIL = (val("--owner") || process.env.CRM_IMPORT_OWNER_EMAIL || "dukotah@gmail.com").toLowerCase();
 const WEBSITES = val("--websites", process.env.WEBSITES_FACTORY_DIR || "C:/Users/dukot/projects/Websites");
 const GALLERY_BASE = (process.env.GALLERY_BASE_URL || "https://demos.copperbaytech.com").replace(/\/+$/, "");
@@ -67,7 +80,15 @@ async function main() {
   const manifestPath = join(WEBSITES, "data", "outreach-links.json");
   if (!existsSync(manifestPath)) { console.error(`No manifest at ${manifestPath}. Generate sites first.`); process.exit(1); }
   let batch = JSON.parse(readFileSync(manifestPath, "utf8"));
-  if (ONLY_READY) batch = batch.filter((e) => (e.status ?? "ready") !== "needs-review");
+  // QUALITY GATE: by default keep ONLY status:"ready". normStatus collapses both
+  // "needs-review" and "needs_review" spellings, so neither slips through.
+  let heldBack = 0;
+  if (ONLY_READY) {
+    const before = batch.length;
+    batch = batch.filter((e) => normStatus(e.status ?? "ready") === "ready");
+    heldBack = before - batch.length;
+    if (heldBack) console.log(`Quality gate: holding back ${heldBack} needs-review demo(s) — only 'ready' sites sync to the CRM. (--include-needs-review to override.)`);
+  }
 
   // 3) Existing custom leads (dedupe) + existing previews.
   const existingIds = await r.smembers(`custom_leads:${owner.id}`);
