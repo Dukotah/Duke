@@ -130,7 +130,7 @@ nothing or (worse) send unreviewed sites.
 |---|---|---|
 | `name` | business name (the join key) | `previewKey(name)` match in CRM |
 | `slug` | stable demo id | preview link + thumbnail |
-| `link` | `https://demos.copperbaytech.com/p/<slug>` | the URL emailed to the prospect |
+| `link` | `https://demos.copperbaytech.com/s/<slug>` | the URL emailed to the prospect (premium multi-page) |
 | `status` | `ready` \| `needs_review` \| `needs-review` | **the send gate** (Step 1) |
 | `email`, `category`, `area`, `thumbnailUrl` | lead enrichment | CRM lead card |
 

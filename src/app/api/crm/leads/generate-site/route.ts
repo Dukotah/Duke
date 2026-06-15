@@ -52,7 +52,11 @@ function runGenerator(
   csvRel: string,
 ): Promise<{ code: number; stdout: string; stderr: string }> {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, ["scripts/generate-prospects.mjs", csvRel], {
+    // PREMIUM pipeline: generate.mjs authors the multi-page /s/<slug> site and
+    // writes the manifest with /s/ links + slug. --no-crm-sync because this route
+    // attaches the preview itself (and merges the manifest); we don't want the
+    // factory's own CRM auto-sync recursing back in.
+    const child = spawn(process.execPath, ["scripts/generate.mjs", csvRel, "--no-crm-sync"], {
       cwd: factoryDir,
       windowsHide: true,
     });
@@ -79,12 +83,12 @@ function runGenerator(
  * POST /api/crm/leads/generate-site
  *
  * LOCAL-ONLY: generates a demo site for a single lead by invoking the /websites
- * Astro factory (generate-prospects.mjs) for one row, then attaches the local
- * preview URL to the lead. Hard-blocked in production (this shells out to a
+ * premium factory (generate.mjs) for one row, then attaches the local preview
+ * URL (/s/<slug>) to the lead. Hard-blocked in production (this shells out to a
  * local script and must never be reachable on Vercel) and disabled unless
  * WEBSITES_FACTORY_DIR points at a local checkout.
  *
- * It is non-destructive to the batch workflow: generate-prospects OVERWRITES
+ * It is non-destructive to the batch workflow: generate.mjs OVERWRITES
  * data/outreach-links.json with only the current run, so we snapshot the
  * existing manifest first and merge the new entry back in (dedup by slug).
  */

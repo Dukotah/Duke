@@ -80,7 +80,9 @@ async function main() {
   for (const e of batch) {
     if (!e.name || !e.link) continue;
     const key = previewKey(e.name);
-    const slug = e.slug || e.link.split("/p/").pop();
+    // Slug is segment-agnostic: prefer the manifest's `slug`, else take the last
+    // path segment of the link (works for /s/<slug>, /p/<slug>, or any scheme).
+    const slug = e.slug || e.link.replace(/\/+$/, "").split("/").pop();
     // Fill contact gaps from the research file.
     let lead = {};
     try { lead = JSON.parse(readFileSync(join(WEBSITES, "data", "research", `${slug}.json`), "utf8"))._lead || {}; } catch { /* optional */ }

@@ -13,7 +13,7 @@ import { setLeadPreview } from "@/lib/db";
  * `x-crm-token` header, or `?token=`. Fails closed when the token is unset.
  *
  * Accepts a single entry or a batch:
- *   { leadName: "Acme Plumbing", previewUrl: "https://demos.../p/acme-plumbing" }
+ *   { leadName: "Acme Plumbing", previewUrl: "https://demos.../s/acme-plumbing" }
  *   { entries: [ { name, link }, ... ] }
  * (name/leadName and previewUrl/link are accepted as aliases so the /websites
  * manifest shape can be posted with minimal reshaping.)
