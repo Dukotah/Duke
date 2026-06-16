@@ -63,6 +63,26 @@ Thanks,
 Copper Bay Tech`,
   },
   {
+    key: "student_building",
+    label: "🎓 Student (building skills)",
+    subject: "A student built {business} a sample site",
+    body: `Hi {name},
+
+I want to be straight with you. I am still in school here in {city}, and I started this little website company for two reasons. One, to help keep myself in school. And two, because the best way to actually get good at this is to build real sites for real businesses, not classroom projects.
+
+So instead of just asking for your time, I did the work first. I went ahead and built {business} a sample site so you can see it instead of imagine it:
+
+{demoUrl}
+
+It is put together from what is already public about you, it loads fast, and it looks right on a phone. Nothing is locked in. We can change the words, the photos, the colors, or start fresh if you picture something different.
+
+I know you probably get a lot of emails like this. I am just a local student trying to do honest work and get better at my craft, and I would be grateful for even ten minutes. You can reply right here or call or text me at (707) 239-6725. If it is not for you there are no hard feelings at all, and any feedback would genuinely help me grow.
+
+Thanks for giving a student a shot,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
     key: "diy_upgrade",
     label: "⚡ Site Upgrade",
     subject: "An idea for the {business} website",
