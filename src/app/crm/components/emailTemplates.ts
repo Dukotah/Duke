@@ -76,6 +76,8 @@ So instead of just asking for your time, I did the work first. I went ahead and 
 
 It is put together from what is already public about you, it loads fast, and it looks right on a phone. Nothing is locked in. We can change the words, the photos, the colors, or start fresh if you picture something different.
 
+This is just a demo to get the ideas flowing. We can keep it as simple as one clean landing page, or build it out as far as you want to go. If you want to see the fuller end of what I can do, here is my own site: copperbaytech.com.
+
 I know you probably get a lot of emails like this. I am just a local student trying to do honest work and get better at my craft, and I would be grateful for even ten minutes. You can reply right here or call or text me at (707) 239-6725. If it is not for you there are no hard feelings at all, and any feedback would genuinely help me grow.
 
 Thanks for giving a student a shot,
