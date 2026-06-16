@@ -1,0 +1,10 @@
+# Cloudflare Email Worker for capturing lead replies → CRM inbound webhook.
+# After `wrangler deploy`, bind the address in the Cloudflare dashboard:
+#   Email Routing → Routing rules → Custom address → reply@copperbaytech.com
+#   → action: Send to a Worker → cbt-inbound
+name = "cbt-inbound"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+
+# CRM_INBOUND_SECRET is set as a Worker secret (not committed):
+#   npx wrangler secret put CRM_INBOUND_SECRET
