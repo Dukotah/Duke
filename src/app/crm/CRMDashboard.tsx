@@ -6,7 +6,7 @@ import {
   Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail,
   Flame, Zap, ArrowUpDown, X, LayoutGrid,
   BookOpen, List, DollarSign,
-  AlertCircle, Plus, CalendarClock, Sparkles,
+  AlertCircle, Plus, CalendarClock, Sparkles, Globe,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
@@ -485,6 +485,18 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
                       {lead.email_status && <span className={`w-1.5 h-1.5 rounded-full ${deliverabilityDot(lead.email_status)}`} title={`Email: ${lead.email_status}`} />}
                       <Mail size={9} />email
                     </span>
+                  )}
+                  {lead.website && (
+                    <a
+                      href={/^https?:\/\//i.test(lead.website) ? lead.website : `https://${lead.website}`}
+                      target="_blank" rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      title={`Existing site (source): ${lead.website}`}
+                      className="text-xs text-white/35 hidden sm:flex items-center gap-1 hover:text-[#F97316] transition-colors"
+                      style={H}
+                    >
+                      <Globe size={9} />current site
+                    </a>
                   )}
                   <ChevronRight size={15} className="text-white/20 group-hover:text-[#F97316] group-hover:translate-x-0.5 transition-all" />
                 </div>
