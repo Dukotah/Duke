@@ -41,6 +41,10 @@ function dailyCapFor(today: string): number {
   return rampedDailyCap(process.env.OUTREACH_DOMAIN_VERIFIED_DATE, today, hardCap);
 }
 const SENDER = OUTREACH_FROM;
+// Where replies are routed. Point OUTREACH_REPLY_TO at the Resend-Inbound
+// address (the one feeding /api/crm/inbound) once it's configured, so lead
+// replies are captured. Falls back to SENDER so nothing breaks before then.
+const REPLY_TO = process.env.OUTREACH_REPLY_TO || SENDER;
 
 function addDays(days: number): string {
   const d = new Date();
@@ -259,7 +263,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           from: `${fromName} via Copper Bay Tech <${SENDER}>`,
-          reply_to: SENDER,
+          reply_to: REPLY_TO,
           to: [lead.email],
           subject: personalizedSubject,
           text: personalizedBody + buildFooter(unsubUrl),

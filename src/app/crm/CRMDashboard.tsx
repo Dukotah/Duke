@@ -6,7 +6,7 @@ import {
   Phone, ChevronRight, Search, Filter, Tag, MapPin, Mail,
   Flame, Zap, ArrowUpDown, X, LayoutGrid,
   BookOpen, List, DollarSign,
-  AlertCircle, Plus, CalendarClock, Sparkles, Globe,
+  AlertCircle, Plus, CalendarClock, Sparkles, Globe, MessageSquareReply,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
@@ -128,6 +128,7 @@ const ScriptsGuide = dynamic(() => import("./components/ScriptsGuide"), { ssr: f
 const EarningsView = dynamic(() => import("./components/Earnings"), { ssr: false });
 const BulkOutreach = dynamic(() => import("./components/BulkOutreach"), { ssr: false });
 const EmailComposer = dynamic(() => import("./components/EmailComposer"), { ssr: false });
+const RespondedQueue = dynamic(() => import("./components/RespondedQueue"), { ssr: false });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -181,11 +182,12 @@ interface LeadsResponse {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-type View = "due" | "new" | "all" | "pipeline";
+type View = "due" | "new" | "responded" | "all" | "pipeline";
 
 const CHIPS: { key: View; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: "due", label: "Due today", icon: CalendarClock },
   { key: "new", label: "New", icon: Sparkles },
+  { key: "responded", label: "Responded", icon: MessageSquareReply },
   { key: "all", label: "All", icon: List },
   { key: "pipeline", label: "Pipeline", icon: LayoutGrid },
 ];
@@ -546,6 +548,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   const [statesLoaded, setStatesLoaded] = useState(false);
   const [showAddLead, setShowAddLead] = useState(false);
   const [queueRefreshKey, setQueueRefreshKey] = useState(0);
+  const [respondedCount, setRespondedCount] = useState(0);
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const [emailLead, setEmailLead] = useState<Lead | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -573,6 +576,10 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
     fetch("/api/crm/goals").then((r) => r.json()).then((d) => {
       if (typeof d?.dailyStats?.callsLogged === "number") setLoggedToday(d.dailyStats.callsLogged);
     }).catch((e) => console.error("CRM: failed to load goals", e));
+    // Count of leads who replied — drives the "Responded" chip badge.
+    fetch("/api/crm/responded").then((r) => r.json()).then((d) => {
+      if (Array.isArray(d?.responded)) setRespondedCount(d.responded.length);
+    }).catch((e) => console.error("CRM: failed to load responded count", e));
   }, []);
 
   // Load leads for pipeline (needs all touched leads)
@@ -828,7 +835,10 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           <div className="max-w-[1800px] mx-auto px-4 py-2 flex gap-2 overflow-x-auto">
             {CHIPS.map((c) => {
               const active = view === c.key;
-              const badge = c.key === "due" && dueCount > 0 ? dueCount : null;
+              const badge =
+                c.key === "due" && dueCount > 0 ? dueCount :
+                c.key === "responded" && respondedCount > 0 ? respondedCount :
+                null;
               return (
                 <button key={c.key} onClick={() => setView(c.key)} aria-current={active ? "true" : undefined}
                   className={`shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-all ${active ? "bg-[#F97316]/12 text-[#F97316] border-[#F97316]/40" : "bg-white/[0.03] text-white/50 border-white/10 hover:text-white/80 hover:border-white/20"}`}
@@ -860,6 +870,12 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
             {view === "new" && (
               <DemoQueue
                 key={queueRefreshKey}
+                states={states}
+                onSelectLead={(l) => setSelectedLead(l as unknown as Lead)}
+              />
+            )}
+            {view === "responded" && (
+              <RespondedQueue
                 states={states}
                 onSelectLead={(l) => setSelectedLead(l as unknown as Lead)}
               />

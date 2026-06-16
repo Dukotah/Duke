@@ -9,6 +9,7 @@
 import {
   Mail, Phone, Voicemail, Star, CalendarClock, XCircle, Trophy,
   Globe, PhoneOff, CircleDashed, MailOpen, MousePointerClick, AlertTriangle,
+  MessageSquareReply,
 } from "lucide-react";
 
 const H = { fontFamily: "var(--font-heading)" };
@@ -33,6 +34,8 @@ export interface LeadAction {
   clickedAt?: string;
   clickedCount?: number;
   bouncedAt?: string;
+  respondedAt?: string;
+  replyCount?: number;
 }
 
 // Minimal shape of the per-user LeadState used as a fallback for the current rep.
@@ -85,6 +88,7 @@ function dayOf(s?: string): string {
 
 export type TagKey =
   | "not_contacted"
+  | "responded"
   | "emailed"
   | "opened"
   | "clicked"
@@ -100,6 +104,7 @@ export type TagKey =
 
 export const TAG_DEFS: { key: TagKey; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: "not_contacted", label: "Not contacted", icon: CircleDashed },
+  { key: "responded", label: "Responded", icon: MessageSquareReply },
   { key: "emailed", label: "Emailed", icon: Mail },
   { key: "opened", label: "Opened email", icon: MailOpen },
   { key: "clicked", label: "Clicked demo", icon: MousePointerClick },
@@ -133,6 +138,7 @@ export function deriveTags(
   const status = (a.status ?? s.status ?? "").toLowerCase();
   const stage = (s.stage ?? "").toLowerCase();
 
+  if (a.respondedAt) tags.add("responded");
   if (a.emailedAt || a.openedAt || a.clickedAt) tags.add("emailed");
   else if (emailed) tags.add("emailed");
   if (a.openedAt) tags.add("opened");
@@ -194,6 +200,14 @@ export function RecencyBadges({
 
   const pills: React.ReactNode[] = [];
 
+  // Replied is the single hottest signal — surface it first, even above Won.
+  if (tags.has("responded")) {
+    const rc = a?.replyCount && a.replyCount > 1 ? ` ${a.replyCount}×` : "";
+    pills.push(<Pill key="rep" icon={MessageSquareReply}
+      text={a?.respondedAt ? `Replied ${relTime(a.respondedAt)}${rc}` : `Replied${rc}`}
+      cls="text-[#F97316] bg-[#F97316]/15 border-[#F97316]/40"
+      title="This lead replied to an outreach email — open the card to read it" />);
+  }
   if (tags.has("bounced")) {
     pills.push(<Pill key="bnc" icon={AlertTriangle} text="Bad email" cls="text-red-300 bg-red-400/10 border-red-400/30"
       title={a?.bouncedAt ? `Hard bounced / spam-flagged ${relTime(a.bouncedAt)} — do not re-email` : "Bad email — do not re-email"} />);

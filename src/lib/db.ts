@@ -249,10 +249,17 @@ export interface ActivityEntry {
   id: string;
   userId: string;
   repName: string;
-  type: "call" | "note" | "email" | "submitted" | "status_change";
+  type: "call" | "note" | "email" | "submitted" | "status_change" | "reply";
   outcome?: string; // "no_answer" | "voicemail" | "interested" etc
   note?: string;
   createdAt: string;
+  // Inbound-reply payload (type === "reply"): the FULL email so the rep can read
+  // it straight from the timeline without a second lookup.
+  fromEmail?: string;
+  fromName?: string;
+  subject?: string;
+  text?: string;
+  html?: string;
 }
 
 export async function addActivity(
@@ -283,6 +290,120 @@ export async function getActivity(leadId: string): Promise<ActivityEntry[]> {
 export async function deleteActivity(leadId: string): Promise<void> {
   const redis = getRedis();
   await redis.del(`activity:${leadId}`);
+}
+
+// ─── Inbound email replies ────────────────────────────────────────────────────
+// When a lead replies to an outreach email (captured via the inbound webhook),
+// we both (a) drop the FULL reply onto the lead's activity timeline so the rep
+// can read it, and (b) durably stamp the cross-rep lead_actions hash (respondedAt
+// set-once, lastOutcome="replied", replyCount) so the lead auto-surfaces in the
+// "Responded" tab and shows a badge for every rep. The newest reply body is also
+// kept in a dedicated `lead_replies` hash for a cheap one-HGET read by the feed.
+
+export interface InboundReply {
+  fromEmail: string;
+  fromName?: string;
+  subject?: string;
+  text?: string;
+  html?: string;
+  receivedAt: string; // ISO
+}
+
+// What the feed/card needs to render a reply: latest body + count + when first
+// replied. Shape is JSON-stored per leadId in the `lead_replies` hash.
+export interface LeadReply extends InboundReply {
+  leadId: string;
+  replyCount: number;
+  respondedAt: string; // ISO of the FIRST reply (set-once)
+}
+
+const LEAD_REPLIES_KEY = "lead_replies";
+
+export async function recordInboundReply(
+  leadId: string,
+  reply: { fromEmail: string; fromName?: string; subject?: string; text?: string; html?: string; receivedAt?: string },
+  opts: { userId: string; repName?: string }
+): Promise<void> {
+  if (!leadId) return;
+  const redis = getRedis();
+  const receivedAt = reply.receivedAt || new Date().toISOString();
+  const repName = opts.repName ?? "lead";
+
+  // (a) Append the FULL reply to the lead's timeline.
+  await addActivity(leadId, opts.userId, repName, {
+    type: "reply",
+    outcome: "replied",
+    note: reply.subject || "Replied to outreach email",
+    fromEmail: reply.fromEmail,
+    ...(reply.fromName ? { fromName: reply.fromName } : {}),
+    ...(reply.subject ? { subject: reply.subject } : {}),
+    ...(reply.text ? { text: reply.text } : {}),
+    ...(reply.html ? { html: reply.html } : {}),
+  });
+
+  // (b) Durable cross-rep stamp: respondedAt is sticky/set-once (first reply),
+  // but lastOutcome/lastOutcomeAt always update and replyCount always bumps.
+  try {
+    await stampLeadAction(
+      leadId,
+      {
+        respondedAt: receivedAt, // STICKY_ONCE — keeps the FIRST reply time
+        lastOutcome: "replied",
+        lastOutcomeAt: receivedAt,
+        _incReply: true,
+      },
+      { userId: opts.userId, repName }
+    );
+  } catch {
+    /* timeline already written; the stamp is additive */
+  }
+
+  // (c) Store the newest reply body for a cheap feed read. Read-modify-write so
+  // respondedAt stays the FIRST reply and replyCount is monotonic.
+  const prev = await getLeadReply(leadId);
+  const value: LeadReply = {
+    leadId,
+    fromEmail: reply.fromEmail,
+    ...(reply.fromName ? { fromName: reply.fromName } : {}),
+    ...(reply.subject ? { subject: reply.subject } : {}),
+    ...(reply.text ? { text: reply.text } : {}),
+    ...(reply.html ? { html: reply.html } : {}),
+    receivedAt,
+    replyCount: (prev?.replyCount ?? 0) + 1,
+    respondedAt: prev?.respondedAt || receivedAt,
+  };
+  await redis.hset(LEAD_REPLIES_KEY, { [leadId]: JSON.stringify(value) });
+}
+
+// Latest reply (body + count + first-reply time) for one lead, or null.
+export async function getLeadReply(leadId: string): Promise<LeadReply | null> {
+  const redis = getRedis();
+  const raw = await redis.hget(LEAD_REPLIES_KEY, leadId);
+  if (raw == null) return null;
+  try {
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (parsed && typeof parsed === "object") return parsed as LeadReply;
+  } catch {
+    /* skip malformed */
+  }
+  return null;
+}
+
+// Whole map of leadId → latest LeadReply for enriching a page in one HGETALL.
+export async function getLeadReplies(): Promise<Record<string, LeadReply>> {
+  const redis = getRedis();
+  const all = (await redis.hgetall(LEAD_REPLIES_KEY)) as Record<string, unknown> | null;
+  if (!all) return {};
+  const out: Record<string, LeadReply> = {};
+  for (const [k, v] of Object.entries(all)) {
+    try {
+      const parsed = typeof v === "string" ? JSON.parse(v) : v;
+      if (parsed && typeof parsed === "object") out[k] = parsed as LeadReply;
+    } catch {
+      /* skip malformed entry */
+    }
+  }
+  return out;
 }
 
 // ─── Custom Leads ─────────────────────────────────────────────────────────────
@@ -468,6 +589,8 @@ export interface LeadActions {
   clickedAt?: string;       // ISO — last time this lead clicked a link (e.g. the demo) — hottest signal
   clickedCount?: number;    // total link clicks
   bouncedAt?: string;       // ISO — email hard-bounced or was marked spam; address suppressed. Don't re-email.
+  respondedAt?: string;     // ISO — set-once when the lead FIRST replies to an outreach email (inbound webhook); sticky
+  replyCount?: number;      // total inbound replies received from this lead
 }
 
 const LEAD_ACTIONS_KEY = "lead_actions";
@@ -480,6 +603,7 @@ export type LeadActionPatch = Partial<LeadActions> & {
   _incCall?: boolean;
   _incOpen?: boolean;
   _incClick?: boolean;
+  _incReply?: boolean;
 };
 
 // Single lead's actions, tolerant of Upstash auto-deserialization and legacy
@@ -527,14 +651,14 @@ export async function stampLeadAction(
   const redis = getRedis();
   const current = (await getLeadAction(leadId)) ?? {};
 
-  const { _incEmail, _incCall, _incOpen, _incClick, ...rest } = patch;
+  const { _incEmail, _incCall, _incOpen, _incClick, _incReply, ...rest } = patch;
   const next: LeadActions = { ...current };
 
   // Sticky, set-once fields: once a high-value signal is recorded, a later
   // outcome (e.g. a follow-up "no_answer") must never clear it. We keep the
   // first non-empty value so cross-rep Interested/Not-interested membership
   // does not silently vanish on a subsequent touch.
-  const STICKY_ONCE = new Set(["interestedAt", "notInterestedAt"]);
+  const STICKY_ONCE = new Set(["interestedAt", "notInterestedAt", "respondedAt"]);
 
   for (const [k, val] of Object.entries(rest)) {
     if (val !== undefined && val !== null && val !== "") {
@@ -547,6 +671,7 @@ export async function stampLeadAction(
   if (_incCall) next.callCount = (current.callCount ?? 0) + 1;
   if (_incOpen) next.openedCount = (current.openedCount ?? 0) + 1;
   if (_incClick) next.clickedCount = (current.clickedCount ?? 0) + 1;
+  if (_incReply) next.replyCount = (current.replyCount ?? 0) + 1;
 
   const nowISO = new Date().toISOString();
   next.lastTouchedAt = nowISO;
@@ -886,6 +1011,55 @@ export async function getAllOutreachLog(limit = 250): Promise<OutreachLogEntry[]
   );
   all.sort((a, b) => (b.sentAt ?? "").localeCompare(a.sentAt ?? ""));
   return all.slice(0, limit);
+}
+
+// Resolve an email address to (userId, leadId) the SAME way the Resend delivery
+// webhook does: scan every rep's outreach log for a matching recipient. Falls
+// back to matching a custom lead by its stored email (a custom lead's id is what
+// the CRM keys activity/actions on). Returns null when nothing matches — callers
+// must treat that as "unmatched, don't error".
+export async function findLeadByEmail(
+  email: string
+): Promise<{ userId: string; leadId: string; leadName: string } | null> {
+  const redis = getRedis();
+  const norm = email.toLowerCase().trim();
+  if (!norm) return null;
+
+  // 1) Outreach log — the authoritative record of who we emailed (any rep).
+  const keys = await redis.keys("outreach_log:*");
+  for (const key of keys as string[]) {
+    const userId = key.replace("outreach_log:", "");
+    const items = (await redis.lrange(key, 0, -1)) as unknown[];
+    for (const raw of items) {
+      try {
+        const entry = typeof raw === "string" ? JSON.parse(raw) : raw;
+        if (typeof entry?.email === "string" && entry.email.toLowerCase().trim() === norm) {
+          return { userId, leadId: entry.leadId, leadName: entry.leadName ?? "" };
+        }
+      } catch {
+        /* skip malformed entry */
+      }
+    }
+  }
+
+  // 2) Custom leads — a reply may come from a hand-raiser / manually-added lead
+  // we never bulk-emailed. Their CRM id is `custom_lead:{id}`, keyed under the
+  // owning user in `custom_leads:{userId}`. The activity/actions hashes for these
+  // are keyed by the raw custom_lead id (e.g. demos feed uses `custom:{id}`),
+  // but the timeline/actions use the bare id, so return the bare id here.
+  const userIndexKeys = await redis.keys("custom_leads:*");
+  for (const idxKey of userIndexKeys as string[]) {
+    const userId = idxKey.replace("custom_leads:", "");
+    const ids = (await redis.smembers(idxKey)) as string[];
+    for (const id of ids) {
+      const lead = (await redis.hgetall(`custom_lead:${id}`)) as unknown as CustomLead | null;
+      if (lead && typeof lead.email === "string" && lead.email.toLowerCase().trim() === norm) {
+        return { userId, leadId: id, leadName: lead.name ?? "" };
+      }
+    }
+  }
+
+  return null;
 }
 
 // ─── Admin seed ───────────────────────────────────────────────────────────────
