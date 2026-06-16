@@ -107,8 +107,9 @@ async function main() {
     // Fill contact gaps from the research file.
     let lead = {};
     try { lead = JSON.parse(readFileSync(join(WEBSITES, "data", "research", `${slug}.json`), "utf8"))._lead || {}; } catch { /* optional */ }
-    const phone = lead.phone || "";
+    const phone = e.phone || lead.phone || "";
     const email = e.email || lead.email || "";
+    const website = e.website || lead.website || "";
     const city = lead.city || (e.area || "").split(",")[0].trim();
     const thumb = e.thumbnailUrl ? (e.thumbnailUrl.startsWith("http") ? e.thumbnailUrl : `${GALLERY_BASE}${e.thumbnailUrl}`) : "";
 
@@ -121,7 +122,7 @@ async function main() {
     if (!leadExists) {
       const cl = {
         id: randomUUID(), name: e.name, contactName: "", phone, email,
-        website: lead.website || "", city, county: "", niche: e.category || lead.category || "custom",
+        website, city, county: "", niche: e.category || lead.category || "custom",
         notes: `Demo built ${new Date().toISOString().slice(0, 10)}: ${e.link}`,
         addedBy: owner.id, createdAt: new Date().toISOString(),
       };
@@ -129,6 +130,14 @@ async function main() {
       await r.sadd(`custom_leads:${owner.id}`, cl.id);
       existing.set(key, { id: cl.id, ...cl });
       created++;
+    } else {
+      // Self-heal: backfill contact on an existing lead when the batch now has it.
+      const cur = existing.get(key);
+      const patch = {};
+      if (!cur.email && email) patch.email = email;
+      if (!cur.phone && phone) patch.phone = phone;
+      if (!cur.website && website) patch.website = website;
+      if (Object.keys(patch).length) { await r.hset(`custom_lead:${cur.id}`, patch); Object.assign(cur, patch); }
     }
     linkedLeads++;
 
