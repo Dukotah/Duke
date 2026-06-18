@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import RelatedLinks, { type RelatedLink } from "@/components/RelatedLinks";
 import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
+import { RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 import { ArrowRight, Globe, Server, ShieldCheck, Phone } from "lucide-react";
 
 type CityPageProps = {
@@ -45,131 +46,176 @@ export default function CityPage({
     <>
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Locations", url: "https://copperbaytech.com/locations" }, { name: city }])} />
       <Nav />
-      <main>
+      {/* Dark + rationed-copper context: warm off-white text on near-black, depth
+          from lighter surfaces + hairlines, copper reserved for CTAs/accents. */}
+      <main className="theme-dark bg-ink-0">
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-[#18181B]">
-          <div className="max-w-4xl mx-auto px-6">
-            <span
-              className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
-              style={{
-                backgroundColor: "rgba(249,115,22,0.15)",
-                color: "#F97316",
-                fontFamily: "var(--font-heading)",
-              }}
+        <section className="relative overflow-hidden bg-ink-0 pt-32 pb-20">
+          {/* Quiet ambient copper glow — position:absolute, aria-hidden → CLS 0,
+              never competes with the headline LCP. CSS-only, no image/WebGL. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-24 left-1/2 -z-0 h-[28rem] w-[40rem] -translate-x-1/2 rounded-full opacity-60 blur-[90px]"
+            style={{
+              background:
+                "radial-gradient(closest-side, var(--copper-glow), transparent 75%)",
+            }}
+          />
+          <div className="relative z-10 mx-auto max-w-4xl px-6">
+            <RevealOnScroll
+              as="span"
+              direction="up"
+              distance={10}
+              duration={0.5}
+              className="mb-5 inline-flex items-center gap-2.5 rounded-full border border-copper-dim bg-ink-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-copper-bright"
+              style={{ fontFamily: "var(--font-heading)" }}
             >
               {county}
-            </span>
+            </RevealOnScroll>
+
+            {/* The LCP — plain warm text, paints first, waits on no animation. */}
             <h1
-              className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
+              className="text-balance text-[2.4rem] font-bold leading-[1.07] tracking-tight text-warm sm:text-5xl"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               IT Support & Web Development
               <br />
-              <span style={{ color: "#F97316" }}>in {city}</span>
+              <span className="bg-gradient-to-r from-copper to-copper-bright bg-clip-text text-transparent">
+                in {city}
+              </span>
             </h1>
-            <p
-              className="text-white/60 text-lg max-w-2xl mb-8"
+
+            <RevealOnScroll
+              as="p"
+              direction="up"
+              delay={0.1}
+              distance={12}
+              className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {description}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
+            </RevealOnScroll>
+
+            <RevealOnScroll
+              as="div"
+              direction="up"
+              delay={0.2}
+              distance={12}
+              className="mt-9 flex flex-col gap-3 sm:flex-row"
+            >
+              <MagneticCTA
+                as="link"
                 href="/#contact"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                shine
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-6 py-3 text-sm font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Get a Free Consultation <ArrowRight size={15} />
-              </Link>
+                Get a Free Consultation <ArrowRight size={15} aria-hidden />
+              </MagneticCTA>
               <a
                 href="tel:+17072396725"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-hairline px-6 py-3 text-sm font-semibold text-warm transition-colors duration-200 hover:border-copper-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <Phone size={15} aria-hidden={true} /> (707) 239-6725
               </a>
-            </div>
+            </RevealOnScroll>
           </div>
         </section>
 
         {/* Pain points */}
-        <section className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-6">
-            <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-[#3F3F46]/60" style={{ fontFamily: "var(--font-body)" }}>
-              <Link href="/" className="hover:text-[#F97316]">Home</Link>
+        <section className="bg-ink-0 py-16">
+          <div className="mx-auto max-w-4xl px-6">
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-warm-3"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              <Link href="/" className="transition-colors hover:text-copper-bright">Home</Link>
               <span aria-hidden="true">/</span>
-              <Link href="/locations" className="hover:text-[#F97316]">Locations</Link>
+              <Link href="/locations" className="transition-colors hover:text-copper-bright">Locations</Link>
               <span aria-hidden="true">/</span>
-              <span className="text-[#3F3F46]/80">{city}</span>
+              <span className="text-warm-2">{city}</span>
             </nav>
-            <p
-              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Sound familiar?
-            </p>
-            <h2
-              className="text-3xl font-bold text-[#18181B] mb-8"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Common problems for {city} businesses
-            </h2>
-            <ul className="grid sm:grid-cols-2 gap-4">
-              {painPoints.map((point) => (
-                <li
-                  key={point}
-                  className="flex items-start gap-3 p-4 rounded-xl bg-[#FAFAF9] border border-[#18181B]/8"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-[#F97316] flex-shrink-0" />
-                  <span className="text-sm text-[#3F3F46]/70">{point}</span>
-                </li>
+
+            <RevealOnScroll>
+              <p
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper"
+                style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+              >
+                Sound familiar?
+              </p>
+              <h2
+                className="text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Common problems for {city} businesses
+              </h2>
+            </RevealOnScroll>
+
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+              {painPoints.map((point, i) => (
+                <RevealOnScroll as="li" key={point} delay={i * 0.06}>
+                  <div
+                    className="flex h-full items-start gap-3 rounded-xl border border-hairline bg-ink-1 p-4"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-copper" />
+                    <span className="text-sm text-warm-2">{point}</span>
+                  </div>
+                </RevealOnScroll>
               ))}
             </ul>
           </div>
         </section>
 
         {/* Services */}
-        <section className="py-16 bg-[#FAFAF9]">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2
-              className="text-3xl font-bold text-[#18181B] mb-8"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              How we help {city} businesses
-            </h2>
-            <div className="grid sm:grid-cols-3 gap-6">
-              {services.map(({ icon: Icon, title, blurb }) => (
-                <div
-                  key={title}
-                  className="p-6 bg-white rounded-xl border border-[#18181B]/8 shadow-sm"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-[#18181B]/8 flex items-center justify-center mb-4">
-                    <Icon size={20} color="#18181B" aria-hidden={true} />
-                  </div>
-                  <h3
-                    className="font-bold text-[#18181B] mb-2"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {title}
-                  </h3>
-                  <p
-                    className="text-sm text-[#3F3F46]/60 leading-relaxed"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    {blurb}
-                  </p>
-                </div>
+        <section className="bg-ink-0 py-16">
+          <div className="mx-auto max-w-4xl px-6">
+            <RevealOnScroll>
+              <h2
+                className="mb-8 text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                How we help {city} businesses
+              </h2>
+            </RevealOnScroll>
+            <div className="grid gap-6 sm:grid-cols-3">
+              {services.map(({ icon: Icon, title, blurb }, i) => (
+                <RevealOnScroll key={title} delay={i * 0.08} className="h-full">
+                  <SpotlightCard radius={16} className="h-full">
+                    <div className="flex h-full flex-col p-6">
+                      <span
+                        className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-hairline bg-ink-3"
+                        aria-hidden
+                      >
+                        <Icon size={20} className="text-copper-bright" />
+                      </span>
+                      <h3
+                        className="mb-2 text-base font-bold text-warm"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {title}
+                      </h3>
+                      <p
+                        className="text-sm leading-relaxed text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {blurb}
+                      </p>
+                    </div>
+                  </SpotlightCard>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
         {/* Nearby areas */}
-        <section className="py-12 bg-white border-t border-[#18181B]/8">
-          <div className="max-w-4xl mx-auto px-6">
+        <section className="border-t border-hairline bg-ink-0 py-12">
+          <div className="mx-auto max-w-4xl px-6">
             <p
-              className="text-sm text-[#3F3F46]/50 mb-2"
+              className="mb-3 text-sm text-warm-3"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Also serving:
@@ -178,7 +224,7 @@ export default function CityPage({
               {nearbyAreas.map((area) => (
                 <span
                   key={area}
-                  className="px-3 py-1 rounded-full text-xs bg-[#FAFAF9] border border-[#18181B]/10 text-[#3F3F46]/60"
+                  className="rounded-full border border-hairline bg-ink-1 px-3 py-1 text-xs text-warm-2"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {area}
@@ -192,30 +238,45 @@ export default function CityPage({
         <RelatedLinks
           heading={`Services for ${city} businesses`}
           links={[...relatedLinks, ...SERVICE_HUB_LINKS]}
+          variant="dark"
         />
 
         {/* CTA */}
-        <section className="py-20 bg-[#18181B]">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2
-              className="text-3xl font-bold text-white mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Ready to fix your tech — for good?
-            </h2>
-            <p
-              className="text-white/60 mb-8"
-              style={{ fontFamily: "var(--font-body)" }}
-            >
-              Free 30-minute call. We&apos;ll tell you exactly what we&apos;d recommend and what it would cost. No fluff.
-            </p>
-            <Link
-              href="/#contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Book a Free Consultation <ArrowRight size={16} />
-            </Link>
+        <section className="relative overflow-hidden border-t border-hairline bg-ink-0 py-20">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute bottom-[-12rem] left-1/2 h-[26rem] w-[44rem] -translate-x-1/2 rounded-full opacity-50 blur-[100px]"
+            style={{
+              background:
+                "radial-gradient(closest-side, var(--copper-glow), transparent 75%)",
+            }}
+          />
+          <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
+            <RevealOnScroll>
+              <h2
+                className="text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Ready to fix your tech — for good?
+              </h2>
+              <p
+                className="mx-auto mt-4 max-w-xl text-pretty text-lg text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Free 30-minute call. We&apos;ll tell you exactly what we&apos;d recommend and what it would cost. No fluff.
+              </p>
+            </RevealOnScroll>
+            <RevealOnScroll as="div" delay={0.1} className="mt-8">
+              <MagneticCTA
+                as="link"
+                href="/#contact"
+                shine
+                className="inline-flex items-center gap-2 rounded-lg bg-copper px-8 py-4 text-base font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Book a Free Consultation <ArrowRight size={16} aria-hidden />
+              </MagneticCTA>
+            </RevealOnScroll>
           </div>
         </section>
       </main>

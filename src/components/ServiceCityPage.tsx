@@ -5,6 +5,7 @@ import JsonLd, { serviceSchema, breadcrumbSchema, faqSchema } from "@/components
 import { PRICING } from "@/config/pricing";
 import { SERVICE_CITIES, SERVICE_META } from "@/config/serviceCities";
 import { ArrowRight, Check } from "lucide-react";
+import { MeshGradient, RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 
 // Map a service label to its pricing.ts key so each page can emit a price range.
 const PRICE_KEY: Record<string, keyof typeof PRICING> = {
@@ -33,6 +34,11 @@ const SERVICE_TO_CITYKEY: Record<string, "web" | "it" | "cyber"> = {
  *
  * Emits Service + BreadcrumbList + FAQPage schema. No testimonials here — never
  * embed an attributed quote that isn't a real, approved client review.
+ *
+ * Visual system: dark canvas + rationed copper (ELEVATED_DESIGN_PLAYBOOK). This
+ * is a server component for LCP/SEO; the dark look is all CSS tokens + the
+ * shared, guard-railed motion primitives (each ships its own mobile + RM branch),
+ * so any change here multiplies cleanly across ~35 generated pages.
  */
 export interface ServiceCityPageProps {
   service: string; // e.g. "Cybersecurity"
@@ -72,7 +78,6 @@ export default function ServiceCityPage({
   nearby,
   ctaBlurb = "Free 30-minute call. We'll tell you honestly what we'd fix first and what it would cost — no pressure.",
 }: ServiceCityPageProps) {
-  const patternId = `topo-${service}-${city}`.toLowerCase().replace(/[^a-z]/g, "");
   const priceKey = PRICE_KEY[service];
   const offer = priceKey ? { low: PRICING[priceKey].low, high: PRICING[priceKey].high } : undefined;
   // Auto cross-link the OTHER services available in this same city.
@@ -103,104 +108,139 @@ export default function ServiceCityPage({
       />
       {faqs.length > 0 && <JsonLd schema={faqSchema(faqs)} />}
       <Nav />
-      <main>
-        {/* Hero */}
-        <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-[#18181B] pt-16">
-          <div className="absolute inset-0 opacity-10" aria-hidden="true">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id={patternId} x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                  <path d="M0 40 Q20 20 40 40 Q60 60 80 40" fill="none" stroke="#F97316" strokeWidth="0.8" />
-                  <path d="M0 20 Q20 0 40 20 Q60 40 80 20" fill="none" stroke="#F97316" strokeWidth="0.5" />
-                  <path d="M0 60 Q20 40 40 60 Q60 80 80 60" fill="none" stroke="#F97316" strokeWidth="0.5" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill={`url(#${patternId})`} />
-            </svg>
-          </div>
-          <div className="relative z-10 max-w-5xl mx-auto px-6 text-center py-24">
-            <span className="inline-block mb-6 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase" style={{ backgroundColor: "rgba(200,169,110,0.15)", color: "#F97316", border: "1px solid rgba(200,169,110,0.3)", fontFamily: "var(--font-heading)" }}>
+      <main className="theme-dark">
+        {/* Hero — template-level hero effect: shared copper mesh-gradient + cursor
+            spotlight (desktop), orbs-only on mobile, perfectly still under RM.
+            The <h1> is the LCP: plain warm text, present in markup, paints before
+            any motion. */}
+        <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden bg-ink-0 pt-16">
+          <MeshGradient spotlight blur={80} />
+
+          <div className="relative z-10 mx-auto max-w-5xl px-6 py-24 text-center">
+            <RevealOnScroll
+              as="span"
+              direction="up"
+              distance={10}
+              duration={0.5}
+              className="mb-6 inline-block rounded-full border border-copper-dim bg-ink-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-copper-bright"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               {heroEyebrow ?? `${city}, CA · ${service}`}
-            </span>
-            <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6" style={{ fontFamily: "var(--font-heading)" }}>
-              {service} for<br />
-              <span style={{ color: "#F97316" }}>{city} businesses.</span>
+            </RevealOnScroll>
+            <h1
+              className="mb-6 text-balance text-[2.6rem] font-bold leading-[1.08] tracking-tight text-warm sm:text-5xl md:text-6xl"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              {service} for
+              <br />
+              <span className="bg-gradient-to-r from-copper to-copper-bright bg-clip-text text-transparent">
+                {city} businesses.
+              </span>
             </h1>
-            <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <RevealOnScroll
+              as="p"
+              direction="up"
+              delay={0.1}
+              distance={12}
+              className="mx-auto mb-10 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2 md:text-xl"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
               {heroBlurb}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/#contact" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
-                Get a Free Assessment <ArrowRight size={16} />
-              </Link>
-              <Link href="/pricing" className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]" style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}>
+            </RevealOnScroll>
+            <RevealOnScroll
+              as="div"
+              direction="up"
+              delay={0.2}
+              distance={12}
+              className="flex flex-col justify-center gap-4 sm:flex-row"
+            >
+              <MagneticCTA
+                as="link"
+                href="/#contact"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-8 py-3.5 text-base font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Get a Free Assessment <ArrowRight size={16} aria-hidden />
+              </MagneticCTA>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center justify-center rounded-lg border border-hairline bg-ink-2 px-8 py-3.5 text-base font-semibold text-warm transition-colors duration-200 hover:border-copper-dim hover:text-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
                 See Pricing
               </Link>
-            </div>
+            </RevealOnScroll>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAFAF9] to-transparent" />
         </section>
 
         {/* Intro — local context */}
-        <section className="py-16 bg-white">
-          <div className="max-w-3xl mx-auto px-6">
-            <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-[#3F3F46]/60" style={{ fontFamily: "var(--font-body)" }}>
-              <Link href="/" className="hover:text-[#F97316]">Home</Link>
+        <section className="bg-ink-0 py-16">
+          <div className="mx-auto max-w-3xl px-6">
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-warm-3"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              <Link href="/" className="transition-colors hover:text-copper-bright">Home</Link>
               <span aria-hidden="true">/</span>
-              <Link href={hub.href} className="hover:text-[#F97316]">{hub.label}</Link>
+              <Link href={hub.href} className="transition-colors hover:text-copper-bright">{hub.label}</Link>
               <span aria-hidden="true">/</span>
-              <span className="text-[#3F3F46]/80">{service} in {city}</span>
+              <span className="text-warm-2">{service} in {city}</span>
             </nav>
-            <div className="space-y-5">
+            <RevealOnScroll className="space-y-5">
               {intro.map((p, i) => (
-                <p key={i} className="text-[#3F3F46]/75 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{p}</p>
+                <p key={i} className="leading-relaxed text-warm-2" style={{ fontFamily: "var(--font-body)" }}>{p}</p>
               ))}
-            </div>
+            </RevealOnScroll>
           </div>
         </section>
 
         {/* Includes + industries */}
-        <section className="py-20 bg-[#FAFAF9]">
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="grid md:grid-cols-2 gap-16 items-start">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4" style={{ fontFamily: "var(--font-heading)" }}>What&apos;s included</p>
-                <h2 className="text-3xl font-bold text-[#18181B] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{includesTitle}.</h2>
+        <section className="bg-ink-1 py-20">
+          <div className="mx-auto max-w-5xl px-6">
+            <div className="grid items-start gap-16 md:grid-cols-2">
+              <RevealOnScroll>
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-copper" style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}>What&apos;s included</p>
+                <h2 className="mb-6 text-3xl font-bold text-warm" style={{ fontFamily: "var(--font-heading)" }}>{includesTitle}.</h2>
                 <ul className="space-y-3">
                   {includes.map((item) => (
                     <li key={item} className="flex items-start gap-3">
-                      <Check size={16} color="#F97316" className="flex-shrink-0 mt-0.5" aria-hidden={true} />
-                      <span className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item}</span>
+                      <Check size={16} className="mt-0.5 flex-shrink-0 text-copper" aria-hidden={true} />
+                      <span className="text-sm leading-relaxed text-warm-2" style={{ fontFamily: "var(--font-body)" }}>{item}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4" style={{ fontFamily: "var(--font-heading)" }}>Industries we support</p>
-                <h2 className="text-2xl font-bold text-[#18181B] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{industriesTitle}.</h2>
+              </RevealOnScroll>
+              <RevealOnScroll delay={0.1}>
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-copper" style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}>Industries we support</p>
+                <h2 className="mb-6 text-2xl font-bold text-warm" style={{ fontFamily: "var(--font-heading)" }}>{industriesTitle}.</h2>
                 <div className="grid grid-cols-2 gap-3">
                   {industries.map((ind) => (
-                    <div key={ind} className="bg-white rounded-lg p-3 border border-[#18181B]/8 text-sm text-[#3F3F46]/70" style={{ fontFamily: "var(--font-body)" }}>{ind}</div>
+                    <div key={ind} className="rounded-lg border border-hairline bg-ink-2 p-3 text-sm text-warm-2" style={{ fontFamily: "var(--font-body)" }}>{ind}</div>
                   ))}
                 </div>
-              </div>
+              </RevealOnScroll>
             </div>
           </div>
         </section>
 
         {/* FAQ */}
         {faqs.length > 0 && (
-          <section className="py-20 bg-white">
-            <div className="max-w-3xl mx-auto px-6">
-              <h2 className="text-3xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
+          <section className="bg-ink-0 py-20">
+            <div className="mx-auto max-w-3xl px-6">
+              <RevealOnScroll
+                as="h2"
+                className="mb-8 text-3xl font-bold text-warm"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
                 {service} in {city} — common questions
-              </h2>
+              </RevealOnScroll>
               <div className="space-y-6">
-                {faqs.map((f) => (
-                  <div key={f.q}>
-                    <h3 className="font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{f.q}</h3>
-                    <p className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{f.a}</p>
-                  </div>
+                {faqs.map((f, i) => (
+                  <RevealOnScroll key={f.q} delay={Math.min(i * 0.06, 0.3)}>
+                    <h3 className="mb-2 font-bold text-warm" style={{ fontFamily: "var(--font-heading)" }}>{f.q}</h3>
+                    <p className="text-sm leading-relaxed text-warm-2" style={{ fontFamily: "var(--font-body)" }}>{f.a}</p>
+                  </RevealOnScroll>
                 ))}
               </div>
             </div>
@@ -209,31 +249,33 @@ export default function ServiceCityPage({
 
         {/* Other services we offer in this same city (matrix-driven cross-sell) */}
         {otherServices.length > 0 && (
-          <section className="py-14 bg-white border-t border-[#18181B]/8">
-            <div className="max-w-4xl mx-auto px-6 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-3" style={{ fontFamily: "var(--font-heading)" }}>More for {city} businesses</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#18181B] mb-7" style={{ fontFamily: "var(--font-heading)" }}>
-                Other services we offer in {city}.
-              </h2>
-              <div className="flex flex-wrap gap-3 justify-center">
-                {otherServices.map((s) => (
-                  <Link key={s.href} href={s.href} className="inline-flex items-center gap-2 rounded-lg border border-[#18181B]/15 px-5 py-3 text-sm font-semibold text-[#18181B] transition-colors hover:border-[#F97316] hover:text-[#F97316] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2" style={{ fontFamily: "var(--font-heading)" }}>
-                    {s.label} in {city} <ArrowRight size={14} aria-hidden={true} />
-                  </Link>
-                ))}
-              </div>
+          <section className="border-t border-hairline bg-ink-1 py-14">
+            <div className="mx-auto max-w-4xl px-6 text-center">
+              <RevealOnScroll>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper" style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}>More for {city} businesses</p>
+                <h2 className="mb-7 text-2xl font-bold text-warm md:text-3xl" style={{ fontFamily: "var(--font-heading)" }}>
+                  Other services we offer in {city}.
+                </h2>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {otherServices.map((s) => (
+                    <Link key={s.href} href={s.href} className="inline-flex items-center gap-2 rounded-lg border border-hairline bg-ink-2 px-5 py-3 text-sm font-semibold text-warm transition-colors hover:border-copper-dim hover:text-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-1" style={{ fontFamily: "var(--font-heading)" }}>
+                      {s.label} in {city} <ArrowRight size={14} aria-hidden={true} />
+                    </Link>
+                  ))}
+                </div>
+              </RevealOnScroll>
             </div>
           </section>
         )}
 
         {/* Nearby / hub cross-links */}
-        <section className="py-12 bg-[#FAFAF9] border-t border-[#18181B]/8">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <p className="text-sm text-[#3F3F46]/60" style={{ fontFamily: "var(--font-body)" }}>
+        <section className="border-t border-hairline bg-ink-0 py-12">
+          <div className="mx-auto max-w-4xl px-6 text-center">
+            <p className="text-sm text-warm-3" style={{ fontFamily: "var(--font-body)" }}>
               Also serving{" "}
               {nearby.map((n, i) => (
                 <span key={n.href}>
-                  <Link href={n.href} className="text-gold-on-light font-semibold hover:underline">{n.label}</Link>
+                  <Link href={n.href} className="font-semibold text-copper-bright underline-offset-4 hover:underline">{n.label}</Link>
                   {i < nearby.length - 1 ? (i === nearby.length - 2 ? ", and " : ", ") : "."}
                 </span>
               ))}
@@ -242,20 +284,44 @@ export default function ServiceCityPage({
         </section>
 
         {/* CTA */}
-        <section className="py-24 bg-[#18181B]">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className="text-4xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+        <section className="relative overflow-hidden border-t border-hairline bg-ink-0 py-24">
+          <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
+            <RevealOnScroll
+              as="h2"
+              className="mb-6 text-balance text-4xl font-bold text-warm"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Worried about {service.toLowerCase()}? Let&apos;s talk.
-            </h2>
-            <p className="text-lg text-white/60 mb-10" style={{ fontFamily: "var(--font-body)" }}>{ctaBlurb}</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/#contact" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
-                Get a Free Assessment <ArrowRight size={16} />
-              </Link>
-              <a href="tel:+17072396725" className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]" style={{ border: "2px solid rgba(255,255,255,0.3)", fontFamily: "var(--font-heading)" }}>
+            </RevealOnScroll>
+            <RevealOnScroll
+              as="p"
+              delay={0.1}
+              className="mb-10 text-lg text-warm-2"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              {ctaBlurb}
+            </RevealOnScroll>
+            <RevealOnScroll
+              as="div"
+              delay={0.2}
+              className="flex flex-col justify-center gap-4 sm:flex-row"
+            >
+              <MagneticCTA
+                as="link"
+                href="/#contact"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-8 py-3.5 text-base font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Get a Free Assessment <ArrowRight size={16} aria-hidden />
+              </MagneticCTA>
+              <a
+                href="tel:+17072396725"
+                className="inline-flex items-center justify-center rounded-lg border border-hairline bg-ink-2 px-8 py-3.5 text-base font-semibold text-warm transition-colors duration-200 hover:border-copper-dim hover:text-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
                 Call (707) 239-6725
               </a>
-            </div>
+            </RevealOnScroll>
           </div>
         </section>
       </main>
