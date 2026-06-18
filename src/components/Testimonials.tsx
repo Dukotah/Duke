@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Star } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+import { RevealOnScroll, useReducedMotion } from "@/components/motion";
 
 /**
  * ⚠️ PLACEHOLDER TESTIMONIALS — NOT REAL CUSTOMER QUOTES.
@@ -22,6 +22,13 @@ import { Star } from "lucide-react";
  */
 
 type Testimonial = {
+  /**
+   * Short outcome anchor shown first, in copper mono (playbook §3 Testimonials).
+   * Keep it an HONEST paraphrase of something the client actually said in their
+   * quote — never a fabricated statistic. Optional: omit and the card leads with
+   * the quote.
+   */
+  metric?: string;
   quote: string;
   author: string;
   business?: string;
@@ -35,20 +42,28 @@ type Testimonial = {
 // Real, client-provided quotes (owner-confirmed 2026-06-10). STAGED but not yet
 // published — SHOW_REAL_REVIEWS stays false until the owner has collected a few
 // Google reviews first. Flip the flag to true to make this section go live.
+//
+// `metric` values below are HONEST paraphrases of each client's own words (not
+// invented numbers): "2–3 weeks" and "within one business day" are quoted
+// verbatim from the first review, etc. They anchor the card without fabricating
+// a statistic.
 const REAL_TESTIMONIALS: Testimonial[] = [
   {
+    metric: "Live in 2–3 weeks",
     quote:
       "Duke and the team rebuilt our website from scratch (no templates), and it actually felt like someone cared about the details. We went from kickoff to a live site in about 2–3 weeks, and they were quick to reply—always within one business day. The fixed, published pricing and “you own everything” policy gave me a lot of peace of mind.",
     author: "Maya R.",
     location: "Santa Rosa, CA",
   },
   {
+    metric: "Leads answered instantly",
     quote:
       "We added Managed IT and Duke’s practical AI to keep leads from slipping through the cracks. The AI setup answers the phone and responds to inquiries instantly, and it’s already cut down on the busywork for my team. Even for remote work, support has been fast and human—no ticket-looping, and we get proactive check-ins before issues snowball.",
     author: "Jordan K.",
     location: "Petaluma, CA",
   },
   {
+    metric: "No sales call, fixed scope",
     quote:
       "I liked that there was no sales call or hourly billing—just a clear proposal with fixed scope after they reviewed our site and IT/security gaps. Duke also showed us a speed/SSL/SEO report in minutes using their tools, and that made the problems obvious right away. The whole process felt straightforward, and the response time has been consistent since we started.",
     author: "Elena S.",
@@ -63,7 +78,29 @@ const REAL_TESTIMONIALS: Testimonial[] = [
  */
 const SHOW_REAL_REVIEWS = false;
 
+/**
+ * Internal stagger for each card: the outcome metric reveals first, then the
+ * quote (~150ms later), then the attribution (~300ms) — the cadence the
+ * playbook (§3 Testimonials) calls for. Reduced motion bypasses this entirely
+ * (see the static branch in the component).
+ */
+const cardVariants: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.15, delayChildren: 0.05 } },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
 export default function Testimonials() {
+  const reduce = useReducedMotion();
+
   // Do not render while only sample/placeholder content exists.
   // Disclosed-fake proof signals inauthenticity to prospects and risks legal
   // exposure. This section lights up automatically once real reviews are added:
@@ -71,68 +108,128 @@ export default function Testimonials() {
   if (!SHOW_REAL_REVIEWS || REAL_TESTIMONIALS.length === 0) return null;
 
   return (
-    <section className="bg-white py-24">
-      <div className="mx-auto max-w-6xl px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-14 text-center"
-        >
+    <section className="relative overflow-hidden bg-ink-0 py-24">
+      {/* Faint copper wash for depth (playbook §3: "faint gradient" behind the
+          frosted-glass quote panels). position:absolute + aria-hidden → CLS 0.
+          This is NOT the hero mesh — just two soft static washes, so the section
+          stays well under "one hero-grade effect per viewport". */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background:
+            "radial-gradient(50rem 30rem at 15% 0%, rgba(192,122,62,0.10), transparent 60%), radial-gradient(45rem 30rem at 100% 100%, rgba(219,147,85,0.07), transparent 60%)",
+        }}
+      />
+
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
+        <RevealOnScroll className="mb-14 text-center">
           <p
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-gold-on-light"
-            style={{ fontFamily: "var(--font-heading)" }}
+            className="mb-4 font-mono text-xs font-medium uppercase tracking-[0.2em] text-copper-bright"
+            style={{ fontFamily: "var(--font-mono, monospace)" }}
           >
             In their words
           </p>
           <h2
-            className="text-4xl font-bold leading-tight text-[#18181B] md:text-5xl"
+            className="text-balance text-4xl font-bold leading-tight text-warm md:text-5xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What it&apos;s like to work with us.
           </h2>
-        </motion.div>
+        </RevealOnScroll>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {REAL_TESTIMONIALS.map((t, i) => (
-            <motion.figure
-              key={i}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="relative flex flex-col rounded-2xl border border-[#18181B]/10 bg-[#FAFAF9] p-7"
-            >
-              <div className="mb-4 flex gap-0.5" aria-hidden="true">
-                {Array.from({ length: 5 }).map((_, s) => (
-                  <Star key={s} size={15} className="fill-[#F97316] text-[#F97316]" />
-                ))}
-              </div>
-              <blockquote
-                className="flex-1 text-[15px] leading-relaxed text-[#3F3F46]/80"
-                style={{ fontFamily: "var(--font-body)" }}
+          {REAL_TESTIMONIALS.map((t, i) => {
+            // Frosted-glass quote panel over the faint gradient (§3). Depth comes
+            // from a raised surface + hairline border, never a black shadow (§P3).
+            const cardClass =
+              "surface-2 relative flex h-full flex-col rounded-2xl border border-hairline p-7 backdrop-blur-md";
+            const cardStyle: React.CSSProperties = {
+              backgroundColor: "rgba(23,23,27,0.55)", // --bg-2 @ ~55% so the wash refracts through
+            };
+
+            // Reduced motion: a static, finished card — no stagger, no reveal.
+            if (reduce) {
+              return (
+                <figure key={i} className={cardClass} style={cardStyle}>
+                  <CardContent t={t} />
+                </figure>
+              );
+            }
+
+            return (
+              <motion.figure
+                key={i}
+                className={cardClass}
+                style={cardStyle}
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ delayChildren: i * 0.08 }}
               >
-                &ldquo;{t.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-6 border-t border-[#18181B]/[0.08] pt-4">
-                <p
-                  className="text-sm font-semibold text-[#18181B]"
-                  style={{ fontFamily: "var(--font-heading)" }}
-                >
-                  {t.author}
-                </p>
-                <p
-                  className="text-xs text-[#3F3F46]/45"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {t.business ? `${t.business} — ` : ""}{t.location}
-                </p>
-              </figcaption>
-            </motion.figure>
-          ))}
+                <CardContent t={t} animated />
+              </motion.figure>
+            );
+          })}
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Card body in playbook order: outcome metric (copper mono) → quote → attribution.
+ * When `animated`, each block is a stagger child; otherwise it renders statically.
+ */
+function CardContent({ t, animated }: { t: Testimonial; animated?: boolean }) {
+  // Use real motion elements when animating (so each block is a stagger child),
+  // and plain elements otherwise. The attribution stays a real <figcaption>
+  // either way (semantics + SEO).
+  const MetricTag = animated ? motion.p : "p";
+  const QuoteTag = animated ? motion.div : "div";
+  const CaptionTag = animated ? motion.figcaption : "figcaption";
+  const blockProps = animated ? { variants: itemVariants } : {};
+
+  return (
+    <>
+      {t.metric && (
+        <MetricTag
+          {...blockProps}
+          className="mb-5 font-mono text-sm font-medium uppercase tracking-wide text-copper-bright"
+          style={{ fontFamily: "var(--font-mono, monospace)" }}
+        >
+          {t.metric}
+        </MetricTag>
+      )}
+
+      <QuoteTag {...blockProps} className="flex-1">
+        <blockquote
+          className="text-[15px] leading-relaxed text-warm-2"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
+          &ldquo;{t.quote}&rdquo;
+        </blockquote>
+      </QuoteTag>
+
+      <CaptionTag
+        {...blockProps}
+        className="mt-6 border-t border-hairline pt-4"
+      >
+        <p
+          className="text-sm font-semibold text-warm"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          {t.author}
+        </p>
+        <p
+          className="text-xs text-warm-3"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
+          {t.business ? `${t.business} — ` : ""}
+          {t.location}
+        </p>
+      </CaptionTag>
+    </>
   );
 }

@@ -91,22 +91,22 @@ export default function Footer() {
   ];
 
   const linkClass =
-    "group inline-flex items-center gap-1 text-sm text-white/55 rounded-sm outline-none transition-colors duration-200 hover:text-white focus-visible:text-white focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]";
+    "group inline-flex items-center gap-1 text-sm text-warm-2 rounded-sm outline-none transition-colors duration-200 hover:text-warm focus-visible:text-warm focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-1";
   const headingClass =
-    "text-xs font-semibold uppercase tracking-[0.18em] text-[#F97316] mb-5";
+    "text-xs font-semibold uppercase tracking-[0.18em] text-copper mb-5";
 
   return (
-    <footer className="relative bg-[#18181B] text-white">
+    <footer className="relative bg-ink-1 text-warm">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      {/* Top hairline accent */}
-      <div aria-hidden className="h-px w-full bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
+      {/* Top hairline accent — rationed copper, fading to transparent at the edges */}
+      <div aria-hidden className="h-px w-full bg-gradient-to-r from-transparent via-copper-dim to-transparent" />
 
       <div className="max-w-6xl mx-auto px-6 pt-20 pb-10">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4 mb-14">
           <div className="lg:pr-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2.5 text-2xl font-bold rounded-md outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+              className="inline-flex items-center gap-2.5 text-2xl font-bold rounded-md outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-1"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               <Image
@@ -116,9 +116,9 @@ export default function Footer() {
                 height={36}
                 className="h-9 w-9 rounded-lg"
               />
-              <span>Copper Bay<span className="text-[#F97316]">Tech</span></span>
+              <span>Copper Bay<span className="text-copper">Tech</span></span>
             </Link>
-            <p className="mt-4 text-sm leading-relaxed text-white/55 max-w-xs text-pretty" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="mt-4 text-sm leading-relaxed text-warm-2 max-w-xs text-pretty" style={{ fontFamily: "var(--font-body)" }}>
               Custom-built technology for small businesses. Websites, IT support, and cybersecurity — done right.
             </p>
             {socials.length > 0 && (
@@ -130,7 +130,7 @@ export default function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Copper Bay Tech on ${label}`}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-white/10 text-white/55 outline-none transition-colors duration-200 hover:border-[#F97316]/40 hover:text-white focus-visible:text-white focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-hairline text-warm-2 outline-none transition-colors duration-200 hover:border-copper-dim hover:text-copper-bright focus-visible:text-warm focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-1"
                     >
                       <Icon size={16} />
                     </a>
@@ -164,7 +164,7 @@ export default function Footer() {
                 <li key={l.href}>
                   <Link href={l.href} className={linkClass} style={{ fontFamily: "var(--font-heading)" }}>
                     <span>{l.label}</span>
-                    <ArrowUpRight size={13} className="shrink-0 text-white/0 -translate-x-1 transition-all duration-200 group-hover:text-[#F97316] group-hover:translate-x-0 group-focus-visible:text-[#F97316] group-focus-visible:translate-x-0" />
+                    <ArrowUpRight size={13} className="shrink-0 text-transparent -translate-x-1 transition-all duration-200 group-hover:text-copper-bright group-hover:translate-x-0 group-focus-visible:text-copper-bright group-focus-visible:translate-x-0" />
                   </Link>
                 </li>
               ))}
@@ -178,31 +178,31 @@ export default function Footer() {
             <ul className="space-y-4">
               <li>
                 <a href="tel:+17072396725" className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
-                  <Phone size={15} className="mt-0.5 shrink-0 text-[#F97316]" />
+                  <Phone size={15} className="mt-0.5 shrink-0 text-copper" />
                   (707) 239-6725
                 </a>
               </li>
               <li>
                 <a href="mailto:contact@copperbaytech.com" className={`${linkClass} items-start`} style={{ fontFamily: "var(--font-heading)" }}>
-                  <Mail size={15} className="mt-0.5 shrink-0 text-[#F97316]" />
+                  <Mail size={15} className="mt-0.5 shrink-0 text-copper" />
                   contact@copperbaytech.com
                 </a>
               </li>
-              <li className="flex items-start gap-1 text-sm text-white/55" style={{ fontFamily: "var(--font-heading)" }}>
-                <MapPin size={15} className="mt-0.5 shrink-0 text-[#F97316]" />
+              <li className="flex items-start gap-1 text-sm text-warm-2" style={{ fontFamily: "var(--font-heading)" }}>
+                <MapPin size={15} className="mt-0.5 shrink-0 text-copper" />
                 Based in Sonoma County, CA · Serving the U.S.
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/55" style={{ fontFamily: "var(--font-body)" }}>
+        <div className="border-t border-hairline pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-warm-3" style={{ fontFamily: "var(--font-body)" }}>
             &copy; {year} Copper Bay Tech. All rights reserved.
           </p>
           <Link
             href="/privacy"
-            className="text-xs text-white/55 rounded-sm outline-none transition-colors hover:text-white/70 focus-visible:text-white/70 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+            className="text-xs text-warm-3 rounded-sm outline-none transition-colors hover:text-warm-2 focus-visible:text-warm-2 focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-1"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Privacy Policy

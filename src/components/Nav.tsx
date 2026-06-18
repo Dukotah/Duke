@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { Menu, X, ArrowRight, Phone } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { PHONE, PHONE_HREF, BOOKING_URL } from "@/config/site";
 import { track } from "@/lib/analytics";
+import { MagneticCTA } from "@/components/motion";
 
 const links = [
   { label: "Services", href: "/#services" },
@@ -16,16 +18,28 @@ const links = [
   { label: "Contact", href: "/#contact" },
 ];
 
+// Active-link match: a link is active when the current path is its route (or a
+// child of it). Hash/home links ("/#services") only highlight on the homepage.
+function isActive(href: string, pathname: string): boolean {
+  if (href.startsWith("/#")) return pathname === "/";
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 // `light` is for pages whose hero/top section is light (FAQ, About, Terms, and
-// the white-background blog articles). Without it the nav floats transparent
-// with white text over a light background and the links/wordmark vanish until
-// you scroll. Pages with a dark hero (the majority) leave it false and keep the
-// glass-over-hero look. Defaulting to false is the safe choice: a missed
-// dark-hero page just shows a readable solid nav, never an invisible one.
+// the white-background blog articles). With the dark + copper system, those
+// pages get a SOLID near-black bar (--bg-0) at all times so the warm-white nav
+// stays legible over still-light page content — never a transparent nav whose
+// text vanishes. Pages with a dark hero (the majority) leave it false: the nav
+// floats transparent over the hero gradient and frosts into dark glass on
+// scroll (the Stripe/Linear glass-over-hero look). Defaulting to false is the
+// safe choice: a missed dark-hero page still shows a readable frosted bar once
+// scrolled, and a solid dark bar is legible over any background.
 export default function Nav({ light = false }: { light?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -51,24 +65,36 @@ export default function Nav({ light = false }: { light?: boolean }) {
     };
   }, [open]);
 
-  // When the chrome is "light" (solid linen) the text/icons go dark; when it's
-  // floating over the dark hero they stay white. Drawer-open and light-bg pages
-  // force solid so the nav is always legible.
-  const solid = scrolled || open || light;
+  // `floating` = the nav is transparent over a dark hero (dark-hero page, not
+  // scrolled, drawer closed). Otherwise the chrome is opaque/glass:
+  //  - light interior pages → solid near-black bar (always legible over light)
+  //  - dark-hero page once scrolled (or drawer open) → frosted dark glass
+  const floating = !light && !scrolled && !open;
+  // Glass (translucent + blur) only over the dark hero on scroll. Light pages
+  // use a fully solid bar so the dark nav reads cleanly over light content.
+  const glass = scrolled && !light;
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow,border-color] duration-300 ease-out ${
-        solid
-          ? "bg-[#FAFAF9]/85 backdrop-blur-md border-b border-[#18181B]/10 shadow-[0_1px_2px_rgba(24,24,27,0.04),0_8px_24px_-12px_rgba(24,24,27,0.18)]"
-          : "bg-transparent border-b border-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow,border-color,backdrop-filter] duration-300 ease-out motion-reduce:transition-[background-color,border-color] ${
+        floating
+          ? "bg-transparent border-b border-transparent"
+          : glass
+            ? "bg-[var(--bg-0)]/80 backdrop-blur-md border-b border-hairline shadow-[0_8px_24px_-12px_rgba(0,0,0,0.6)]"
+            : "bg-[var(--bg-0)] border-b border-hairline shadow-[0_8px_24px_-16px_rgba(0,0,0,0.7)]"
       }`}
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div
+        className={`max-w-6xl mx-auto px-6 flex items-center justify-between transition-[height] duration-300 ease-out motion-reduce:transition-none ${
+          // Sticky shrink: taller floating over the hero, condensed once solid.
+          floating ? "h-[4.5rem]" : "h-16"
+        }`}
+      >
         {/* Logo */}
         <Link
           href="/"
-          className="group flex items-center gap-2 rounded-md outline-none transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:scale-[0.98]"
+          className="group flex items-center gap-2 rounded-md outline-none transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:scale-[0.98]"
           aria-label="Copper Bay Tech — home"
         >
           <Image
@@ -80,32 +106,45 @@ export default function Nav({ light = false }: { light?: boolean }) {
             className="h-8 w-8 rounded-lg"
           />
           <span
-            className={`text-xl font-bold tracking-tight transition-colors duration-300 ${
-              solid ? "text-[#18181B]" : "text-white"
-            }`}
+            className="text-xl font-bold tracking-tight text-warm transition-colors duration-300"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Copper Bay
-            <span className="text-[#F97316] transition-colors group-hover:text-[#ea6c0a]">Tech</span>
+            <span className="text-copper transition-colors group-hover:text-copper-bright">Tech</span>
           </span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`relative px-3 py-2 text-sm font-medium rounded-md outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ${
-                solid
-                  ? "text-[#3F3F46] hover:text-[#18181B] hover:bg-[#18181B]/[0.04]"
-                  : "text-white/80 hover:text-white hover:bg-white/10"
-              }`}
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {l.label}
-            </Link>
-          ))}
+          {links.map((l) => {
+            const active = isActive(l.href, pathname);
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                aria-current={active ? "page" : undefined}
+                className={`group relative px-3 py-2 text-sm font-medium rounded-md outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ${
+                  active
+                    ? "text-warm"
+                    : "text-warm-2 hover:text-warm hover:bg-warm/[0.06]"
+                }`}
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                {l.label}
+                {/* Copper active-link underline indicator. Scales in from the
+                    left on the active route; a fainter version previews on
+                    hover. Drops its transition under reduced motion. */}
+                <span
+                  aria-hidden
+                  className={`pointer-events-none absolute left-3 right-3 -bottom-0.5 h-px origin-left bg-copper transition-transform duration-300 ease-out motion-reduce:transition-none ${
+                    active
+                      ? "scale-x-100"
+                      : "scale-x-0 group-hover:scale-x-100 bg-copper-dim"
+                  }`}
+                />
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Desktop actions: tap-to-call + primary CTA */}
@@ -113,34 +152,29 @@ export default function Nav({ light = false }: { light?: boolean }) {
           <a
             href={PHONE_HREF}
             onClick={() => track("cta_call_phone", { location: "nav" })}
-            className={`group inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-semibold outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 ${
-              solid
-                ? "text-[#18181B] hover:bg-[#18181B]/[0.04] focus-visible:ring-offset-[#FAFAF9]"
-                : "text-white hover:bg-white/10 focus-visible:ring-offset-transparent"
-            }`}
+            className="group inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-semibold text-warm outline-none transition-colors duration-200 hover:bg-warm/[0.06] focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             style={{ fontFamily: "var(--font-heading)" }}
             aria-label={`Call Copper Bay Tech at ${PHONE}`}
           >
-            <Phone size={15} className="text-[#F97316]" />
+            <Phone size={15} className="text-copper" />
             {PHONE}
           </a>
-          <Link
+          <MagneticCTA
+            as="link"
             href={BOOKING_URL}
             onClick={() => track("cta_consultation", { location: "nav" })}
-            className="group inline-flex items-center gap-1.5 px-5 py-2 rounded-md text-sm font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:translate-y-0 active:scale-[0.98]"
+            className="group inline-flex items-center justify-center px-5 py-2 rounded-md text-sm font-semibold text-warm bg-copper outline-none transition-[background-color,box-shadow] duration-200 hover:bg-copper-bright hover:shadow-[0_0_0_1px_var(--copper-dim),0_8px_24px_-10px_var(--copper-glow)] focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-0)]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Book a free consultation
             <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Link>
+          </MagneticCTA>
         </div>
 
         {/* Mobile toggle */}
         <button
           type="button"
-          className={`md:hidden inline-flex items-center justify-center p-3 rounded-md outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 active:scale-95 ${
-            solid ? "text-[#18181B] focus-visible:ring-offset-[#FAFAF9] hover:bg-[#18181B]/[0.04]" : "text-white focus-visible:ring-offset-transparent hover:bg-white/10"
-          }`}
+          className="md:hidden inline-flex items-center justify-center p-3 rounded-md text-warm outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-transparent hover:bg-warm/[0.06] active:scale-95"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
@@ -156,45 +190,59 @@ export default function Nav({ light = false }: { light?: boolean }) {
         aria-hidden={!open}
         inert={!open}
         className={`md:hidden overflow-hidden border-t transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none ${
-          open ? "max-h-[28rem] opacity-100 border-[#18181B]/10" : "max-h-0 opacity-0 border-transparent"
+          open ? "max-h-[28rem] opacity-100 border-hairline" : "max-h-0 opacity-0 border-transparent"
         }`}
       >
         <nav
-          className="bg-[#FAFAF9]/95 backdrop-blur-md px-6 pt-3 pb-6 flex flex-col"
+          className="bg-[var(--bg-0)]/95 backdrop-blur-md px-6 pt-3 pb-6 flex flex-col"
+          style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
           aria-label="Mobile"
         >
-          {links.map((l, i) => (
-            <Link
-              key={l.href}
-              ref={i === 0 ? firstLinkRef : undefined}
-              href={l.href}
-              onClick={() => setOpen(false)}
-              tabIndex={open ? 0 : -1}
-              className="group flex items-center justify-between py-3 text-base font-medium text-[#3F3F46] border-b border-[#18181B]/[0.06] rounded-md px-1 outline-none transition-colors duration-200 hover:text-[#18181B] focus-visible:ring-2 focus-visible:ring-[#F97316]"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {l.label}
-              <ArrowRight
-                size={16}
-                className="text-[#18181B]/25 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#F97316]"
-              />
-            </Link>
-          ))}
+          {links.map((l, i) => {
+            const active = isActive(l.href, pathname);
+            return (
+              <Link
+                key={l.href}
+                ref={i === 0 ? firstLinkRef : undefined}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                tabIndex={open ? 0 : -1}
+                aria-current={active ? "page" : undefined}
+                className={`group flex items-center justify-between py-3 text-base font-medium border-b border-hairline rounded-md px-1 outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-copper ${
+                  active ? "text-warm" : "text-warm-2 hover:text-warm"
+                }`}
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                <span className="inline-flex items-center gap-2">
+                  {/* Copper active-route marker for the mobile list. */}
+                  <span
+                    aria-hidden
+                    className={`h-4 w-px rounded-full transition-colors ${active ? "bg-copper" : "bg-transparent"}`}
+                  />
+                  {l.label}
+                </span>
+                <ArrowRight
+                  size={16}
+                  className="text-warm-3 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-copper"
+                />
+              </Link>
+            );
+          })}
           <a
             href={PHONE_HREF}
             onClick={() => { track("cta_call_phone", { location: "nav" }); setOpen(false); }}
             tabIndex={open ? 0 : -1}
-            className="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-[#18181B] border border-[#18181B]/15 bg-white outline-none transition-colors duration-200 hover:bg-[#18181B]/[0.04] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:scale-[0.98]"
+            className="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-warm border border-hairline bg-[var(--bg-2)] outline-none transition-colors duration-200 hover:bg-[var(--bg-3)] focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-0)] active:scale-[0.98]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            <Phone size={16} className="text-[#F97316]" />
+            <Phone size={16} className="text-copper" />
             {PHONE}
           </a>
           <Link
             href={BOOKING_URL}
             onClick={() => { track("cta_consultation", { location: "nav" }); setOpen(false); }}
             tabIndex={open ? 0 : -1}
-            className="mt-3 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-white bg-[#F97316] shadow-sm outline-none transition-all duration-200 hover:bg-[#ea6c0a] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:scale-[0.98]"
+            className="mt-3 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md text-base font-semibold text-warm bg-copper outline-none transition-colors duration-200 hover:bg-copper-bright focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-0)] active:scale-[0.98]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Book a free consultation

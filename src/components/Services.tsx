@@ -1,239 +1,325 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { Globe, Server, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
+import { Check, Globe, Server, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
+import { websitePackages, carePlans } from "@/config/pricing";
+import { RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 
-const aiHighlights = [
-  "Answers every call & chat 24/7",
-  "Replies to leads in seconds",
-  "Books appointments for you",
-  "Handles the busywork",
-];
-
-const tiers = [
-  {
-    icon: Globe,
-    tier: "Start here",
-    headline: "Your digital front door, done right.",
-    items: [
-      "Custom-coded business websites",
-      "No templates, no page builders",
-      "Mobile-first, fast-loading",
-      "Local SEO optimization",
-      "Google Business Profile setup",
-      "Domain, hosting & email setup",
-    ],
-    cta: "Start with a website",
-  },
+// Quiet "also handled" — IT / security / AI are folded in as care-plan benefits,
+// never headline services. This row simply reassures that they're covered.
+const alsoHandled = [
   {
     icon: Server,
-    tier: "Grow with confidence",
-    headline: "IT that just works, every day.",
-    items: [
-      "Network setup & management",
-      "Workstations, Wi-Fi, printers",
-      "Cloud migration & storage",
-      "Process & workflow automation",
-      "AI agent integrations",
-      "Staff onboarding & support",
-    ],
-    cta: "Get IT support",
-    featured: true,
+    label: "Managed IT & helpdesk",
+    note: "Workstations, cloud, support for your team.",
   },
   {
     icon: ShieldCheck,
-    tier: "Stay protected",
-    headline: "Protect what you've built.",
-    items: [
-      "Cybersecurity audits & reporting",
-      "Infrastructure hardening",
-      "Incident response planning",
-      "Custom web application development",
-      "Compliance baseline (PCI, HIPAA)",
-      "Ongoing security monitoring",
-    ],
-    cta: "Talk security",
+    label: "Cybersecurity & hardening",
+    note: "Monitoring, backups, incident planning.",
+  },
+  {
+    icon: Sparkles,
+    label: "AI tools & automation",
+    note: "Answer calls, reply to leads, clear busywork.",
   },
 ];
 
 export default function Services() {
-  const reduce = useReducedMotion();
   return (
-    <section id="services" className="py-16 sm:py-20 bg-white">
-      <div className="max-w-6xl mx-auto px-6">
-        <motion.div
-          initial={reduce ? false : { opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={reduce ? { duration: 0 } : { duration: 0.6 }}
-          className="text-center mb-16"
-        >
+    <section id="services" className="bg-ink-0 py-20 sm:py-28">
+      <div className="mx-auto max-w-6xl px-6">
+        {/* ── Block 1: Websites (the product) ───────────────────────────── */}
+        <RevealOnScroll className="mb-14 text-center">
+          <p
+            className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper"
+            style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+          >
+            Start with a website
+          </p>
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
+            className="text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl md:text-5xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            One partner, from launch to locked-down.
+            A custom website, built to last.
           </h2>
           <p
-            className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
+            className="mx-auto mt-4 max-w-xl text-pretty text-lg text-warm-2"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            From your first website to a hardened security posture — we grow with you.
+            One-time build, no templates. Pick a starting point — then keep it
+            handled for life with a care plan.
           </p>
-        </motion.div>
+        </RevealOnScroll>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {tiers.map((t, i) => (
-            <motion.div
-              key={t.tier}
-              initial={reduce ? false : { opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.1 }}
-              className={`rounded-xl p-8 flex flex-col ${
-                t.featured
-                  ? "bg-[#18181B] text-white shadow-xl"
-                  : "bg-[#FAFAF9] border border-[#18181B]/5"
-              }`}
-            >
-              <div
-                className={`w-12 h-12 rounded-lg flex items-center justify-center mb-5 ${
-                  t.featured ? "bg-white/10" : "bg-[#18181B]/8"
-                }`}
-              >
-                <t.icon size={22} color={t.featured ? "#F97316" : "#18181B"} />
-              </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          {websitePackages.map((pkg, i) => (
+            <RevealOnScroll key={pkg.id} delay={i * 0.08} className="h-full">
+              <SpotlightCard radius={20} className="h-full">
+                <div className="flex h-full flex-col p-7 sm:p-8">
+                  <div className="mb-5 flex items-center justify-between">
+                    <span
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-hairline bg-ink-3"
+                      aria-hidden
+                    >
+                      <Globe size={20} className="text-copper-bright" />
+                    </span>
+                    {pkg.popular && (
+                      <span
+                        className="rounded-full border border-copper-dim px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-copper-bright"
+                        style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                      >
+                        Most popular
+                      </span>
+                    )}
+                  </div>
 
-              <p
-                className={`text-xs font-semibold uppercase tracking-widest mb-2 ${
-                  t.featured ? "text-[#F97316]" : "text-[#18181B]/50"
-                }`}
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {t.tier}
-              </p>
+                  <h3
+                    className="text-xl font-bold text-warm"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {pkg.name}
+                  </h3>
 
-              <h3
-                className={`text-xl font-bold mb-4 ${
-                  t.featured ? "text-white" : "text-[#18181B]"
-                }`}
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {t.headline}
-              </h3>
-
-              <ul className="flex-1 space-y-2 mb-8">
-                {t.items.map((item) => (
-                  <li
-                    key={item}
-                    className={`flex items-start gap-2 text-sm ${
-                      t.featured ? "text-white/80" : "text-[#3F3F46]/60"
-                    }`}
+                  <p
+                    className="mt-1.5 min-h-[2.75rem] text-sm text-warm-2"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
+                    {pkg.tagline}
+                  </p>
+
+                  <p className="mt-5 flex items-baseline gap-1.5">
+                    {pkg.pricePrefix && (
+                      <span
+                        className="text-sm font-medium text-warm-3"
+                        style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                      >
+                        {pkg.pricePrefix.trim()}
+                      </span>
+                    )}
                     <span
-                      className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                        t.featured ? "bg-[#F97316]" : "bg-[#18181B]"
-                      }`}
-                    />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+                      className="text-3xl font-bold tabular-nums text-warm"
+                      style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                    >
+                      {pkg.price}
+                    </span>
+                    <span
+                      className="text-sm text-warm-3"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      one-time
+                    </span>
+                  </p>
 
-              <a
-                href="#contact"
-                className={`inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 ${
-                  t.featured
-                    ? "bg-[#F97316] text-[#18181B] hover:bg-[#ea6c0a] focus-visible:ring-offset-[#18181B]"
-                    : "bg-[#18181B] text-white hover:bg-[#0d0d0f] focus-visible:ring-offset-white"
-                }`}
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {t.cta}
-              </a>
+                  <ul className="mt-6 mb-7 flex-1 space-y-2.5">
+                    {pkg.features.map((feature) => (
+                      <li
+                        key={feature}
+                        className="flex items-start gap-2.5 text-sm text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        <Check
+                          size={16}
+                          className="mt-0.5 flex-shrink-0 text-copper"
+                          aria-hidden
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
 
-              {t.tier === "Start here" && (
-                <Link
-                  href="/tools/website-cost-estimator"
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B]/70 transition-colors hover:text-[#18181B] mt-2"
-                  style={{ border: "1px solid rgba(24,24,27,0.2)", fontFamily: "var(--font-heading)" }}
-                >
-                  What should your website cost?
-                </Link>
-              )}
-            </motion.div>
+                  <MagneticCTA
+                    as="link"
+                    href="/pricing"
+                    shine={pkg.popular}
+                    className={`mt-auto inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0 ${
+                      pkg.popular
+                        ? "bg-copper text-ink-0 hover:bg-copper-bright"
+                        : "border border-hairline bg-ink-3 text-warm hover:border-copper-dim"
+                    }`}
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    Build your plan
+                    <ArrowRight size={15} aria-hidden />
+                  </MagneticCTA>
+                </div>
+              </SpotlightCard>
+            </RevealOnScroll>
           ))}
         </div>
 
-        {/* Featured: AI Integration */}
-        <motion.div
-          initial={reduce ? false : { opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={reduce ? { duration: 0 } : { duration: 0.5, delay: 0.15 }}
-          className="relative mt-6 overflow-hidden rounded-xl bg-[#18181B] p-8 md:p-10 shadow-xl ring-1 ring-[#F97316]/30"
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-[#F97316]/70 to-transparent"
-          />
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-xl">
-              <span
-                className="inline-flex items-center gap-1.5 mb-4 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] text-[#F97316]"
-                style={{ backgroundColor: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.3)", fontFamily: "var(--font-heading)" }}
+        {/* ── Block 2: Care plans (security/updates/IT live here as benefits) ── */}
+        <RevealOnScroll className="mt-24 mb-14 text-center">
+          <p
+            className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper"
+            style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+          >
+            Then keep it handled
+          </p>
+          <h2
+            className="text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl md:text-5xl"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Care plans, for life.
+          </h2>
+          <p
+            className="mx-auto mt-4 max-w-xl text-pretty text-lg text-warm-2"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
+            Hosting, updates, security, and improvements — handled monthly so your
+            site never goes stale or unsafe.
+          </p>
+        </RevealOnScroll>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {carePlans.map((plan, i) => (
+            <RevealOnScroll key={plan.id} delay={i * 0.08} className="h-full">
+              <SpotlightCard
+                radius={20}
+                className={`h-full ${plan.popular ? "surface-featured" : ""}`}
+                style={
+                  plan.popular
+                    ? { border: "1px solid var(--copper)" }
+                    : undefined
+                }
               >
-                <Sparkles size={12} /> New · AI Integration
-              </span>
-              <h3
-                className="text-2xl md:text-3xl font-bold text-white mb-3 leading-snug"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Put AI to work — an employee that never clocks out.
-              </h3>
-              <p
-                className="text-white/65 leading-relaxed mb-5"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                Practical AI, built for your shop and supported locally. It answers the phone, replies to
-                leads instantly, and clears the busywork — no hype, no hiring. Works as a standalone setup
-                or an add-on to your IT plan.
-              </p>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                {aiHighlights.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-2 text-sm text-white/80"
+                <div className="flex h-full flex-col p-7 sm:p-8">
+                  <div className="mb-5 flex items-center justify-between">
+                    <h3
+                      className="text-xl font-bold text-warm"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                      {plan.name}
+                    </h3>
+                    {plan.popular && (
+                      <span
+                        className="rounded-full border border-copper-dim px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-copper-bright"
+                        style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                      >
+                        Most popular
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="flex items-baseline gap-1.5">
+                    <span
+                      className="text-3xl font-bold tabular-nums text-warm"
+                      style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                    >
+                      {plan.price}
+                    </span>
+                    <span
+                      className="text-sm text-warm-3"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      /mo
+                    </span>
+                  </p>
+
+                  <p
+                    className="mt-2 min-h-[2.75rem] text-sm text-warm-2"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[#F97316]" />
-                    {item}
+                    {plan.tagline}
+                  </p>
+
+                  <ul className="mt-6 mb-7 flex-1 space-y-2.5">
+                    {plan.features.map((feature) => (
+                      <li
+                        key={feature}
+                        className="flex items-start gap-2.5 text-sm text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        <Check
+                          size={16}
+                          className="mt-0.5 flex-shrink-0 text-copper"
+                          aria-hidden
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <MagneticCTA
+                    as="link"
+                    href="/pricing"
+                    shine={plan.popular}
+                    className={`mt-auto inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0 ${
+                      plan.popular
+                        ? "bg-copper text-ink-0 hover:bg-copper-bright"
+                        : "border border-hairline bg-ink-3 text-warm hover:border-copper-dim"
+                    }`}
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    Build your plan
+                    <ArrowRight size={15} aria-hidden />
+                  </MagneticCTA>
+                </div>
+              </SpotlightCard>
+            </RevealOnScroll>
+          ))}
+        </div>
+
+        {/* ── Block 3: Quiet "also handled" (IT / cyber / AI as benefits) ── */}
+        <RevealOnScroll className="mt-20">
+          <div className="rounded-2xl border border-hairline bg-ink-1 p-7 sm:p-9">
+            <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+              <div className="max-w-md">
+                <p
+                  className="text-sm font-semibold text-warm"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Also handled, on the Fully Managed plan
+                </p>
+                <p
+                  className="mt-1.5 text-sm text-warm-2"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  IT, security, and AI aren&rsquo;t add-on services to chase — they
+                  come folded into one partner.
+                </p>
+              </div>
+
+              <ul className="grid flex-1 gap-x-8 gap-y-4 sm:grid-cols-3 lg:max-w-2xl">
+                {alsoHandled.map(({ icon: Icon, label, note }) => (
+                  <li key={label} className="flex items-start gap-3">
+                    <span
+                      className="mt-0.5 inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-hairline bg-ink-3"
+                      aria-hidden
+                    >
+                      <Icon size={16} className="text-copper" />
+                    </span>
+                    <span>
+                      <span
+                        className="block text-sm font-semibold text-warm"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {label}
+                      </span>
+                      <span
+                        className="mt-0.5 block text-xs leading-relaxed text-warm-3"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {note}
+                      </span>
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="flex flex-col gap-3 lg:items-end lg:flex-shrink-0">
+            <div className="mt-7 border-t border-hairline pt-6">
               <Link
-                href="/ai-integration-small-business"
-                className="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] transition-colors hover:bg-[#ea6c0a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                href="/pricing"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-copper-bright underline-offset-4 transition-colors hover:text-copper hover:underline focus-visible:outline-none focus-visible:underline"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Explore AI for your business
-                <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
-              </Link>
-              <Link
-                href="/tools/missed-call-calculator"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-md text-sm font-semibold text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
-                style={{ border: "1px solid rgba(255,255,255,0.2)", fontFamily: "var(--font-heading)" }}
-              >
-                What are missed calls costing you?
+                See everything in a plan
+                <ArrowRight size={14} aria-hidden />
               </Link>
             </div>
           </div>
-        </motion.div>
+        </RevealOnScroll>
       </div>
     </section>
   );

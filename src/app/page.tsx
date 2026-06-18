@@ -37,18 +37,20 @@ export default function Home() {
       <JsonLd schema={organizationSchema()} />
       <JsonLd schema={websiteSchema()} />
       {agg && <JsonLd schema={aggregateRatingSchema({ ratingValue: agg.ratingValue, reviewCount: agg.reviewCount })} />}
-      <Nav />
-      <main>
-        <Hero />
-        <SocialProof />
-        <Services />
-        <Stats />
-        <HowItWorks />
-        <Testimonials />
-        <ToolsTeaser />
-        <Contact />
-      </main>
-      <Footer />
+      <div className="theme-dark">
+        <Nav />
+        <main>
+          <Hero />
+          <SocialProof />
+          <Services />
+          <Stats />
+          <HowItWorks />
+          <Testimonials />
+          <ToolsTeaser />
+          <Contact />
+        </main>
+        <Footer />
+      </div>
       <ChatWidget />
     </>
   );

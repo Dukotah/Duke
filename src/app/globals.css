@@ -13,6 +13,30 @@
   --green: #18181B;
   --background: #FAFAF9;
   --foreground: #3F3F46;
+
+  /* ─── Dark + rationed-copper design system (ELEVATED_DESIGN_PLAYBOOK §0) ────
+     Homepage-scoped dark theme. The global body stays on the LIGHT defaults
+     above (other marketing pages depend on them); the homepage opts into dark
+     via its own section wrappers + the .surface-* / .hairline helpers below. */
+
+  /* canvas / depth — opacity STACKING, never black shadows */
+  --bg-0: #0E0E11;   /* deepest canvas */
+  --bg-1: #131316;   /* base surface */
+  --bg-2: #17171B;   /* raised surface (cards) */
+  --bg-3: #1E1E22;   /* hover / active surface */
+
+  /* accent — RATIONED. CTAs, active states, borders, focus, count-up only. */
+  --copper: #C07A3E;          /* base */
+  --copper-bright: #DB9355;   /* hover / emphasis / count-up numbers */
+  --copper-dim: rgba(192, 122, 62, 0.30);
+  --copper-glow: rgba(219, 147, 85, 0.40);
+
+  /* text — warm off-white, never pure white */
+  --text-warm: #F4F1EC;                          /* (name avoids clobbering the
+                                                    existing light --text above) */
+  --text-2: rgba(244, 241, 236, 0.70);   /* secondary / meta */
+  --text-3: rgba(244, 241, 236, 0.45);   /* labels / disabled */
+  --hairline: rgba(244, 241, 236, 0.08); /* borders instead of shadows */
 }
 
 @theme inline {
@@ -23,6 +47,50 @@
   --color-gold-on-light: var(--gold-on-light);
   --color-linen: var(--linen);
   --color-green: var(--green);
+
+  /* Dark + copper system → Tailwind utilities (text-copper, bg-ink-0, etc.) */
+  --color-copper: var(--copper);
+  --color-copper-bright: var(--copper-bright);
+  --color-copper-dim: var(--copper-dim);
+  --color-copper-glow: var(--copper-glow);
+  --color-ink-0: var(--bg-0);
+  --color-ink-1: var(--bg-1);
+  --color-ink-2: var(--bg-2);
+  --color-ink-3: var(--bg-3);
+  --color-text-warm: var(--text-warm);
+  --color-text-warm-2: var(--text-2);
+  --color-text-warm-3: var(--text-3);
+  --color-hairline: var(--hairline);
+}
+
+/* ─── Dark-surface helpers (homepage dark sections) ─────────────────────────
+   Depth via lighter surfaces + 1px hairline borders, NEVER black drop-shadows
+   (playbook P3). Opt a section/card into the dark system with these classes. */
+
+/* Raised card surface on the dark canvas. */
+.surface-1 {
+  background-color: var(--bg-1);
+  border: 1px solid var(--hairline);
+  color: var(--text-warm);
+}
+
+/* One step brighter — featured cards / nested raised panels. */
+.surface-2 {
+  background-color: var(--bg-2);
+  border: 1px solid var(--hairline);
+  color: var(--text-warm);
+}
+
+/* Hairline divider/border token as a utility (border, not shadow). */
+.hairline {
+  border-color: var(--hairline);
+}
+
+/* Featured-tier copper outline — the only place a border carries the accent. */
+.surface-featured {
+  background-color: var(--bg-2);
+  border: 1px solid var(--copper-dim);
+  color: var(--text-warm);
 }
 
 html {
@@ -32,6 +100,14 @@ html {
 body {
   background-color: var(--linen);
   color: var(--text);
+}
+
+/* Dark-theme context (homepage proof): near-black canvas + warm off-white text
+   so dark sections inherit legible text instead of the light body color.
+   Opt-in per page via a wrapper — the still-light pages are unaffected. */
+.theme-dark {
+  background-color: var(--bg-0);
+  color: var(--text-warm);
 }
 
 /* Keyboard focus visibility — many interactive elements use inline/custom

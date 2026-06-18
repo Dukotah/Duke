@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { Phone, Mail, Clock, CalendarDays } from "lucide-react";
+import { Phone, Mail, Clock, CalendarDays, ArrowRight } from "lucide-react";
 import { BOOKING_URL } from "@/config/site";
 import { track } from "@/lib/analytics";
 import { getAttribution } from "@/lib/attribution";
+import { MagneticCTA, RevealOnScroll } from "@/components/motion";
 
 // Module-level so the purity linter doesn't flag a Date.now() call inside the
 // component (it's only ever called from the submit event handler, not render).
@@ -57,109 +58,109 @@ export default function Contact() {
     }
   };
 
+  // Dark focus-glow input (playbook Contact §): border→copper + 0 0 0 2px
+  // copper-glow on focus. Pure CSS focus state, no JS — works under reduced
+  // motion and on every device. The transition is opacity/color only (cheap).
   const inputClass =
-    "w-full px-4 py-3 rounded-md border border-[#18181B]/15 bg-white text-[#3F3F46] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-1 transition placeholder-[#3F3F46]/30";
+    "w-full px-4 py-3 rounded-lg border border-hairline bg-ink-2 text-warm text-sm placeholder-text-warm-3 outline-none transition-[border-color,box-shadow] duration-200 focus-visible:border-copper focus-visible:shadow-[0_0_0_2px_var(--copper-glow)]";
 
-  const labelClass = "block text-xs font-semibold uppercase tracking-widest text-[#18181B]/60 mb-1.5";
+  const labelClass =
+    "block text-xs font-semibold uppercase tracking-widest text-warm-3 mb-1.5";
 
   return (
-    <section id="contact" className="py-16 sm:py-20 bg-white">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-16">
+    <section id="contact" className="bg-ink-0 py-16 sm:py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid gap-16 md:grid-cols-2">
           {/* Left: Info */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <RevealOnScroll as="div" direction="left" distance={20} duration={0.6}>
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
+              className="mb-4 text-xs font-semibold uppercase tracking-widest text-copper-bright"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Get in touch
             </p>
             <h2
-              className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"
+              className="mb-6 text-4xl font-bold leading-tight text-warm"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Let&apos;s talk about what&apos;s holding your business back.
+              Let&apos;s get your website handled — for life.
             </h2>
             <p
-              className="text-[#3F3F46]/60 leading-relaxed mb-8"
+              className="mb-8 leading-relaxed text-warm-2"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Tell us what you&apos;re working with. We&apos;ll give you an honest assessment
-              and a clear path forward — no fluff, no pressure.
+              Tell us about your site and your business. We&apos;ll give you an
+              honest assessment and a clear path forward — design, hosting,
+              updates and support, folded into one calm care plan. No fluff, no
+              pressure.
             </p>
 
             {/* Book a call CTA → on-site /schedule */}
             <a
               href={BOOKING_URL}
-              className="inline-flex items-center gap-3 w-full px-5 py-4 rounded-xl border-2 border-[#F97316] mb-8 hover:bg-[#F97316]/5 transition-colors group"
+              className="group mb-8 inline-flex w-full items-center gap-3 rounded-xl border border-copper-dim bg-ink-2 px-5 py-4 transition-colors hover:border-copper hover:bg-ink-3"
             >
-              <div className="w-10 h-10 rounded-md bg-[#F97316] flex items-center justify-center flex-shrink-0">
-                <CalendarDays size={18} color="white" />
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-copper">
+                <CalendarDays size={18} className="text-ink-0" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>
+                <p className="text-sm font-bold text-warm" style={{ fontFamily: "var(--font-heading)" }}>
                   Book a free consultation
                 </p>
-                <p className="text-xs text-[#3F3F46]/50" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-xs text-warm-3" style={{ fontFamily: "var(--font-body)" }}>
                   Pick a time that works — no back and forth
                 </p>
               </div>
-              <span className="text-[#F97316] text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>→</span>
+              <ArrowRight
+                size={17}
+                className="text-copper-bright transition-transform duration-200 group-hover:translate-x-0.5"
+                aria-hidden
+              />
             </a>
 
-            <p className="text-xs text-[#3F3F46]/40 mb-6 text-center" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="mb-6 text-center text-xs text-warm-3" style={{ fontFamily: "var(--font-body)" }}>
               or send a message below
             </p>
 
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "rgba(24,24,27,0.07)" }}>
-                  <Phone size={16} color="#18181B" />
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-hairline bg-ink-2">
+                  <Phone size={16} className="text-copper-bright" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#3F3F46]/40 uppercase tracking-widest" style={{ fontFamily: "var(--font-heading)" }}>Phone / Text</p>
-                  <a href="tel:+17072396725" className="text-sm font-medium text-[#18181B] hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
+                  <p className="text-xs uppercase tracking-widest text-warm-3" style={{ fontFamily: "var(--font-heading)" }}>Phone / Text</p>
+                  <a href="tel:+17072396725" className="text-sm font-medium text-warm transition-colors hover:text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>
                     (707) 239-6725
                   </a>
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "rgba(24,24,27,0.07)" }}>
-                  <Mail size={16} color="#18181B" />
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-hairline bg-ink-2">
+                  <Mail size={16} className="text-copper-bright" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#3F3F46]/40 uppercase tracking-widest" style={{ fontFamily: "var(--font-heading)" }}>Email</p>
-                  <a href="mailto:contact@copperbaytech.com" className="text-sm font-medium text-[#18181B] hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
+                  <p className="text-xs uppercase tracking-widest text-warm-3" style={{ fontFamily: "var(--font-heading)" }}>Email</p>
+                  <a href="mailto:contact@copperbaytech.com" className="text-sm font-medium text-warm transition-colors hover:text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>
                     contact@copperbaytech.com
                   </a>
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "rgba(24,24,27,0.07)" }}>
-                  <Clock size={16} color="#18181B" />
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-hairline bg-ink-2">
+                  <Clock size={16} className="text-copper-bright" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#3F3F46]/40 uppercase tracking-widest" style={{ fontFamily: "var(--font-heading)" }}>Response Time</p>
-                  <p className="text-sm font-medium text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>Within one business day</p>
+                  <p className="text-xs uppercase tracking-widest text-warm-3" style={{ fontFamily: "var(--font-heading)" }}>Response Time</p>
+                  <p className="text-sm font-medium text-warm" style={{ fontFamily: "var(--font-heading)" }}>Within one business day</p>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </RevealOnScroll>
 
           {/* Right: Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <RevealOnScroll as="div" direction="right" distance={20} duration={0.6}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {/* Honeypot: hidden from users (and the a11y tree), catnip for bots. */}
               <input
@@ -170,28 +171,28 @@ export default function Contact() {
                 aria-hidden="true"
                 className="absolute left-[-9999px] top-[-9999px] h-0 w-0 opacity-0"
               />
-              <div className="grid sm:grid-cols-2 gap-5">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <label htmlFor="contact-name" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Your Name *</label>
                   <input id="contact-name" {...register("name", { required: true })} placeholder="Jane Smith" className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.name ? "true" : undefined} aria-describedby={errors.name ? "contact-name-error" : undefined} />
-                  {errors.name && <p id="contact-name-error" role="alert" className="text-red-700 text-xs mt-1">Required</p>}
+                  {errors.name && <p id="contact-name-error" role="alert" className="mt-1 text-xs text-red-400">Required</p>}
                 </div>
                 <div>
                   <label htmlFor="contact-business" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Business Name *</label>
                   <input id="contact-business" {...register("business", { required: true })} placeholder="Acme Co." className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.business ? "true" : undefined} aria-describedby={errors.business ? "contact-business-error" : undefined} />
-                  {errors.business && <p id="contact-business-error" role="alert" className="text-red-700 text-xs mt-1">Required</p>}
+                  {errors.business && <p id="contact-business-error" role="alert" className="mt-1 text-xs text-red-400">Required</p>}
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-5">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <label htmlFor="contact-email" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Email *</label>
-                  <input id="contact-email" {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })} type="email" placeholder="jane@example.com" className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.email ? "true" : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} />
-                  {errors.email && <p id="contact-email-error" role="alert" className="text-red-700 text-xs mt-1">{errors.email.type === "pattern" ? "Enter a valid email" : "Required"}</p>}
+                  <input id="contact-email" {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })} type="email" inputMode="email" placeholder="jane@example.com" className={inputClass} style={{ fontFamily: "var(--font-body)" }} aria-required="true" aria-invalid={errors.email ? "true" : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} />
+                  {errors.email && <p id="contact-email-error" role="alert" className="mt-1 text-xs text-red-400">{errors.email.type === "pattern" ? "Enter a valid email" : "Required"}</p>}
                 </div>
                 <div>
                   <label htmlFor="contact-phone" className={labelClass} style={{ fontFamily: "var(--font-heading)" }}>Phone (optional)</label>
-                  <input id="contact-phone" {...register("phone")} type="tel" placeholder="(707) 239-6725" className={inputClass} style={{ fontFamily: "var(--font-body)" }} />
+                  <input id="contact-phone" {...register("phone")} type="tel" inputMode="tel" placeholder="(707) 239-6725" className={inputClass} style={{ fontFamily: "var(--font-body)" }} />
                 </div>
               </div>
 
@@ -206,7 +207,7 @@ export default function Contact() {
                   <option value="custom-dev">Custom Web Application</option>
                   <option value="other">Not sure — I need advice</option>
                 </select>
-                {errors.service && <p id="contact-service-error" role="alert" className="text-red-700 text-xs mt-1">Please select a service</p>}
+                {errors.service && <p id="contact-service-error" role="alert" className="mt-1 text-xs text-red-400">Please select a service</p>}
               </div>
 
               <div>
@@ -215,41 +216,42 @@ export default function Contact() {
                   id="contact-message"
                   {...register("message")}
                   rows={4}
-                  placeholder="Describe your situation, current setup, or what you'd like to accomplish..."
+                  placeholder="Describe your current site, what's not working, or what you'd like to accomplish..."
                   className={inputClass}
                   style={{ fontFamily: "var(--font-body)", resize: "none" }}
                 />
               </div>
 
               {status === "error" && (
-                <div role="alert" className="rounded-md bg-red-50 border border-red-200 p-4">
-                  <p className="text-red-700 text-sm font-medium mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+                <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 p-4">
+                  <p className="mb-1 text-sm font-medium text-red-300" style={{ fontFamily: "var(--font-heading)" }}>
                     Message couldn&apos;t be sent
                   </p>
-                  <p className="text-red-600 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+                  <p className="text-sm text-red-200/80" style={{ fontFamily: "var(--font-body)" }}>
                     Please email{" "}
-                    <a href="mailto:contact@copperbaytech.com" className="underline font-medium">contact@copperbaytech.com</a>
+                    <a href="mailto:contact@copperbaytech.com" className="font-medium text-copper-bright underline">contact@copperbaytech.com</a>
                     {" "}or call{" "}
-                    <a href="tel:+17072396725" className="underline font-medium">(707) 239-6725</a>
+                    <a href="tel:+17072396725" className="font-medium text-copper-bright underline">(707) 239-6725</a>
                   </p>
                 </div>
               )}
 
-              <button
+              <MagneticCTA
+                as="button"
                 type="submit"
                 disabled={status === "loading"}
-                className="w-full py-3.5 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 active:scale-[0.98]"
+                className="flex w-full items-center justify-center rounded-lg bg-copper py-3.5 text-sm font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {status === "loading" ? "Sending..." : "Send Message"}
-              </button>
+              </MagneticCTA>
 
-              <p className="text-xs text-[#3F3F46]/60 text-center" style={{ fontFamily: "var(--font-body)" }}>
+              <p className="text-center text-xs text-warm-3" style={{ fontFamily: "var(--font-body)" }}>
                 We reply within one business day. No spam, no sales pressure — and
                 we never share your details.
               </p>
             </form>
-          </motion.div>
+          </RevealOnScroll>
         </div>
       </div>
     </section>
