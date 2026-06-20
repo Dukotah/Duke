@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyResendSignature } from "@/lib/crm/webhook";
 import { getRedis } from "@/lib/redis";
 import { setLeadState, addActivity, suppressEmail, getLeadState, stampLeadAction } from "@/lib/db";
+import { addNotification } from "@/lib/crm/notifications";
 
 type ResendEvent = {
   type: string;
@@ -85,16 +86,32 @@ export async function POST(req: NextRequest) {
   if (type === "email.bounced" || type === "email.complained") {
     await suppressEmail(recipientEmail);
     if (match) {
+      const isBounce = type === "email.bounced";
       await addActivity(match.leadId, match.userId, "system", {
         type: "email",
-        outcome: type === "email.bounced" ? "bounced" : "complained",
-        note: `Email ${type === "email.bounced" ? "hard bounced" : "marked as spam"} — suppressed`,
+        outcome: isBounce ? "bounced" : "complained",
+        note: `Email ${isBounce ? "hard bounced" : "marked as spam"} — suppressed`,
       });
       // Durable cross-rep "bad email" stamp so the row badge warns every rep off
       // re-emailing this address.
       try {
         await stampLeadAction(match.leadId, { bouncedAt: new Date().toISOString() }, { userId: match.userId, repName: "system" });
       } catch { /* suppression already applied; stamp is additive */ }
+
+      // Notify the owning rep so they know this address is now dead.
+      try {
+        const displayName = match.leadName || recipientEmail;
+        await addNotification(match.userId, {
+          type: isBounce ? "email_bounced" : "email_complained",
+          title: isBounce
+            ? `Email to ${displayName} bounced`
+            : `${displayName} marked your email as spam`,
+          body: isBounce
+            ? `Hard bounce from ${recipientEmail} — address suppressed.`
+            : `${recipientEmail} reported spam — address suppressed.`,
+          leadId: match.leadId,
+        });
+      } catch { /* notification failure must never break event processing */ }
     }
     return NextResponse.json({ ok: true, action: "suppressed", email: recipientEmail });
   }
@@ -131,6 +148,22 @@ export async function POST(req: NextRequest) {
         { userId: match.userId, repName: "system" },
       );
     } catch { /* engagement already logged to the timeline; stamp is additive */ }
+
+    // Notify the owning rep of the engagement signal.
+    try {
+      const displayName = match.leadName || recipientEmail;
+      const isClick = engagement === "clicked";
+      await addNotification(match.userId, {
+        type: isClick ? "email_clicked" : "email_opened",
+        title: isClick
+          ? `${displayName} clicked your link!`
+          : `${displayName} opened your email`,
+        body: isClick
+          ? `${recipientEmail} clicked a link in your outreach — hot signal.`
+          : `${recipientEmail} opened your outreach email.`,
+        leadId: match.leadId,
+      });
+    } catch { /* notification failure must never break event processing */ }
   }
 
   return NextResponse.json({ ok: true, type, leadId: match.leadId });

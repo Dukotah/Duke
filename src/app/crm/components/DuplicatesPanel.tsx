@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   RefreshCw,
   Check,
+  Sparkles,
 } from "lucide-react";
 
 // ─── Duplicate detection + guided merge (Admin) ───────────────────────────────
@@ -22,6 +23,8 @@ import {
 //   POST /api/crm/merge       → { survivorId, loserId }
 // Only a custom lead can be the LOSER (a CSV lead has no deletable record), so
 // the merge button is disabled when the chosen loser is a CSV lead.
+
+const H = { fontFamily: "var(--font-heading)" };
 
 interface DuplicateLead {
   id: string;
@@ -50,8 +53,32 @@ const REASON_LABEL: Record<DuplicateGroup["reason"], string> = {
   "name+city": "Similar name + city",
 };
 
+// ─── Skeleton loader ──────────────────────────────────────────────────────────
+
+function GroupSkeleton() {
+  return (
+    <div className="bg-[var(--crm-surface)] rounded-2xl border border-[var(--crm-border)] overflow-hidden animate-pulse" aria-hidden="true">
+      <div className="flex items-center gap-2 px-5 py-3 border-b border-[var(--crm-border)] bg-[var(--crm-surface-2)]">
+        <div className="h-3 w-20 bg-[var(--crm-surface-3)] rounded" />
+        <div className="h-3 w-32 bg-[var(--crm-surface-3)] rounded ml-1" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4">
+        {[1, 2].map((i) => (
+          <div key={i} className="rounded-xl border border-[var(--crm-border)] p-4 space-y-3">
+            <div className="h-4 w-3/4 bg-[var(--crm-surface-3)] rounded" />
+            <div className="space-y-2">
+              <div className="h-3 w-full bg-[var(--crm-surface-3)] rounded" />
+              <div className="h-3 w-2/3 bg-[var(--crm-surface-3)] rounded" />
+            </div>
+            <div className="h-8 w-32 bg-[var(--crm-surface-3)] rounded-lg" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function DuplicatesPanel() {
-  const H = { fontFamily: "var(--font-heading)" };
   const [groups, setGroups] = useState<DuplicateGroup[]>([]);
   const [loading, setLoading] = useState(true);
   // survivor selection per group key (defaults to the first member)
@@ -87,7 +114,7 @@ export default function DuplicatesPanel() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]); // eslint-disable-line react-hooks/set-state-in-effect
+  useEffect(() => { void load(); }, [load]); // eslint-disable-line react-hooks/set-state-in-effect
 
   async function merge(group: DuplicateGroup, loser: DuplicateLead) {
     const gk = `${group.reason}:${group.key}`;
@@ -130,41 +157,70 @@ export default function DuplicatesPanel() {
     <div className="space-y-5">
       {/* Summary + refresh */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] px-5 py-4 flex items-center gap-4">
-          <div className="flex items-center gap-2 text-xs text-[var(--crm-text-3)]" style={H}>
-            <Copy size={14} className="text-[var(--crm-accent)]" />Duplicate groups
+        <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] px-5 py-4 flex items-center gap-4 min-w-0">
+          <div className="flex items-center gap-2 text-xs text-[var(--crm-text-3)] shrink-0" style={H}>
+            <Copy size={14} className="text-[var(--crm-accent)]" aria-hidden="true" />
+            Duplicate groups
           </div>
-          <p className="text-2xl font-bold text-[var(--crm-text)] tabular-nums" style={H}>{groups.length}</p>
-          {totalDupes > 0 && (
+          <p className="text-2xl font-bold text-[var(--crm-text)] tabular-nums" style={H}>
+            {loading ? <span className="inline-block h-7 w-8 bg-[var(--crm-surface-3)] rounded animate-pulse" aria-hidden="true" /> : groups.length}
+          </p>
+          {!loading && totalDupes > 0 && (
             <span className="text-xs text-[var(--crm-text-3)]" style={H}>
               across {totalDupes} leads
             </span>
           )}
         </div>
         <button
-          onClick={load}
+          onClick={() => void load()}
           disabled={loading}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface)] border border-[var(--crm-border)] hover:border-[var(--crm-accent-border)] disabled:opacity-40 transition-colors"
-          style={H}>
-          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />Rescan
+          aria-label="Rescan for duplicates"
+          className="inline-flex items-center gap-2 min-h-[40px] px-4 py-2 rounded-xl text-sm font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface)] border border-[var(--crm-border)] hover:border-[var(--crm-accent-border)] hover:bg-[var(--crm-surface-3)] disabled:opacity-40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent)]"
+          style={H}
+        >
+          <RefreshCw size={14} className={loading ? "animate-spin" : ""} aria-hidden="true" />
+          Rescan
         </button>
       </div>
 
       {error && (
-        <div className="flex items-start gap-2 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3" style={H}>
-          <AlertTriangle size={15} className="shrink-0 mt-0.5" />{error}
+        <div
+          role="alert"
+          className="flex items-start gap-2 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"
+          style={H}
+        >
+          <AlertTriangle size={15} className="shrink-0 mt-0.5" aria-hidden="true" />
+          {error}
         </div>
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="w-6 h-6 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
+        <div aria-busy="true" aria-label="Scanning for duplicates" className="space-y-4">
+          <GroupSkeleton />
+          <GroupSkeleton />
         </div>
       ) : groups.length === 0 ? (
-        <div className="text-center py-16 text-[var(--crm-text-3)] text-sm bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)]" style={H}>
-          {merged.length > 0
-            ? "All clear — no remaining duplicates. 🎉"
-            : "No duplicate leads detected. 🎉"}
+        <div
+          className="flex flex-col items-center gap-3 py-16 text-center bg-[var(--crm-surface)] rounded-2xl border border-[var(--crm-border)]"
+          style={H}
+        >
+          <div className="w-12 h-12 rounded-2xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] flex items-center justify-center">
+            {merged.length > 0 ? (
+              <Sparkles size={20} className="text-emerald-500" aria-hidden="true" />
+            ) : (
+              <Check size={20} className="text-emerald-500" aria-hidden="true" />
+            )}
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[var(--crm-text-2)]">
+              {merged.length > 0 ? "All clear — no remaining duplicates" : "No duplicate leads detected"}
+            </p>
+            <p className="text-xs text-[var(--crm-text-3)] mt-1">
+              {merged.length > 0
+                ? `You merged ${merged.length} lead${merged.length !== 1 ? "s" : ""} this session.`
+                : "Your lead database looks clean. Rescan after importing new leads."}
+            </p>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">
@@ -178,8 +234,12 @@ export default function DuplicatesPanel() {
                   <span className="text-xs font-bold uppercase tracking-wider text-[var(--crm-accent-text)]" style={H}>
                     {REASON_LABEL[group.reason]}
                   </span>
-                  <span className="text-xs text-[var(--crm-text-3)] truncate" style={H}>· {group.key}</span>
-                  <span className="ml-auto text-xs text-[var(--crm-text-3)]" style={H}>{group.leads.length} leads</span>
+                  <span className="text-xs text-[var(--crm-text-3)] truncate min-w-0" style={H}>
+                    · {group.key}
+                  </span>
+                  <span className="ml-auto shrink-0 text-xs text-[var(--crm-text-3)]" style={H}>
+                    {group.leads.length} leads
+                  </span>
                 </div>
 
                 {/* Members side-by-side */}
@@ -190,30 +250,38 @@ export default function DuplicatesPanel() {
                     return (
                       <div
                         key={lead.id}
-                        className={`rounded-xl border p-4 space-y-3 transition-colors ${
+                        className={`rounded-xl border p-4 space-y-3 transition-all duration-150 ${
                           isSurvivor
-                            ? "border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)]"
-                            : "border-[var(--crm-border)] bg-[var(--crm-surface-2)]"
-                        }`}>
+                            ? "border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] shadow-sm"
+                            : "border-[var(--crm-border)] bg-[var(--crm-surface-2)] hover:border-[var(--crm-accent-border)]/50"
+                        }`}
+                      >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <p className="font-bold text-[var(--crm-text)] truncate flex items-center gap-1.5" style={H}>
-                              {isSurvivor && <Crown size={13} className="text-[var(--crm-accent)] shrink-0" />}
+                              {isSurvivor && (
+                                <Crown size={13} className="text-[var(--crm-accent)] shrink-0" aria-hidden="true" />
+                              )}
                               {lead.name || "(no name)"}
                             </p>
                             <p className="text-[11px] text-[var(--crm-text-3)] mt-0.5 flex items-center gap-1.5 flex-wrap" style={H}>
-                              <span className={`px-1.5 py-0.5 rounded-full border text-[10px] font-semibold ${
-                                lead.isCustom
-                                  ? "text-blue-500 bg-blue-500/10 border-blue-500/20"
-                                  : "text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] border-[var(--crm-border)]"
-                              }`}>
+                              <span
+                                className={`px-1.5 py-0.5 rounded-full border text-[10px] font-semibold ${
+                                  lead.isCustom
+                                    ? "text-blue-500 bg-blue-500/10 border-blue-500/20"
+                                    : "text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] border-[var(--crm-border)]"
+                                }`}
+                              >
                                 {lead.isCustom ? "Custom" : "CSV"}
                               </span>
                               {lead.niche && <span className="truncate">{lead.niche}</span>}
                             </p>
                           </div>
                           {isSurvivor && (
-                            <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[var(--crm-accent-text)]" style={H}>
+                            <span
+                              className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[var(--crm-accent-text)]"
+                              style={H}
+                            >
                               Survivor
                             </span>
                           )}
@@ -223,51 +291,60 @@ export default function DuplicatesPanel() {
                         <div className="space-y-1.5">
                           {lead.email && (
                             <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2 truncate" style={H}>
-                              <Mail size={11} className="text-[var(--crm-accent)] shrink-0" />{lead.email}
+                              <Mail size={11} className="text-[var(--crm-accent)] shrink-0" aria-hidden="true" />
+                              {lead.email}
                             </p>
                           )}
                           {lead.phone && (
                             <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2 truncate" style={H}>
-                              <Phone size={11} className="text-[var(--crm-accent)] shrink-0" />{lead.phone}
+                              <Phone size={11} className="text-[var(--crm-accent)] shrink-0" aria-hidden="true" />
+                              {lead.phone}
                             </p>
                           )}
                           {(lead.city || lead.county) && (
                             <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2 truncate" style={H}>
-                              <MapPin size={11} className="text-[var(--crm-accent)] shrink-0" />
+                              <MapPin size={11} className="text-[var(--crm-accent)] shrink-0" aria-hidden="true" />
                               {[lead.city, lead.county].filter(Boolean).join(", ")}
                             </p>
                           )}
                           {lead.website && (
                             <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2 truncate" style={H}>
-                              <Globe size={11} className="text-[var(--crm-accent)] shrink-0" />{lead.website}
+                              <Globe size={11} className="text-[var(--crm-accent)] shrink-0" aria-hidden="true" />
+                              {lead.website}
                             </p>
                           )}
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-2 pt-1">
+                        <div className="flex items-center gap-2 pt-1 flex-wrap">
                           {isSurvivor ? (
                             <span className="text-[11px] text-[var(--crm-text-3)] flex items-center gap-1" style={H}>
-                              <Check size={11} className="text-[var(--crm-accent)]" />Kept as survivor
+                              <Check size={11} className="text-[var(--crm-accent)]" aria-hidden="true" />
+                              Kept as survivor
                             </span>
                           ) : (
                             <>
                               <button
-                                onClick={() =>
-                                  setSurvivors((p) => ({ ...p, [gk]: lead.id }))
-                                }
-                                className="text-[11px] font-semibold text-[var(--crm-text-3)] hover:text-[var(--crm-accent-text)] transition-colors"
-                                style={H}>
+                                onClick={() => setSurvivors((p) => ({ ...p, [gk]: lead.id }))}
+                                className="text-[11px] min-h-[32px] font-semibold text-[var(--crm-text-3)] hover:text-[var(--crm-accent-text)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent)] rounded px-1"
+                                style={H}
+                              >
                                 Make survivor
                               </button>
                               <button
-                                onClick={() => merge(group, lead)}
+                                onClick={() => void merge(group, lead)}
                                 disabled={!canBeLoser || merging === lead.id || !survivorId}
-                                title={canBeLoser ? "Merge this lead into the survivor" : "A CSV lead can't be merged away — make it the survivor instead"}
-                                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:opacity-90"
-                                style={{ backgroundColor: "var(--crm-accent)", ...H }}>
-                                <GitMerge size={11} />
-                                {merging === lead.id ? "Merging…" : "Merge into survivor"}
+                                title={
+                                  canBeLoser
+                                    ? "Merge this lead into the survivor"
+                                    : "A CSV lead can't be merged away — make it the survivor instead"
+                                }
+                                aria-label={`Merge ${lead.name || "lead"} into survivor`}
+                                className="ml-auto inline-flex items-center gap-1.5 min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent)] focus-visible:ring-offset-1"
+                                style={{ backgroundColor: "var(--crm-accent)", ...H }}
+                              >
+                                <GitMerge size={11} aria-hidden="true" />
+                                {merging === lead.id ? "Merging…" : "Merge in"}
                               </button>
                             </>
                           )}
@@ -283,7 +360,7 @@ export default function DuplicatesPanel() {
       )}
 
       <p className="text-xs text-[var(--crm-text-3)] px-1 flex items-start gap-1.5" style={H}>
-        <AlertTriangle size={12} className="text-amber-500 shrink-0 mt-0.5" />
+        <AlertTriangle size={12} className="text-amber-500 shrink-0 mt-0.5" aria-hidden="true" />
         Merging is permanent. The loser&apos;s activity, claims, submissions and notes are re-pointed
         onto the survivor, then the loser is removed. Only custom leads can be merged away — pick a
         CSV lead as the survivor when one is present.

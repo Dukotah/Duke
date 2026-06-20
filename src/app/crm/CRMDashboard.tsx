@@ -16,9 +16,14 @@ import LeadPanel from "./components/LeadPanel";
 import AddLeadModal from "./components/AddLeadModal";
 import CallTimer from "./components/CallTimer";
 import CommandPalette from "./components/CommandPalette";
+import ShortcutsHelp from "./components/ShortcutsHelp";
 import SmartLists, { type SmartListFilters } from "./components/SmartLists";
 import ImportLeadsModal, { ExportButton, type ExportFilters } from "./components/ImportLeadsModal";
 import { RecencyBadges, deriveTags, TAG_DEFS, type LeadAction, type TagKey } from "./components/RecencyBadges";
+import { TagChip } from "./components/TagManager";
+
+// Custom (user-defined) tag definitions + the lead→tagIds map, from /api/crm/tags.
+interface CustomTag { id: string; userId: string; label: string; color: string; createdAt: string }
 
 // ─── Broadcast Banner ─────────────────────────────────────────────────────────
 
@@ -139,6 +144,7 @@ const BulkActionBar = dynamic(() => import("./components/BulkActionBar"), { ssr:
 const TodayQueue = dynamic(() => import("./components/TodayQueue"), { ssr: false });
 const TasksView = dynamic(() => import("./components/TasksView"), { ssr: false });
 const NotificationsBell = dynamic(() => import("./components/NotificationsBell"), { ssr: false });
+const PowerDialer = dynamic(() => import("./components/PowerDialer"), { ssr: false });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -252,7 +258,7 @@ function RailButton({ icon: Icon, label, onClick }: {
 
 // ─── All Leads table view ─────────────────────────────────────────────────────
 
-function AllLeads({ states, onSelectLead, userName, selectedLeadId, initialFilters, onUpdateState }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string; selectedLeadId?: string | null; initialFilters?: SmartListFilters | null; onUpdateState: (leadId: string, patch: Partial<LeadState>) => void }) {
+function AllLeads({ states, onSelectLead, userName, selectedLeadId, initialFilters, onUpdateState, onPowerDial }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string; selectedLeadId?: string | null; initialFilters?: SmartListFilters | null; onUpdateState: (leadId: string, patch: Partial<LeadState>) => void; onPowerDial: (leads: Lead[]) => void }) {
   const [data, setData] = useState<LeadsResponse | null>(null);
   const [showBulkOutreach, setShowBulkOutreach] = useState(false);
   const [showImport, setShowImport] = useState(false);
@@ -275,9 +281,29 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId, initialFilte
   // cross-rep stamps the leads API already attaches), composable with search +
   // server filters + the view-chips. null = no tag filter.
   const [tagFilter, setTagFilter] = useState<TagKey | null>(null);
+  // Custom user-defined tags (from /api/crm/tags): defs + lead→tagIds map, plus
+  // the active custom-tag filter (composable with everything else). null = off.
+  const [customTags, setCustomTags] = useState<CustomTag[]>([]);
+  const [leadTagMap, setLeadTagMap] = useState<Record<string, string[]>>({});
+  const [customTagFilter, setCustomTagFilter] = useState<string | null>(null);
   // ─── Bulk multi-select ────────────────────────────────────────────────────
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const todayISO = new Date().toISOString().slice(0, 10);
+
+  // Load custom tag defs + the lead→tagIds map once for chips + the tag filter.
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/crm/tags")
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return;
+        setCustomTags(d.tags ?? []);
+        setLeadTagMap(d.leadTagMap ?? {});
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+  const tagById = new Map(customTags.map((t) => [t.id, t]));
 
   const fetch_ = useCallback(async () => {
     setLoading(true); setError("");
@@ -305,6 +331,7 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId, initialFilte
   // Apply the action-tag filter client-side over the loaded page. Composable with
   // every server-side filter and the search above — those already shaped `data`.
   const visibleLeads = (data?.leads ?? []).filter((lead) => {
+    if (customTagFilter && !(leadTagMap[lead.id] ?? []).includes(customTagFilter)) return false;
     if (!tagFilter) return true;
     const tags = deriveTags(lead.actions ?? null, states[lead.id] ?? null, todayISO, { previewUrl: lead.previewUrl });
     return tags.has(tagFilter);
@@ -438,6 +465,12 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId, initialFilte
           <Filter size={13} />
           {activeFilters > 0 && <span className="bg-[var(--crm-accent)] text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">{activeFilters}</span>}
         </button>
+        <button onClick={() => onPowerDial(visibleLeads)} disabled={visibleLeads.length === 0}
+          className="inline-flex items-center gap-1.5 px-3 rounded-xl text-sm font-bold border bg-[var(--crm-accent)] text-white border-[var(--crm-accent)] hover:brightness-110 transition-all disabled:opacity-40"
+          title="Power Dialer — call through this filtered list" style={H}>
+          <Zap size={13} />
+          <span className="hidden sm:inline">Power Dialer</span>
+        </button>
         <button onClick={() => setShowBulkOutreach(true)}
           className="inline-flex items-center gap-1.5 px-3 rounded-xl text-sm bg-[var(--crm-surface)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] hover:border-[var(--crm-border-strong)] transition-all"
           title="Bulk Email" style={H}>
@@ -535,6 +568,29 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId, initialFilte
           </button>
         )}
       </div>
+
+      {/* Custom user-defined tags — one click filters People to that tag.
+          Composable with the action tags, search, and server filters. */}
+      {customTags.length > 0 && (
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {customTags.map((t) => {
+            const active = customTagFilter === t.id;
+            return (
+              <button key={t.id} onClick={() => setCustomTagFilter(active ? null : t.id)}
+                className={`rounded-full transition-all ${active ? "ring-2 ring-[var(--crm-accent-border)]" : "opacity-80 hover:opacity-100"}`}
+                style={H} aria-pressed={active}>
+                <TagChip tag={t} small />
+              </button>
+            );
+          })}
+          {customTagFilter && (
+            <button onClick={() => setCustomTagFilter(null)}
+              className="inline-flex items-center gap-1 text-[11px] text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] px-1.5" style={H}>
+              <X size={10} />Clear tag
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Territory badge + toggle */}
       {territory && (
@@ -648,6 +704,15 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId, initialFilte
                   </div>
                   {/* Durable cross-rep recency badges — what's been done, by whom. */}
                   <RecencyBadges actions={lead.actions} state={state} today={todayISO} previewUrl={lead.previewUrl} className="mt-2" />
+                  {/* Custom user-defined tag chips */}
+                  {(leadTagMap[lead.id] ?? []).length > 0 && (
+                    <div className="flex items-center gap-1.5 flex-wrap mt-2">
+                      {(leadTagMap[lead.id] ?? []).map((tagId) => {
+                        const t = tagById.get(tagId);
+                        return t ? <TagChip key={tagId} tag={t} small /> : null;
+                      })}
+                    </div>
+                  )}
                   {/* Inline-editable stage / tier / follow-up — edit without opening the panel.
                       stopPropagation so changing a cell doesn't open the lead. */}
                   <div className="flex items-center gap-2 mt-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
@@ -768,6 +833,10 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
   const { theme, toggle: toggleTheme } = useCrmTheme();
   const [view, setView] = useState<View>("today");
   const [showPalette, setShowPalette] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  // Power Dialer — full-screen call-session overlay. The queue is the caller's
+  // current filtered list (passed from the launching view); null = closed.
+  const [dialerQueue, setDialerQueue] = useState<Lead[] | null>(null);
   // Filters pushed from the Smart Lists rail into the All-leads view on mount.
   const [pendingFilters, setPendingFilters] = useState<SmartListFilters | null>(null);
   const [allLeadsKey, setAllLeadsKey] = useState(0);
@@ -803,6 +872,22 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
       if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
         setShowPalette((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // "?" opens the keyboard shortcuts help overlay (only when not typing).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target as HTMLElement | null;
+      const tag = el?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el?.isContentEditable) return;
+      if (e.key === "?") {
+        e.preventDefault();
+        setShowShortcuts((v) => !v);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -881,10 +966,12 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
       : { status: "contacted", lastContacted: nowDisplay, followUpDate: fuISO });
   }, [emailLead, states, updateState]);
 
-  const handleCallOutcome = useCallback(async (outcome: string) => {
-    if (!activeLead) return;
-    const leadId = activeLead.id;
-    setActiveLead(null);
+  const handleCallOutcome = useCallback(async (outcome: string, explicitLeadId?: string) => {
+    // CallTimer passes only the outcome (uses activeLead); PowerDialer passes an
+    // explicit leadId per queued lead. Resolve whichever was given.
+    const leadId = explicitLeadId ?? activeLead?.id;
+    if (!leadId) return;
+    if (!explicitLeadId) setActiveLead(null);
     const outcomeToStage: Record<string, string> = {
       no_answer: "called",
       voicemail: "voicemail",
@@ -974,6 +1061,15 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
         onToggleTheme={toggleTheme}
         onSelectLead={(r) => selectLeadById(r.id)}
       />
+      <ShortcutsHelp open={showShortcuts} onClose={() => setShowShortcuts(false)} />
+      {dialerQueue && (
+        <PowerDialer
+          leads={dialerQueue}
+          states={states}
+          onLogOutcome={(leadId, outcome) => handleCallOutcome(outcome, leadId)}
+          onClose={() => setDialerQueue(null)}
+        />
+      )}
       {/* Mobile: lead detail as a right slide-over overlay. On desktop it docks
           inline beside the list (rendered in the main row below). */}
       {selectedLead && !isDesktop && (
@@ -1151,7 +1247,7 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
               <TasksView onSelectLead={(leadId) => selectLeadById(leadId)} />
             )}
             {view === "all" && (
-              <AllLeads key={allLeadsKey} states={states} onSelectLead={setSelectedLead} userName={userName} selectedLeadId={selectedLead?.id} initialFilters={pendingFilters} onUpdateState={updateState} />
+              <AllLeads key={allLeadsKey} states={states} onSelectLead={setSelectedLead} userName={userName} selectedLeadId={selectedLead?.id} initialFilters={pendingFilters} onUpdateState={updateState} onPowerDial={(leads) => setDialerQueue(leads)} />
             )}
             {view === "pipeline" && (
               <DealsBoard leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} onStageChange={(leadId, stage) => updateState(leadId, { stage })} />

@@ -9,7 +9,8 @@ import {
   ChevronDown, ChevronRight, MessageSquare, Repeat,
   MailOpen, MousePointerClick, AlertTriangle,
 } from "lucide-react";
-import ActivityTimeline from "./ActivityTimeline";
+import UnifiedTimeline from "./UnifiedTimeline";
+import TagPicker from "./TagPicker";
 import EmailComposer from "./EmailComposer";
 import { relTime, type LeadAction } from "./RecencyBadges";
 import { buildCallScript, buildObjections, callTimingFor, suggestCadence } from "@/lib/crm/playbook";
@@ -1120,6 +1121,11 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             {/* Claim row — ownership is a header-level concern */}
             <div className="px-5 pb-3">{claimBlock}</div>
 
+            {/* Tags row — user-defined labels for this lead */}
+            <div className="px-5 pb-3">
+              <TagPicker leadId={lead.id} />
+            </div>
+
             {/* Tab bar */}
             <div className="flex items-stretch gap-1 px-3 -mb-px overflow-x-auto">
               {TABS.map((t) => {
@@ -1152,7 +1158,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                   <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
                     <Activity size={11} />Timeline
                   </p>
-                  <ActivityTimeline key={activityKey} leadId={lead.id} />
+                  <UnifiedTimeline key={activityKey} leadId={lead.id} />
                 </div>
               </>
             )}

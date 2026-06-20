@@ -11,6 +11,8 @@ import SuppressionTab from "./SuppressionTab";
 import FunnelReport from "@/app/crm/components/FunnelReport";
 import AutomationRulesPanel from "@/app/crm/components/AutomationRulesPanel";
 import DuplicatesPanel from "@/app/crm/components/DuplicatesPanel";
+import SequenceBuilder from "@/app/crm/components/SequenceBuilder";
+import TagManager from "@/app/crm/components/TagManager";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -978,7 +980,7 @@ function SetupTab() {
 
 export default function AdminDashboard({ adminName }: { adminName: string }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "suppression" | "setup" | "funnel" | "automation" | "duplicates">("submissions");
+  const [tab, setTab] = useState<"submissions" | "reps" | "territories" | "leaderboard" | "revenue" | "email" | "suppression" | "setup" | "funnel" | "automation" | "duplicates" | "cadence" | "tags">("submissions");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [reps, setReps] = useState<RepWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1127,6 +1129,8 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               { key: "funnel", label: "Funnel", count: 0 },
               { key: "automation", label: "Automations", count: 0 },
               { key: "duplicates", label: "Duplicates", count: 0 },
+              { key: "cadence", label: "Cadence", count: 0 },
+              { key: "tags", label: "Tags", count: 0 },
             ].map(({ key, label, count }) => (
               <button key={key} onClick={() => setTab(key as typeof tab)} aria-current={tab === key ? "page" : undefined}
                 className={`relative px-4 py-3 text-sm font-semibold transition-colors flex items-center gap-2 whitespace-nowrap focus-visible:outline-none ${
@@ -1322,6 +1326,10 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
           {tab === "automation" && <AutomationRulesPanel />}
 
           {tab === "duplicates" && <DuplicatesPanel />}
+
+          {tab === "cadence" && <SequenceBuilder />}
+
+          {tab === "tags" && <TagManager onTagsChanged={() => {}} />}
 
         </main>
       </div>

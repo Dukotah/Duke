@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   CheckCircle2, Circle, Clock, Trash2, Pencil, AlarmClock,
   ChevronRight, Plus, Phone, Mail, ClipboardList,
@@ -72,6 +72,40 @@ function relativeTime(iso: string): string {
   if (hrs >= 1)  return past ? `${hrs}h ago`  : `in ${hrs}h`;
   if (mins >= 1) return past ? `${mins}m ago` : `in ${mins}m`;
   return past ? "just now" : "soon";
+}
+
+// ── Loading skeleton ───────────────────────────────────────────────────────────
+
+function TasksSkeleton() {
+  return (
+    <div className="space-y-4" aria-hidden="true">
+      {/* Quick-add bar skeleton */}
+      <div className="h-14 rounded-2xl bg-[var(--crm-surface)] border border-[var(--crm-border)] animate-pulse" />
+      {/* Group label */}
+      <div className="h-3 w-24 rounded bg-[var(--crm-surface-3)] animate-pulse" />
+      {/* Task card skeletons */}
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          className="rounded-2xl border border-[var(--crm-border)] bg-[var(--crm-surface)] animate-pulse"
+          style={{ opacity: 1 - i * 0.15 }}
+        >
+          <div className="flex items-start gap-3 px-4 py-3">
+            <div className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[var(--crm-surface-3)]" />
+            <div className="flex-1 space-y-2 py-0.5">
+              <div className="h-3.5 rounded bg-[var(--crm-surface-3)]" style={{ width: `${48 + i * 12}%` }} />
+              <div className="h-2.5 w-1/4 rounded bg-[var(--crm-surface-3)]" />
+            </div>
+            <div className="flex gap-1 mt-0.5">
+              {Array.from({ length: 3 }).map((_, j) => (
+                <div key={j} className="w-7 h-7 rounded-lg bg-[var(--crm-surface-3)]" />
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function TasksView({ onSelectLead }: Props) {
@@ -200,20 +234,32 @@ export default function TasksView({ onSelectLead }: Props) {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center gap-3 py-20">
-        <div className="w-7 h-7 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-[var(--crm-text-3)]" style={H}>Loading tasks…</p>
+      <div className="space-y-5" style={H}>
+        {/* Header skeleton */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-1.5">
+            <div className="h-5 w-16 rounded bg-[var(--crm-surface-3)] animate-pulse" />
+            <div className="h-3 w-32 rounded bg-[var(--crm-surface-3)] animate-pulse" />
+          </div>
+          <div className="h-7 w-16 rounded-lg bg-[var(--crm-surface-3)] animate-pulse" />
+        </div>
+        <TasksSkeleton />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center gap-3 py-16 text-center">
-        <AlertTriangle size={26} className="text-red-400/70" />
-        <p className="text-sm text-[var(--crm-text-2)]" style={H}>{error}</p>
-        <button onClick={load} className="inline-flex items-center gap-1.5 text-xs text-[var(--crm-accent-text)] hover:opacity-80" style={H}>
-          <RefreshCw size={11} />Try again
+      <div className="flex flex-col items-center gap-3 py-16 text-center" style={H}>
+        <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center">
+          <AlertTriangle size={22} className="text-red-500" aria-hidden="true" />
+        </div>
+        <p className="text-sm font-semibold text-[var(--crm-text-2)]">{error}</p>
+        <button
+          onClick={load}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--crm-accent-text)] hover:opacity-80 min-h-[36px] px-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)]"
+        >
+          <RefreshCw size={11} aria-hidden="true" />Try again
         </button>
       </div>
     );
@@ -236,9 +282,10 @@ export default function TasksView({ onSelectLead }: Props) {
         </div>
         <button
           onClick={load}
-          className="inline-flex items-center gap-1.5 text-xs text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors"
+          aria-label="Refresh tasks"
+          className="inline-flex items-center gap-1.5 min-h-[36px] px-2.5 text-xs text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] hover:bg-[var(--crm-surface-3)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)]"
         >
-          <RefreshCw size={11} />Refresh
+          <RefreshCw size={11} aria-hidden="true" />Refresh
         </button>
       </div>
 
@@ -246,11 +293,13 @@ export default function TasksView({ onSelectLead }: Props) {
       <form
         onSubmit={addTask}
         className="flex gap-2 bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl px-4 py-3"
+        aria-label="Add a new task"
       >
         <select
           value={addType}
           onChange={(e) => setAddType(e.target.value as Task["type"])}
-          className="text-xs font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface-2)] border border-[var(--crm-border)] rounded-lg px-2 py-1.5 shrink-0 focus:outline-none"
+          aria-label="Task type"
+          className="text-xs font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface-2)] border border-[var(--crm-border)] rounded-lg px-2 py-1.5 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)] min-h-[36px]"
         >
           <option value="todo">Todo</option>
           <option value="call">Call</option>
@@ -261,24 +310,30 @@ export default function TasksView({ onSelectLead }: Props) {
           value={addTitle}
           onChange={(e) => setAddTitle(e.target.value)}
           placeholder="Add a task…"
-          className="flex-1 text-sm bg-transparent text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none min-w-0"
+          aria-label="Task title"
+          className="flex-1 text-sm bg-transparent text-[var(--crm-text)] placeholder:text-[var(--crm-text-3)] focus:outline-none min-w-0"
         />
         <button
           type="submit"
           disabled={adding || !addTitle.trim()}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white transition-all active:scale-95 disabled:opacity-40"
+          aria-label="Add task"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[36px] rounded-xl text-xs font-bold text-white transition-all active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)]"
           style={{ backgroundColor: "var(--crm-accent)" }}
         >
-          <Plus size={12} />Add
+          <Plus size={12} aria-hidden="true" />Add
         </button>
       </form>
 
       {/* Empty state */}
       {totalVisible === 0 && (
-        <div className="text-center py-16">
-          <CheckCheck size={32} className="text-emerald-400/40 mx-auto mb-3" />
-          <p className="text-[var(--crm-text-2)] font-semibold">All clear!</p>
-          <p className="text-sm text-[var(--crm-text-3)] mt-1">Add a task above to get started.</p>
+        <div className="flex flex-col items-center gap-3 text-center py-16 crm-surface rounded-2xl">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+            <CheckCheck size={28} className="text-emerald-500" aria-hidden="true" />
+          </div>
+          <p className="text-base font-bold text-[var(--crm-text)]" style={H}>All clear!</p>
+          <p className="text-sm text-[var(--crm-text-3)] max-w-xs leading-relaxed" style={H}>
+            No open tasks right now. Add one above or create tasks from a lead&apos;s workspace.
+          </p>
         </div>
       )}
 
@@ -380,7 +435,8 @@ function TaskGroup({
   return (
     <div>
       <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${accent}`} style={H}>
-        {label} <span className="opacity-60 font-semibold normal-case tracking-normal ml-1">{tasks.length}</span>
+        {label}{" "}
+        <span className="opacity-60 font-semibold normal-case tracking-normal ml-1">{tasks.length}</span>
       </p>
       <div className="space-y-2">
         {tasks.map((task) => (
@@ -433,19 +489,43 @@ function TaskCard({
 }: TaskCardProps) {
   const meta = TYPE_META[task.type];
   const TypeIcon = meta.icon;
+  const snoozeRef = useRef<HTMLDivElement>(null);
+
+  // Close snooze dropdown on outside click / Escape
+  useEffect(() => {
+    if (!snoozeOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (snoozeRef.current && !snoozeRef.current.contains(e.target as Node)) {
+        onSnoozeToggle(task.id);
+      }
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onSnoozeToggle(task.id);
+    }
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [snoozeOpen, onSnoozeToggle, task.id]);
+
+  const iconBtn =
+    "p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)]";
 
   return (
     <div
       className={`rounded-2xl border border-[var(--crm-border)] bg-[var(--crm-surface)] transition-opacity ${isBusy ? "opacity-50 pointer-events-none" : ""}`}
+      aria-busy={isBusy}
     >
       <div className="flex items-start gap-3 px-4 py-3">
-        {/* Complete button */}
+        {/* Complete button — left side (large tap target) */}
         <button
           onClick={() => onComplete(task.id)}
-          className="mt-0.5 shrink-0 text-[var(--crm-text-3)] hover:text-emerald-500 transition-colors"
-          title="Mark complete"
+          aria-label={`Mark "${task.title}" complete`}
+          className={`mt-0.5 shrink-0 text-[var(--crm-text-3)] hover:text-emerald-500 transition-colors ${iconBtn}`}
         >
-          <Circle size={18} />
+          <Circle size={18} aria-hidden="true" />
         </button>
 
         {/* Body */}
@@ -460,16 +540,21 @@ function TaskCard({
                   if (e.key === "Enter") onEditSave(task.id);
                   if (e.key === "Escape") onEditCancel();
                 }}
+                aria-label="Edit task title"
                 className="flex-1 text-sm bg-[var(--crm-surface-2)] border border-[var(--crm-border)] rounded-lg px-2 py-1 text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent)]"
               />
               <button
                 onClick={() => onEditSave(task.id)}
-                className="text-xs font-semibold text-emerald-500 hover:opacity-80"
-              >Save</button>
+                className="text-xs font-semibold text-emerald-500 hover:opacity-80 min-h-[32px] px-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)]"
+              >
+                Save
+              </button>
               <button
                 onClick={onEditCancel}
-                className="text-xs text-[var(--crm-text-3)] hover:opacity-80"
-              >Cancel</button>
+                className="text-xs text-[var(--crm-text-3)] hover:opacity-80 min-h-[32px] px-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)]"
+              >
+                Cancel
+              </button>
             </div>
           ) : (
             <p className="text-sm font-semibold text-[var(--crm-text)] leading-snug">{task.title}</p>
@@ -478,13 +563,13 @@ function TaskCard({
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             {/* Type badge */}
             <span className={`inline-flex items-center gap-1 text-[10px] font-semibold ${meta.color}`}>
-              <TypeIcon size={10} />{meta.label}
+              <TypeIcon size={10} aria-hidden="true" />{meta.label}
             </span>
 
             {/* Due time */}
             {task.dueAt && (
               <span className="inline-flex items-center gap-1 text-[10px] text-[var(--crm-text-3)]">
-                <Clock size={9} />{relativeTime(task.dueAt)}
+                <Clock size={9} aria-hidden="true" />{relativeTime(task.dueAt)}
               </span>
             )}
 
@@ -492,9 +577,10 @@ function TaskCard({
             {task.leadId && (
               <button
                 onClick={() => onSelectLead(task.leadId!)}
-                className="inline-flex items-center gap-1 text-[10px] text-[var(--crm-accent-text)] hover:opacity-80 transition-opacity"
+                aria-label={`Open lead: ${task.leadName ?? task.leadId}`}
+                className="inline-flex items-center gap-1 text-[10px] text-[var(--crm-accent-text)] hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)] rounded"
               >
-                <ChevronRight size={9} />
+                <ChevronRight size={9} aria-hidden="true" />
                 {task.leadName ?? task.leadId}
               </button>
             )}
@@ -502,23 +588,30 @@ function TaskCard({
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-1 shrink-0 mt-0.5">
+        <div className="flex items-center gap-0.5 shrink-0 mt-0.5">
           {/* Snooze */}
-          <div className="relative">
+          <div className="relative" ref={snoozeRef}>
             <button
               onClick={() => onSnoozeToggle(task.id)}
-              className="p-1.5 rounded-lg text-[var(--crm-text-3)] hover:text-amber-500 hover:bg-amber-500/10 transition-colors"
-              title="Snooze"
+              aria-label={`Snooze "${task.title}"`}
+              aria-expanded={snoozeOpen}
+              aria-haspopup="menu"
+              className={`${iconBtn} text-[var(--crm-text-3)] hover:text-amber-500 hover:bg-amber-500/10`}
             >
-              <AlarmClock size={14} />
+              <AlarmClock size={14} aria-hidden="true" />
             </button>
             {snoozeOpen && (
-              <div className="absolute right-0 top-full mt-1 z-20 bg-[var(--crm-surface-2)] border border-[var(--crm-border)] rounded-xl shadow-lg py-1 min-w-[110px]">
+              <div
+                role="menu"
+                aria-label="Snooze options"
+                className="absolute right-0 top-full mt-1 z-20 bg-[var(--crm-surface-2)] border border-[var(--crm-border)] rounded-xl shadow-lg py-1 min-w-[110px]"
+              >
                 {SNOOZE_OPTIONS.map((opt) => (
                   <button
                     key={opt.days}
+                    role="menuitem"
                     onClick={() => onSnooze(task.id, opt.days)}
-                    className="w-full text-left px-3 py-1.5 text-xs text-[var(--crm-text-2)] hover:bg-[var(--crm-surface-3)] hover:text-[var(--crm-text)] transition-colors"
+                    className="w-full text-left px-3 py-2 text-xs text-[var(--crm-text-2)] hover:bg-[var(--crm-surface-3)] hover:text-[var(--crm-text)] transition-colors focus-visible:outline-none focus-visible:bg-[var(--crm-surface-3)]"
                   >
                     {opt.label}
                   </button>
@@ -530,28 +623,28 @@ function TaskCard({
           {/* Edit */}
           <button
             onClick={() => onEditStart(task)}
-            className="p-1.5 rounded-lg text-[var(--crm-text-3)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)] transition-colors"
-            title="Edit"
+            aria-label={`Edit "${task.title}"`}
+            className={`${iconBtn} text-[var(--crm-text-3)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)]`}
           >
-            <Pencil size={14} />
+            <Pencil size={14} aria-hidden="true" />
           </button>
 
           {/* Delete */}
           <button
             onClick={() => onDelete(task.id)}
-            className="p-1.5 rounded-lg text-[var(--crm-text-3)] hover:text-red-500 hover:bg-red-500/10 transition-colors"
-            title="Delete"
+            aria-label={`Delete "${task.title}"`}
+            className={`${iconBtn} text-[var(--crm-text-3)] hover:text-red-500 hover:bg-red-500/10`}
           >
-            <Trash2 size={14} />
+            <Trash2 size={14} aria-hidden="true" />
           </button>
 
           {/* Complete shortcut — right-hand side for quick tap */}
           <button
             onClick={() => onComplete(task.id)}
-            className="p-1.5 rounded-lg text-[var(--crm-text-3)] hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
-            title="Complete"
+            aria-label={`Complete "${task.title}"`}
+            className={`${iconBtn} text-[var(--crm-text-3)] hover:text-emerald-500 hover:bg-emerald-500/10`}
           >
-            <CheckCircle2 size={14} />
+            <CheckCircle2 size={14} aria-hidden="true" />
           </button>
         </div>
       </div>
