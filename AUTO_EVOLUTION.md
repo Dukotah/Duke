@@ -6,29 +6,41 @@
 
 ---
 
-## Epoch 15 — 2026-06-20
+## Epoch 16 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 233 passed (24 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~19 commits ahead of `origin/main`, not pushed. Route-handler coverage now spans a
-per-user route, an admin-gated route, a bulk-mutation route, and the claim/cross-rep flow.
+Green. **vitest 237 passed (25 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~20 commits ahead of `origin/main`, not pushed. **All originally-planned hardening +
+the optional handler-test list are complete.** The CRM is shippable.
 
 ### 2. Completed in This Epoch
-- **`api/crm/claim/route.test.ts`** (5): 401 unauth; 400 missing leadId/action (POST) +
-  missing leadId (GET); claim then GET reflects it; the cross-rep guard (409) with admin
-  override; owner-only unclaim (403 for a non-owner). 228 → 233.
+- **`api/crm/state/route.test.ts`** (4): GET/POST 401 unauth; POST 400 without leadId;
+  patch persists + GET reflects it (per-user isolation); the stage-change path fires
+  automations safely (`{rulesFired:0, actionsRun:0}`) with no rules and persists the new
+  stage. (Confirmed `getLeadState` correctly treats a status-less hash as "no state" —
+  not a bug.) 233 → 237.
 
 ### 3. Discovered Debt / Opportunities
-- None of real risk. Only `/api/crm/state` remains on the optional handler-test list.
+- No real risk remains. The loop has reached its planned hand-off point. There is still
+  **genuine (lower-value) breadth**: ~15 other route handlers (`today`, `tasks`, `tags`,
+  `search`, `activity`, `import-leads`, `export`, `sequences`, `automation`, `merge`,
+  `notifications`, `smart-lists`, `contacts`, `companies`, `deals`) have no handler-level
+  contract tests. Adding them is real regression insurance, not cosmetic churn — but
+  marginal value is low. **Recommend pausing the loop and reviewing/deploying.**
 
 ### 4. The Next Epoch Roadmap
-> The CRM is shippable; remaining items are optional. Natural pause/deploy point.
-1. **Handler test for `/api/crm/state`** — persists a per-user patch; the stage-change
-   path runs automations without throwing when no rules are configured.
-2. **Then pause / hand off** — surface to the owner that hardening + handler coverage are
-   done and the branch is ready to review or deploy.
+> ⚑ Owner decision point: hardening is done; the branch is review/deploy-ready. If the
+> loop keeps running (per the "use up credits today" directive), continue genuine
+> handler-test breadth — otherwise pause + deploy.
+1. **Handler tests for the remaining query/mutation routes** — batch a few per epoch
+   (e.g. `today`, `tasks`, `tags`, `search`), asserting the 401/400/2xx contract each.
+2. **Pause / hand off** whenever the owner is ready to review or deploy `crm-cockpit`.
 
 ---
+
+## Epoch 15 — 2026-06-20
+- `api/crm/claim/route.test.ts` (5): claim/unclaim, 409 cross-rep guard + admin override,
+  403 non-owner unclaim. 228 → 233.
 
 ## Epoch 14 — 2026-06-20
 - `api/crm/bulk/route.test.ts` (5): auth/validation + setStage mutates per-user state. 223 → 228.
