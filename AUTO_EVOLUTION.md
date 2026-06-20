@@ -6,29 +6,34 @@
 
 ---
 
-## Epoch 18 — 2026-06-20
+## Epoch 19 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 248 passed (29 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~22 commits ahead of `origin/main`, not pushed. Shippable; loop on optional handler-test
+Green. **vitest 254 passed (31 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~23 commits ahead of `origin/main`, not pushed. Shippable; loop on optional handler-test
 breadth (owner can pause/deploy anytime).
 
 ### 2. Completed in This Epoch
-- **`api/crm/tags/route.test.ts`** (3): 401 every method; label/color/id/op validation;
-  create → assign (PATCH add) → list → delete (cascade scrub) contract.
-- **`api/crm/today/route.test.ts`** (3): 401 unauth; empty queue with zeroed counts; a
-  seeded long-overdue follow-up surfacing as the top-priority item (per-user). 242 → 248.
+- **`api/crm/notifications/route.test.ts`** (3): 401 GET/PATCH; PATCH 400 without id;
+  list newest-first → mark one read → mark all (`__all__`).
+- **`api/crm/smart-lists/route.test.ts`** (3): 401 every method; POST validates
+  name/scope/filters; create → list → delete. 248 → 254.
 
 ### 3. Discovered Debt / Opportunities
 - Remaining untested handlers: `activity`, `import-leads`, `export`, `sequences`,
-  `automation`, `notifications`, `smart-lists`, `contacts`, `companies`, `deals`. Low
-  marginal value. **Still recommend pausing + deploying.**
+  `automation`, `contacts`, `companies`, `deals`. Low marginal value. **Still recommend
+  pausing + deploying.**
 
 ### 4. The Next Epoch Roadmap
 > ⚑ Owner decision point: branch is review/deploy-ready. Continuing only per the
 > "use up credits today" directive.
-1. **Handler tests for `notifications` + `smart-lists`** (or another batch).
+1. **Handler tests for `automation` + `sequences`** (both admin-gated — assert 403).
 2. **Pause / hand off** whenever ready to review or deploy `crm-cockpit`.
+
+---
+
+## Epoch 18 — 2026-06-20
+- `api/crm/tags/route.test.ts` + `today/route.test.ts`. 242 → 248.
 
 ---
 
