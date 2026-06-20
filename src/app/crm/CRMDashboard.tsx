@@ -7,13 +7,17 @@ import {
   Flame, Zap, ArrowUpDown, X, LayoutGrid,
   BookOpen, List, DollarSign,
   AlertCircle, Plus, CalendarClock, Sparkles, Globe, MessageSquareReply,
-  Users, Sun, Moon, LogOut,
+  Users, Sun, Moon, LogOut, CheckSquare, Square,
+  Home, ClipboardList, Bookmark, Upload,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { CrmThemeProvider, useCrmTheme } from "./useCrmTheme";
 import LeadPanel from "./components/LeadPanel";
 import AddLeadModal from "./components/AddLeadModal";
 import CallTimer from "./components/CallTimer";
+import CommandPalette from "./components/CommandPalette";
+import SmartLists, { type SmartListFilters } from "./components/SmartLists";
+import ImportLeadsModal, { ExportButton, type ExportFilters } from "./components/ImportLeadsModal";
 import { RecencyBadges, deriveTags, TAG_DEFS, type LeadAction, type TagKey } from "./components/RecencyBadges";
 
 // ─── Broadcast Banner ─────────────────────────────────────────────────────────
@@ -131,6 +135,10 @@ const EarningsView = dynamic(() => import("./components/Earnings"), { ssr: false
 const BulkOutreach = dynamic(() => import("./components/BulkOutreach"), { ssr: false });
 const EmailComposer = dynamic(() => import("./components/EmailComposer"), { ssr: false });
 const RespondedQueue = dynamic(() => import("./components/RespondedQueue"), { ssr: false });
+const BulkActionBar = dynamic(() => import("./components/BulkActionBar"), { ssr: false });
+const TodayQueue = dynamic(() => import("./components/TodayQueue"), { ssr: false });
+const TasksView = dynamic(() => import("./components/TasksView"), { ssr: false });
+const NotificationsBell = dynamic(() => import("./components/NotificationsBell"), { ssr: false });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -184,7 +192,7 @@ interface LeadsResponse {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-type View = "due" | "new" | "responded" | "all" | "pipeline";
+type View = "today" | "due" | "new" | "responded" | "tasks" | "all" | "pipeline" | "smartlists";
 
 const LIMIT = 50;
 const H = { fontFamily: "var(--font-heading)" };
@@ -244,26 +252,31 @@ function RailButton({ icon: Icon, label, onClick }: {
 
 // ─── All Leads table view ─────────────────────────────────────────────────────
 
-function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string; selectedLeadId?: string | null }) {
+function AllLeads({ states, onSelectLead, userName, selectedLeadId, initialFilters, onUpdateState }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string; selectedLeadId?: string | null; initialFilters?: SmartListFilters | null; onUpdateState: (leadId: string, patch: Partial<LeadState>) => void }) {
   const [data, setData] = useState<LeadsResponse | null>(null);
   const [showBulkOutreach, setShowBulkOutreach] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [q, setQ] = useState("");
-  const [county, setCounty] = useState("");
-  const [niche, setNiche] = useState("");
-  const [tier, setTier] = useState("");
-  const [hasEmail, setHasEmail] = useState("");
-  const [grade, setGrade] = useState("");
-  const [emailStatus, setEmailStatus] = useState("");
-  const [sortBy, setSortBy] = useState("outreach_score");
+  const [q, setQ] = useState(initialFilters?.q ?? "");
+  const [county, setCounty] = useState(initialFilters?.county ?? "");
+  const [niche, setNiche] = useState(initialFilters?.niche ?? "");
+  const [tier, setTier] = useState(initialFilters?.tier ?? "");
+  const [hasEmail, setHasEmail] = useState(initialFilters?.hasEmail ?? "");
+  const [grade, setGrade] = useState(initialFilters?.grade ?? "");
+  const [emailStatus, setEmailStatus] = useState(initialFilters?.emailStatus ?? "");
+  const [sortBy, setSortBy] = useState(initialFilters?.sortBy ?? "outreach_score");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [allTerritories, setAllTerritories] = useState(false);
+  // Keyboard nav: index of the focused row (J/K traversal). -1 = none.
+  const [focusIdx, setFocusIdx] = useState(-1);
   // Action tag filter — client-side over the current page's leads (the durable
   // cross-rep stamps the leads API already attaches), composable with search +
   // server filters + the view-chips. null = no tag filter.
   const [tagFilter, setTagFilter] = useState<TagKey | null>(null);
+  // ─── Bulk multi-select ────────────────────────────────────────────────────
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const todayISO = new Date().toISOString().slice(0, 10);
 
   const fetch_ = useCallback(async () => {
@@ -285,7 +298,6 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
   useEffect(() => { fetch_(); }, [fetch_]);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset pagination when filters change
   useEffect(() => { setPage(1); }, [q, county, niche, tier, hasEmail, grade, emailStatus, sortBy, allTerritories]);
-
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
   const activeFilters = [q, county, niche, tier, hasEmail, grade, emailStatus].filter(Boolean).length;
   const territory = data?.territory;
@@ -298,9 +310,119 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
     return tags.has(tagFilter);
   });
 
+  // Derive leadMap from all loaded leads so BulkActionBar can resolve name+email
+  // for cadence enrollment without an extra fetch. Accumulated across pages because
+  // leads stay in memory once loaded.
+  const leadMap = new Map<string, { id: string; name: string; email: string }>(
+    (data?.leads ?? []).map((l) => [l.id, { id: l.id, name: l.name, email: l.email ?? "" }])
+  );
+
+  // ─── Bulk select helpers ──────────────────────────────────────────────────
+  const allVisibleSelected = visibleLeads.length > 0 && visibleLeads.every((l) => selectedIds.has(l.id));
+  const someVisibleSelected = visibleLeads.some((l) => selectedIds.has(l.id));
+
+  function toggleSelectLead(e: React.MouseEvent | React.KeyboardEvent, leadId: string) {
+    e.stopPropagation();
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(leadId)) next.delete(leadId);
+      else next.add(leadId);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    if (allVisibleSelected) {
+      // Deselect all currently visible
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        for (const l of visibleLeads) next.delete(l.id);
+        return next;
+      });
+    } else {
+      // Select all currently visible
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        for (const l of visibleLeads) next.add(l.id);
+        return next;
+      });
+    }
+  }
+
+  // Apply a saved Smart List back into the individual filter setters.
+  const handleApplySmartList = useCallback((filters: SmartListFilters) => {
+    setQ(filters.q ?? "");
+    setCounty(filters.county ?? "");
+    setNiche(filters.niche ?? "");
+    setTier(filters.tier ?? "");
+    setHasEmail(filters.hasEmail ?? "");
+    setGrade(filters.grade ?? "");
+    setEmailStatus(filters.emailStatus ?? "");
+    if (filters.sortBy !== undefined) setSortBy(filters.sortBy);
+    setPage(1);
+  }, []);
+
+  // Filter object shared with SmartLists (save) and ExportButton (download).
+  const currentFilters: SmartListFilters = {
+    ...(q && { q }), ...(county && { county }), ...(niche && { niche }),
+    ...(tier && { tier }), ...(hasEmail && { hasEmail }),
+    ...(grade && { grade }), ...(emailStatus && { emailStatus }), sortBy,
+  };
+  const exportFilters: ExportFilters = {
+    ...currentFilters,
+    ...(allTerritories && { allTerritories: "1" }),
+  };
+
+  // ─── Keyboard navigation (J/K traverse, Enter open, X toggle select) ──────
+  // Ignored while typing in an input/textarea/select or with modifier keys held.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target as HTMLElement | null;
+      const tag = el?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el?.isContentEditable) return;
+      const n = visibleLeads.length;
+      if (n === 0) return;
+      const k = e.key.toLowerCase();
+      if (k === "j") {
+        e.preventDefault();
+        setFocusIdx((i) => Math.min(n - 1, i < 0 ? 0 : i + 1));
+      } else if (k === "k") {
+        e.preventDefault();
+        setFocusIdx((i) => Math.max(0, i < 0 ? 0 : i - 1));
+      } else if (e.key === "Enter") {
+        if (focusIdx >= 0 && focusIdx < n) { e.preventDefault(); onSelectLead(visibleLeads[focusIdx]); }
+      } else if (k === "x") {
+        if (focusIdx >= 0 && focusIdx < n) {
+          e.preventDefault();
+          const id = visibleLeads[focusIdx].id;
+          setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+          });
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [visibleLeads, focusIdx, onSelectLead]);
+
+  // Keep the focused row in bounds when the list size changes.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- clamp focus when list shrinks
+    setFocusIdx((i) => (i >= visibleLeads.length ? visibleLeads.length - 1 : i));
+  }, [visibleLeads.length]);
+
   return (
     <div className="space-y-3">
       {showBulkOutreach && <BulkOutreach repName={userName} onClose={() => setShowBulkOutreach(false)} />}
+      {showImport && (
+        <ImportLeadsModal
+          onClose={() => setShowImport(false)}
+          onImported={() => { fetch_(); }}
+        />
+      )}
       {/* Search */}
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -321,6 +443,13 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
           title="Bulk Email" style={H}>
           <Mail size={13} />
           <span className="hidden sm:inline">Bulk Email</span>
+        </button>
+        <ExportButton filters={exportFilters} className="inline-flex items-center gap-1.5 px-3 rounded-xl text-sm bg-[var(--crm-surface)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] hover:border-[var(--crm-border-strong)] transition-all h-auto" />
+        <button onClick={() => setShowImport(true)}
+          className="inline-flex items-center gap-1.5 px-3 rounded-xl text-sm bg-[var(--crm-surface)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] hover:border-[var(--crm-border-strong)] transition-all"
+          title="Import CSV" style={H}>
+          <Upload size={13} />
+          <span className="hidden sm:inline">Import CSV</span>
         </button>
       </div>
 
@@ -373,6 +502,9 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
         </div>
       )}
 
+      {/* Saved smart lists — save the current filter set, recall in one click */}
+      <SmartLists currentFilters={currentFilters} onApply={handleApplySmartList} userName={userName} />
+
       {/* Quick pills */}
       <div className="flex items-center gap-2 flex-wrap">
         <button onClick={() => { setTier(tier === "A" ? "" : "A"); setPage(1); }}
@@ -420,17 +552,35 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
         </div>
       )}
 
-      {/* Results count */}
+      {/* Results count + select-all control */}
       {data && (
-        <p className="text-xs text-[var(--crm-text-3)]" style={H}>
-          {tagFilter ? (
-            <><span className="text-[var(--crm-text)] font-semibold">{visibleLeads.length.toLocaleString()}</span> tagged on this page · </>
-          ) : (
-            <><span className="text-[var(--crm-text)] font-semibold">{data.total.toLocaleString()}</span> leads · </>
-          )}
-          page {page} of {totalPages}
-          · 🔥 {data.tierCounts.A.toLocaleString()} no-site
-        </p>
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <p className="text-xs text-[var(--crm-text-3)]" style={H}>
+            {tagFilter ? (
+              <><span className="text-[var(--crm-text)] font-semibold">{visibleLeads.length.toLocaleString()}</span> tagged on this page · </>
+            ) : (
+              <><span className="text-[var(--crm-text)] font-semibold">{data.total.toLocaleString()}</span> leads · </>
+            )}
+            page {page} of {totalPages}
+            · 🔥 {data.tierCounts.A.toLocaleString()} no-site
+          </p>
+          {/* Select-all (filtered page) toggle */}
+          <button
+            onClick={toggleSelectAll}
+            className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all ${
+              allVisibleSelected
+                ? "bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)] border-[var(--crm-accent-border)]"
+                : someVisibleSelected
+                ? "bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border-[var(--crm-border)]"
+                : "bg-[var(--crm-surface-3)] text-[var(--crm-text-3)] border-[var(--crm-border)] hover:text-[var(--crm-text-2)]"
+            }`}
+            style={H}
+          >
+            {allVisibleSelected
+              ? <><CheckSquare size={11} />Deselect page</>
+              : <><Square size={11} />Select page ({visibleLeads.length})</>}
+          </button>
+        </div>
       )}
 
       {/* List */}
@@ -455,12 +605,24 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
         </div>
       ) : (
         <div className="space-y-1.5">
-          {visibleLeads.map((lead) => {
+          {visibleLeads.map((lead, idx) => {
             const state = states[lead.id];
+            const isChecked = selectedIds.has(lead.id);
+            const isFocused = focusIdx === idx;
             return (
-              <div key={lead.id} onClick={() => onSelectLead(lead)} role="button" tabIndex={0}
+              <div key={lead.id}
+                onClick={() => { setFocusIdx(idx); onSelectLead(lead); }} role="button" tabIndex={0}
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelectLead(lead); } }}
-                className={`crm-surface crm-surface-hover flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-pointer active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)] ${selectedLeadId === lead.id ? "ring-2 ring-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)]" : ""}`}>
+                className={`crm-surface crm-surface-hover flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-pointer active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)] ${isChecked ? "ring-2 ring-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)]" : selectedLeadId === lead.id ? "ring-2 ring-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)]" : isFocused ? "ring-2 ring-[var(--crm-accent-border)]/60" : ""}`}>
+                {/* Per-row checkbox — click/key without opening the lead panel */}
+                <button
+                  onClick={(e) => toggleSelectLead(e, lead.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSelectLead(e, lead.id); } }}
+                  aria-label={isChecked ? `Deselect ${lead.name}` : `Select ${lead.name}`}
+                  className={`shrink-0 rounded-md p-0.5 transition-colors ${isChecked ? "text-[var(--crm-accent-text)]" : "text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)]"}`}
+                >
+                  {isChecked ? <CheckSquare size={15} /> : <Square size={15} />}
+                </button>
                 {lead.thumbnailUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={lead.thumbnailUrl} alt="" loading="lazy"
@@ -486,6 +648,48 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
                   </div>
                   {/* Durable cross-rep recency badges — what's been done, by whom. */}
                   <RecencyBadges actions={lead.actions} state={state} today={todayISO} previewUrl={lead.previewUrl} className="mt-2" />
+                  {/* Inline-editable stage / tier / follow-up — edit without opening the panel.
+                      stopPropagation so changing a cell doesn't open the lead. */}
+                  <div className="flex items-center gap-2 mt-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
+                    <select
+                      value={state?.stage ?? "to_call"}
+                      onChange={(e) => onUpdateState(lead.id, { stage: e.target.value })}
+                      aria-label={`Stage for ${lead.name}`}
+                      className="text-[11px] font-semibold px-2 py-1 rounded-lg bg-[var(--crm-surface-3)] border border-[var(--crm-border)] text-[var(--crm-text-2)] focus:outline-none focus:border-[var(--crm-accent-border)] appearance-none cursor-pointer"
+                      style={H}
+                    >
+                      <option value="to_call">To call</option>
+                      <option value="called">Called</option>
+                      <option value="voicemail">Voicemail</option>
+                      <option value="call_back">Call back</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="interested">Interested</option>
+                      <option value="submitted">Submitted</option>
+                      <option value="won">Won</option>
+                      <option value="lost">Lost</option>
+                    </select>
+                    <select
+                      value={state?.status ?? "new"}
+                      onChange={(e) => onUpdateState(lead.id, { status: e.target.value as LeadState["status"] })}
+                      aria-label={`Status for ${lead.name}`}
+                      className="text-[11px] font-semibold px-2 py-1 rounded-lg bg-[var(--crm-surface-3)] border border-[var(--crm-border)] text-[var(--crm-text-2)] focus:outline-none focus:border-[var(--crm-accent-border)] appearance-none cursor-pointer"
+                      style={H}
+                    >
+                      <option value="new">New</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="follow_up">Follow up</option>
+                      <option value="not_interested">Not interested</option>
+                      <option value="won">Won</option>
+                    </select>
+                    <input
+                      type="date"
+                      value={state?.followUpDate ?? ""}
+                      onChange={(e) => onUpdateState(lead.id, { followUpDate: e.target.value })}
+                      aria-label={`Follow-up date for ${lead.name}`}
+                      className="text-[11px] font-semibold px-2 py-1 rounded-lg bg-[var(--crm-surface-3)] border border-[var(--crm-border)] text-[var(--crm-text-2)] focus:outline-none focus:border-[var(--crm-accent-border)] cursor-pointer"
+                      style={H}
+                    />
+                  </div>
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   {lead.phone && <span className="text-xs text-[var(--crm-text-3)] hidden sm:flex items-center gap-1 tabular-nums" style={H}><Phone size={9} />{lead.phone}</span>}
@@ -512,6 +716,15 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
               </div>
             );
           })}
+          {/* Floating bulk action bar — appears when any leads are selected */}
+          {selectedIds.size > 0 && (
+            <BulkActionBar
+              selectedIds={selectedIds}
+              leadMap={leadMap}
+              onClear={() => setSelectedIds(new Set())}
+              onDone={() => { setSelectedIds(new Set()); fetch_(); }}
+            />
+          )}
           {visibleLeads.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-2 py-14 crm-surface rounded-2xl text-center px-6">
               <Search size={22} className="text-[var(--crm-text-3)]" />
@@ -553,7 +766,11 @@ export default function CRMDashboard(props: { userId: string; userName: string; 
 function CRMWorkspace({ userId, userName, role }: { userId: string; userName: string; role: "admin" | "rep" }) {
   const router = useRouter();
   const { theme, toggle: toggleTheme } = useCrmTheme();
-  const [view, setView] = useState<View>("due");
+  const [view, setView] = useState<View>("today");
+  const [showPalette, setShowPalette] = useState(false);
+  // Filters pushed from the Smart Lists rail into the All-leads view on mount.
+  const [pendingFilters, setPendingFilters] = useState<SmartListFilters | null>(null);
+  const [allLeadsKey, setAllLeadsKey] = useState(0);
   const [showScripts, setShowScripts] = useState(false);
   const [showEarnings, setShowEarnings] = useState(false);
   const [loggedToday, setLoggedToday] = useState<number | null>(null);
@@ -579,6 +796,30 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
   }, []);
+
+  // ⌘K / Ctrl+K opens the command palette.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        setShowPalette((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Open a lead by id from the palette: try the loaded set, else fetch it.
+  const selectLeadById = useCallback(async (leadId: string) => {
+    const found = allLeads.find((l) => l.id === leadId);
+    if (found) { setSelectedLead(found); return; }
+    try {
+      const res = await fetch(`/api/crm/leads?limit=1&q=${encodeURIComponent(leadId)}`);
+      const d = await res.json();
+      const hit = (d.leads as Lead[] | undefined)?.find((l) => l.id === leadId) ?? d.leads?.[0];
+      if (hit) setSelectedLead(hit);
+    } catch { /* palette already closed; non-fatal */ }
+  }, [allLeads]);
 
   // Load all state + submissions once
   useEffect(() => {
@@ -696,15 +937,18 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
   // Left nav-rail sections. Each drives the center list in place (no navigation),
   // FUB-style: a persistent rail rather than top chips.
   const navItems: { key: View; label: string; icon: React.ComponentType<{ size?: number; className?: string }>; badge: number | null }[] = [
+    { key: "today", label: "Today", icon: Home, badge: null },
     { key: "due", label: "Follow-ups", icon: CalendarClock, badge: dueCount || null },
     { key: "new", label: "Demos", icon: Sparkles, badge: null },
     { key: "responded", label: "Replies", icon: MessageSquareReply, badge: respondedCount || null },
+    { key: "tasks", label: "Tasks", icon: ClipboardList, badge: null },
     { key: "all", label: "People", icon: Users, badge: null },
     { key: "pipeline", label: "Pipeline", icon: LayoutGrid, badge: interestedCount || null },
+    { key: "smartlists", label: "Lists", icon: Bookmark, badge: null },
   ];
   const sectionTitle: Record<View, string> = {
-    due: "Follow-ups due", new: "Demos & new leads", responded: "Replies",
-    all: "All people", pipeline: "Pipeline",
+    today: "Today", due: "Follow-ups due", new: "Demos & new leads", responded: "Replies",
+    tasks: "Tasks", all: "All people", pipeline: "Pipeline", smartlists: "Saved Lists",
   };
 
   return (
@@ -722,6 +966,14 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
           onAdded={() => { setQueueRefreshKey((k) => k + 1); setShowAddLead(false); }}
         />
       )}
+      <CommandPalette
+        open={showPalette}
+        onClose={() => setShowPalette(false)}
+        onGoTo={(v) => setView(v)}
+        onAddLead={() => setShowAddLead(true)}
+        onToggleTheme={toggleTheme}
+        onSelectLead={(r) => selectLeadById(r.id)}
+      />
       {/* Mobile: lead detail as a right slide-over overlay. On desktop it docks
           inline beside the list (rendered in the main row below). */}
       {selectedLead && !isDesktop && (
@@ -837,6 +1089,12 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
           <header className="crm-chrome border-b border-[var(--crm-border)] shrink-0 h-14 flex items-center gap-3 px-4 z-20">
             <h1 className="text-[15px] font-bold text-[var(--crm-text)] tracking-tight truncate" style={H}>{sectionTitle[view]}</h1>
             <div className="ml-auto flex items-center gap-2">
+              <NotificationsBell onSelectLead={(leadId) => selectLeadById(leadId)} />
+              <button onClick={() => setShowPalette(true)} title="Search & commands (⌘K)"
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] px-2.5 py-1.5 rounded-full hover:text-[var(--crm-text)] transition-colors" style={H}>
+                <Search size={12} /><span className="hidden lg:inline">Search</span>
+                <span className="text-[var(--crm-text-3)] text-[10px]">⌘K</span>
+              </button>
               <span className="hidden md:inline-flex items-center gap-1 text-xs font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] px-2.5 py-1.5 rounded-full" style={H}>
                 <span className="text-[var(--crm-text-3)]">Today</span>
                 <span className="text-[var(--crm-text)] tabular-nums">{loggedToday ?? "—"}<span className="text-[var(--crm-text-3)]">/50</span></span>
@@ -859,6 +1117,15 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
           <div className="flex-1 flex min-h-0">
             <div key={view} className="crm-rise flex-1 min-w-0 px-4 pt-5 pb-24 sm:pb-6 overflow-y-auto">
               <BroadcastBanners />
+              {view === "today" && (
+              <TodayQueue
+                onSelectLead={(leadId, leadName) => {
+                  const found = allLeads.find((l) => l.id === leadId);
+                  if (found) { setSelectedLead(found); return; }
+                  setSelectedLead({ id: leadId, name: leadName } as Lead);
+                }}
+              />
+            )}
               {view === "due" && (
               <CallReminders
                 states={states}
@@ -880,11 +1147,22 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
                 onSelectLead={(l) => setSelectedLead(l as unknown as Lead)}
               />
             )}
+            {view === "tasks" && (
+              <TasksView onSelectLead={(leadId) => selectLeadById(leadId)} />
+            )}
             {view === "all" && (
-              <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} selectedLeadId={selectedLead?.id} />
+              <AllLeads key={allLeadsKey} states={states} onSelectLead={setSelectedLead} userName={userName} selectedLeadId={selectedLead?.id} initialFilters={pendingFilters} onUpdateState={updateState} />
             )}
             {view === "pipeline" && (
-              <DealsBoard leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
+              <DealsBoard leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} onStageChange={(leadId, stage) => updateState(leadId, { stage })} />
+            )}
+            {view === "smartlists" && (
+              <SmartLists
+                railMode
+                currentFilters={{}}
+                userName={userName}
+                onApply={(f) => { setPendingFilters(f); setAllLeadsKey((k) => k + 1); setView("all"); }}
+              />
             )}
           </div>
 

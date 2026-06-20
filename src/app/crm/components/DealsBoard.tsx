@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Flame, Zap, Phone, Mail, User, TrendingUp, Trophy, Target } from "lucide-react";
 
 /* These mirror the live data shapes Pipeline.tsx receives. DealsBoard is a drop-in
@@ -24,6 +24,10 @@ interface Props {
   states: Record<string, LeadState>;
   submissions: Submission[];
   onSelectLead: (lead: Lead) => void;
+  // Optional drag-and-drop handler. When provided, cards become draggable and
+  // dropping a card on another column reports the new live `stage` for the lead.
+  // The board moves the card optimistically; the parent persists the change.
+  onStageChange?: (leadId: string, stage: string) => void;
 }
 
 const H = { fontFamily: "var(--font-heading)" };
@@ -65,14 +69,35 @@ function dealValue(lead: Lead, subByLead: Map<string, Submission>): number {
   return estimateValue(lead);
 }
 
-export default function DealsBoard({ leads, states, submissions, onSelectLead }: Props) {
+// Live `stage` value to persist when a card is dropped on a column — the first
+// stage that funnels into that column (e.g. "Contacted" → "called").
+const colDropStage = (col: StageCol): string => col.stages[0] ?? col.key;
+
+export default function DealsBoard({ leads, states, submissions, onSelectLead, onStageChange }: Props) {
+  const dndEnabled = !!onStageChange;
+  // Optimistic stage overrides applied on drop, keyed by leadId. Cleared per
+  // lead once the parent's `states` catches up to the dropped value.
+  const [moved, setMoved] = useState<Record<string, string>>({});
+  // Column currently being hovered during a drag, for a drop-target highlight.
+  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
+
   const subByLead = useMemo(() => {
     const m = new Map<string, Submission>();
     for (const s of submissions) m.set(s.leadId, s);
     return m;
   }, [submissions]);
 
-  // Bucket leads into HubSpot-style columns from their live stage.
+  function handleDrop(col: StageCol, leadId: string) {
+    setDragOverCol(null);
+    if (!onStageChange || !leadId) return;
+    const target = colDropStage(col);
+    const current = moved[leadId] ?? states[leadId]?.stage ?? "to_call";
+    if (current === target) return;
+    setMoved((m) => ({ ...m, [leadId]: target })); // optimistic local move
+    onStageChange(leadId, target);
+  }
+
+  // Bucket leads into HubSpot-style columns from their (possibly overridden) stage.
   const board = useMemo(() => {
     const stageToCol = new Map<string, StageCol>();
     for (const col of COLUMNS) for (const s of col.stages) stageToCol.set(s, col);
@@ -80,9 +105,12 @@ export default function DealsBoard({ leads, states, submissions, onSelectLead }:
     const buckets: Record<string, Lead[]> = Object.fromEntries(COLUMNS.map((c) => [c.key, []]));
     for (const lead of leads) {
       const state = states[lead.id];
-      const stage = state?.stage || "to_call";
-      // Surface untouched leads in "New" only if they have activity or a strong score.
-      if (stage === "to_call" && !state?.lastContacted && (lead.outreach_score ?? 0) < 80) continue;
+      const override = moved[lead.id];
+      const realStage = state?.stage || "to_call";
+      const stage = override && override !== realStage ? override : realStage;
+      // Surface untouched leads in "New" only if they have activity or a strong
+      // score — unless the rep just dragged one here, which always shows it.
+      if (stage === "to_call" && !override && !state?.lastContacted && (lead.outreach_score ?? 0) < 80) continue;
       const col = stageToCol.get(stage);
       if (col) buckets[col.key].push(lead);
     }
@@ -92,7 +120,7 @@ export default function DealsBoard({ leads, states, submissions, onSelectLead }:
       buckets[key].sort((a, b) => dealValue(b, subByLead) - dealValue(a, subByLead));
     }
     return buckets;
-  }, [leads, states, subByLead]);
+  }, [leads, states, subByLead, moved]);
 
   // Per-column $ totals + a weighted pipeline forecast across open columns.
   const { colTotals, openValue, weighted, wonValue, openCount } = useMemo(() => {
@@ -143,9 +171,13 @@ export default function DealsBoard({ leads, states, submissions, onSelectLead }:
         {COLUMNS.map((col) => {
           const items = board[col.key] ?? [];
           const total = colTotals[col.key] ?? 0;
+          const isDropTarget = dragOverCol === col.key;
           return (
             <div key={col.key}
-              className="shrink-0 w-64 sm:flex-1 sm:min-w-[200px] snap-start flex flex-col rounded-2xl border border-[var(--crm-border)] bg-[var(--crm-surface-2)]">
+              onDragOver={dndEnabled ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; if (dragOverCol !== col.key) setDragOverCol(col.key); } : undefined}
+              onDragLeave={dndEnabled ? (e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOverCol((c) => (c === col.key ? null : c)); } : undefined}
+              onDrop={dndEnabled ? (e) => { e.preventDefault(); handleDrop(col, e.dataTransfer.getData("text/plain")); } : undefined}
+              className={`shrink-0 w-64 sm:flex-1 sm:min-w-[200px] snap-start flex flex-col rounded-2xl border bg-[var(--crm-surface-2)] transition-colors ${isDropTarget ? "border-[var(--crm-accent)] bg-[var(--crm-accent-weak)]" : "border-[var(--crm-border)]"}`}>
               {/* Column header */}
               <div className="flex items-center justify-between gap-2 px-3.5 py-3 border-b border-[var(--crm-border)]">
                 <div className="flex items-center gap-2 min-w-0">
@@ -160,7 +192,8 @@ export default function DealsBoard({ leads, states, submissions, onSelectLead }:
               <div className="p-2 space-y-2 min-h-[120px] flex-1">
                 {items.slice(0, 12).map((lead) => (
                   <DealCard key={lead.id} lead={lead} value={dealValue(lead, subByLead)}
-                    sub={subByLead.get(lead.id)} onClick={() => onSelectLead(lead)} />
+                    sub={subByLead.get(lead.id)} onClick={() => onSelectLead(lead)}
+                    draggable={dndEnabled} />
                 ))}
                 {items.length > 12 && (
                   <p className="text-center text-[11px] text-[var(--crm-text-3)] py-2">+{items.length - 12} more</p>
@@ -181,13 +214,15 @@ export default function DealsBoard({ leads, states, submissions, onSelectLead }:
   );
 }
 
-function DealCard({ lead, value, sub, onClick }: {
-  lead: Lead; value: number; sub?: Submission; onClick: () => void;
+function DealCard({ lead, value, sub, onClick, draggable }: {
+  lead: Lead; value: number; sub?: Submission; onClick: () => void; draggable?: boolean;
 }) {
   const won = sub?.status === "accepted";
   return (
     <div onClick={onClick}
-      className="group rounded-xl border border-[var(--crm-border)] bg-[var(--crm-surface)] p-3 cursor-pointer hover:border-[var(--crm-accent-border)] transition-colors active:scale-[0.98]">
+      draggable={draggable}
+      onDragStart={draggable ? (e) => { e.dataTransfer.setData("text/plain", lead.id); e.dataTransfer.effectAllowed = "move"; } : undefined}
+      className={`group rounded-xl border border-[var(--crm-border)] bg-[var(--crm-surface)] p-3 cursor-pointer hover:border-[var(--crm-accent-border)] transition-colors active:scale-[0.98] ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}>
       <div className="flex items-start justify-between gap-1.5">
         <p className="text-sm font-semibold text-[var(--crm-text)] leading-tight line-clamp-2 flex-1">{lead.name}</p>
         {lead.tier === "A" && <Flame size={11} className="text-[var(--crm-accent)] shrink-0 mt-0.5" />}

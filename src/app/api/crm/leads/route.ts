@@ -100,7 +100,7 @@ export function clearLeadsCache() {
   cacheTime = 0;
 }
 
-function parseCSVLine(line: string): string[] {
+export function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = "";
   let inQuotes = false;
@@ -120,7 +120,7 @@ function parseCSVLine(line: string): string[] {
   return result;
 }
 
-async function getLeads(): Promise<Lead[]> {
+export async function getLeads(): Promise<Lead[]> {
   if (cachedLeads && Date.now() - cacheTime < CACHE_TTL) return cachedLeads;
 
   // Resilient load: the base lead list comes from an external CSV. If that source

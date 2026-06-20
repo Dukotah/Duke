@@ -21,6 +21,10 @@ interface Props {
   states: Record<string, LeadState>;
   submissions: Submission[];
   onSelectLead: (lead: Lead) => void;
+  // Optional drag-and-drop handler. When provided, cards become draggable and
+  // dropping a card on a stage column reports the new live `stage` for the lead.
+  // The board moves the card optimistically; the parent persists the change.
+  onStageChange?: (leadId: string, stage: string) => void;
 }
 
 const STAGES = [
@@ -59,12 +63,14 @@ function PipelineSelect<T extends string>({ value, onChange, children, icon: Ico
   );
 }
 
-function MiniCard({ lead, state, sub, onClick }: {
-  lead: Lead; state: LeadState; sub?: Submission; onClick: () => void;
+function MiniCard({ lead, state, sub, onClick, draggable }: {
+  lead: Lead; state: LeadState; sub?: Submission; onClick: () => void; draggable?: boolean;
 }) {
   return (
     <div onClick={onClick}
-      className="bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-xl p-3 cursor-pointer hover:border-[var(--crm-accent-border)] transition-all group active:scale-[0.98]">
+      draggable={draggable}
+      onDragStart={draggable ? (e) => { e.dataTransfer.setData("text/plain", lead.id); e.dataTransfer.effectAllowed = "move"; } : undefined}
+      className={`bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-xl p-3 cursor-pointer hover:border-[var(--crm-accent-border)] transition-all group active:scale-[0.98] ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}>
       <div className="flex items-start justify-between gap-1">
         <p className="text-xs font-bold text-[var(--crm-text)] leading-tight line-clamp-2 flex-1" style={H}>{lead.name}</p>
         {lead.tier === "A" && <Flame size={10} className="text-orange-400 shrink-0 mt-0.5" />}
@@ -88,11 +94,25 @@ function MiniCard({ lead, state, sub, onClick }: {
   );
 }
 
-export default function Pipeline({ leads, states, submissions, onSelectLead }: Props) {
+export default function Pipeline({ leads, states, submissions, onSelectLead, onStageChange }: Props) {
   const [q, setQ] = useState("");
   const [stageFilter, setStageFilter] = useState<string>("");
   const [owner, setOwner] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortKey>("score");
+  const dndEnabled = !!onStageChange;
+  // Optimistic stage overrides applied on drop, keyed by leadId. An override
+  // wins over the real state until the parent's `states` catches up.
+  const [moved, setMoved] = useState<Record<string, string>>({});
+  const [dragOverStage, setDragOverStage] = useState<string | null>(null);
+
+  function handleDrop(stageKey: string, leadId: string) {
+    setDragOverStage(null);
+    if (!onStageChange || !leadId) return;
+    const current = moved[leadId] ?? states[leadId]?.stage ?? "to_call";
+    if (current === stageKey) return;
+    setMoved((m) => ({ ...m, [leadId]: stageKey })); // optimistic local move
+    onStageChange(leadId, stageKey);
+  }
 
   // Owners present in the current lead set (for the owner filter dropdown).
   const owners = useMemo(() => {
@@ -125,11 +145,15 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
 
     for (const lead of visibleLeads) {
       const state = states[lead.id];
-      if (!state || !state.stage || state.stage === "to_call") {
-        // Only show in To Call if they have some activity or high score
-        if (state?.lastContacted || lead.outreach_score >= 80) buckets["to_call"].push(lead);
-      } else if (buckets[state.stage]) {
-        buckets[state.stage].push(lead);
+      const override = moved[lead.id];
+      const realStage = state?.stage || "to_call";
+      const stage = override && override !== realStage ? override : realStage;
+      if (!stage || stage === "to_call") {
+        // Only show in To Call if they have some activity, high score, or were
+        // just dragged here.
+        if (override || state?.lastContacted || lead.outreach_score >= 80) buckets["to_call"].push(lead);
+      } else if (buckets[stage]) {
+        buckets[stage].push(lead);
       }
     }
 
@@ -145,7 +169,7 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
     };
     for (const key of Object.keys(buckets)) buckets[key].sort(cmp);
     return buckets;
-  }, [visibleLeads, states, sortBy]);
+  }, [visibleLeads, states, sortBy, moved]);
 
   const totalDeals = byStage["won"].length + byStage["submitted"].length;
   const interested = byStage["interested"].length;
@@ -203,8 +227,13 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
       <div className={`flex gap-3 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 snap-x ${stageFilter ? "lg:grid-cols-3" : "lg:grid-cols-6"}`}>
         {shownStages.map((stage) => {
           const stageLeads = byStage[stage.key] ?? [];
+          const isDropTarget = dragOverStage === stage.key;
           return (
-            <div key={stage.key} className={`shrink-0 w-52 sm:w-auto snap-start flex flex-col rounded-2xl border p-3 min-h-[200px] ${stage.bg} ${stage.border}`}>
+            <div key={stage.key}
+              onDragOver={dndEnabled ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; if (dragOverStage !== stage.key) setDragOverStage(stage.key); } : undefined}
+              onDragLeave={dndEnabled ? (e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOverStage((s) => (s === stage.key ? null : s)); } : undefined}
+              onDrop={dndEnabled ? (e) => { e.preventDefault(); handleDrop(stage.key, e.dataTransfer.getData("text/plain")); } : undefined}
+              className={`shrink-0 w-52 sm:w-auto snap-start flex flex-col rounded-2xl border p-3 min-h-[200px] transition-colors ${isDropTarget ? "border-[var(--crm-accent)] bg-[var(--crm-accent-weak)]" : `${stage.bg} ${stage.border}`}`}>
               <div className="flex items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${stage.dot}`} />
@@ -215,7 +244,8 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
               <div className="flex-1 space-y-2">
                 {stageLeads.slice(0, 8).map((lead) => (
                   <MiniCard key={lead.id} lead={lead} state={states[lead.id] ?? { status: "new", stage: "to_call", notes: "" }}
-                    sub={submissions.find((s) => s.leadId === lead.id)} onClick={() => onSelectLead(lead)} />
+                    sub={submissions.find((s) => s.leadId === lead.id)} onClick={() => onSelectLead(lead)}
+                    draggable={dndEnabled} />
                 ))}
                 {stageLeads.length > 8 && (
                   <p className="text-[10px] text-[var(--crm-text-3)] text-center py-2" style={H}>+{stageLeads.length - 8} more</p>

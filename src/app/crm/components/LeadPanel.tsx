@@ -176,6 +176,8 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const [showObjections, setShowObjections] = useState(false);
   const [showCadence, setShowCadence] = useState(false);
   const [calOverride, setCalOverride] = useState("");
+  // "+ Task / Snooze" — quick task creation from the lead drawer.
+  const [taskState, setTaskState] = useState<"idle" | "saving" | "done">("idle");
   // Local-only demo-site generation (see /api/crm/leads/generate-site).
   const [genState, setGenState] = useState<"idle" | "loading" | "error">("idle");
   const [genError, setGenError] = useState("");
@@ -286,6 +288,66 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
     onUpdate({ followUpDate: dateStr });
     setShowFollowUp(false);
   };
+
+  // Create a task for this lead. `inDays` sets the due date (default tomorrow);
+  // `type` is call/email/todo. Posts to /api/crm/tasks (the Tasks view reads it).
+  const createTask = async (type: "call" | "email" | "todo", inDays: number, title?: string) => {
+    setTaskState("saving");
+    const due = new Date(); due.setDate(due.getDate() + inDays);
+    try {
+      await fetch("/api/crm/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leadId: lead.id,
+          leadName: lead.name,
+          title: title ?? `Follow up with ${lead.name}`,
+          type,
+          dueAt: due.toISOString(),
+        }),
+      });
+      setTaskState("done");
+      setTimeout(() => setTaskState("idle"), 1800);
+    } catch {
+      setTaskState("idle");
+    }
+  };
+
+  const taskBlock = (
+    <div className="rounded-2xl border border-[var(--crm-border)] bg-[var(--crm-surface)] px-4 py-3">
+      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
+        <CalendarClock size={11} />Task &amp; Snooze
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <button onClick={() => createTask("call", 1)} disabled={taskState === "saving"}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)] border border-[var(--crm-accent-border)] hover:opacity-80 transition-all disabled:opacity-50"
+          style={H}>
+          <PhoneCall size={11} />Call tomorrow
+        </button>
+        <button onClick={() => createTask("call", 3)} disabled={taskState === "saving"}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] transition-all disabled:opacity-50"
+          style={H}>
+          <CalendarClock size={11} />Snooze 3 days
+        </button>
+        <button onClick={() => createTask("email", 7, `Email ${lead.name}`)} disabled={taskState === "saving"}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] transition-all disabled:opacity-50"
+          style={H}>
+          <Mail size={11} />Email in a week
+        </button>
+        <button onClick={() => createTask("todo", 0)} disabled={taskState === "saving"}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] transition-all disabled:opacity-50"
+          style={H}>
+          <StickyNote size={11} />Today
+        </button>
+      </div>
+      {taskState === "done" && (
+        <p className="text-[11px] text-emerald-500 mt-2 flex items-center gap-1.5" style={H}><Check size={11} />Task added — see the Tasks view.</p>
+      )}
+      {taskState === "saving" && (
+        <p className="text-[11px] text-[var(--crm-text-3)] mt-2" style={H}>Saving…</p>
+      )}
+    </div>
+  );
 
   const handleSubmitted = () => {
     postActivity({ type: "submitted" });
@@ -533,6 +595,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       </div>
       {lead.thumbnailUrl && (
         <a href={effPreviewUrl} target="_blank" rel="noopener noreferrer" className="block mt-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={lead.thumbnailUrl} alt="Demo preview" loading="lazy"
             className="w-full rounded-xl border border-[var(--crm-border)] hover:border-[var(--crm-accent-border)] transition-colors" />
         </a>
@@ -1084,6 +1147,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                 {engagementBlock}
                 {outcomeBlock}
                 {followUpBlock}
+                {taskBlock}
                 <div>
                   <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
                     <Activity size={11} />Timeline
@@ -1108,6 +1172,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                 {callBlock}
                 {outcomeBlock}
                 {followUpBlock}
+                {taskBlock}
                 {scriptBlock}
                 {fullScriptBlock}
                 {objectionsBlock}
