@@ -190,19 +190,74 @@ body {
   }
 }
 
+/* ─── CRM semantic theme tokens ─────────────────────────────────────────────
+   The CRM supports a light/dark toggle. Components read these --crm-* tokens
+   (via Tailwind arbitrary values like bg-[var(--crm-surface)] or the helper
+   classes below) instead of hardcoded hex, so flipping data-crm-theme on the
+   CRM root element re-themes the whole app. Dark is the default. */
+:root,
+[data-crm-theme="dark"] {
+  --crm-bg: #0e0e10;                       /* app canvas */
+  --crm-bg-glow: rgba(249, 115, 22, 0.07); /* ambient brand glow at top */
+  --crm-surface: #1c1c1f;                  /* cards / list rows */
+  --crm-surface-2: #111113;                /* rails / docked panels */
+  --crm-surface-3: #26262b;                /* hover / active */
+  --crm-chrome: rgba(14, 14, 16, 0.82);    /* translucent sticky chrome */
+  --crm-border: rgba(255, 255, 255, 0.08);
+  --crm-border-strong: rgba(255, 255, 255, 0.16);
+  --crm-text: rgba(255, 255, 255, 0.92);
+  --crm-text-2: rgba(255, 255, 255, 0.55);
+  --crm-text-3: rgba(255, 255, 255, 0.32);
+  --crm-accent: #f97316;                   /* fills, borders, icons */
+  --crm-accent-text: #f97316;              /* accent as text (AA on dark) */
+  --crm-accent-weak: rgba(249, 115, 22, 0.12);
+  --crm-accent-border: rgba(249, 115, 22, 0.40);
+  --crm-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --crm-surface-top: rgba(255, 255, 255, 0.035); /* top-edge sheen on cards */
+  color-scheme: dark;
+}
+
+[data-crm-theme="light"] {
+  --crm-bg: #f5f5f7;
+  --crm-bg-glow: rgba(249, 115, 22, 0.05);
+  --crm-surface: #ffffff;
+  --crm-surface-2: #fbfbfc;
+  --crm-surface-3: #eef0f2;
+  --crm-chrome: rgba(255, 255, 255, 0.85);
+  --crm-border: rgba(15, 15, 20, 0.10);
+  --crm-border-strong: rgba(15, 15, 20, 0.18);
+  --crm-text: #18181b;
+  --crm-text-2: rgba(24, 24, 27, 0.62);
+  --crm-text-3: rgba(24, 24, 27, 0.42);
+  --crm-accent: #f97316;
+  --crm-accent-text: #c2540a;              /* AA-compliant orange on light */
+  --crm-accent-weak: rgba(249, 115, 22, 0.10);
+  --crm-accent-border: rgba(249, 115, 22, 0.45);
+  --crm-shadow: 0 1px 2px rgba(15, 15, 20, 0.06), 0 8px 24px -14px rgba(15, 15, 20, 0.18);
+  --crm-surface-top: rgba(255, 255, 255, 0);
+  color-scheme: light;
+}
+
+/* Token-backed helper classes for the shell (terser than arbitrary values). */
+.crm-text   { color: var(--crm-text); }
+.crm-text-2 { color: var(--crm-text-2); }
+.crm-text-3 { color: var(--crm-text-3); }
+.crm-bd     { border-color: var(--crm-border); }
+.crm-accent-text { color: var(--crm-accent-text); }
+.crm-panel  { background-color: var(--crm-surface-2); }
+
 /* ─── CRM shell surface system ──────────────────────────────────────────────
-   Dark, futuristic surfaces with layered depth, a hairline top highlight, and
-   an ambient brand glow. Used across the CRM dashboard shell (nav/header/cards). */
+   Layered surfaces with a hairline top highlight + ambient brand glow, now
+   token-driven so they re-theme with data-crm-theme. */
 
 .crm-surface {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0) 60%),
-    #1c1c1f;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+    linear-gradient(180deg, var(--crm-surface-top) 0%, transparent 60%),
+    var(--crm-surface);
+  border: 1px solid var(--crm-border);
   box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
-    0 1px 2px rgba(0, 0, 0, 0.4),
-    0 8px 24px -12px rgba(0, 0, 0, 0.6);
+    0 1px 0 0 var(--crm-surface-top) inset,
+    var(--crm-shadow);
 }
 
 .crm-surface-hover {
@@ -210,23 +265,23 @@ body {
 }
 
 .crm-surface-hover:hover {
-  border-color: rgba(249, 115, 22, 0.28);
+  border-color: var(--crm-accent-border);
   box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
-    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 1px 0 0 var(--crm-surface-top) inset,
+    0 2px 4px var(--crm-bg-glow),
     0 16px 36px -14px rgba(249, 115, 22, 0.22);
 }
 
-/* App backdrop: deep base with a faint radial brand glow at the top */
+/* App backdrop: base canvas with a faint radial brand glow at the top */
 .crm-backdrop {
   background:
-    radial-gradient(120% 60% at 50% -10%, rgba(249, 115, 22, 0.07) 0%, rgba(249, 115, 22, 0) 55%),
-    #0e0e10;
+    radial-gradient(120% 60% at 50% -10%, var(--crm-bg-glow) 0%, transparent 55%),
+    var(--crm-bg);
 }
 
 /* Translucent sticky chrome (header / bottom nav) */
 .crm-chrome {
-  background: rgba(14, 14, 16, 0.82);
+  background: var(--crm-chrome);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
 }

@@ -7,8 +7,10 @@ import {
   Flame, Zap, ArrowUpDown, X, LayoutGrid,
   BookOpen, List, DollarSign,
   AlertCircle, Plus, CalendarClock, Sparkles, Globe, MessageSquareReply,
+  Users, Sun, Moon, LogOut,
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import { CrmThemeProvider, useCrmTheme } from "./useCrmTheme";
 import LeadPanel from "./components/LeadPanel";
 import AddLeadModal from "./components/AddLeadModal";
 import CallTimer from "./components/CallTimer";
@@ -184,14 +186,6 @@ interface LeadsResponse {
 
 type View = "due" | "new" | "responded" | "all" | "pipeline";
 
-const CHIPS: { key: View; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
-  { key: "due", label: "Due today", icon: CalendarClock },
-  { key: "new", label: "New", icon: Sparkles },
-  { key: "responded", label: "Responded", icon: MessageSquareReply },
-  { key: "all", label: "All", icon: List },
-  { key: "pipeline", label: "Pipeline", icon: LayoutGrid },
-];
-
 const LIMIT = 50;
 const H = { fontFamily: "var(--font-heading)" };
 
@@ -232,6 +226,19 @@ function Select({ value, onChange, children, icon: Icon }: {
         {children}
       </select>
     </div>
+  );
+}
+
+// Icon button for the left nav rail footer (tools + account actions).
+function RailButton({ icon: Icon, label, onClick }: {
+  icon: React.ComponentType<{ size?: number; className?: string }>; label: string; onClick: () => void;
+}) {
+  return (
+    <button onClick={onClick} title={label}
+      className="flex flex-col items-center gap-1 rounded-xl py-2 text-[var(--crm-text-3)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)] transition-colors">
+      <Icon size={18} />
+      <span className="text-[9px] font-semibold tracking-tight leading-none">{label}</span>
+    </button>
   );
 }
 
@@ -535,8 +542,17 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
 
 // ─── Dashboard shell ──────────────────────────────────────────────────────────
 
-export default function CRMDashboard({ userId, userName, role }: { userId: string; userName: string; role: "admin" | "rep" }) {
+export default function CRMDashboard(props: { userId: string; userName: string; role: "admin" | "rep" }) {
+  return (
+    <CrmThemeProvider>
+      <CRMWorkspace {...props} />
+    </CrmThemeProvider>
+  );
+}
+
+function CRMWorkspace({ userId, userName, role }: { userId: string; userName: string; role: "admin" | "rep" }) {
   const router = useRouter();
+  const { theme, toggle: toggleTheme } = useCrmTheme();
   const [view, setView] = useState<View>("due");
   const [showScripts, setShowScripts] = useState(false);
   const [showEarnings, setShowEarnings] = useState(false);
@@ -677,6 +693,20 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
     (s) => s.followUpDate && !["lost", "won", "submitted"].includes(s.stage) && s.followUpDate <= todayISO
   ).length;
 
+  // Left nav-rail sections. Each drives the center list in place (no navigation),
+  // FUB-style: a persistent rail rather than top chips.
+  const navItems: { key: View; label: string; icon: React.ComponentType<{ size?: number; className?: string }>; badge: number | null }[] = [
+    { key: "due", label: "Follow-ups", icon: CalendarClock, badge: dueCount || null },
+    { key: "new", label: "Demos", icon: Sparkles, badge: null },
+    { key: "responded", label: "Replies", icon: MessageSquareReply, badge: respondedCount || null },
+    { key: "all", label: "People", icon: Users, badge: null },
+    { key: "pipeline", label: "Pipeline", icon: LayoutGrid, badge: interestedCount || null },
+  ];
+  const sectionTitle: Record<View, string> = {
+    due: "Follow-ups due", new: "Demos & new leads", responded: "Replies",
+    all: "All people", pipeline: "Pipeline",
+  };
+
   return (
     <>
       {activeLead && (
@@ -755,111 +785,81 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
         </div>
       )}
 
-      <div className="h-[100dvh] overflow-hidden crm-backdrop flex flex-col text-white/80" style={H}>
+      <div data-crm-theme={theme} className="h-[100dvh] overflow-hidden crm-backdrop flex text-[var(--crm-text)]" style={H}>
 
-        {loadError && (
-          <div role="alert" className="flex items-center justify-between gap-3 px-4 py-2.5 bg-red-500/15 border-b border-red-500/30 text-red-200 text-sm">
-            <span>{loadError}</span>
-            <button onClick={() => setLoadError(null)} className="shrink-0 text-red-200/70 hover:text-red-100 text-xs font-semibold uppercase tracking-wide">Dismiss</button>
-          </div>
-        )}
-
-        {/* Top bar */}
-        <header className="border-b border-white/[0.06] crm-chrome sticky top-0 z-30 shrink-0">
-          <div className="max-w-[1800px] mx-auto px-4 h-15 py-2.5 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="text-[17px] font-bold text-white tracking-tight">Copper Bay<span className="text-[#F97316]">Tech</span></span>
-              <span className="hidden sm:inline-flex items-center text-[11px] uppercase tracking-[0.14em] text-white/30 font-semibold border-l border-white/10 pl-2.5">Sales</span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-2.5">
-              {/* Stats strip — hidden below md; Due survives below md as the chip badge */}
-              <div className="hidden md:flex items-center gap-2 mr-1">
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-white/55 bg-white/[0.04] border border-white/10 px-2.5 py-1.5 rounded-full" style={H}>
-                  <span className="text-white/35">Today</span>
-                  <span className="text-white tabular-nums">{loggedToday ?? "—"}<span className="text-white/30">/50</span></span>
-                </span>
-                <button onClick={() => setView("due")}
-                  className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-full border transition-colors ${dueCount > 0 ? "text-amber-300 bg-amber-400/10 border-amber-400/25 hover:bg-amber-400/15" : "text-white/45 bg-white/[0.04] border-white/10 hover:text-white/70"}`}
-                  style={H}>
-                  <CalendarClock size={11} />
-                  <span className="tabular-nums">{dueCount}</span><span className="text-white/35 hidden lg:inline">due</span>
-                </button>
-                <button onClick={() => setShowEarnings(true)}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-green-300 bg-green-400/10 border border-green-400/25 px-2.5 py-1.5 rounded-full hover:bg-green-400/15 transition-colors"
-                  style={H} title="View earnings breakdown">
-                  ${earnedTotal.toLocaleString()}
-                  {pendingCount > 0 && <span className="text-white/35 font-medium hidden lg:inline">· {pendingCount} pending</span>}
-                </button>
-              </div>
-              {interestedCount > 0 && (
-                <button onClick={() => setView("pipeline")}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/25 px-2.5 py-1.5 rounded-full hover:bg-[#F97316]/15 transition-colors"
-                  style={H}>
-                  🔥 {interestedCount} interested
-                </button>
-              )}
-              {/* Earnings — mobile/below-md fallback for the green stats button (which is md:hidden above). Carries the pending badge so the signal survives on phones. */}
-              <button onClick={() => setShowEarnings(true)}
-                className="md:hidden relative inline-flex items-center gap-1.5 text-xs font-semibold text-green-300 bg-green-400/10 border border-green-400/25 px-2.5 py-1.5 rounded-full hover:bg-green-400/15 transition-colors"
-                style={H} title="View earnings breakdown" aria-label="View earnings">
-                <DollarSign size={12} /><span className="hidden sm:inline tabular-nums">{earnedTotal.toLocaleString()}</span>
-                {pendingCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-amber-400 text-black text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center" aria-label={`${pendingCount} pending`}>{pendingCount}</span>
-                )}
-              </button>
-              <button onClick={() => setShowScripts(true)}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 px-2.5 py-1.5 rounded-full transition-colors"
-                style={H} title="Scripts & guide">
-                <BookOpen size={12} /><span className="hidden sm:inline">Scripts</span>
-              </button>
-              {role === "admin" && (
-                <button onClick={() => router.push("/crm/admin")}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 px-2.5 py-1.5 rounded-full transition-colors"
-                  style={H} title="Admin dashboard — analytics, leaderboard, revenue">
-                  <LayoutGrid size={12} /><span className="hidden sm:inline">Dashboard</span>
-                </button>
-              )}
-              <div className="hidden sm:flex items-center gap-2 pl-1">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#F97316]/30 to-[#F97316]/10 ring-1 ring-[#F97316]/30 flex items-center justify-center text-xs font-bold text-[#F97316]" style={H}>
-                  {userName.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-xs font-medium text-white/55" style={H}>{userName}</span>
-              </div>
-              <button onClick={handleLogout} className="text-xs font-medium text-white/30 hover:text-white/60 transition-colors ml-0.5" style={H}>Sign out</button>
-            </div>
-          </div>
-        </header>
-
-        {/* View chips — drive the left list in place; no page navigation */}
-        <div className="border-b border-white/[0.06] crm-chrome shrink-0">
-          <div className="max-w-[1800px] mx-auto px-4 py-2 flex gap-2 overflow-x-auto">
-            {CHIPS.map((c) => {
-              const active = view === c.key;
-              const badge =
-                c.key === "due" && dueCount > 0 ? dueCount :
-                c.key === "responded" && respondedCount > 0 ? respondedCount :
-                null;
+        {/* ── Left nav rail (tablet+) — the persistent FUB-style navigation ── */}
+        <nav className="hidden sm:flex flex-col items-center w-[68px] shrink-0 crm-panel border-r border-[var(--crm-border)] py-3" aria-label="CRM sections">
+          <div className="w-9 h-9 rounded-xl bg-[var(--crm-accent)] flex items-center justify-center text-white font-bold text-[13px] shrink-0" title="Copper Bay Tech — Sales" style={H}>CB</div>
+          <div className="mt-4 flex flex-col gap-1 w-full px-2">
+            {navItems.map((item) => {
+              const active = view === item.key;
               return (
-                <button key={c.key} onClick={() => setView(c.key)} aria-current={active ? "true" : undefined}
-                  className={`shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border transition-all ${active ? "bg-[#F97316]/12 text-[#F97316] border-[#F97316]/40" : "bg-white/[0.03] text-white/50 border-white/10 hover:text-white/80 hover:border-white/20"}`}
-                  style={H}>
-                  <c.icon size={13} />
-                  {c.label}
-                  {badge && (
-                    <span className="bg-[#F97316] text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center">{badge}</span>
-                  )}
+                <button key={item.key} onClick={() => setView(item.key)} title={item.label}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative flex flex-col items-center gap-1 rounded-xl py-2 transition-colors ${active ? "bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)]" : "text-[var(--crm-text-3)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)]"}`}>
+                  {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--crm-accent)]" />}
+                  <item.icon size={19} />
+                  <span className="text-[9px] font-semibold tracking-tight leading-none">{item.label}</span>
+                  {item.badge ? (
+                    <span className="absolute top-1 right-1.5 bg-[var(--crm-accent)] text-white text-[9px] font-bold rounded-full min-w-[15px] h-[15px] px-1 flex items-center justify-center">{item.badge}</span>
+                  ) : null}
                 </button>
               );
             })}
           </div>
-        </div>
 
-        {/* Main row — full-width cockpit. On desktop the lead detail docks in the
-            aside on the right; the list/work pane flexes to fill the rest. */}
-        <div className="flex-1 flex min-h-0 w-full max-w-[1800px] mx-auto">
-          <div key={view} className="crm-rise flex-1 min-w-0 px-4 pt-5 pb-24 overflow-y-auto">
-            <BroadcastBanners />
-            {view === "due" && (
+          {/* Rail footer — tools + theme + account */}
+          <div className="mt-auto flex flex-col gap-1 w-full px-2">
+            {role === "admin" && (
+              <RailButton icon={LayoutGrid} label="Reports" onClick={() => router.push("/crm/admin")} />
+            )}
+            <RailButton icon={DollarSign} label="Earnings" onClick={() => setShowEarnings(true)} />
+            <RailButton icon={BookOpen} label="Scripts" onClick={() => setShowScripts(true)} />
+            <RailButton icon={theme === "dark" ? Sun : Moon} label={theme === "dark" ? "Light" : "Dark"} onClick={toggleTheme} />
+            <RailButton icon={LogOut} label="Sign out" onClick={handleLogout} />
+            <div className="mx-auto mt-1 w-8 h-8 rounded-full bg-[var(--crm-accent-weak)] ring-1 ring-[var(--crm-accent-border)] flex items-center justify-center text-xs font-bold text-[var(--crm-accent-text)]" title={userName} style={H}>
+              {userName.charAt(0).toUpperCase()}
+            </div>
+          </div>
+        </nav>
+
+        {/* ── Main column ──────────────────────────────────────────────────── */}
+        <div className="flex-1 flex flex-col min-w-0">
+
+          {loadError && (
+            <div role="alert" className="flex items-center justify-between gap-3 px-4 py-2.5 bg-red-500/15 border-b border-red-500/30 text-red-200 text-sm">
+              <span>{loadError}</span>
+              <button onClick={() => setLoadError(null)} className="shrink-0 text-red-200/70 hover:text-red-100 text-xs font-semibold uppercase tracking-wide">Dismiss</button>
+            </div>
+          )}
+
+          {/* Slim section header */}
+          <header className="crm-chrome border-b border-[var(--crm-border)] shrink-0 h-14 flex items-center gap-3 px-4 z-20">
+            <h1 className="text-[15px] font-bold text-[var(--crm-text)] tracking-tight truncate" style={H}>{sectionTitle[view]}</h1>
+            <div className="ml-auto flex items-center gap-2">
+              <span className="hidden md:inline-flex items-center gap-1 text-xs font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] px-2.5 py-1.5 rounded-full" style={H}>
+                <span className="text-[var(--crm-text-3)]">Today</span>
+                <span className="text-[var(--crm-text)] tabular-nums">{loggedToday ?? "—"}<span className="text-[var(--crm-text-3)]">/50</span></span>
+              </span>
+              <button onClick={() => setShowEarnings(true)}
+                className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-green-500 dark:text-green-300 bg-green-400/10 border border-green-400/25 px-2.5 py-1.5 rounded-full hover:bg-green-400/15 transition-colors"
+                style={H} title="View earnings breakdown">
+                <DollarSign size={12} />{earnedTotal.toLocaleString()}
+                {pendingCount > 0 && <span className="text-[var(--crm-text-3)] font-medium hidden lg:inline">· {pendingCount} pending</span>}
+              </button>
+              <button onClick={() => setShowAddLead(true)}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-[var(--crm-accent)] px-3 py-1.5 rounded-full hover:brightness-110 transition-all active:scale-95"
+                style={H}>
+                <Plus size={14} /><span className="hidden sm:inline">Add lead</span>
+              </button>
+            </div>
+          </header>
+
+          {/* Main row — list + docked detail */}
+          <div className="flex-1 flex min-h-0">
+            <div key={view} className="crm-rise flex-1 min-w-0 px-4 pt-5 pb-24 sm:pb-6 overflow-y-auto">
+              <BroadcastBanners />
+              {view === "due" && (
               <CallReminders
                 states={states}
                 allLeads={allLeads}
@@ -888,36 +888,58 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
             )}
           </div>
 
-          {/* Docked lead detail (desktop cockpit). Always rendered on desktop so the
-              two-pane frame is fixed; shows the empty state until a lead is picked. */}
-          {isDesktop && (
-            <aside className="hidden lg:flex w-[480px] xl:w-[560px] 2xl:w-[640px] shrink-0 flex-col border-l border-white/[0.07] bg-[#111113] overflow-hidden pb-4">
-              {selectedLead ? (
-                <LeadPanel inline lead={selectedLead}
-                  state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
-                  submission={submissions.find((s) => s.leadId === selectedLead.id)}
-                  repName={userName}
-                  onClose={() => setSelectedLead(null)}
-                  onUpdate={(patch) => updateState(selectedLead.id, patch)}
-                  onSubmitted={refreshSubs} />
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center gap-3 px-8 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center">
-                    <List size={24} className="text-white/25" />
+            {/* Docked lead detail (desktop cockpit). Always rendered on desktop so the
+                two-pane frame is fixed; shows the empty state until a lead is picked. */}
+            {isDesktop && (
+              <aside className="hidden lg:flex w-[480px] xl:w-[560px] 2xl:w-[640px] shrink-0 flex-col border-l border-[var(--crm-border)] crm-panel overflow-hidden pb-4">
+                {selectedLead ? (
+                  <LeadPanel inline lead={selectedLead}
+                    state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
+                    submission={submissions.find((s) => s.leadId === selectedLead.id)}
+                    repName={userName}
+                    onClose={() => setSelectedLead(null)}
+                    onUpdate={(patch) => updateState(selectedLead.id, patch)}
+                    onSubmitted={refreshSubs} />
+                ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center gap-3 px-8 text-center">
+                    <div className="w-14 h-14 rounded-2xl bg-[var(--crm-surface-3)] border border-[var(--crm-border)] flex items-center justify-center">
+                      <List size={24} className="text-[var(--crm-text-3)]" />
+                    </div>
+                    <p className="text-sm font-bold text-[var(--crm-text-2)]" style={H}>Select a lead to start</p>
+                    <p className="text-xs text-[var(--crm-text-3)] max-w-[16rem] leading-relaxed" style={H}>Pick a lead from the list and their full workspace — email, call, outcomes and notes — opens here.</p>
                   </div>
-                  <p className="text-sm font-bold text-white/55" style={H}>Select a lead to start</p>
-                  <p className="text-xs text-white/30 max-w-[16rem] leading-relaxed" style={H}>Pick a lead from the list and their full workspace — email, call, outcomes and notes — opens here.</p>
-                </div>
-              )}
-            </aside>
-          )}
+                )}
+              </aside>
+            )}
+          </div>
+
+          {/* ── Mobile bottom nav (phones) — mirrors the desktop rail ────────── */}
+          <nav className="sm:hidden shrink-0 crm-chrome border-t border-[var(--crm-border)] flex items-center justify-around px-1 py-1.5" aria-label="CRM sections">
+            {navItems.map((item) => {
+              const active = view === item.key;
+              return (
+                <button key={item.key} onClick={() => setView(item.key)} aria-current={active ? "page" : undefined}
+                  className={`relative flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${active ? "text-[var(--crm-accent-text)]" : "text-[var(--crm-text-3)]"}`}>
+                  <item.icon size={18} />
+                  <span className="text-[9px] font-semibold leading-none">{item.label}</span>
+                  {item.badge ? (
+                    <span className="absolute top-0 right-1 bg-[var(--crm-accent)] text-white text-[8px] font-bold rounded-full min-w-[13px] h-[13px] px-0.5 flex items-center justify-center">{item.badge}</span>
+                  ) : null}
+                </button>
+              );
+            })}
+            <button onClick={toggleTheme} aria-label="Toggle theme"
+              className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg text-[var(--crm-text-3)]">
+              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+              <span className="text-[9px] font-semibold leading-none">{theme === "dark" ? "Light" : "Dark"}</span>
+            </button>
+          </nav>
         </div>
 
-        {/* FAB — add lead. On lg+ the lead detail docks in the right aside
-            (480/560/640px wide); offset the FAB left of it so it floats over the
-            list pane and never lands on the LeadPanel's footer/action region. */}
+        {/* FAB — add lead (phones only; desktop uses the header button). Sits
+            above the mobile bottom nav. */}
         <button onClick={() => setShowAddLead(true)}
-          className="crm-glow-brand fixed bottom-5 right-4 lg:right-[504px] xl:right-[584px] 2xl:right-[664px] z-40 w-[54px] h-[54px] rounded-full flex items-center justify-center bg-[#F97316] transition-all duration-200 active:scale-95 hover:brightness-110 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e0e10]"
+          className="crm-glow-brand sm:hidden fixed bottom-20 right-4 z-40 w-[54px] h-[54px] rounded-full flex items-center justify-center bg-[var(--crm-accent)] transition-all duration-200 active:scale-95 hover:brightness-110 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--crm-bg)]"
           aria-label="Add lead">
           <Plus size={22} className="text-white" strokeWidth={2.4} />
         </button>
