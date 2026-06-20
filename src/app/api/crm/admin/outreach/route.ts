@@ -40,15 +40,21 @@ export async function GET(req: NextRequest) {
 // POST /api/crm/admin/outreach — manually suppress an address (admin opt-out
 // on someone's behalf, e.g. they replied "unsubscribe" or asked by phone).
 export async function POST(req: NextRequest) {
-  const denied = requireAdmin(req);
-  if (denied) return denied;
-  const { email } = await req.json();
-  const clean = typeof email === "string" ? email.trim().toLowerCase() : "";
-  if (!clean || !EMAIL_RE.test(clean)) {
-    return NextResponse.json({ error: "A valid email is required" }, { status: 400 });
+  try {
+    const denied = requireAdmin(req);
+    if (denied) return denied;
+    const parsed = await parseJsonBody<{ email?: string }>(req);
+    if (!parsed.ok) return parsed.response;
+    const { email } = parsed.data;
+    const clean = typeof email === "string" ? email.trim().toLowerCase() : "";
+    if (!clean || !EMAIL_RE.test(clean)) {
+      return NextResponse.json({ error: "A valid email is required" }, { status: 400 });
+    }
+    await suppressEmail(clean);
+    return NextResponse.json({ ok: true, email: clean });
+  } catch (err) {
+    return handleApiError("crm/admin/outreach POST", err);
   }
-  await suppressEmail(clean);
-  return NextResponse.json({ ok: true, email: clean });
 }
 
 // DELETE /api/crm/admin/outreach — re-allow an unsubscribed address
