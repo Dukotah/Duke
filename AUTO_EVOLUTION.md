@@ -6,29 +6,33 @@
 
 ---
 
-## Epoch 19 — 2026-06-20
+## Epoch 20 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 254 passed (31 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~23 commits ahead of `origin/main`, not pushed. Shippable; loop on optional handler-test
+Green. **vitest 258 passed (33 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~24 commits ahead of `origin/main`, not pushed. Shippable; loop on optional handler-test
 breadth (owner can pause/deploy anytime).
 
 ### 2. Completed in This Epoch
-- **`api/crm/notifications/route.test.ts`** (3): 401 GET/PATCH; PATCH 400 without id;
-  list newest-first → mark one read → mark all (`__all__`).
-- **`api/crm/smart-lists/route.test.ts`** (3): 401 every method; POST validates
-  name/scope/filters; create → list → delete. 248 → 254.
+- **`api/crm/automation/route.test.ts`** (2): GET 401/403/200+[]; POST 401/403 + admin
+  persisting validated rules that GET returns.
+- **`api/crm/sequences/route.test.ts`** (2): GET 401 + default-steps for any authed user;
+  POST 401/403/400(empty)/200(admin override). 254 → 258.
 
 ### 3. Discovered Debt / Opportunities
-- Remaining untested handlers: `activity`, `import-leads`, `export`, `sequences`,
-  `automation`, `contacts`, `companies`, `deals`. Low marginal value. **Still recommend
-  pausing + deploying.**
+- Remaining untested handlers: `activity`, `import-leads`, `export`, `contacts`,
+  `companies`, `deals`. Low marginal value. **Still recommend pausing + deploying.**
 
 ### 4. The Next Epoch Roadmap
 > ⚑ Owner decision point: branch is review/deploy-ready. Continuing only per the
 > "use up credits today" directive.
-1. **Handler tests for `automation` + `sequences`** (both admin-gated — assert 403).
+1. **Handler tests for `activity` + `import-leads`** (or another batch).
 2. **Pause / hand off** whenever ready to review or deploy `crm-cockpit`.
+
+---
+
+## Epoch 19 — 2026-06-20
+- `api/crm/notifications/route.test.ts` + `smart-lists/route.test.ts`. 248 → 254.
 
 ---
 
