@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
+import { requireAdmin } from "@/lib/api";
 import { CSV_URL } from "@/app/api/crm/leads/route";
-
-function isAdmin(req: NextRequest) {
-  return req.headers.get("x-user-role") === "admin";
-}
 
 const set = (v?: string) => Boolean(v && v.trim().length > 0);
 
 // GET /api/crm/admin/health — plain-language status of every integration.
 // Only ever returns booleans/labels, never the secret values themselves.
 export async function GET(req: NextRequest) {
-  if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
   // Live-test the database connection if its keys are present.
   const hasRedisKeys = set(process.env.UPSTASH_REDIS_REST_URL) && set(process.env.UPSTASH_REDIS_REST_TOKEN);

@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createBroadcast, getActiveBroadcasts, deleteBroadcast, Broadcast } from "@/lib/db";
-import { parseJsonBody, handleApiError } from "@/lib/api";
-
-function isAdmin(req: NextRequest) {
-  return req.headers.get("x-user-role") === "admin";
-}
+import { parseJsonBody, handleApiError, requireAdmin } from "@/lib/api";
 
 function isAuthenticated(req: NextRequest) {
   return !!req.headers.get("x-user-id");
@@ -22,7 +18,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const denied = requireAdmin(req);
+    if (denied) return denied;
     const parsed = await parseJsonBody<{ message?: string; type?: Broadcast["type"]; expiresInDays?: number }>(req);
     if (!parsed.ok) return parsed.response;
     const { message, type, expiresInDays } = parsed.data;
@@ -37,7 +34,8 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const denied = requireAdmin(req);
+    if (denied) return denied;
     const parsed = await parseJsonBody<{ id?: string }>(req);
     if (!parsed.ok) return parsed.response;
     const { id } = parsed.data;

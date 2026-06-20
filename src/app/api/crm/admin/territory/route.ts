@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllTerritories, setTerritory, deleteTerritory } from "@/lib/db";
-import { parseJsonBody, handleApiError } from "@/lib/api";
-
-function requireAdmin(req: NextRequest) {
-  const role = req.headers.get("x-user-role");
-  if (role !== "admin") return NextResponse.json({ error: "Admin only" }, { status: 403 });
-  return null;
-}
+import { parseJsonBody, handleApiError, requireAdmin } from "@/lib/api";
 
 export async function GET(req: NextRequest) {
   try {

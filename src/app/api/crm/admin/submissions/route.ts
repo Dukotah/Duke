@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listSubmissions, resolveSubmission, markCommissionPaid, getRepStats, listUsers, getUserLeadCount, getUserById, stampLeadAction } from "@/lib/db";
-import { parseJsonBody, handleApiError } from "@/lib/api";
+import { parseJsonBody, handleApiError, requireAdmin } from "@/lib/api";
 
 async function sendRepNotification(
   repEmail: string,
@@ -52,13 +52,10 @@ async function sendRepNotification(
   }
 }
 
-function isAdmin(req: NextRequest) {
-  return req.headers.get("x-user-role") === "admin";
-}
-
 export async function GET(req: NextRequest) {
   try {
-    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const denied = requireAdmin(req);
+    if (denied) return denied;
 
     const filter = req.nextUrl.searchParams.get("filter") as "pending" | "accepted" | "rejected" | null;
     const subs = await listSubmissions(filter ?? undefined);
@@ -81,7 +78,8 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const denied = requireAdmin(req);
+    if (denied) return denied;
     const parsed = await parseJsonBody<{ id?: string; action?: string; dealValue?: number }>(req);
     if (!parsed.ok) return parsed.response;
     const { id, action, dealValue } = parsed.data;

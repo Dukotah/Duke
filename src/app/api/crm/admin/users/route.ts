@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createUser, listUsers, updateUser, deleteUser, hashPassword, getUserById } from "@/lib/db";
-import { parseJsonBody, handleApiError } from "@/lib/api";
-
-function isAdmin(req: NextRequest) {
-  return req.headers.get("x-user-role") === "admin";
-}
+import { parseJsonBody, handleApiError, requireAdmin } from "@/lib/api";
 
 export async function GET(req: NextRequest) {
   try {
-    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const denied = requireAdmin(req);
+    if (denied) return denied;
     const users = await listUsers();
     return NextResponse.json(users);
   } catch (err) {
@@ -18,7 +15,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const denied = requireAdmin(req);
+    if (denied) return denied;
     const parsed = await parseJsonBody<{ name?: string; email?: string; password?: string; commissionRate?: string | number }>(req);
     if (!parsed.ok) return parsed.response;
     const { name, email, password, commissionRate } = parsed.data;
@@ -39,7 +37,8 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const denied = requireAdmin(req);
+    if (denied) return denied;
     const parsed = await parseJsonBody<{ id?: string; password?: string } & Record<string, unknown>>(req);
     if (!parsed.ok) return parsed.response;
     const { id, password, ...patch } = parsed.data;
@@ -59,7 +58,8 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const denied = requireAdmin(req);
+    if (denied) return denied;
     const parsed = await parseJsonBody<{ id?: string }>(req);
     if (!parsed.ok) return parsed.response;
     const { id } = parsed.data;

@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listSubmissions } from "@/lib/db";
-import { handleApiError } from "@/lib/api";
-
-function isAdmin(req: NextRequest) {
-  return req.headers.get("x-user-role") === "admin";
-}
+import { handleApiError, requireAdmin } from "@/lib/api";
 
 const TIER_A_VALUE = 2500;
 const TIER_B_VALUE = 1800;
 
 export async function GET(req: NextRequest) {
-  if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
   let allSubs;
   try {
