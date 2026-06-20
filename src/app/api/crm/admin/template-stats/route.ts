@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { handleApiError } from "@/lib/api";
+import { handleApiError, requireAdmin } from "@/lib/api";
 import { getRedis } from "@/lib/redis";
 
 // GET /api/crm/admin/template-stats
@@ -35,7 +35,9 @@ interface TemplateBucket {
 }
 
 export async function GET(req: NextRequest) {
-  void req;
+  // Admin-only: /api/crm/admin/* is NOT role-gated by middleware, so enforce here.
+  const denied = requireAdmin(req);
+  if (denied) return denied;
   try {
     const redis = getRedis();
 

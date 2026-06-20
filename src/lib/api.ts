@@ -1,8 +1,8 @@
-// Shared helpers for API route handlers: safe JSON parsing and consistent
-// error responses. Codifies the patterns already used across the route
-// handlers so every route fails the same way — with a proper status code and
-// without ever leaking a stack trace to the client.
-import { NextResponse } from "next/server";
+// Shared helpers for API route handlers: safe JSON parsing, admin gating, and
+// consistent error responses. Codifies the patterns already used across the
+// route handlers so every route fails the same way — with a proper status code
+// and without ever leaking a stack trace to the client.
+import { NextRequest, NextResponse } from "next/server";
 
 // Result of attempting to read a JSON request body.
 type JsonParseResult<T> =
@@ -40,6 +40,26 @@ export async function parseJsonBody<T = unknown>(
       response: NextResponse.json({ error: "Invalid JSON body" }, { status: 400 }),
     };
   }
+}
+
+/**
+ * Admin-only gate for route handlers. `src/middleware.ts` injects the CRM
+ * session role as the `x-user-role` header on every authenticated request, so
+ * routes can trust it. Returns a `403 Forbidden` response when the caller is
+ * not an admin, or `null` when access is allowed:
+ *
+ *   const denied = requireAdmin(req);
+ *   if (denied) return denied;
+ *
+ * Note: `/api/crm/*` is only session-gated by middleware (the admin redirect
+ * applies to the `/crm/admin` page path, not the API), so genuinely admin-only
+ * endpoints must call this themselves.
+ */
+export function requireAdmin(req: NextRequest): NextResponse | null {
+  if (req.headers.get("x-user-role") !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  return null;
 }
 
 /**

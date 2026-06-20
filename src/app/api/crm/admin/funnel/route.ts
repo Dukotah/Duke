@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { handleApiError } from "@/lib/api";
+import { handleApiError, requireAdmin } from "@/lib/api";
 import { listUsers, getAllLeadStates, listSubmissions } from "@/lib/db";
 
 // GET /api/crm/admin/funnel
@@ -7,8 +7,9 @@ import { listUsers, getAllLeadStates, listSubmissions } from "@/lib/db";
 // Stages: leads → contacted → replied → demo/interested → submitted → won
 
 export async function GET(req: NextRequest) {
-  // Admin-only: no x-user-id guard needed (same pattern as admin/revenue)
-  void req;
+  // Admin-only: /api/crm/admin/* is NOT role-gated by middleware, so enforce here.
+  const denied = requireAdmin(req);
+  if (denied) return denied;
   try {
     const [users, allSubs] = await Promise.all([listUsers(), listSubmissions()]);
 
