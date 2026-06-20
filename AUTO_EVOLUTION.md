@@ -6,33 +6,34 @@
 
 ---
 
-## Epoch 17 — 2026-06-20
+## Epoch 18 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 242 passed (27 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~21 commits ahead of `origin/main`, not pushed. Shippable; loop is on optional
-handler-test breadth (owner can pause/deploy anytime).
+Green. **vitest 248 passed (29 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~22 commits ahead of `origin/main`, not pushed. Shippable; loop on optional handler-test
+breadth (owner can pause/deploy anytime).
 
 ### 2. Completed in This Epoch
-- **`api/crm/tasks/route.test.ts`** (3 cases / full CRUD): 401 on every method; 400 on
-  missing title / id; and the create → list → complete (excluded unless `?all=1`) →
-  delete loop.
-- **`api/crm/search/route.test.ts`** (2): 401 unauth + empty-query short-circuit to `[]`
-  (hermetic paths only — a non-empty query hits the network `getLeads()` CSV fetch, which
-  is deliberately not exercised in a unit test). 237 → 242.
+- **`api/crm/tags/route.test.ts`** (3): 401 every method; label/color/id/op validation;
+  create → assign (PATCH add) → list → delete (cascade scrub) contract.
+- **`api/crm/today/route.test.ts`** (3): 401 unauth; empty queue with zeroed counts; a
+  seeded long-overdue follow-up surfacing as the top-priority item (per-user). 242 → 248.
 
 ### 3. Discovered Debt / Opportunities
-- Remaining untested handlers: `tags`, `today`, `activity`, `import-leads`, `export`,
-  `sequences`, `automation`, `notifications`, `smart-lists`, `contacts`, `companies`,
-  `deals`. All low marginal value. **Still recommend pausing + deploying.**
+- Remaining untested handlers: `activity`, `import-leads`, `export`, `sequences`,
+  `automation`, `notifications`, `smart-lists`, `contacts`, `companies`, `deals`. Low
+  marginal value. **Still recommend pausing + deploying.**
 
 ### 4. The Next Epoch Roadmap
 > ⚑ Owner decision point: branch is review/deploy-ready. Continuing only per the
 > "use up credits today" directive.
-1. **Handler tests for `tags` + `today`** (or another batch) — 401/400/2xx contracts.
+1. **Handler tests for `notifications` + `smart-lists`** (or another batch).
 2. **Pause / hand off** whenever ready to review or deploy `crm-cockpit`.
 
 ---
+
+## Epoch 17 — 2026-06-20
+- `api/crm/tasks/route.test.ts` (CRUD) + `search/route.test.ts` (hermetic paths). 237 → 242.
 
 ## Epoch 16 — 2026-06-20
 - `api/crm/state/route.test.ts` (4): auth/validation, patch persistence, safe stage-change
