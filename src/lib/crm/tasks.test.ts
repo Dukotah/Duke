@@ -1,34 +1,13 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import os from "node:os";
-import path from "node:path";
-import fs from "node:fs";
-import { getRedis } from "@/lib/redis";
-import { __resetLocalRedis } from "@/lib/localRedis";
+import { describe, expect, it } from "vitest";
 import { createTask, getTasks, updateTask, deleteTask } from "./tasks";
+import { setupIsolatedRedis } from "./testRedis";
 
-// Integration tests for the Redis-backed task store, run against the file-backed
-// LocalRedis stand-in pointed at an isolated temp file (the dev .local-db.json is
-// never touched). updateTask/deleteTask rely on LocalRedis hget/hdel, so this
-// also guards that those commands exist + behave (they previously did not).
-const TMP = path.join(os.tmpdir(), `crm-tasks-test-${process.pid}.json`);
+// Integration tests for the Redis-backed task store, run against an isolated
+// file-backed LocalRedis. updateTask/deleteTask rely on LocalRedis hget/hdel, so
+// this also guards that those commands exist + behave (they previously did not).
+setupIsolatedRedis("tasks");
+
 const U = "user-1";
-
-beforeAll(() => {
-  process.env.LOCAL_DB_FILE = TMP;
-  try { fs.rmSync(TMP, { force: true }); } catch { /* ignore */ }
-  __resetLocalRedis(); // next getRedis() builds a LocalRedis on the temp file
-});
-
-beforeEach(async () => {
-  // Clear the test users' task hashes so each test starts empty.
-  await getRedis().del("tasks:user-1", "tasks:user-2");
-});
-
-afterAll(() => {
-  try { fs.rmSync(TMP, { force: true }); } catch { /* ignore */ }
-  delete process.env.LOCAL_DB_FILE;
-  __resetLocalRedis();
-});
 
 describe("tasks store", () => {
   it("creates a task with trimmed title + defaults and lists it back", async () => {

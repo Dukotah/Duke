@@ -1,40 +1,19 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import os from "node:os";
-import path from "node:path";
-import fs from "node:fs";
+import { describe, expect, it } from "vitest";
 import { getRedis } from "@/lib/redis";
-import { __resetLocalRedis } from "@/lib/localRedis";
 import { createCustomLead, getCustomLeads } from "@/lib/db";
 import {
   normEmail, normPhone, normNameCity,
   findDuplicates, mergeLeads,
 } from "./merge";
+import { setupIsolatedRedis } from "./testRedis";
 
 // merge.ts is the riskiest module: it re-points lead data across many Redis
 // namespaces and deletes the loser. These tests cover the pure normalizers, every
 // guard branch, an end-to-end merge (re-point + delete), and duplicate grouping —
-// all against an isolated LocalRedis temp store.
-const TMP = path.join(os.tmpdir(), `crm-merge-test-${process.pid}.json`);
+// all against an isolated LocalRedis store.
+setupIsolatedRedis("merge");
+
 const U = "user-1";
-
-beforeAll(() => {
-  process.env.LOCAL_DB_FILE = TMP;
-  try { fs.rmSync(TMP, { force: true }); } catch { /* ignore */ }
-  __resetLocalRedis();
-});
-
-beforeEach(async () => {
-  // Flush the whole store so each test starts pristine (single LocalRedis instance).
-  const r = getRedis();
-  const all = await r.keys("*");
-  if (all.length) await r.del(...all);
-});
-
-afterAll(() => {
-  try { fs.rmSync(TMP, { force: true }); } catch { /* ignore */ }
-  delete process.env.LOCAL_DB_FILE;
-  __resetLocalRedis();
-});
 
 describe("merge normalizers", () => {
   it("normEmail trims + lowercases, empty → ''", () => {

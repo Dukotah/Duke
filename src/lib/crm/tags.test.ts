@@ -1,36 +1,17 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import os from "node:os";
-import path from "node:path";
-import fs from "node:fs";
-import { getRedis } from "@/lib/redis";
-import { __resetLocalRedis } from "@/lib/localRedis";
+import { describe, expect, it } from "vitest";
 import {
   createTag, getTags, deleteTag,
   addLeadTag, removeLeadTag, getLeadTags, getAllLeadTagMap,
 } from "./tags";
+import { setupIsolatedRedis } from "./testRedis";
 
-// Integration tests for the user-tag store against an isolated LocalRedis temp
-// file. Exercises hget/hdel/hset/hgetall and the deleteTag cascade that scrubs a
+// Integration tests for the user-tag store against an isolated LocalRedis.
+// Exercises hget/hdel/hset/hgetall and the deleteTag cascade that scrubs a
 // deleted tag from every lead's tag list.
-const TMP = path.join(os.tmpdir(), `crm-tags-test-${process.pid}.json`);
+setupIsolatedRedis("tags");
+
 const U = "user-1";
 const LEAD = "lead-A";
-
-beforeAll(() => {
-  process.env.LOCAL_DB_FILE = TMP;
-  try { fs.rmSync(TMP, { force: true }); } catch { /* ignore */ }
-  __resetLocalRedis();
-});
-
-beforeEach(async () => {
-  await getRedis().del("tags:user-1", "leadtags:user-1", "tags:user-2", "leadtags:user-2");
-});
-
-afterAll(() => {
-  try { fs.rmSync(TMP, { force: true }); } catch { /* ignore */ }
-  delete process.env.LOCAL_DB_FILE;
-  __resetLocalRedis();
-});
 
 describe("tags store", () => {
   it("creates a tag (trimmed) and lists it back", async () => {
