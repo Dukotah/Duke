@@ -6,31 +6,38 @@
 
 ---
 
-## Epoch 21 — 2026-06-20
+## Epoch 22 — 2026-06-20  (ARMADA #1)
 
 ### 1. Current Status
-Green. **vitest 264 passed (35 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~25 commits ahead of `origin/main`, not pushed. Shippable; loop on optional handler-test
-breadth (owner can pause/deploy anytime).
+Green. **vitest 291 passed (38 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~26 commits ahead of `origin/main`, not pushed. **Loop is now armada-level**: each
+iteration runs a parallel multi-agent workflow + integration gate, then I verify/commit
+and fire the next. No pauses (per owner directive).
 
-### 2. Completed in This Epoch
-- **`api/crm/activity/route.test.ts`** (2): auth + required-field validation; log a call
-  entry that GET returns (with outcome).
-- **`api/crm/import-leads/route.test.ts`** (4): 401; 400 malformed body + missing csv;
-  parse + email dedup (case-insensitive, within-import); skip + report a no-name row.
-  258 → 264.
+### 2. Completed in This Epoch (7-agent armada)
+- Handler tests added for **`export`, `goals`, `reminders`** (parallel agents). 264 → 291.
+- **`contacts`, `companies`, `deals` correctly SKIPPED** — agents verified those routes do
+  NOT exist in this branch (no such dirs under `src/app/api/crm/`). Good guardrail.
+- Integration agent fixed the `export` test hanging on the network `getLeads()` fetch by
+  stubbing `fetch` to reject — drives the route's real "CSV source unreachable → serve
+  empty + still load custom leads" path (assertions unchanged; file 11.8s → 0.7s).
 
 ### 3. Discovered Debt / Opportunities
-- Remaining untested handlers: `export`, `contacts`, `companies`, `deals` (some may be
-  thin/unused stubs from the deals-board port — verify before testing). Low marginal
-  value. **Still recommend pausing + deploying.**
+- Untested routes that are real + hermetic: `responded`, `submit`, `activities`,
+  `activity-log`. Network/secret-gated (skip or stub): `leads`, `email-events`, `webhook`,
+  `cron`, `leads/generate-site`. After route coverage, rotate armadas to **adversarial
+  bug-hunt + fix**. Branch remains review/deploy-ready.
 
-### 4. The Next Epoch Roadmap
-> ⚑ Owner decision point: branch is review/deploy-ready. Continuing only per the
-> "use up credits today" directive.
-1. **Handler test for `export`** + audit `contacts`/`companies`/`deals` routes (test if
-   real; note as stubs if not).
-2. **Pause / hand off** whenever ready to review or deploy `crm-cockpit`.
+### 4. The Next Epoch Roadmap (armada)
+1. **Armada #2:** parallel handler tests for `responded`, `submit`, `activities`,
+   `activity-log` + integration gate.
+2. **Armada #3+:** adversarial bug-hunt → verify → fix passes across lib/crm + components,
+   with a build gate.
+
+---
+
+## Epoch 21 — 2026-06-20
+- `api/crm/activity/route.test.ts` + `import-leads/route.test.ts`. 258 → 264.
 
 ---
 
