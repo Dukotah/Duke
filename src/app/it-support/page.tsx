@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowRight, CheckCircle, Phone, AlertTriangle, DollarSign, Wifi } from "lucide-react";
 import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
+import { RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 
 export const metadata: Metadata = {
   title: "IT Support for Small Business | Sonoma County | Copper Bay Tech",
@@ -94,7 +95,7 @@ export default function ITSupportPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
-      <main>
+      <main className="theme-dark">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -130,149 +131,277 @@ export default function ITSupportPage() {
             }),
           }}
         />
-        {/* Hero */}
-        <section className="pt-32 pb-20 bg-[#18181B]">
-          <div className="max-w-4xl mx-auto px-6">
-            <span
-              className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
-              style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#F97316", fontFamily: "var(--font-heading)" }}
+
+        {/* ── Hero ─────────────────────────────────────────────────────────
+            Websites-first framing: IT is the "rest of your tech," folded into
+            the same handled-for-life care story. The <h1> is the LCP — plain
+            warm text in server markup, painting before any motion. */}
+        <section className="bg-ink-0 pt-32 pb-20">
+          <div className="mx-auto max-w-4xl px-6">
+            <RevealOnScroll
+              as="span"
+              direction="up"
+              distance={10}
+              duration={0.5}
+              className="mb-5 inline-flex items-center gap-2 rounded-full border border-copper-dim bg-ink-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-copper-bright"
+              style={{ fontFamily: "var(--font-heading)" }}
             >
-              IT Support
-            </span>
+              The rest of your tech, handled
+            </RevealOnScroll>
+
             <h1
-              className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
+              className="mb-6 text-balance text-4xl font-bold leading-[1.05] tracking-tight text-warm md:text-5xl"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               IT that just works —
               <br />
-              <span style={{ color: "#F97316" }}>every single day.</span>
+              <span className="bg-gradient-to-r from-copper to-copper-bright bg-clip-text text-transparent">
+                every single day.
+              </span>
             </h1>
-            <p
-              className="text-white/60 text-lg max-w-2xl mb-8"
+
+            <RevealOnScroll
+              as="p"
+              direction="up"
+              delay={0.15}
+              distance={12}
+              className="mb-8 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Local managed IT support for Sonoma County small businesses. We handle your network, workstations, cloud tools, and day-to-day tech so you can focus on running your business. Month-to-month — no long-term contracts.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
+              We start with your website and keep the rest of your tech handled too.
+              Local managed IT support for Sonoma County small businesses — your
+              network, workstations, cloud tools, and day-to-day tech, looked after
+              by the same partner. Month-to-month, no long-term contracts.
+            </RevealOnScroll>
+
+            <RevealOnScroll
+              as="div"
+              direction="up"
+              delay={0.25}
+              distance={12}
+              className="flex flex-col gap-3 sm:flex-row"
+            >
+              <MagneticCTA
+                as="link"
                 href={BOOKING_URL}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="group inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-6 py-3 text-sm font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a free consultation <ArrowRight size={15} />
-              </Link>
+                Book a free consultation
+                <ArrowRight
+                  size={15}
+                  className="transition-transform duration-200 group-hover:translate-x-0.5"
+                  aria-hidden
+                />
+              </MagneticCTA>
               <a
                 href={PHONE_HREF}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-hairline bg-ink-2 px-6 py-3 text-sm font-semibold text-warm transition-colors duration-200 hover:border-copper-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                <Phone size={15} /> {PHONE}
+                <Phone size={15} aria-hidden /> {PHONE}
               </a>
-            </div>
+            </RevealOnScroll>
+
             {/* Urgent fast path */}
-            <p className="mt-6 text-sm text-white/40" style={{ fontFamily: "var(--font-body)" }}>
+            <RevealOnScroll
+              as="p"
+              direction="up"
+              delay={0.35}
+              distance={8}
+              className="mt-6 text-sm text-warm-3"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
               Server down or site offline?{" "}
-              <a href={PHONE_HREF} className="text-[#F97316] hover:underline font-semibold">
+              <a
+                href={PHONE_HREF}
+                className="font-semibold text-copper-bright underline-offset-4 hover:text-copper hover:underline focus-visible:outline-none focus-visible:underline"
+              >
                 Call or text {PHONE}
               </a>{" "}
               for same-day response.
-            </p>
+            </RevealOnScroll>
           </div>
         </section>
 
-        {/* Pain points */}
-        <section className="py-16 bg-[#FAFAF9]">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-[#18181B] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Why most small business IT fails
-            </h2>
-            <p className="text-[#3F3F46]/60 mb-10 max-w-xl" style={{ fontFamily: "var(--font-body)" }}>
-              It&apos;s not bad luck — it&apos;s structural. Three patterns show up in almost every small business we work with.
-            </p>
-            <div className="grid sm:grid-cols-3 gap-6">
-              {painPoints.map((p) => (
-                <div key={p.title} className="bg-white rounded-xl p-6 border border-[#18181B]/8 shadow-sm">
-                  <div className="w-10 h-10 rounded-lg bg-[#18181B]/8 flex items-center justify-center mb-4">
-                    <p.Icon size={20} color="#18181B" />
-                  </div>
-                  <h3 className="font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                    {p.title}
-                  </h3>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-                    {p.desc}
-                  </p>
-                </div>
+        {/* ── Pain points ─────────────────────────────────────────────────── */}
+        <section className="bg-ink-1 py-16 sm:py-20">
+          <div className="mx-auto max-w-4xl px-6">
+            <RevealOnScroll>
+              <h2
+                className="mb-4 text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Why most small business IT fails
+              </h2>
+              <p
+                className="mb-10 max-w-xl text-pretty text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                It&apos;s not bad luck — it&apos;s structural. Three patterns show up in
+                almost every small business we work with.
+              </p>
+            </RevealOnScroll>
+
+            <div className="grid gap-6 sm:grid-cols-3">
+              {painPoints.map((p, i) => (
+                <RevealOnScroll key={p.title} delay={i * 0.08} className="h-full">
+                  <SpotlightCard radius={16} className="h-full">
+                    <div className="flex h-full flex-col p-6">
+                      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-hairline bg-ink-3">
+                        <p.Icon size={20} className="text-copper-bright" aria-hidden />
+                      </div>
+                      <h3
+                        className="mb-2 font-bold text-warm"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {p.title}
+                      </h3>
+                      <p
+                        className="text-sm leading-relaxed text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {p.desc}
+                      </p>
+                    </div>
+                  </SpotlightCard>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
-        {/* What's covered */}
-        <section className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
-              What we cover
-            </h2>
-            <ul className="grid sm:grid-cols-2 gap-4">
-              {included.map((item) => (
-                <li key={item} className="flex items-start gap-3 p-4 rounded-xl bg-[#FAFAF9] border border-[#18181B]/8">
-                  <CheckCircle size={16} className="flex-shrink-0 mt-0.5" color="#16A34A" />
-                  <span className="text-sm text-[#3F3F46]/70" style={{ fontFamily: "var(--font-body)" }}>{item}</span>
-                </li>
+        {/* ── What's covered ──────────────────────────────────────────────── */}
+        <section className="bg-ink-0 py-16 sm:py-20">
+          <div className="mx-auto max-w-4xl px-6">
+            <RevealOnScroll>
+              <p
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper"
+                style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+              >
+                Folded into one partner
+              </p>
+              <h2
+                className="mb-8 text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                What we cover
+              </h2>
+            </RevealOnScroll>
+
+            <ul className="grid gap-4 sm:grid-cols-2">
+              {included.map((item, i) => (
+                <RevealOnScroll key={item} as="li" delay={(i % 2) * 0.06}>
+                  <span className="flex items-start gap-3 rounded-xl border border-hairline bg-ink-1 p-4">
+                    <CheckCircle
+                      size={16}
+                      className="mt-0.5 flex-shrink-0 text-copper"
+                      aria-hidden
+                    />
+                    <span
+                      className="text-sm text-warm-2"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      {item}
+                    </span>
+                  </span>
+                </RevealOnScroll>
               ))}
             </ul>
           </div>
         </section>
 
-        {/* Retainer tiers */}
-        <section className="py-16 bg-[#FAFAF9]">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-[#18181B] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Monthly retainer plans
-            </h2>
-            <p className="text-[#3F3F46]/60 mb-8 max-w-xl" style={{ fontFamily: "var(--font-body)" }}>
-              Priced by the problem you need solved, not just headcount. Cancel anytime with 30 days notice — no lock-in, no penalties.
-            </p>
-            <div className="grid sm:grid-cols-3 gap-6">
-              {retainerTiers.map((t) => (
-                <div
-                  key={t.name}
-                  className={`rounded-xl p-6 ${t.featured ? "bg-[#18181B] text-white shadow-xl" : "bg-white border border-[#18181B]/10 shadow-sm"}`}
-                >
-                  <p className={`text-xs font-semibold uppercase tracking-widest mb-1 ${t.featured ? "text-[#F97316]" : "text-[#3F3F46]/50"}`} style={{ fontFamily: "var(--font-heading)" }}>
-                    {t.name}
-                  </p>
-                  <p className={`text-2xl font-bold mb-1 ${t.featured ? "text-white" : "text-[#18181B]"}`} style={{ fontFamily: "var(--font-heading)" }}>
-                    {t.price}
-                  </p>
-                  <p className={`text-xs font-semibold mb-3 ${t.featured ? "text-[#F97316]" : "text-gold-on-light"}`} style={{ fontFamily: "var(--font-heading)" }}>
-                    {t.problem}
-                  </p>
-                  <p className={`text-sm leading-relaxed ${t.featured ? "text-white/70" : "text-[#3F3F46]/60"}`} style={{ fontFamily: "var(--font-body)" }}>
-                    {t.desc}
-                  </p>
-                </div>
+        {/* ── Retainer tiers ──────────────────────────────────────────────── */}
+        <section className="bg-ink-1 py-16 sm:py-20">
+          <div className="mx-auto max-w-4xl px-6">
+            <RevealOnScroll>
+              <h2
+                className="mb-4 text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Monthly retainer plans
+              </h2>
+              <p
+                className="mb-8 max-w-xl text-pretty text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Priced by the problem you need solved, not just headcount. Cancel
+                anytime with 30 days notice — no lock-in, no penalties.
+              </p>
+            </RevealOnScroll>
+
+            <div className="grid gap-6 sm:grid-cols-3">
+              {retainerTiers.map((t, i) => (
+                <RevealOnScroll key={t.name} delay={i * 0.08} className="h-full">
+                  <SpotlightCard
+                    radius={16}
+                    className={`h-full ${t.featured ? "surface-featured" : ""}`}
+                    style={t.featured ? { border: "1px solid var(--copper)" } : undefined}
+                  >
+                    <div className="flex h-full flex-col p-6">
+                      <p
+                        className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-copper-bright"
+                        style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                      >
+                        {t.name}
+                      </p>
+                      <p
+                        className="mb-1 text-2xl font-bold tabular-nums text-warm"
+                        style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                      >
+                        {t.price}
+                      </p>
+                      <p
+                        className="mb-3 text-xs font-semibold text-copper"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {t.problem}
+                      </p>
+                      <p
+                        className="text-sm leading-relaxed text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {t.desc}
+                      </p>
+                    </div>
+                  </SpotlightCard>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="py-20 bg-[#18181B]">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Stop putting up with IT that doesn&apos;t work.
-            </h2>
-            <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
-              Free 30-minute IT assessment. We&apos;ll review your current setup and tell you exactly what we&apos;d fix and what it would cost.
-            </p>
-            <Link
-              href={BOOKING_URL}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Book a free consultation <ArrowRight size={16} />
-            </Link>
+        {/* ── CTA ─────────────────────────────────────────────────────────── */}
+        <section className="bg-ink-0 py-20">
+          <div className="mx-auto max-w-3xl px-6 text-center">
+            <RevealOnScroll>
+              <h2
+                className="mb-4 text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Stop putting up with IT that doesn&apos;t work.
+              </h2>
+              <p
+                className="mx-auto mb-8 max-w-xl text-pretty text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Free 30-minute IT assessment. We&apos;ll review your current setup and
+                tell you exactly what we&apos;d fix and what it would cost.
+              </p>
+              <MagneticCTA
+                as="link"
+                href={BOOKING_URL}
+                className="group inline-flex items-center gap-2 rounded-lg bg-copper px-8 py-4 text-base font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Book a free consultation
+                <ArrowRight
+                  size={16}
+                  className="transition-transform duration-200 group-hover:translate-x-0.5"
+                  aria-hidden
+                />
+              </MagneticCTA>
+            </RevealOnScroll>
           </div>
         </section>
       </main>

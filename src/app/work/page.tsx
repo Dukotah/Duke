@@ -6,6 +6,7 @@ import Portfolio from "@/components/Portfolio";
 import Testimonials from "@/components/Testimonials";
 import { ArrowRight, Globe, ShieldCheck, Cloud } from "lucide-react";
 import { BOOKING_URL } from "@/config/site";
+import { RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 
 export const metadata: Metadata = {
   title: "Our Work | Client Projects | Copper Bay Tech",
@@ -125,80 +126,118 @@ export default function Work() {
   return (
     <>
       <Nav />
-      <main>
-        {/* Hero */}
-        <section className="pt-32 pb-16 bg-[#18181B]">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <span className="inline-block mb-6 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase" style={{ backgroundColor: "rgba(200,169,110,0.15)", color: "#F97316", border: "1px solid rgba(200,169,110,0.3)", fontFamily: "var(--font-heading)" }}>
+      <main className="theme-dark">
+        {/* Hero — dark canvas, rationed copper. One quiet accent line; the
+            headline is the LCP (plain warm text, no animation gate). */}
+        <section className="relative overflow-hidden bg-ink-0 pt-32 pb-16">
+          {/* Ambient copper wash — position:absolute, aria-hidden → CLS 0. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-70"
+            style={{
+              background:
+                "radial-gradient(60% 50% at 15% 0%, rgba(192,122,62,0.16), transparent 60%), radial-gradient(50% 45% at 90% 10%, rgba(219,147,85,0.10), transparent 60%)",
+            }}
+          />
+          <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
+            <RevealOnScroll
+              as="span"
+              direction="up"
+              distance={10}
+              duration={0.5}
+              className="mb-6 inline-block rounded-full border border-copper-dim bg-ink-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-copper-bright"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Client Work
-            </span>
-            <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+            </RevealOnScroll>
+            <h1
+              className="mb-6 text-balance text-5xl font-bold leading-tight text-warm md:text-6xl"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               The kind of work<br />
-              <span style={{ color: "#F97316" }}>we do.</span>
+              <span className="bg-gradient-to-r from-copper to-copper-bright bg-clip-text text-transparent">
+                we do.
+              </span>
             </h1>
-            <p className="text-lg text-white/60 max-w-2xl mx-auto" style={{ fontFamily: "var(--font-body)" }}>
+            <RevealOnScroll
+              as="p"
+              direction="up"
+              delay={0.1}
+              className="mx-auto max-w-2xl text-pretty text-lg text-warm-2"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
               Every project starts with a real problem. Here&apos;s what we build and what changes.
-            </p>
+            </RevealOnScroll>
           </div>
         </section>
 
         {/* Case studies — only rendered when SHOW_REAL_CASES is true.
             Populate `projects` with real, approved engagements and flip the flag. */}
         {SHOW_REAL_CASES && (
-          <section className="py-24 bg-[#FAFAF9]">
-            <div className="max-w-5xl mx-auto px-6 space-y-16">
+          <section className="bg-ink-1 py-24">
+            <div className="mx-auto max-w-5xl space-y-16 px-6">
               {projects.map((p, i) => (
-                <div key={p.client} className={`grid md:grid-cols-2 gap-12 items-start ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}>
+                <RevealOnScroll
+                  key={p.client}
+                  direction="up"
+                  distance={24}
+                  className={`grid items-start gap-12 md:grid-cols-2 ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}
+                >
                   {/* Left: detail */}
                   <div>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "rgba(249,115,22,0.1)" }}>
-                        <p.icon size={20} color="#F97316" />
+                    <div className="mb-4 flex items-center gap-3">
+                      <div
+                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-copper-dim"
+                        style={{ backgroundColor: "rgba(192,122,62,0.12)" }}
+                      >
+                        <p.icon size={20} className="text-copper-bright" />
                       </div>
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-widest text-gold-on-light" style={{ fontFamily: "var(--font-heading)" }}>{p.tag}</p>
-                        <p className="text-xs text-[#3F3F46]/50" style={{ fontFamily: "var(--font-heading)" }}>{p.client}</p>
+                        <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>{p.tag}</p>
+                        <p className="text-xs text-warm-3" style={{ fontFamily: "var(--font-heading)" }}>{p.client}</p>
                       </div>
                     </div>
-                    <h2 className="text-2xl font-bold text-[#18181B] mb-4 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>{p.headline}</h2>
-                    <p className="text-sm text-[#3F3F46]/60 leading-relaxed mb-6" style={{ fontFamily: "var(--font-body)" }}>{p.summary}</p>
+                    <h2 className="mb-4 text-2xl font-bold leading-tight text-warm" style={{ fontFamily: "var(--font-heading)" }}>{p.headline}</h2>
+                    <p className="mb-6 text-sm leading-relaxed text-warm-2" style={{ fontFamily: "var(--font-body)" }}>{p.summary}</p>
                     <div className="mb-6">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-[#3F3F46]/40 mb-3" style={{ fontFamily: "var(--font-heading)" }}>What We Did</p>
+                      <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-warm-3" style={{ fontFamily: "var(--font-heading)" }}>What We Did</p>
                       <ul className="space-y-2">
                         {p.what.map((w) => (
                           <li key={w} className="flex items-start gap-2.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0 mt-1.5" />
-                            <span className="text-sm text-[#3F3F46]/70" style={{ fontFamily: "var(--font-body)" }}>{w}</span>
+                            <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-copper" />
+                            <span className="text-sm text-warm-2" style={{ fontFamily: "var(--font-body)" }}>{w}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
-                    <Link href={p.service} className="inline-flex items-center gap-2 text-sm font-semibold text-gold-on-light hover:text-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+                    <Link href={p.service} className="inline-flex items-center gap-2 text-sm font-semibold text-copper-bright underline-offset-4 transition-colors hover:text-copper hover:underline focus-visible:outline-none focus-visible:underline" style={{ fontFamily: "var(--font-heading)" }}>
                       Learn about {p.serviceLabel} <ArrowRight size={14} />
                     </Link>
                   </div>
 
                   {/* Right: metrics + quote */}
                   <div className="space-y-4">
-                    <div className="bg-[#18181B] rounded-2xl p-6">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>By the Numbers</p>
+                    <div className="rounded-2xl border border-hairline bg-ink-2 p-6">
+                      <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>By the Numbers</p>
                       <div className="space-y-4">
                         {p.metrics.map((m) => (
                           <div key={m.label}>
-                            <p className="text-3xl font-bold text-white" style={{ fontFamily: "var(--font-heading)" }}>{m.value}</p>
-                            <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>{m.label}</p>
+                            <p className="text-3xl font-bold tabular-nums text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>{m.value}</p>
+                            <p className="text-xs text-warm-3" style={{ fontFamily: "var(--font-body)" }}>{m.label}</p>
                           </div>
                         ))}
                       </div>
                     </div>
-                    <blockquote className="relative bg-white rounded-2xl border border-[#18181B]/8 p-6">
-                      <p className="text-sm text-[#3F3F46]/70 leading-relaxed italic mb-4" style={{ fontFamily: "var(--font-body)" }}>
-                        &ldquo;{p.quote}&rdquo;
-                      </p>
-                      <p className="text-xs font-semibold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>{p.author}</p>
-                    </blockquote>
+                    <SpotlightCard radius={16} lift={false} className="p-6">
+                      <blockquote className="relative">
+                        <p className="mb-4 text-sm italic leading-relaxed text-warm-2" style={{ fontFamily: "var(--font-body)" }}>
+                          &ldquo;{p.quote}&rdquo;
+                        </p>
+                        <p className="text-xs font-semibold text-warm" style={{ fontFamily: "var(--font-heading)" }}>{p.author}</p>
+                      </blockquote>
+                    </SpotlightCard>
                   </div>
-                </div>
+                </RevealOnScroll>
               ))}
             </div>
           </section>
@@ -206,45 +245,51 @@ export default function Work() {
 
         {/* Holding state — shown while case studies are being collected */}
         {!SHOW_REAL_CASES && (
-          <section className="py-24 bg-[#FAFAF9]">
-            <div className="max-w-2xl mx-auto px-6 text-center">
+          <section className="bg-ink-1 py-24">
+            <RevealOnScroll className="mx-auto max-w-2xl px-6 text-center">
               <p
-                className="text-[#3F3F46]/60 text-base leading-relaxed mb-6"
+                className="mb-6 text-base leading-relaxed text-warm-2"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 Detailed case studies are being prepared with client approval. In the
                 meantime, the portfolio section below shows real work — starting with
                 this site, built on the same custom stack used for every client.
               </p>
-              <Link
+              <MagneticCTA
+                as="link"
                 href={BOOKING_URL}
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-7 py-3 text-sm font-semibold text-ink-0 transition-colors hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-1"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a free consultation <ArrowRight size={15} />
-              </Link>
-            </div>
+                Book a free consultation <ArrowRight size={15} aria-hidden />
+              </MagneticCTA>
+            </RevealOnScroll>
           </section>
         )}
 
         {/* CTA */}
-        <section className="py-24 bg-[#18181B]">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+        <section className="bg-ink-0 py-24">
+          <RevealOnScroll className="mx-auto max-w-3xl px-6 text-center">
+            <h2 className="mb-6 text-balance text-4xl font-bold text-warm md:text-5xl" style={{ fontFamily: "var(--font-heading)" }}>
               {SHOW_REAL_CASES ? "Become the next case study." : "Ready to get started?"}
             </h2>
-            <p className="text-lg text-white/60 mb-10" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="mb-10 text-lg text-warm-2" style={{ fontFamily: "var(--font-body)" }}>
               Free 30-minute call. Tell us what&apos;s going on and we&apos;ll tell you honestly what we&apos;d do.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href={BOOKING_URL} className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white" style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}>
-                Book a free consultation <ArrowRight size={16} />
-              </Link>
-              <Link href="/pricing" className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold" style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}>
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              <MagneticCTA
+                as="link"
+                href={BOOKING_URL}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-8 py-3.5 text-base font-semibold text-ink-0 transition-colors hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Book a free consultation <ArrowRight size={16} aria-hidden />
+              </MagneticCTA>
+              <Link href="/pricing" className="inline-flex items-center justify-center rounded-lg border border-hairline px-8 py-3.5 text-base font-semibold text-warm transition-colors hover:border-copper-dim hover:text-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow" style={{ fontFamily: "var(--font-heading)" }}>
                 See Pricing
               </Link>
             </div>
-          </div>
+          </RevealOnScroll>
         </section>
         <Portfolio />
         <Testimonials />

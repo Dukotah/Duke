@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { MapPin, ShieldCheck, Code2, X } from "lucide-react";
+import { RevealOnScroll, SpotlightCard } from "@/components/motion";
 
 // Drop a real headshot at this /public path and the photo replaces the monogram
 // automatically — no other change needed. A real founder photo is the single
@@ -22,26 +22,27 @@ const wontDo = [
   "No handoff-and-disappear — ongoing support is part of every engagement",
 ];
 
+const cities = [
+  "Petaluma", "Santa Rosa", "Sebastopol", "Rohnert Park",
+  "Sonoma", "Bodega Bay", "Cotati", "Windsor",
+  "Healdsburg", "Cloverdale",
+];
+
 export default function About() {
-  const reduce = useReducedMotion();
   return (
-    <section id="about" className="py-24 bg-white">
+    <section id="about" className="bg-ink-0 py-24">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 items-start">
-          <motion.div
-            initial={reduce ? false : { opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={reduce ? { duration: 0 } : { duration: 0.6 }}
-          >
+          {/* Left: the founder story */}
+          <RevealOnScroll as="div" direction="left" distance={20} duration={0.6}>
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               About Copper Bay Tech
             </p>
             <h2
-              className="text-4xl font-bold text-[#18181B] mb-6 leading-tight"
+              className="text-4xl font-bold text-warm mb-6 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Personal service.
@@ -53,7 +54,7 @@ export default function About() {
                 otherwise a polished monogram so the section never looks unfinished.
                 To enable: set FOUNDER_HEADSHOT to e.g. "/team/duke-hutcheon.jpg" */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[#F97316]/40 ring-offset-2 ring-offset-white">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-copper-dim ring-offset-2 ring-offset-ink-0">
                 {FOUNDER_HEADSHOT ? (
                   <Image
                     src={FOUNDER_HEADSHOT}
@@ -66,12 +67,11 @@ export default function About() {
                   <>
                     <span className="sr-only">Duke Hutcheon, founder of Copper Bay Tech — Sonoma County</span>
                     <div
-                      className="flex h-full w-full items-center justify-center"
-                      style={{ background: "linear-gradient(135deg, #27272A 0%, #18181B 100%)" }}
+                      className="flex h-full w-full items-center justify-center bg-ink-3"
                       aria-hidden="true"
                     >
                       <span
-                        className="text-2xl font-bold text-[#F97316]"
+                        className="text-2xl font-bold text-copper-bright"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         DH
@@ -82,13 +82,13 @@ export default function About() {
               </div>
               <div>
                 <p
-                  className="text-base font-bold text-[#18181B]"
+                  className="text-base font-bold text-warm"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   Duke Hutcheon
                 </p>
                 <p
-                  className="text-sm text-[#3F3F46]/50"
+                  className="text-sm text-warm-3"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   Founder, Developer & IT Consultant
@@ -99,7 +99,7 @@ export default function About() {
             {/* Lead with the real client backstory — this is the opener that
                 resonates immediately with the right prospect. */}
             <p
-              className="text-[#3F3F46]/60 leading-relaxed mb-6"
+              className="text-warm-2 leading-relaxed mb-6"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Most of my clients come to me after being burned by a template agency or
@@ -109,7 +109,7 @@ export default function About() {
               picks up the phone, knows your name, and builds things that actually last.
             </p>
             <p
-              className="text-[#3F3F46]/60 leading-relaxed mb-6"
+              className="text-warm-2 leading-relaxed mb-6"
               style={{ fontFamily: "var(--font-body)" }}
             >
               My work spans custom web development, network infrastructure, and
@@ -118,9 +118,9 @@ export default function About() {
             </p>
 
             {/* What I won&apos;t do — reinforces differentiators honestly */}
-            <div className="mb-8 rounded-xl border border-[#18181B]/8 bg-[#FAFAF9] p-5">
+            <div className="mb-8 rounded-xl border border-hairline bg-ink-2 p-5">
               <p
-                className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#3F3F46]/40"
+                className="mb-3 text-xs font-semibold uppercase tracking-widest text-warm-3"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 What I won&apos;t do
@@ -128,9 +128,9 @@ export default function About() {
               <ul className="space-y-2">
                 {wontDo.map((item) => (
                   <li key={item} className="flex items-start gap-2.5">
-                    <X size={13} className="mt-0.5 flex-shrink-0 text-[#F97316]" aria-hidden="true" />
+                    <X size={13} className="mt-0.5 flex-shrink-0 text-copper-bright" aria-hidden="true" />
                     <span
-                      className="text-sm text-[#3F3F46]/70 leading-relaxed"
+                      className="text-sm text-warm-2 leading-relaxed"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
                       {item}
@@ -144,13 +144,12 @@ export default function About() {
               {highlights.map((h) => (
                 <li key={h.text} className="flex items-start gap-3">
                   <div
-                    className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ backgroundColor: "rgba(24,24,27,0.07)" }}
+                    className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 border border-hairline bg-ink-2"
                   >
-                    <h.icon size={16} color="#18181B" />
+                    <h.icon size={16} className="text-copper" />
                   </div>
                   <span
-                    className="text-sm text-[#3F3F46]/70 leading-relaxed"
+                    className="text-sm text-warm-2 leading-relaxed"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     {h.text}
@@ -158,52 +157,47 @@ export default function About() {
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </RevealOnScroll>
 
-          <motion.div
-            initial={reduce ? false : { opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={reduce ? { duration: 0 } : { duration: 0.6 }}
-            className="rounded-2xl overflow-hidden bg-[#18181B] p-10 text-white"
-          >
-            <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-6"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Where We Work
-            </p>
-            <p
-              className="text-white/80 leading-relaxed mb-6"
-              style={{ fontFamily: "var(--font-body)" }}
-            >
-              Based in Sonoma County, we work with clients across the U.S. — with
-              on-site service throughout the North Bay, including:
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                "Petaluma", "Santa Rosa", "Sebastopol", "Rohnert Park",
-                "Sonoma", "Bodega Bay", "Cotati", "Windsor",
-                "Healdsburg", "Cloverdale",
-              ].map((city) => (
-                <div key={city} className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0" />
-                  <span
-                    className="text-sm text-white/70"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {city}
-                  </span>
+          {/* Right: where we work — dark spotlight panel */}
+          <RevealOnScroll as="div" direction="right" distance={20} duration={0.6}>
+            <SpotlightCard radius={20}>
+              <div className="p-10">
+                <p
+                  className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-6"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Where We Work
+                </p>
+                <p
+                  className="text-warm-2 leading-relaxed mb-6"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  Based in Sonoma County, we work with clients across the U.S. — with
+                  on-site service throughout the North Bay, including:
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {cities.map((city) => (
+                    <div key={city} className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-copper flex-shrink-0" />
+                      <span
+                        className="text-sm text-warm"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {city}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <p
-              className="mt-6 text-white/40 text-xs"
-              style={{ fontFamily: "var(--font-body)" }}
-            >
-              Remote engagements available nationwide.
-            </p>
-          </motion.div>
+                <p
+                  className="mt-6 text-warm-3 text-xs"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  Remote engagements available nationwide.
+                </p>
+              </div>
+            </SpotlightCard>
+          </RevealOnScroll>
         </div>
       </div>
     </section>

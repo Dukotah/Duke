@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { ArrowRight, CheckCircle, Phone, ShieldAlert } from "lucide-react";
+import { ArrowRight, Check, Phone, ShieldAlert } from "lucide-react";
 import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
+import { RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 
 export const metadata: Metadata = {
   title: "Cybersecurity for Small Business | Sonoma County | Copper Bay Tech",
@@ -61,7 +61,7 @@ export default function CybersecurityPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
-      <main>
+      <main className="theme-dark">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -97,104 +97,217 @@ export default function CybersecurityPage() {
             }),
           }}
         />
-        {/* Hero */}
-        <section className="pt-32 pb-20 bg-[#18181B]">
-          <div className="max-w-4xl mx-auto px-6">
-            <span
-              className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
-              style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#F97316", fontFamily: "var(--font-heading)" }}
+
+        {/* Hero — protection framed as part of websites, handled for life */}
+        <section className="relative overflow-hidden bg-ink-0 pt-32 pb-20">
+          {/* Atmospheric copper glow — position:absolute, aria-hidden → CLS 0,
+              never blocks the headline LCP. Single soft orb, blur-only. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-24 right-[-10%] h-[28rem] w-[28rem] rounded-full opacity-60"
+            style={{
+              background:
+                "radial-gradient(circle, var(--copper-glow), transparent 70%)",
+              filter: "blur(80px)",
+            }}
+          />
+          <div className="relative z-10 mx-auto max-w-4xl px-6">
+            <RevealOnScroll
+              as="span"
+              direction="up"
+              distance={10}
+              duration={0.5}
+              className="mb-5 inline-flex items-center gap-2.5 rounded-full border border-copper-dim bg-ink-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-copper-bright"
+              style={{ fontFamily: "var(--font-heading)" }}
             >
-              Cybersecurity
-            </span>
-            <h1
-              className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
+              Cybersecurity — part of being handled
+            </RevealOnScroll>
+
+            <RevealOnScroll
+              as="h1"
+              direction="up"
+              distance={12}
+              className="mb-6 max-w-3xl text-balance text-4xl font-bold leading-[1.05] tracking-tight text-warm md:text-5xl"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Protect what you&apos;ve built
               <br />
-              <span style={{ color: "#F97316" }}>before something breaks it.</span>
-            </h1>
-            <p
-              className="text-white/60 text-lg max-w-2xl mb-8"
+              <span className="bg-gradient-to-r from-copper to-copper-bright bg-clip-text text-transparent">
+                before something breaks it.
+              </span>
+            </RevealOnScroll>
+
+            <RevealOnScroll
+              as="p"
+              direction="up"
+              delay={0.1}
+              distance={12}
+              className="mb-8 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Most small businesses don&apos;t think about security until they&apos;re in crisis. A Copper Bay Tech security audit identifies your real risks, explains them in plain English, and gives you a prioritized fix list — not a 40-page report you&apos;ll never read.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
+              Keeping your site and data safe is part of keeping your site
+              handled for life. A Copper Bay Tech security audit identifies your
+              real risks, explains them in plain English, and gives you a
+              prioritized fix list — not a 40-page report you&apos;ll never read.
+            </RevealOnScroll>
+
+            <RevealOnScroll
+              as="div"
+              direction="up"
+              delay={0.2}
+              distance={12}
+              className="flex flex-col gap-3 sm:flex-row"
+            >
+              <MagneticCTA
+                as="link"
                 href={BOOKING_URL}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                shine
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-6 py-3 text-sm font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a free consultation <ArrowRight size={15} />
-              </Link>
+                Book a free consultation <ArrowRight size={15} aria-hidden />
+              </MagneticCTA>
               <a
                 href={PHONE_HREF}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-hairline bg-ink-2 px-6 py-3 text-sm font-semibold text-warm transition-colors duration-200 hover:border-copper-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                <Phone size={15} /> {PHONE}
+                <Phone size={15} aria-hidden /> {PHONE}
               </a>
-            </div>
+            </RevealOnScroll>
           </div>
         </section>
 
-        {/* Threats */}
-        <section className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
-              What you&apos;re actually up against
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-6">
-              {threats.map((t) => (
-                <div key={t.title} className="p-6 rounded-xl bg-[#FAFAF9] border border-[#18181B]/8">
-                  <div className="flex items-center gap-3 mb-3">
-                    <ShieldAlert size={18} color="#F97316" />
-                    <h3 className="font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>{t.title}</h3>
-                  </div>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{t.desc}</p>
-                </div>
+        {/* Threats — spotlight cards on the dark canvas */}
+        <section className="bg-ink-0 py-20">
+          <div className="mx-auto max-w-4xl px-6">
+            <RevealOnScroll className="mb-10">
+              <p
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper"
+                style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+              >
+                The risk
+              </p>
+              <h2
+                className="text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                What you&apos;re actually up against
+              </h2>
+            </RevealOnScroll>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {threats.map((t, i) => (
+                <RevealOnScroll key={t.title} delay={i * 0.08} className="h-full">
+                  <SpotlightCard radius={16} className="h-full">
+                    <div className="flex h-full flex-col p-6">
+                      <div className="mb-3 flex items-center gap-3">
+                        <span
+                          className="inline-flex h-9 w-9 flex-none items-center justify-center rounded-lg border border-hairline bg-ink-3"
+                          aria-hidden
+                        >
+                          <ShieldAlert size={17} className="text-copper-bright" />
+                        </span>
+                        <h3
+                          className="font-bold text-warm"
+                          style={{ fontFamily: "var(--font-heading)" }}
+                        >
+                          {t.title}
+                        </h3>
+                      </div>
+                      <p
+                        className="text-sm leading-relaxed text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {t.desc}
+                      </p>
+                    </div>
+                  </SpotlightCard>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Audit includes */}
-        <section className="py-16 bg-[#FAFAF9]">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-[#18181B] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              What a security audit includes
-            </h2>
-            <p className="text-[#3F3F46]/60 mb-8 max-w-xl" style={{ fontFamily: "var(--font-body)" }}>
-              Flat fee: $600–$2,000 depending on business size. Completed in 3–5 business days.
-            </p>
-            <ul className="grid sm:grid-cols-2 gap-4">
-              {auditIncludes.map((item) => (
-                <li key={item} className="flex items-start gap-3 p-4 rounded-xl bg-white border border-[#18181B]/8 shadow-sm">
-                  <CheckCircle size={16} className="flex-shrink-0 mt-0.5" color="#16A34A" />
-                  <span className="text-sm text-[#3F3F46]/70" style={{ fontFamily: "var(--font-body)" }}>{item}</span>
-                </li>
+        {/* Audit includes — raised surface checklist */}
+        <section className="bg-ink-1 py-20">
+          <div className="mx-auto max-w-4xl px-6">
+            <RevealOnScroll className="mb-8">
+              <p
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper"
+                style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+              >
+                What you get
+              </p>
+              <h2
+                className="mb-4 text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                What a security audit includes
+              </h2>
+              <p
+                className="max-w-xl text-pretty text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Flat fee:{" "}
+                <span
+                  className="font-semibold tabular-nums text-copper-bright"
+                  style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                >
+                  $600–$2,000
+                </span>{" "}
+                depending on business size. Completed in 3–5 business days.
+              </p>
+            </RevealOnScroll>
+            <ul className="grid gap-4 sm:grid-cols-2">
+              {auditIncludes.map((item, i) => (
+                <RevealOnScroll as="li" key={item} delay={i * 0.05}>
+                  <span className="surface-2 flex items-start gap-3 rounded-xl p-4">
+                    <Check
+                      size={16}
+                      className="mt-0.5 flex-shrink-0 text-copper"
+                      aria-hidden
+                    />
+                    <span
+                      className="text-sm text-warm-2"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      {item}
+                    </span>
+                  </span>
+                </RevealOnScroll>
               ))}
             </ul>
           </div>
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-[#18181B]">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Don&apos;t wait for a breach to find out where you&apos;re exposed.
-            </h2>
-            <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
-              Book a free 15-minute call. We&apos;ll ask a few questions and tell you whether a full audit makes sense for your situation — no pressure.
-            </p>
-            <Link
-              href={BOOKING_URL}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Book a free consultation <ArrowRight size={16} />
-            </Link>
+        <section className="bg-ink-0 py-20">
+          <div className="mx-auto max-w-3xl px-6 text-center">
+            <RevealOnScroll>
+              <h2
+                className="mb-4 text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Don&apos;t wait for a breach to find out where you&apos;re exposed.
+              </h2>
+              <p
+                className="mx-auto mb-8 max-w-xl text-pretty text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Book a free 15-minute call. We&apos;ll ask a few questions and
+                tell you whether a full audit makes sense for your situation — no
+                pressure.
+              </p>
+              <MagneticCTA
+                as="link"
+                href={BOOKING_URL}
+                shine
+                className="inline-flex items-center gap-2 rounded-lg bg-copper px-8 py-4 font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Book a free consultation <ArrowRight size={16} aria-hidden />
+              </MagneticCTA>
+            </RevealOnScroll>
           </div>
         </section>
       </main>

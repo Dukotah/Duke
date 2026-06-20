@@ -3,8 +3,9 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { rangeLabel } from "@/config/pricing";
-import { Globe, Server, ShieldCheck, MapPin, User, Receipt, CalendarOff } from "lucide-react";
+import { Globe, Server, ShieldCheck, MapPin, User, Receipt, CalendarOff, ArrowRight } from "lucide-react";
 import { BOOKING_URL } from "@/config/site";
+import { RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 
 export const metadata: Metadata = {
   title: "IT Services for Sonoma County Businesses | Copper Bay Tech",
@@ -39,13 +40,13 @@ const services = [
       "Flat-fee proposals, no hourly billing",
     ],
     range: rangeLabel("web"),
-    cta: "See web development →",
+    cta: "See web development",
   },
   {
     slug: "it-support",
     Icon: Server,
     title: "IT Support & Managed Services",
-    tagline: "Your outsourced IT department — without the overhead.",
+    tagline: "Your outsourced IT department — folded in, without the overhead.",
     desc: "Flat-rate monthly support covering workstations, servers, network, cloud accounts, and helpdesk. No surprise invoices. No waiting two days for a callback. Just reliable support from someone who knows your setup.",
     bullets: [
       "Unlimited helpdesk for covered users",
@@ -54,13 +55,13 @@ const services = [
       "New employee setup and offboarding",
     ],
     range: rangeLabel("it"),
-    cta: "See IT support →",
+    cta: "See IT support",
   },
   {
     slug: "cybersecurity",
     Icon: ShieldCheck,
     title: "Cybersecurity",
-    tagline: "Practical protection for businesses that can't afford a breach.",
+    tagline: "Practical protection, handled as part of keeping you online.",
     desc: "Security assessments, endpoint protection, backup and disaster recovery, employee training, and email security hardening. Designed for businesses with 2–50 employees who want real protection without enterprise complexity.",
     bullets: [
       "Free IT Security Risk Assessment",
@@ -69,7 +70,7 @@ const services = [
       "HIPAA, PCI-DSS, and CCPA compliance support",
     ],
     range: rangeLabel("cybersecurity"),
-    cta: "See cybersecurity →",
+    cta: "See cybersecurity",
   },
 ];
 
@@ -98,189 +99,251 @@ const whyUs = [
 
 export default function ServicesPage() {
   return (
-    <>
+    <div className="theme-dark">
       <Nav />
 
       {/* Hero */}
-      <section className="bg-[#18181B] text-white pt-32 pb-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <span
-            className="inline-block bg-[#F97316]/10 text-[#F97316] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-[#F97316]/20"
+      <section className="relative overflow-hidden bg-ink-0 px-6 pt-32 pb-20">
+        {/* Quiet ambient copper glow — position:absolute, aria-hidden → CLS 0,
+            never blocks the headline LCP. No spotlight (kept calm on this page). */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -left-24 h-[28rem] w-[28rem] rounded-full opacity-60"
+          style={{
+            background:
+              "radial-gradient(circle, var(--copper-glow), transparent 70%)",
+            filter: "blur(80px)",
+          }}
+        />
+        <div className="relative z-10 mx-auto max-w-4xl">
+          <RevealOnScroll
+            as="p"
+            direction="up"
+            distance={10}
+            duration={0.5}
+            className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-copper-dim bg-ink-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-copper-bright"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Serving Sonoma County Since 2022
-          </span>
+          </RevealOnScroll>
           <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+            className="text-balance text-4xl font-bold leading-tight tracking-tight text-warm md:text-5xl lg:text-6xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Technology that works for your business —{" "}
-            <span className="text-[#F97316]">not the other way around.</span>
+            <span className="bg-gradient-to-r from-copper to-copper-bright bg-clip-text text-transparent">
+              not the other way around.
+            </span>
           </h1>
-          <p
-            className="text-lg md:text-xl text-white/70 max-w-2xl leading-relaxed"
+          <RevealOnScroll
+            as="p"
+            direction="up"
+            delay={0.15}
+            distance={12}
+            className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2 md:text-xl"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Copper Bay Tech provides web development, IT support, and cybersecurity for small
-            businesses across Sonoma County. Local to the North Bay. Flat fees. No long-term contracts.
+            Copper Bay Tech builds and looks after websites for small
+            businesses across Sonoma County — with IT support and cybersecurity
+            folded in. Local to the North Bay. Flat fees. No long-term contracts.
             Real humans who pick up the phone.
-          </p>
+          </RevealOnScroll>
         </div>
       </section>
 
       {/* Service Cards */}
-      <section className="bg-[#FAFAF9] py-20 px-6">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {services.map((service) => (
-            <div
-              key={service.slug}
-              className="bg-white rounded-2xl border border-[#18181B]/8 shadow-sm overflow-hidden"
-            >
-              <div className="p-8 md:p-10">
-                <div className="flex flex-col md:flex-row md:items-start gap-6">
-                  {/* Icon */}
-                  <div className="w-14 h-14 rounded-xl bg-[#18181B]/8 flex items-center justify-center flex-shrink-0">
-                    <service.Icon size={28} color="#18181B" />
-                  </div>
-                  <div className="flex-1">
-                    <h2
-                      className="text-2xl font-bold text-[#18181B] mb-1"
-                      style={{ fontFamily: "var(--font-heading)" }}
+      <section className="bg-ink-0 px-6 pb-20">
+        <div className="mx-auto max-w-4xl space-y-6">
+          {services.map((service, i) => (
+            <RevealOnScroll key={service.slug} delay={i * 0.08}>
+              <SpotlightCard radius={20}>
+                <div className="p-8 md:p-10">
+                  <div className="flex flex-col gap-6 md:flex-row md:items-start">
+                    {/* Icon */}
+                    <span
+                      className="inline-flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-hairline bg-ink-3"
+                      aria-hidden
                     >
-                      {service.title}
-                    </h2>
-                    <p
-                      className="text-gold-on-light font-semibold mb-4"
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
-                      {service.tagline}
-                    </p>
-                    <p
-                      className="text-[#3F3F46]/70 leading-relaxed mb-6"
-                      style={{ fontFamily: "var(--font-body)" }}
-                    >
-                      {service.desc}
-                    </p>
-                    <ul className="space-y-2 mb-6">
-                      {service.bullets.map((b) => (
-                        <li key={b} className="flex items-center gap-2 text-[#3F3F46]/70 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#18181B] flex-shrink-0" /> {b}
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="flex flex-wrap items-center gap-6">
-                      <Link
-                        href={`/services/${service.slug}`}
-                        className="inline-flex items-center gap-1 text-gold-on-light hover:text-[#F97316] font-semibold transition-colors"
+                      <service.Icon size={26} className="text-copper-bright" />
+                    </span>
+                    <div className="flex-1">
+                      <h2
+                        className="mb-1 text-2xl font-bold text-warm"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
-                        {service.cta}
-                      </Link>
-                      <span className="text-[#3F3F46]/40 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                        Starting at {service.range}
-                      </span>
+                        {service.title}
+                      </h2>
+                      <p
+                        className="mb-4 font-semibold text-copper-bright"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {service.tagline}
+                      </p>
+                      <p
+                        className="mb-6 leading-relaxed text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {service.desc}
+                      </p>
+                      <ul className="mb-6 space-y-2.5">
+                        {service.bullets.map((b) => (
+                          <li
+                            key={b}
+                            className="flex items-center gap-2.5 text-sm text-warm-2"
+                            style={{ fontFamily: "var(--font-body)" }}
+                          >
+                            <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-copper" />{" "}
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="flex flex-wrap items-center gap-6">
+                        <Link
+                          href={`/services/${service.slug}`}
+                          className="inline-flex items-center gap-1.5 font-semibold text-copper-bright underline-offset-4 transition-colors hover:text-copper hover:underline focus-visible:outline-none focus-visible:underline"
+                          style={{ fontFamily: "var(--font-heading)" }}
+                        >
+                          {service.cta}
+                          <ArrowRight size={15} aria-hidden />
+                        </Link>
+                        <span
+                          className="text-sm text-warm-3"
+                          style={{ fontFamily: "var(--font-mono, var(--font-body))" }}
+                        >
+                          Starting at {service.range}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </SpotlightCard>
+            </RevealOnScroll>
           ))}
         </div>
       </section>
 
       {/* Why local */}
-      <section className="bg-white py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <h2
-            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Why Sonoma County businesses work with Copper Bay Tech
-          </h2>
-          <p
-            className="text-[#3F3F46]/60 text-lg mb-12 max-w-2xl leading-relaxed"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
-            There are national IT and web firms that will take your money. Here&apos;s why local
-            matters.
-          </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {whyUs.map((item) => (
-              <div key={item.title} className="text-center p-6">
-                <div className="w-12 h-12 rounded-xl bg-[#18181B]/8 flex items-center justify-center mx-auto mb-3">
-                  <item.Icon size={22} color="#18181B" />
+      <section className="bg-ink-1 px-6 py-20">
+        <div className="mx-auto max-w-4xl">
+          <RevealOnScroll className="mb-12">
+            <h2
+              className="mb-4 text-balance text-3xl font-bold text-warm md:text-4xl"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Why Sonoma County businesses work with Copper Bay Tech
+            </h2>
+            <p
+              className="max-w-2xl text-lg leading-relaxed text-warm-2"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              There are national IT and web firms that will take your money. Here&apos;s why local
+              matters.
+            </p>
+          </RevealOnScroll>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {whyUs.map((item, i) => (
+              <RevealOnScroll key={item.title} delay={i * 0.08} className="h-full">
+                <div className="h-full rounded-2xl border border-hairline bg-ink-2 p-6 text-center">
+                  <span
+                    className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-hairline bg-ink-3"
+                    aria-hidden
+                  >
+                    <item.Icon size={20} className="text-copper" />
+                  </span>
+                  <h3
+                    className="mb-2 font-bold text-warm"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="text-sm leading-relaxed text-warm-2"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    {item.desc}
+                  </p>
                 </div>
-                <h3
-                  className="font-bold text-[#18181B] mb-2"
-                  style={{ fontFamily: "var(--font-heading)" }}
-                >
-                  {item.title}
-                </h3>
-                <p className="text-[#3F3F46]/60 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
-                  {item.desc}
-                </p>
-              </div>
+              </RevealOnScroll>
             ))}
           </div>
         </div>
       </section>
 
       {/* Areas served */}
-      <section className="bg-[#FAFAF9] py-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="bg-ink-0 px-6 py-16">
+        <RevealOnScroll className="mx-auto max-w-4xl text-center">
           <h2
-            className="text-2xl font-bold text-[#18181B] mb-4"
+            className="mb-4 text-2xl font-bold text-warm"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Serving all of Sonoma County
           </h2>
-          <p className="text-[#3F3F46]/60 text-base mb-6" style={{ fontFamily: "var(--font-body)" }}>
+          <p
+            className="mb-6 text-base text-warm-2"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
             Petaluma · Santa Rosa · Sebastopol · Rohnert Park · Sonoma · Windsor · Healdsburg ·
             Cotati · Bodega Bay · Cloverdale · Guerneville
           </p>
-          <p className="text-[#3F3F46]/40 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+          <p
+            className="text-sm text-warm-3"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
             Remote work is available everywhere. On-site visits are available throughout the North
             Bay.
           </p>
-        </div>
+        </RevealOnScroll>
       </section>
 
       {/* CTA */}
-      <section className="bg-[#18181B] text-white py-20 px-6">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="relative overflow-hidden bg-ink-1 px-6 py-20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-24 left-1/2 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full opacity-50"
+          style={{
+            background:
+              "radial-gradient(circle, var(--copper-glow), transparent 70%)",
+            filter: "blur(80px)",
+          }}
+        />
+        <RevealOnScroll className="relative z-10 mx-auto max-w-3xl text-center">
           <h2
-            className="text-3xl md:text-4xl font-bold mb-4"
+            className="mb-4 text-balance text-3xl font-bold text-warm md:text-4xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Not sure where to start?
           </h2>
           <p
-            className="text-white/70 text-lg mb-10 leading-relaxed"
+            className="mx-auto mb-10 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Book a free 30-minute consultation. We&apos;ll learn about your business and tell you
             exactly where the biggest risks and opportunities are — whether or not you hire us.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link
+          <div className="flex flex-wrap justify-center gap-4">
+            <MagneticCTA
+              as="link"
               href={BOOKING_URL}
-              className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#ea6c0a] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              shine
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-6 py-3 font-semibold text-ink-0 transition-colors hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-1"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Book a free consultation →
-            </Link>
+              Book a free consultation
+              <ArrowRight size={16} aria-hidden />
+            </MagneticCTA>
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-2 text-white/60 hover:text-white text-sm transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-3 text-sm font-semibold text-warm-2 underline-offset-4 transition-colors hover:text-warm hover:underline focus-visible:outline-none focus-visible:underline"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              See pricing estimates ↗
+              See pricing estimates
+              <ArrowRight size={14} aria-hidden className="opacity-70" />
             </Link>
           </div>
-        </div>
+        </RevealOnScroll>
       </section>
 
       <Footer />
-    </>
+    </div>
   );
 }

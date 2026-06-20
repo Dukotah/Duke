@@ -6,7 +6,8 @@ import JsonLd, { faqSchema } from "@/components/JsonLd";
 import PricingEstimator from "@/components/PricingEstimator";
 import Comparison from "@/components/Comparison";
 import { ArrowRight, Globe, Server, ShieldCheck, Check, Phone, Sparkles, Calculator } from "lucide-react";
-import { PRICING } from "@/config/pricing";
+import { PRICING, websitePackages, carePlans, addOns } from "@/config/pricing";
+import { RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 
 const pricingSchema = {
   "@context": "https://schema.org",
@@ -107,117 +108,26 @@ export const metadata: Metadata = {
   },
 };
 
-const tiers = [
-  {
-    icon: Globe,
-    label: "Web Design",
-    tagline: "Your digital front door, done right.",
-    price: PRICING.web.range,
-    priceNote: PRICING.web.note,
-    href: "/web-design-sonoma-county",
-    tiers: [
-      { label: "Starter · up to 5 pages", price: "$2,500" },
-      { label: "Business · up to 10 pages", price: "$4,500" },
-      { label: "Premium · 10–20 pages, e-commerce", price: "$7,500+" },
-    ],
-    includes: [
-      "Custom-coded in Next.js — no templates",
-      "Mobile-first, 90+ PageSpeed score",
-      "Contact form with spam filtering",
-      "Local SEO setup & schema markup",
-      "Google Business Profile configuration",
-      "Domain, hosting & email setup",
-      "30 days of post-launch support",
-    ],
-    addons: [
-      { label: "E-commerce / booking integration", price: "+ $500–$1,500" },
-      { label: "Monthly maintenance retainer", price: "$95/mo" },
-    ],
-    cta: "Get a Fixed-Price Quote",
-    ctaHref: "/#contact",
-  },
+// IT / security / AI fold in as care-plan benefits, not headline services — but
+// we keep the SEO internal links to each service hub so the link equity stays.
+const alsoHandled = [
   {
     icon: Server,
-    label: "IT Support",
-    tagline: "IT that just works, every day.",
-    price: PRICING.it.range,
-    priceNote: PRICING.it.note,
+    label: "Managed IT & helpdesk",
+    note: "Network, workstations, cloud & support for your team.",
     href: "/it-support-sonoma-county",
-    featured: true,
-    tiers: [
-      { label: "1–5 users", price: "$550/mo" },
-      { label: "6–10 users", price: "$1,200/mo" },
-      { label: "11–20 users", price: "$2,200/mo" },
-    ],
-    includes: [
-      "Direct line — no ticket queue",
-      "Network setup & management",
-      "Workstation & device support",
-      "Cloud migration & storage",
-      "Staff onboarding & training",
-      "MFA & password manager rollout",
-      "Monthly check-in call",
-      "No long-term contract",
-    ],
-    addons: [
-      { label: "Security audit (one-time)", price: "+ $750" },
-      { label: "Cloud migration (per user)", price: "+ $75–$150" },
-      { label: "Process automation build-out", price: "Quoted separately" },
-    ],
-    cta: "Get My Free IT Estimate",
-    ctaHref: "/schedule",
   },
   {
     icon: ShieldCheck,
-    label: "Cybersecurity",
-    tagline: "Find the gaps before attackers do.",
-    price: PRICING.cybersecurity.range,
-    priceNote: PRICING.cybersecurity.note,
+    label: "Cybersecurity & hardening",
+    note: "Audits, monitoring, backups & incident planning.",
     href: "/cybersecurity-small-business",
-    tiers: [
-      { label: "Audit with IT support plan", price: "$750" },
-      { label: "Standalone audit", price: "$1,200" },
-    ],
-    includes: [
-      "Full network & device scan",
-      "Open port & firmware audit",
-      "Account access controls review",
-      "MFA & password audit",
-      "Critical issues fixed same day",
-      "Written remediation report",
-      "90-day follow-up check",
-      "HIPAA / PCI baseline mapping (if applicable)",
-    ],
-    addons: [
-      { label: "Ongoing monthly monitoring", price: "+ $200/mo" },
-      { label: "Incident response plan document", price: "+ $400" },
-    ],
-    cta: "Book a Free Security Call",
-    ctaHref: "/schedule",
   },
   {
     icon: Sparkles,
-    label: "AI Integration",
-    tagline: "An employee that never clocks out.",
-    price: PRICING.ai.range,
-    priceNote: PRICING.ai.note,
+    label: "AI tools & automation",
+    note: "Answer calls, reply to leads, clear the busywork.",
     href: "/ai-integration-small-business",
-    includes: [
-      "AI receptionist for calls & website chat",
-      "Instant lead response & missed-call text-back",
-      "Automated review requests & replies",
-      "Quote & routine-email drafting",
-      "Knowledge assistant trained on your business",
-      "Connected to the tools you already use",
-      "Tested before it ever talks to a customer",
-      "Monitoring & tuning included",
-    ],
-    addons: [
-      { label: "Monthly plan (AI usage + tuning)", price: "from $200/mo" },
-      { label: "Extra automations / integrations", price: "Quoted separately" },
-    ],
-    cta: "Book a Free AI Demo",
-    ctaHref: "/schedule",
   },
 ];
 
@@ -256,69 +166,85 @@ export default function Pricing() {
       <JsonLd schema={pricingSchema} />
       <JsonLd schema={faqSchema(faqs)} />
       <Nav />
-      <main className="bg-[#FAFAF9]">
-        {/* Hero */}
-        <section className="relative overflow-hidden bg-[#18181B] pt-36 pb-28">
-          {/* ambient texture */}
+      <main className="theme-dark">
+        {/* ── Hero ─────────────────────────────────────────────────────── */}
+        <section className="relative overflow-hidden bg-ink-0 pt-36 pb-28">
+          {/* ambient grid texture — copper-neutral, masked to the top */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.07]"
+            className="pointer-events-none absolute inset-0 opacity-[0.05]"
             style={{
               backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+                "linear-gradient(var(--text-3) 1px, transparent 1px), linear-gradient(90deg, var(--text-3) 1px, transparent 1px)",
               backgroundSize: "56px 56px",
               maskImage: "radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%)",
             }}
           />
+          {/* single rationed copper glow orb */}
           <div
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] -translate-x-1/2 rounded-full blur-[120px]"
-            style={{ background: "radial-gradient(circle, rgba(249,115,22,0.22) 0%, transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, var(--copper-glow) 0%, transparent 70%)" }}
           />
           <div className="relative mx-auto max-w-4xl px-6 text-center">
-            <span
-              className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#F97316]/30 bg-[#F97316]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#F97316]"
+            <RevealOnScroll
+              as="span"
+              direction="up"
+              distance={10}
+              duration={0.5}
+              className="mb-7 inline-flex items-center gap-2 rounded-full border border-copper-dim bg-ink-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-copper-bright"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              <Sparkles size={13} />
-              Transparent Pricing
-            </span>
+              <Sparkles size={13} aria-hidden />
+              Websites, handled — for life
+            </RevealOnScroll>
+
             <h1
-              className="text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white md:text-7xl"
+              className="text-balance text-5xl font-bold leading-[1.05] tracking-tight text-warm md:text-7xl"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Flat fees.
               <br />
-              <span style={{ color: "#F97316" }}>No surprises.</span>
+              <span className="bg-gradient-to-r from-copper to-copper-bright bg-clip-text text-transparent">
+                No surprises.
+              </span>
             </h1>
-            <p
-              className="mx-auto mt-7 max-w-2xl text-pretty text-lg leading-relaxed text-white/60 md:text-xl"
+
+            <RevealOnScroll
+              as="p"
+              direction="up"
+              delay={0.1}
+              distance={12}
+              className="mx-auto mt-7 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2 md:text-xl"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              We quote a number before any work starts, and that&apos;s the number you pay. No hourly
-              billing, no change-order padding, no hidden fees.
-            </p>
+              Start with a custom website, then keep it handled for life with one
+              calm care plan. We quote a number before any work starts, and
+              that&apos;s the number you pay — no hourly billing, no hidden fees.
+            </RevealOnScroll>
 
-            <Link
-              href="/tools/website-cost-estimator"
-              className="group mx-auto mt-6 inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/85 transition-colors hover:border-[#F97316]/50 hover:text-white"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              <Calculator size={15} color="#F97316" />
-              Try the instant website cost estimator
-              <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
-            </Link>
+            <RevealOnScroll as="div" direction="up" delay={0.18} distance={12}>
+              <Link
+                href="/tools/website-cost-estimator"
+                className="group mx-auto mt-7 inline-flex items-center gap-2 rounded-full border border-hairline px-5 py-2.5 text-sm font-semibold text-warm-2 transition-colors hover:border-copper-dim hover:text-warm"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                <Calculator size={15} className="text-copper-bright" aria-hidden />
+                Try the instant website cost estimator
+                <ArrowRight size={15} aria-hidden className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              </Link>
+            </RevealOnScroll>
 
             {/* guarantee strip */}
             <ul className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row sm:gap-8">
               {guarantees.map((g) => (
                 <li
                   key={g}
-                  className="flex items-center gap-2 text-sm text-white/75"
+                  className="flex items-center gap-2 text-sm text-warm-2"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#F97316]/20">
-                    <Check size={12} color="#F97316" strokeWidth={3} />
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-copper-dim">
+                    <Check size={12} className="text-copper-bright" strokeWidth={3} aria-hidden />
                   </span>
                   {g}
                 </li>
@@ -327,255 +253,428 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* Pricing cards */}
-        <section className="relative -mt-16 pb-24">
+        {/* ── Website build packages (lead with the product) ───────────── */}
+        <section className="relative bg-ink-0 pb-24">
           <div className="mx-auto max-w-6xl px-6">
-            <div className="grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
-              {tiers.map((t) => (
-                <div
-                  key={t.label}
-                  className={`group relative flex flex-col rounded-3xl p-8 transition-all duration-300 ${
-                    t.featured
-                      ? "bg-[#18181B] text-white shadow-[0_30px_60px_-15px_rgba(24,24,27,0.45)] ring-1 ring-[#F97316]/40 xl:-mt-4 xl:mb-4 xl:scale-[1.03]"
-                      : "border border-[#18181B]/[0.07] bg-white shadow-[0_10px_30px_-12px_rgba(24,24,27,0.12)] hover:-translate-y-1 hover:shadow-[0_24px_48px_-16px_rgba(24,24,27,0.2)]"
-                  }`}
-                >
-                  {t.featured && (
-                    <span
-                      className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#F97316] px-4 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-lg"
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
-                      Most popular
-                    </span>
-                  )}
+            <RevealOnScroll className="mb-14 text-center">
+              <p
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper"
+                style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+              >
+                Start with a website
+              </p>
+              <h2
+                className="text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl md:text-5xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                One-time build, no templates.
+              </h2>
+              <p
+                className="mx-auto mt-4 max-w-xl text-pretty text-lg text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Custom-coded, mobile-first and SEO-ready. Pick a starting point —
+                you get a fixed quote before any work begins.
+              </p>
+            </RevealOnScroll>
 
-                  <div
-                    className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-105 ${
-                      t.featured ? "bg-[#F97316]/15 ring-1 ring-[#F97316]/25" : "bg-[#18181B]/[0.05] ring-1 ring-[#18181B]/[0.06]"
-                    }`}
+            <div className="grid items-stretch gap-6 md:grid-cols-3">
+              {websitePackages.map((pkg, i) => (
+                <RevealOnScroll key={pkg.id} delay={i * 0.08} className="h-full">
+                  <SpotlightCard
+                    radius={24}
+                    className={`h-full ${pkg.popular ? "surface-featured" : ""}`}
+                    style={pkg.popular ? { border: "1px solid var(--copper)" } : undefined}
                   >
-                    <t.icon size={26} color="#F97316" strokeWidth={1.75} />
-                  </div>
-
-                  <p
-                    className={`mb-1.5 text-xs font-semibold uppercase tracking-[0.18em] ${
-                      t.featured ? "text-[#F97316]" : "text-[#18181B]/50"
-                    }`}
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {t.label}
-                  </p>
-
-                  <p
-                    className={`mb-6 text-[15px] leading-relaxed ${t.featured ? "text-white/65" : "text-[#3F3F46]/70"}`}
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    {t.tagline}
-                  </p>
-
-                  <div className={`mb-7 border-b pb-7 ${t.featured ? "border-white/10" : "border-[#18181B]/[0.08]"}`}>
-                    <span
-                      className={`text-[2.1rem] font-bold leading-none tracking-tight ${t.featured ? "text-white" : "text-[#18181B]"}`}
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
-                      {t.price}
-                    </span>
-                    <p
-                      className={`mt-2 text-xs uppercase tracking-wide ${t.featured ? "text-white/45" : "text-[#3F3F46]/45"}`}
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
-                      {t.priceNote}
-                    </p>
-
-                    {t.tiers && t.tiers.length > 0 && (
-                      <div className={`mt-5 space-y-2 border-t pt-4 ${t.featured ? "border-white/10" : "border-[#18181B]/[0.08]"}`}>
-                        {t.tiers.map((tier) => (
-                          <div key={tier.label} className="flex items-baseline justify-between gap-3">
-                            <span
-                              className={`text-[13px] ${t.featured ? "text-white/70" : "text-[#3F3F46]/75"}`}
-                              style={{ fontFamily: "var(--font-body)" }}
-                            >
-                              {tier.label}
-                            </span>
-                            <span
-                              className={`whitespace-nowrap text-[13px] font-semibold ${t.featured ? "text-white" : "text-[#18181B]"}`}
-                              style={{ fontFamily: "var(--font-heading)" }}
-                            >
-                              {tier.price}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <ul className="mb-7 flex-1 space-y-3">
-                    {t.includes.map((item) => (
-                      <li key={item} className="flex items-start gap-3">
+                    <div className="flex h-full flex-col p-7 sm:p-8">
+                      <div className="mb-5 flex items-center justify-between">
                         <span
-                          className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${
-                            t.featured ? "bg-[#F97316]/20" : "bg-[#F97316]/12"
-                          }`}
+                          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-hairline bg-ink-3"
+                          aria-hidden
                         >
-                          <Check size={12} color="#F97316" strokeWidth={3} />
+                          <Globe size={20} className="text-copper-bright" />
                         </span>
+                        {pkg.popular && (
+                          <span
+                            className="rounded-full border border-copper-dim px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-copper-bright"
+                            style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                          >
+                            Most popular
+                          </span>
+                        )}
+                      </div>
+
+                      <h3
+                        className="text-xl font-bold text-warm"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {pkg.name}
+                      </h3>
+                      <p
+                        className="mt-1.5 min-h-[2.75rem] text-sm text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {pkg.tagline}
+                      </p>
+
+                      <p className="mt-5 flex items-baseline gap-1.5">
+                        {pkg.pricePrefix && (
+                          <span
+                            className="text-sm font-medium text-warm-3"
+                            style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                          >
+                            {pkg.pricePrefix.trim()}
+                          </span>
+                        )}
                         <span
-                          className={`text-[15px] leading-snug ${t.featured ? "text-white/85" : "text-[#3F3F46]"}`}
-                          style={{ fontFamily: "var(--font-body)" }}
+                          className="text-3xl font-bold tabular-nums text-warm"
+                          style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
                         >
-                          {item}
+                          {pkg.price}
+                        </span>
+                        <span className="text-sm text-warm-3" style={{ fontFamily: "var(--font-body)" }}>
+                          one-time
+                        </span>
+                      </p>
+
+                      <ul className="mt-6 mb-7 flex-1 space-y-2.5">
+                        {pkg.features.map((feature) => (
+                          <li
+                            key={feature}
+                            className="flex items-start gap-2.5 text-sm text-warm-2"
+                            style={{ fontFamily: "var(--font-body)" }}
+                          >
+                            <Check size={16} className="mt-0.5 flex-shrink-0 text-copper" aria-hidden />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <MagneticCTA
+                        as="link"
+                        href="/#contact"
+                        shine={pkg.popular}
+                        className={`mt-auto inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0 ${
+                          pkg.popular
+                            ? "bg-copper text-ink-0 hover:bg-copper-bright"
+                            : "border border-hairline bg-ink-3 text-warm hover:border-copper-dim"
+                        }`}
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        Get a Fixed-Price Quote
+                        <ArrowRight size={15} aria-hidden />
+                      </MagneticCTA>
+                    </div>
+                  </SpotlightCard>
+                </RevealOnScroll>
+              ))}
+            </div>
+
+            <p
+              className="mx-auto mt-8 max-w-2xl text-center text-sm leading-relaxed text-warm-3"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              Prefer the deep dive?{" "}
+              <Link
+                href="/web-design-sonoma-county"
+                className="font-semibold text-copper-bright underline-offset-4 hover:underline"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Learn more about web design in Sonoma County
+              </Link>
+              .
+            </p>
+          </div>
+        </section>
+
+        {/* ── Care plans (monthly — IT/security/AI fold in as benefits) ── */}
+        <section className="relative bg-ink-0 pb-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <RevealOnScroll className="mb-14 text-center">
+              <p
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-copper"
+                style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+              >
+                Then keep it handled
+              </p>
+              <h2
+                className="text-balance text-3xl font-bold leading-[1.1] text-warm sm:text-4xl md:text-5xl"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Care plans, for life.
+              </h2>
+              <p
+                className="mx-auto mt-4 max-w-xl text-pretty text-lg text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Hosting, updates, security and improvements — handled monthly so
+                your site never goes stale or unsafe. Month-to-month, cancel anytime.
+              </p>
+            </RevealOnScroll>
+
+            <div className="grid items-stretch gap-6 md:grid-cols-3">
+              {carePlans.map((plan, i) => (
+                <RevealOnScroll key={plan.id} delay={i * 0.08} className="h-full">
+                  <SpotlightCard
+                    radius={24}
+                    className={`h-full ${plan.popular ? "surface-featured" : ""}`}
+                    style={plan.popular ? { border: "1px solid var(--copper)" } : undefined}
+                  >
+                    <div className="flex h-full flex-col p-7 sm:p-8">
+                      <div className="mb-5 flex items-center justify-between">
+                        <h3
+                          className="text-xl font-bold text-warm"
+                          style={{ fontFamily: "var(--font-heading)" }}
+                        >
+                          {plan.name}
+                        </h3>
+                        {plan.popular && (
+                          <span
+                            className="rounded-full border border-copper-dim px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-copper-bright"
+                            style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                          >
+                            Most popular
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="flex items-baseline gap-1.5">
+                        <span
+                          className="text-3xl font-bold tabular-nums text-warm"
+                          style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                        >
+                          {plan.price}
+                        </span>
+                        <span className="text-sm text-warm-3" style={{ fontFamily: "var(--font-body)" }}>
+                          /mo
+                        </span>
+                      </p>
+                      <p
+                        className="mt-2 min-h-[2.75rem] text-sm text-warm-2"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {plan.tagline}
+                      </p>
+
+                      <ul className="mt-6 mb-7 flex-1 space-y-2.5">
+                        {plan.features.map((feature) => (
+                          <li
+                            key={feature}
+                            className="flex items-start gap-2.5 text-sm text-warm-2"
+                            style={{ fontFamily: "var(--font-body)" }}
+                          >
+                            <Check size={16} className="mt-0.5 flex-shrink-0 text-copper" aria-hidden />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <MagneticCTA
+                        as="link"
+                        href="/schedule"
+                        shine={plan.popular}
+                        className={`mt-auto inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0 ${
+                          plan.popular
+                            ? "bg-copper text-ink-0 hover:bg-copper-bright"
+                            : "border border-hairline bg-ink-3 text-warm hover:border-copper-dim"
+                        }`}
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        Build your plan
+                        <ArrowRight size={15} aria-hidden />
+                      </MagneticCTA>
+                    </div>
+                  </SpotlightCard>
+                </RevealOnScroll>
+              ))}
+            </div>
+
+            {/* Quiet "also handled" — IT / cyber / AI as benefits, with SEO links */}
+            <RevealOnScroll className="mt-16">
+              <div className="rounded-2xl border border-hairline bg-ink-1 p-7 sm:p-9">
+                <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="max-w-md">
+                    <p
+                      className="text-sm font-semibold text-warm"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                      Also handled, on the Fully Managed plan
+                    </p>
+                    <p
+                      className="mt-1.5 text-sm text-warm-2"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      IT, security and AI aren&rsquo;t add-on services to chase —
+                      they come folded into one partner.
+                    </p>
+                  </div>
+
+                  <ul className="grid flex-1 gap-x-8 gap-y-4 sm:grid-cols-3 lg:max-w-2xl">
+                    {alsoHandled.map(({ icon: Icon, label, note, href }) => (
+                      <li key={label} className="flex items-start gap-3">
+                        <span
+                          className="mt-0.5 inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-hairline bg-ink-3"
+                          aria-hidden
+                        >
+                          <Icon size={16} className="text-copper" />
+                        </span>
+                        <span>
+                          <Link
+                            href={href}
+                            className="block text-sm font-semibold text-warm underline-offset-4 transition-colors hover:text-copper-bright hover:underline focus-visible:outline-none focus-visible:underline"
+                            style={{ fontFamily: "var(--font-heading)" }}
+                          >
+                            {label}
+                          </Link>
+                          <span
+                            className="mt-0.5 block text-xs leading-relaxed text-warm-3"
+                            style={{ fontFamily: "var(--font-body)" }}
+                          >
+                            {note}
+                          </span>
                         </span>
                       </li>
                     ))}
                   </ul>
-
-                  {t.addons.length > 0 && (
-                    <div className={`mb-7 rounded-2xl p-5 ${t.featured ? "bg-white/[0.06]" : "bg-[#FAFAF9]"}`}>
-                      <p
-                        className={`mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] ${t.featured ? "text-white/45" : "text-[#18181B]/45"}`}
-                        style={{ fontFamily: "var(--font-heading)" }}
-                      >
-                        Common add-ons
-                      </p>
-                      <div className="space-y-2.5">
-                        {t.addons.map((a) => (
-                          <div key={a.label} className="flex items-start justify-between gap-3">
-                            <span
-                              className={`text-[13px] leading-snug ${t.featured ? "text-white/65" : "text-[#3F3F46]/75"}`}
-                              style={{ fontFamily: "var(--font-body)" }}
-                            >
-                              {a.label}
-                            </span>
-                            <span
-                              className={`whitespace-nowrap text-[13px] font-semibold ${t.featured ? "text-[#F97316]" : "text-[#18181B]"}`}
-                              style={{ fontFamily: "var(--font-heading)" }}
-                            >
-                              {a.price}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <Link
-                    href={t.ctaHref}
-                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 ${
-                      t.featured
-                        ? "bg-[#F97316] text-white shadow-lg shadow-[#F97316]/25 hover:bg-[#ea6c0a] focus-visible:ring-offset-[#18181B]"
-                        : "bg-[#18181B] text-white hover:bg-[#0d0d0f] focus-visible:ring-offset-white"
-                    }`}
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {t.cta}
-                    <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
-                  </Link>
-
-                  <Link
-                    href={t.href}
-                    className={`mt-4 text-center text-xs font-medium underline-offset-4 transition-colors hover:underline ${
-                      t.featured ? "text-white/45 hover:text-white/80" : "text-[#3F3F46]/45 hover:text-[#18181B]"
-                    }`}
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    Learn more about {t.label} →
-                  </Link>
                 </div>
-              ))}
-            </div>
+              </div>
+            </RevealOnScroll>
+
+            {/* Add-ons (one-time extras) */}
+            <RevealOnScroll className="mt-10">
+              <div className="rounded-2xl border border-hairline bg-ink-1 p-7 sm:p-9">
+                <p
+                  className="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-copper"
+                  style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                >
+                  Common add-ons
+                </p>
+                <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {addOns.map((a) => (
+                    <div key={a.id} className="flex items-start justify-between gap-3 border-t border-hairline pt-4">
+                      <span>
+                        <span
+                          className="block text-sm font-semibold text-warm"
+                          style={{ fontFamily: "var(--font-heading)" }}
+                        >
+                          {a.name}
+                        </span>
+                        <span
+                          className="mt-0.5 block text-xs leading-relaxed text-warm-3"
+                          style={{ fontFamily: "var(--font-body)" }}
+                        >
+                          {a.description}
+                        </span>
+                      </span>
+                      <span
+                        className="whitespace-nowrap text-sm font-semibold text-copper-bright"
+                        style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
+                      >
+                        {a.priceNote === "from" && "from "}
+                        {a.price}
+                        {a.priceNote && a.priceNote !== "from" && ` ${a.priceNote}`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </RevealOnScroll>
 
             <p
-              className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-[#3F3F46]/55"
+              className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-warm-3"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              All prices are estimates. You&apos;ll get a specific quote before any work starts. No
-              billing begins until you approve it in writing.
+              All prices are estimates. You&apos;ll get a specific quote before any
+              work starts. No billing begins until you approve it in writing.
             </p>
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="bg-white py-24">
+        {/* ── FAQ ──────────────────────────────────────────────────────── */}
+        <section className="bg-ink-1 py-24">
           <div className="mx-auto max-w-3xl px-6">
-            <div className="mb-14 text-center">
+            <RevealOnScroll className="mb-14 text-center">
               <p
-                className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gold-on-light"
-                style={{ fontFamily: "var(--font-heading)" }}
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-copper"
+                style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
               >
                 Pricing FAQ
               </p>
               <h2
-                className="text-balance text-4xl font-bold tracking-tight text-[#18181B] md:text-5xl"
+                className="text-balance text-4xl font-bold tracking-tight text-warm md:text-5xl"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Questions, answered
               </h2>
-            </div>
+            </RevealOnScroll>
             <div className="space-y-4">
               {faqs.map((f, i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl border border-[#18181B]/[0.07] bg-[#FAFAF9] p-7 transition-colors hover:border-[#F97316]/30"
-                >
-                  <h3
-                    className="mb-2.5 flex items-start gap-3 text-lg font-bold text-[#18181B]"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    <span className="mt-0.5 text-[#F97316]">Q.</span>
-                    {f.q}
-                  </h3>
-                  <p
-                    className="pl-7 text-[15px] leading-relaxed text-[#3F3F46]/75"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    {f.a}
-                  </p>
-                </div>
+                <RevealOnScroll key={i} delay={i * 0.05}>
+                  <div className="rounded-2xl border border-hairline bg-ink-2 p-7 transition-colors hover:border-copper-dim">
+                    <h3
+                      className="mb-2.5 flex items-start gap-3 text-lg font-bold text-warm"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                      <span className="mt-0.5 text-copper-bright">Q.</span>
+                      {f.q}
+                    </h3>
+                    <p
+                      className="pl-7 text-[15px] leading-relaxed text-warm-2"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      {f.a}
+                    </p>
+                  </div>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="relative overflow-hidden bg-[#18181B] py-28">
+        {/* ── CTA ──────────────────────────────────────────────────────── */}
+        <section className="relative overflow-hidden bg-ink-0 py-28">
           <div
             aria-hidden
             className="pointer-events-none absolute left-1/2 bottom-0 h-[360px] w-[760px] -translate-x-1/2 rounded-full blur-[120px]"
-            style={{ background: "radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, var(--copper-glow) 0%, transparent 70%)" }}
           />
           <div className="relative mx-auto max-w-3xl px-6 text-center">
-            <h2
-              className="text-balance text-4xl font-bold tracking-tight text-white md:text-5xl"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Not sure what you need?
-            </h2>
-            <p
-              className="mx-auto mt-6 max-w-xl text-pretty text-lg leading-relaxed text-white/60"
-              style={{ fontFamily: "var(--font-body)" }}
-            >
-              Tell us what&apos;s going on. We&apos;ll recommend the right starting point and give you a
-              clear number — free, no obligation.
-            </p>
-            <div className="mt-11 flex flex-col justify-center gap-4 sm:flex-row">
-              <Link
-                href="/#contact"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#F97316] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#F97316]/25 transition-all duration-200 hover:bg-[#ea6c0a] hover:shadow-xl hover:shadow-[#F97316]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+            <RevealOnScroll>
+              <h2
+                className="text-balance text-4xl font-bold tracking-tight text-warm md:text-5xl"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Book a Free Consultation <ArrowRight size={16} />
-              </Link>
+                Not sure what you need?
+              </h2>
+              <p
+                className="mx-auto mt-6 max-w-xl text-pretty text-lg leading-relaxed text-warm-2"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Tell us what&apos;s going on. We&apos;ll recommend the right starting
+                point and give you a clear number — free, no obligation.
+              </p>
+            </RevealOnScroll>
+            <RevealOnScroll delay={0.1} className="mt-11 flex flex-col justify-center gap-4 sm:flex-row">
+              <MagneticCTA
+                as="link"
+                href="/#contact"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-8 py-4 text-base font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Book a Free Consultation <ArrowRight size={16} aria-hidden />
+              </MagneticCTA>
               <a
                 href="tel:+17072396725"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/25 px-8 py-4 text-base font-semibold text-white transition-colors duration-200 hover:border-white/50 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-hairline px-8 py-4 text-base font-semibold text-warm transition-colors duration-200 hover:border-copper-dim hover:bg-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                <Phone size={16} />
+                <Phone size={16} aria-hidden />
                 Call (707) 239-6725
               </a>
-            </div>
+            </RevealOnScroll>
           </div>
         </section>
+
         <PricingEstimator />
         <Comparison />
       </main>
