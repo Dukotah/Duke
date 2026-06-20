@@ -76,10 +76,10 @@ function CreateRepModal({ onClose, onCreated }: { onClose: () => void; onCreated
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative bg-[#1C1C1F] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="relative bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl p-6 w-full max-w-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-bold text-white" style={H}>Add Sales Rep</h2>
-          <button onClick={onClose} className="text-white/30 hover:text-white/60 transition-colors"><X size={18} /></button>
+          <h2 className="text-lg font-bold text-[var(--crm-text)]" style={H}>Add Sales Rep</h2>
+          <button onClick={onClose} className="text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {[
@@ -88,17 +88,17 @@ function CreateRepModal({ onClose, onCreated }: { onClose: () => void; onCreated
             { key: "password", label: "Password", type: "password", placeholder: "Set a strong password" },
           ].map(({ key, label, type, placeholder }) => (
             <div key={key}>
-              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>{label}</label>
+              <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>{label}</label>
               <input type={type} value={form[key as keyof typeof form]} onChange={(e) => set(key, e.target.value)} required
                 placeholder={placeholder}
-                className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
                 style={H} />
             </div>
           ))}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Commission Rate</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>Commission Rate</label>
             <select value={form.commissionRate} onChange={(e) => set("commissionRate", e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H}>
               {[5, 8, 10, 12, 15, 20].map((r) => (
                 <option key={r} value={(r / 100).toFixed(2)}>{r}% commission</option>
@@ -108,7 +108,7 @@ function CreateRepModal({ onClose, onCreated }: { onClose: () => void; onCreated
           {error && <p className="text-sm text-red-400" style={H}>{error}</p>}
           <button type="submit" disabled={loading}
             className="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-all"
-            style={{ backgroundColor: "#F97316", ...H }}>
+            style={{ backgroundColor: "var(--crm-accent)", ...H }}>
             <Plus size={14} />{loading ? "Creating…" : "Create Account"}
           </button>
         </form>
@@ -139,26 +139,26 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative bg-[#1C1C1F] border border-white/10 rounded-2xl p-6 w-full max-w-lg shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="relative bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl p-6 w-full max-w-lg shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h2 className="text-lg font-bold text-white" style={H}>Review Submission</h2>
-            <p className="text-sm text-white/40 mt-0.5" style={H}>{sub.repName} → {sub.leadName}</p>
+            <h2 className="text-lg font-bold text-[var(--crm-text)]" style={H}>Review Submission</h2>
+            <p className="text-sm text-[var(--crm-text-3)] mt-0.5" style={H}>{sub.repName} → {sub.leadName}</p>
           </div>
-          <button onClick={onClose} className="text-white/30 hover:text-white/60"><X size={18} /></button>
+          <button onClick={onClose} className="text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)]"><X size={18} /></button>
         </div>
-        <div className="bg-[#111113] rounded-xl border border-white/[0.06] p-4 mb-5 space-y-2">
-          {sub.leadPhone && <p className="text-xs text-white/60 flex items-center gap-2" style={H}><Phone size={11} className="text-[#F97316]/60" />{sub.leadPhone}</p>}
-          {sub.leadEmail && <p className="text-xs text-white/60 flex items-center gap-2" style={H}><Mail size={11} className="text-[#F97316]/60" />{sub.leadEmail}</p>}
-          {sub.estimatedBudget && <p className="text-xs text-white/60 flex items-center gap-2" style={H}><DollarSign size={11} className="text-[#F97316]/60" />Est. budget: {sub.estimatedBudget}</p>}
-          <div className="mt-2 pt-2 border-t border-white/[0.06]">
-            <p className="text-xs text-white/40 uppercase tracking-wider mb-1" style={H}>Rep Notes</p>
-            <p className="text-sm text-white/70" style={H}>{sub.repNotes}</p>
+        <div className="bg-[var(--crm-surface-2)] rounded-xl border border-[var(--crm-border)] p-4 mb-5 space-y-2">
+          {sub.leadPhone && <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2" style={H}><Phone size={11} className="text-[var(--crm-accent)]" />{sub.leadPhone}</p>}
+          {sub.leadEmail && <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2" style={H}><Mail size={11} className="text-[var(--crm-accent)]" />{sub.leadEmail}</p>}
+          {sub.estimatedBudget && <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2" style={H}><DollarSign size={11} className="text-[var(--crm-accent)]" />Est. budget: {sub.estimatedBudget}</p>}
+          <div className="mt-2 pt-2 border-t border-[var(--crm-border)]">
+            <p className="text-xs text-[var(--crm-text-3)] uppercase tracking-wider mb-1" style={H}>Rep Notes</p>
+            <p className="text-sm text-[var(--crm-text-2)]" style={H}>{sub.repNotes}</p>
           </div>
           {sub.pitch && (
-            <div className="mt-2 pt-2 border-t border-white/[0.06]">
-              <p className="text-xs text-white/40 uppercase tracking-wider mb-1" style={H}>Pitch</p>
-              <p className="text-xs text-white/50 italic" style={H}>&ldquo;{sub.pitch}&rdquo;</p>
+            <div className="mt-2 pt-2 border-t border-[var(--crm-border)]">
+              <p className="text-xs text-[var(--crm-text-3)] uppercase tracking-wider mb-1" style={H}>Pitch</p>
+              <p className="text-xs text-[var(--crm-text-2)] italic" style={H}>&ldquo;{sub.pitch}&rdquo;</p>
             </div>
           )}
         </div>
@@ -169,7 +169,7 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
                 className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all capitalize ${
                   action === a
                     ? a === "accept" ? "bg-green-400/15 text-green-400 border-green-400/30" : "bg-red-400/15 text-red-400 border-red-400/30"
-                    : "bg-white/[0.03] text-white/40 border-white/10 hover:border-white/20"
+                    : "bg-[var(--crm-surface-3)] text-[var(--crm-text-3)] border-[var(--crm-border)] hover:border-[var(--crm-border-strong)]"
                 }`} style={H}>
                 {a === "accept" ? <span className="flex items-center justify-center gap-1.5"><Check size={13} />Accept</span> : <span className="flex items-center justify-center gap-1.5"><X size={13} />Pass</span>}
               </button>
@@ -177,12 +177,12 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
           </div>
           {action === "accept" && (
             <div>
-              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Deal Value (for commission calc)</label>
+              <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>Deal Value (for commission calc)</label>
               <input type="number" value={dealValue} onChange={(e) => setDealValue(e.target.value)}
                 placeholder="e.g. 2500" min="0" step="50"
-                className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
                 style={H} />
-              {dealValue && <p className="text-xs text-green-400/70 mt-1" style={H}>Commission auto-calculated at rep&apos;s rate</p>}
+              {dealValue && <p className="text-xs text-green-500 mt-1" style={H}>Commission auto-calculated at rep&apos;s rate</p>}
             </div>
           )}
           <button type="submit" disabled={loading}
@@ -234,12 +234,12 @@ function LeaderboardTab() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-16">
-      <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   if (entries.length === 0) return (
-    <div className="text-center py-16 text-white/25 text-sm" style={H}>
+    <div className="text-center py-16 text-[var(--crm-text-3)] text-sm" style={H}>
       No reps yet. Add sales reps to see rankings here.
     </div>
   );
@@ -247,11 +247,11 @@ function LeaderboardTab() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-white/40" style={H}>
+        <p className="text-xs text-[var(--crm-text-3)]" style={H}>
           {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })} rankings
         </p>
         <button onClick={shareLeaderboard}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/[0.04] text-white/60 border border-white/10 hover:border-white/20 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:border-[var(--crm-border-strong)] transition-colors"
           style={H}>
           {copied ? <><Check size={11} />Copied!</> : <><Trophy size={11} />Share Leaderboard</>}
         </button>
@@ -262,7 +262,7 @@ function LeaderboardTab() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {top3.map((entry) => (
             <div key={entry.userId}
-              className={`bg-[#1C1C1F] rounded-2xl border p-5 space-y-3 ${
+              className={`bg-[var(--crm-surface)] rounded-2xl border p-5 space-y-3 ${
                 entry.rank === 1 ? "border-yellow-400/30 bg-yellow-400/5" :
                 entry.rank === 2 ? "border-zinc-400/20" :
                 "border-orange-400/20"
@@ -276,25 +276,25 @@ function LeaderboardTab() {
                 )}
               </div>
               <div>
-                <p className="font-bold text-white text-base" style={H}>{entry.name}</p>
-                <p className="text-xs text-white/40 truncate" style={H}>{entry.email}</p>
+                <p className="font-bold text-[var(--crm-text)] text-base" style={H}>{entry.name}</p>
+                <p className="text-xs text-[var(--crm-text-3)] truncate" style={H}>{entry.email}</p>
               </div>
               <div className="grid grid-cols-2 gap-2 text-center">
-                <div className="bg-[#111113] rounded-lg py-2">
-                  <p className="text-xs text-white/30" style={H}>Submissions</p>
-                  <p className="text-lg font-bold text-white" style={H}>{entry.submissionsThisMonth}</p>
+                <div className="bg-[var(--crm-surface-2)] rounded-lg py-2">
+                  <p className="text-xs text-[var(--crm-text-3)]" style={H}>Submissions</p>
+                  <p className="text-lg font-bold text-[var(--crm-text)]" style={H}>{entry.submissionsThisMonth}</p>
                 </div>
-                <div className="bg-[#111113] rounded-lg py-2">
-                  <p className="text-xs text-white/30" style={H}>Calls</p>
-                  <p className="text-lg font-bold text-white" style={H}>{entry.callsThisMonth}</p>
+                <div className="bg-[var(--crm-surface-2)] rounded-lg py-2">
+                  <p className="text-xs text-[var(--crm-text-3)]" style={H}>Calls</p>
+                  <p className="text-lg font-bold text-[var(--crm-text)]" style={H}>{entry.callsThisMonth}</p>
                 </div>
-                <div className="bg-[#111113] rounded-lg py-2">
-                  <p className="text-xs text-white/30" style={H}>Accepted</p>
-                  <p className="text-lg font-bold text-green-400" style={H}>{entry.acceptedThisMonth}</p>
+                <div className="bg-[var(--crm-surface-2)] rounded-lg py-2">
+                  <p className="text-xs text-[var(--crm-text-3)]" style={H}>Accepted</p>
+                  <p className="text-lg font-bold text-green-500" style={H}>{entry.acceptedThisMonth}</p>
                 </div>
-                <div className="bg-[#111113] rounded-lg py-2">
-                  <p className="text-xs text-white/30" style={H}>Earned</p>
-                  <p className="text-sm font-bold text-[#F97316]" style={H}>${entry.totalEarned.toFixed(0)}</p>
+                <div className="bg-[var(--crm-surface-2)] rounded-lg py-2">
+                  <p className="text-xs text-[var(--crm-text-3)]" style={H}>Earned</p>
+                  <p className="text-sm font-bold text-[var(--crm-accent-text)]" style={H}>${entry.totalEarned.toFixed(0)}</p>
                 </div>
               </div>
             </div>
@@ -306,17 +306,17 @@ function LeaderboardTab() {
       {rest.length > 0 && (
         <div className="space-y-2">
           {rest.map((entry) => (
-            <div key={entry.userId} className="flex items-center gap-4 bg-[#1C1C1F] border border-white/[0.06] rounded-xl px-4 py-3">
-              <span className="text-lg font-bold text-white/30 w-8 tabular-nums" style={H}>#{entry.rank}</span>
+            <div key={entry.userId} className="flex items-center gap-4 bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-xl px-4 py-3">
+              <span className="text-lg font-bold text-[var(--crm-text-3)] w-8 tabular-nums" style={H}>#{entry.rank}</span>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-white text-sm" style={H}>{entry.name}</p>
-                <p className="text-xs text-white/35" style={H}>{entry.email}</p>
+                <p className="font-semibold text-[var(--crm-text)] text-sm" style={H}>{entry.name}</p>
+                <p className="text-xs text-[var(--crm-text-3)]" style={H}>{entry.email}</p>
               </div>
-              <div className="hidden sm:flex items-center gap-4 text-xs text-white/50" style={H}>
-                <span><span className="text-white font-semibold">{entry.callsThisMonth}</span> calls</span>
-                <span><span className="text-white font-semibold">{entry.submissionsThisMonth}</span> subs</span>
-                <span><span className="text-green-400 font-semibold">{entry.acceptedThisMonth}</span> accepted</span>
-                <span><span className="text-[#F97316] font-semibold">${entry.totalEarned.toFixed(0)}</span> earned</span>
+              <div className="hidden sm:flex items-center gap-4 text-xs text-[var(--crm-text-2)]" style={H}>
+                <span><span className="text-[var(--crm-text)] font-semibold">{entry.callsThisMonth}</span> calls</span>
+                <span><span className="text-[var(--crm-text)] font-semibold">{entry.submissionsThisMonth}</span> subs</span>
+                <span><span className="text-green-500 font-semibold">{entry.acceptedThisMonth}</span> accepted</span>
+                <span><span className="text-[var(--crm-accent-text)] font-semibold">${entry.totalEarned.toFixed(0)}</span> earned</span>
               </div>
               {entry.currentStreak > 0 && (
                 <span className="text-xs text-orange-400 flex items-center gap-1 shrink-0" style={H}>
@@ -347,11 +347,11 @@ function RevenueTab() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-16">
-      <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
-  if (!data) return <div className="text-center py-16 text-white/25 text-sm" style={H}>Could not load revenue data.</div>;
+  if (!data) return <div className="text-center py-16 text-[var(--crm-text-3)] text-sm" style={H}>Could not load revenue data.</div>;
 
   const maxRevenue = Math.max(...data.monthlyTrend.map((m) => m.revenue), 1);
 
@@ -360,39 +360,39 @@ function RevenueTab() {
       {/* Hero numbers */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { label: "This Month Revenue", val: `$${data.thisMonth.revenue.toLocaleString()}`, sub: `${data.thisMonth.deals} deals`, color: "text-[#F97316]" },
-          { label: "All-Time Revenue", val: `$${data.allTime.revenue.toLocaleString()}`, sub: `${data.allTime.deals} deals total`, color: "text-white" },
+          { label: "This Month Revenue", val: `$${data.thisMonth.revenue.toLocaleString()}`, sub: `${data.thisMonth.deals} deals`, color: "text-[var(--crm-accent-text)]" },
+          { label: "All-Time Revenue", val: `$${data.allTime.revenue.toLocaleString()}`, sub: `${data.allTime.deals} deals total`, color: "text-[var(--crm-text)]" },
           { label: "Commissions Owed", val: `$${data.thisMonth.commissions.toFixed(2)}`, sub: "this month", color: "text-amber-400" },
         ].map(({ label, val, sub, color }) => (
           <div key={label} className="crm-surface rounded-2xl p-6">
-            <p className="text-[11px] font-semibold text-white/40 uppercase tracking-wider mb-2.5" style={H}>{label}</p>
+            <p className="text-[11px] font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2.5" style={H}>{label}</p>
             <p className={`text-[32px] leading-none font-bold tabular-nums tracking-tight ${color}`} style={H}>{val}</p>
-            <p className="text-xs text-white/30 mt-2" style={H}>{sub}</p>
+            <p className="text-xs text-[var(--crm-text-3)] mt-2" style={H}>{sub}</p>
           </div>
         ))}
       </div>
 
       {/* 6-month trend bar chart (CSS only) */}
-      <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5">
+      <div className="bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-5">
-          <BarChart2 size={14} className="text-[#F97316]" />
-          <h3 className="text-sm font-bold text-white" style={H}>6-Month Revenue Trend</h3>
+          <BarChart2 size={14} className="text-[var(--crm-accent)]" />
+          <h3 className="text-sm font-bold text-[var(--crm-text)]" style={H}>6-Month Revenue Trend</h3>
         </div>
         <div className="flex items-end gap-2 h-32">
           {data.monthlyTrend.map((m) => {
             const pct = maxRevenue > 0 ? (m.revenue / maxRevenue) * 100 : 0;
             return (
               <div key={m.month} className="flex-1 flex flex-col items-center gap-1.5">
-                <p className="text-xs font-bold text-white/60 tabular-nums" style={H}>
+                <p className="text-xs font-bold text-[var(--crm-text-2)] tabular-nums" style={H}>
                   {m.revenue > 0 ? `$${(m.revenue / 1000).toFixed(1)}k` : "–"}
                 </p>
-                <div className="w-full rounded-t-md bg-[#F97316]/20 overflow-hidden relative" style={{ height: "80px" }}>
+                <div className="w-full rounded-t-md bg-[var(--crm-accent-weak)] overflow-hidden relative" style={{ height: "80px" }}>
                   <div
-                    className="absolute bottom-0 w-full rounded-t-md bg-[#F97316] transition-all"
+                    className="absolute bottom-0 w-full rounded-t-md bg-[var(--crm-accent)] transition-all"
                     style={{ height: `${pct}%` }}
                   />
                 </div>
-                <p className="text-[9px] text-white/30 text-center leading-tight" style={H}>{m.month.split(" ")[0]}</p>
+                <p className="text-[9px] text-[var(--crm-text-3)] text-center leading-tight" style={H}>{m.month.split(" ")[0]}</p>
               </div>
             );
           })}
@@ -400,23 +400,23 @@ function RevenueTab() {
       </div>
 
       {/* Pipeline funnel */}
-      <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5">
+      <div className="bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp size={14} className="text-[#F97316]" />
-          <h3 className="text-sm font-bold text-white" style={H}>Pipeline Funnel</h3>
+          <TrendingUp size={14} className="text-[var(--crm-accent)]" />
+          <h3 className="text-sm font-bold text-[var(--crm-text)]" style={H}>Pipeline Funnel</h3>
         </div>
         <div className="space-y-3">
           {[
-            { label: "Interested", count: data.pipeline.interested, color: "bg-[#F97316]", pct: 100 },
+            { label: "Interested", count: data.pipeline.interested, color: "bg-[var(--crm-accent)]", pct: 100 },
             { label: "Submitted (Pending)", count: data.pipeline.submitted, color: "bg-amber-400", pct: 66 },
             { label: "Projected Value", count: null, val: `$${data.pipeline.projectedValue.toLocaleString()}`, color: "bg-green-400", pct: 33 },
           ].map(({ label, count, val, color, pct }) => (
             <div key={label}>
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs text-white/50" style={H}>{label}</p>
-                <p className="text-sm font-bold text-white" style={H}>{count !== null ? count : val}</p>
+                <p className="text-xs text-[var(--crm-text-2)]" style={H}>{label}</p>
+                <p className="text-sm font-bold text-[var(--crm-text)]" style={H}>{count !== null ? count : val}</p>
               </div>
-              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-[var(--crm-surface-3)] rounded-full overflow-hidden">
                 <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
               </div>
             </div>
@@ -427,17 +427,17 @@ function RevenueTab() {
       {/* Deals this month */}
       {data.dealsThisMonth.length > 0 && (
         <div>
-          <h3 className="text-sm font-bold text-white mb-3" style={H}>Deals Closed This Month</h3>
+          <h3 className="text-sm font-bold text-[var(--crm-text)] mb-3" style={H}>Deals Closed This Month</h3>
           <div className="space-y-2">
             {data.dealsThisMonth.map((sub) => (
-              <div key={sub.id} className="flex items-center justify-between bg-[#1C1C1F] border border-white/[0.06] rounded-xl px-4 py-3">
+              <div key={sub.id} className="flex items-center justify-between bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-xl px-4 py-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-white" style={H}>{sub.leadName}</p>
-                  <p className="text-xs text-white/40" style={H}>{sub.repName} · {new Date(sub.submittedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
+                  <p className="text-sm font-semibold text-[var(--crm-text)]" style={H}>{sub.leadName}</p>
+                  <p className="text-xs text-[var(--crm-text-3)]" style={H}>{sub.repName} · {new Date(sub.submittedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-bold text-green-400" style={H}>${(sub.dealValue ?? 0).toLocaleString()}</p>
-                  {sub.commissionAmount && <p className="text-xs text-white/40" style={H}>+${sub.commissionAmount.toFixed(2)} comm.</p>}
+                  <p className="text-sm font-bold text-green-500" style={H}>${(sub.dealValue ?? 0).toLocaleString()}</p>
+                  {sub.commissionAmount && <p className="text-xs text-[var(--crm-text-3)]" style={H}>+${sub.commissionAmount.toFixed(2)} comm.</p>}
                 </div>
               </div>
             ))}
@@ -498,10 +498,10 @@ function BroadcastPanel() {
   };
 
   return (
-    <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5 space-y-4">
+    <div className="bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl p-5 space-y-4">
       <div className="flex items-center gap-2">
-        <Megaphone size={14} className="text-[#F97316]" />
-        <h3 className="text-sm font-bold text-white" style={H}>Broadcast to All Reps</h3>
+        <Megaphone size={14} className="text-[var(--crm-accent)]" />
+        <h3 className="text-sm font-bold text-[var(--crm-text)]" style={H}>Broadcast to All Reps</h3>
       </div>
 
       <div className="space-y-3">
@@ -510,7 +510,7 @@ function BroadcastPanel() {
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type a message to show as a banner in every rep's dashboard…"
           rows={2}
-          className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors resize-none"
+          className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors resize-none"
           style={H}
         />
         <div className="flex flex-wrap gap-2 items-center">
@@ -518,7 +518,7 @@ function BroadcastPanel() {
             {(["info", "success", "urgent"] as const).map((t) => (
               <button key={t} onClick={() => setType(t)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold border capitalize transition-all ${
-                  type === t ? typeColors[t] : "bg-white/[0.03] text-white/40 border-white/10"
+                  type === t ? typeColors[t] : "bg-[var(--crm-surface-3)] text-[var(--crm-text-3)] border-[var(--crm-border)]"
                 }`} style={H}>
                 {t === "info" ? "ℹ️ Info" : t === "success" ? "✅ Success" : "🚨 Urgent"}
               </button>
@@ -527,7 +527,7 @@ function BroadcastPanel() {
           <select
             value={expiresInDays}
             onChange={(e) => setExpiresInDays(parseInt(e.target.value))}
-            className="px-3 py-1.5 rounded-lg bg-[#111113] border border-white/10 text-xs text-white focus:outline-none"
+            className="px-3 py-1.5 rounded-lg bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-xs text-[var(--crm-text)] focus:outline-none"
             style={H}>
             <option value={1}>Expires in 1 day</option>
             <option value={3}>Expires in 3 days</option>
@@ -537,7 +537,7 @@ function BroadcastPanel() {
             onClick={sendBroadcast}
             disabled={sending || !message.trim()}
             className="ml-auto inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold text-white disabled:opacity-40 transition-all hover:opacity-90"
-            style={{ backgroundColor: "#F97316", ...H }}>
+            style={{ backgroundColor: "var(--crm-accent)", ...H }}>
             <Megaphone size={13} />{sending ? "Sending…" : "Send to All Reps"}
           </button>
         </div>
@@ -545,8 +545,8 @@ function BroadcastPanel() {
 
       {/* Active broadcasts */}
       {broadcasts.length > 0 && (
-        <div className="space-y-2 border-t border-white/[0.06] pt-4">
-          <p className="text-xs text-white/40 uppercase tracking-wider" style={H}>Active Broadcasts</p>
+        <div className="space-y-2 border-t border-[var(--crm-border)] pt-4">
+          <p className="text-xs text-[var(--crm-text-3)] uppercase tracking-wider" style={H}>Active Broadcasts</p>
           {broadcasts.map((b) => (
             <div key={b.id} className={`flex items-start justify-between gap-3 px-3 py-2.5 rounded-xl border ${typeColors[b.type]}`}>
               <div className="min-w-0 flex-1">
@@ -630,33 +630,33 @@ function TerritoryTab({ reps }: { reps: RepWithStats[] }) {
   return (
     <div className="space-y-3">
       {reps.length === 0 ? (
-        <div className="text-center py-16 text-white/25 text-sm" style={H}>No sales reps yet.</div>
+        <div className="text-center py-16 text-[var(--crm-text-3)] text-sm" style={H}>No sales reps yet.</div>
       ) : (
         <div className="space-y-2">
           {reps.map((rep) => {
             const t = territories[rep.id];
             const isEditing = editing === rep.id;
             return (
-              <div key={rep.id} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-5">
+              <div key={rep.id} className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] p-5">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
-                    <p className="font-bold text-white" style={H}>{rep.name}</p>
-                    <p className="text-xs text-white/40 mt-0.5" style={H}>{rep.email}</p>
+                    <p className="font-bold text-[var(--crm-text)]" style={H}>{rep.name}</p>
+                    <p className="text-xs text-[var(--crm-text-3)] mt-0.5" style={H}>{rep.email}</p>
                     {t ? (
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {t.counties.length > 0 ? t.counties.map((c) => (
-                          <span key={c} className="text-xs bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20 px-2 py-0.5 rounded-full" style={H}>{c.charAt(0).toUpperCase() + c.slice(1)}</span>
-                        )) : <span className="text-xs text-white/30" style={H}>All counties</span>}
+                          <span key={c} className="text-xs bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)] border border-[var(--crm-accent-border)] px-2 py-0.5 rounded-full" style={H}>{c.charAt(0).toUpperCase() + c.slice(1)}</span>
+                        )) : <span className="text-xs text-[var(--crm-text-3)]" style={H}>All counties</span>}
                         {t.niches.map((n) => (
                           <span key={n} className="text-xs bg-blue-400/10 text-blue-400 border border-blue-400/20 px-2 py-0.5 rounded-full" style={H}>{n.replace(/_/g, " ")}</span>
                         ))}
                       </div>
                     ) : (
-                      <span className="text-xs text-white/30 mt-1 inline-block" style={H}>All Areas</span>
+                      <span className="text-xs text-[var(--crm-text-3)] mt-1 inline-block" style={H}>All Areas</span>
                     )}
                   </div>
                   <button onClick={() => isEditing ? setEditing(null) : startEdit(rep)}
-                    className="text-xs px-3 py-1.5 rounded-lg border border-white/10 text-white/40 hover:text-white/70 hover:border-white/20 transition-colors"
+                    className="text-xs px-3 py-1.5 rounded-lg border border-[var(--crm-border)] text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] hover:border-[var(--crm-border-strong)] transition-colors"
                     style={H}>
                     {isEditing ? "Cancel" : "Edit"}
                   </button>
@@ -665,21 +665,21 @@ function TerritoryTab({ reps }: { reps: RepWithStats[] }) {
                 {isEditing && (
                   <div className="mt-4 space-y-4">
                     <div>
-                      <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Counties (leave blank = all)</p>
+                      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>Counties (leave blank = all)</p>
                       <div className="flex flex-wrap gap-2">
                         {ALL_COUNTIES.map((c) => (
                           <button key={c} type="button" onClick={() => toggleItem(editCounties, setEditCounties, c.toLowerCase())}
-                            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${editCounties.includes(c.toLowerCase()) ? "bg-[#F97316]/15 text-[#F97316] border-[#F97316]/30" : "bg-white/[0.04] text-white/50 border-white/10 hover:border-white/20"}`}
+                            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${editCounties.includes(c.toLowerCase()) ? "bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)] border-[var(--crm-accent-border)]" : "bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border-[var(--crm-border)] hover:border-[var(--crm-border-strong)]"}`}
                             style={H}>{c}</button>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Niches (leave blank = all)</p>
+                      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>Niches (leave blank = all)</p>
                       <div className="flex flex-wrap gap-2">
                         {COMMON_NICHES.map((n) => (
                           <button key={n} type="button" onClick={() => toggleItem(editNiches, setEditNiches, n)}
-                            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${editNiches.includes(n) ? "bg-blue-400/15 text-blue-400 border-blue-400/30" : "bg-white/[0.04] text-white/50 border-white/10 hover:border-white/20"}`}
+                            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${editNiches.includes(n) ? "bg-blue-400/15 text-blue-400 border-blue-400/30" : "bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border-[var(--crm-border)] hover:border-[var(--crm-border-strong)]"}`}
                             style={H}>{n.replace(/_/g, " ")}</button>
                         ))}
                       </div>
@@ -687,7 +687,7 @@ function TerritoryTab({ reps }: { reps: RepWithStats[] }) {
                     <div className="flex items-center gap-2 pt-1">
                       <button onClick={() => saveTerritory(rep.id)} disabled={saving}
                         className="px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-40 transition-all hover:opacity-90"
-                        style={{ backgroundColor: "#F97316", ...H }}>
+                        style={{ backgroundColor: "var(--crm-accent)", ...H }}>
                         {saving ? "Saving…" : "Save Territory"}
                       </button>
                       {t && (
@@ -757,7 +757,7 @@ function EmailTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -771,10 +771,10 @@ function EmailTab() {
       {loggedOnly > 0 && (
         <div className="flex items-start gap-3 rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-4 py-3" style={H}>
           <AlertTriangle size={16} className="text-yellow-400 shrink-0 mt-0.5" />
-          <p className="text-xs text-white/60 leading-relaxed">
-            <span className="font-bold text-white">Email delivery isn&apos;t live yet.</span>{" "}
+          <p className="text-xs text-[var(--crm-text-2)] leading-relaxed">
+            <span className="font-bold text-[var(--crm-text)]">Email delivery isn&apos;t live yet.</span>{" "}
             {loggedOnly} recent {loggedOnly === 1 ? "email was" : "emails were"} tracked on lead timelines but not actually sent.
-            Sending stays locked until the domain is verified — see <span className="text-white/80">Email delivery</span> in the Setup tab.
+            Sending stays locked until the domain is verified — see <span className="text-[var(--crm-text-2)]">Email delivery</span> in the Setup tab.
             This protects your domain from being flagged as spam.
           </p>
         </div>
@@ -782,46 +782,46 @@ function EmailTab() {
 
       {/* Summary */}
       <div className="grid grid-cols-2 gap-2">
-        <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] px-4 py-4">
-          <div className="flex items-center gap-2 text-xs text-white/40 mb-2" style={H}><Mail size={14} className="text-[#F97316]" />Emails tracked (recent)</div>
-          <p className="text-2xl font-bold text-white tabular-nums" style={H}>{entries.length}</p>
+        <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] px-4 py-4">
+          <div className="flex items-center gap-2 text-xs text-[var(--crm-text-3)] mb-2" style={H}><Mail size={14} className="text-[var(--crm-accent)]" />Emails tracked (recent)</div>
+          <p className="text-2xl font-bold text-[var(--crm-text)] tabular-nums" style={H}>{entries.length}</p>
           {loggedOnly > 0 && (
-            <p className="text-[11px] text-white/30 mt-1" style={H}>{entries.length - loggedOnly} delivered · {loggedOnly} logged</p>
+            <p className="text-[11px] text-[var(--crm-text-3)] mt-1" style={H}>{entries.length - loggedOnly} delivered · {loggedOnly} logged</p>
           )}
         </div>
-        <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] px-4 py-4">
-          <div className="flex items-center gap-2 text-xs text-white/40 mb-2" style={H}><X size={14} className="text-red-400" />Unsubscribes</div>
-          <p className="text-2xl font-bold text-white tabular-nums" style={H}>{suppressed.length}</p>
+        <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] px-4 py-4">
+          <div className="flex items-center gap-2 text-xs text-[var(--crm-text-3)] mb-2" style={H}><X size={14} className="text-red-400" />Unsubscribes</div>
+          <p className="text-2xl font-bold text-[var(--crm-text)] tabular-nums" style={H}>{suppressed.length}</p>
         </div>
       </div>
 
       {/* Recent sends */}
       <div>
-        <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Recent Sends</p>
+        <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>Recent Sends</p>
         {entries.length === 0 ? (
-          <div className="text-center py-12 text-white/25 text-sm bg-[#1C1C1F] rounded-xl border border-white/[0.06]" style={H}>
+          <div className="text-center py-12 text-[var(--crm-text-3)] text-sm bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)]" style={H}>
             No outreach emails logged yet.
           </div>
         ) : (
-          <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] divide-y divide-white/[0.05]">
+          <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] divide-y divide-[var(--crm-border)]">
             {entries.map((e, i) => (
               <div key={`${e.email}-${i}`} className="flex items-center gap-3 px-4 py-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 min-w-0">
-                    <p className="text-sm font-semibold text-white truncate" style={H}>{e.subject || "(no subject)"}</p>
+                    <p className="text-sm font-semibold text-[var(--crm-text)] truncate" style={H}>{e.subject || "(no subject)"}</p>
                     {e.delivered === false && (
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-white/35 bg-white/10 rounded px-1.5 py-0.5 shrink-0" style={H}>
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] rounded px-1.5 py-0.5 shrink-0" style={H}>
                         logged
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-white/40 truncate mt-0.5" style={H}>
+                  <p className="text-xs text-[var(--crm-text-3)] truncate mt-0.5" style={H}>
                     {e.leadName} · {e.email}
                   </p>
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="text-xs text-white/50" style={H}>{e.repName}</p>
-                  <p className="text-xs text-white/25 mt-0.5" style={H}>{fmt(e.sentAt)}</p>
+                  <p className="text-xs text-[var(--crm-text-2)]" style={H}>{e.repName}</p>
+                  <p className="text-xs text-[var(--crm-text-3)] mt-0.5" style={H}>{fmt(e.sentAt)}</p>
                 </div>
               </div>
             ))}
@@ -831,25 +831,25 @@ function EmailTab() {
 
       {/* Unsubscribe list */}
       <div>
-        <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Unsubscribed / Suppressed</p>
+        <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>Unsubscribed / Suppressed</p>
         {suppressed.length === 0 ? (
-          <div className="text-center py-8 text-white/25 text-sm bg-[#1C1C1F] rounded-xl border border-white/[0.06]" style={H}>
+          <div className="text-center py-8 text-[var(--crm-text-3)] text-sm bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)]" style={H}>
             Nobody has unsubscribed. 🎉
           </div>
         ) : (
-          <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] divide-y divide-white/[0.05]">
+          <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] divide-y divide-[var(--crm-border)]">
             {suppressed.map((email) => (
               <div key={email} className="flex items-center justify-between gap-3 px-4 py-2.5">
-                <span className="text-sm text-white/70 truncate" style={H}>{email}</span>
+                <span className="text-sm text-[var(--crm-text-2)] truncate" style={H}>{email}</span>
                 <button onClick={() => reAllow(email)}
-                  className="shrink-0 text-xs font-semibold text-white/40 hover:text-green-400 transition-colors" style={H}>
+                  className="shrink-0 text-xs font-semibold text-[var(--crm-text-3)] hover:text-green-500 transition-colors" style={H}>
                   Re-allow
                 </button>
               </div>
             ))}
           </div>
         )}
-        <p className="text-xs text-white/25 mt-2 px-1" style={H}>
+        <p className="text-xs text-[var(--crm-text-3)] mt-2 px-1" style={H}>
           Suppressed addresses are skipped on every send. Re-allow only with the person&apos;s consent.
         </p>
       </div>
@@ -890,7 +890,7 @@ function SetupTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -902,24 +902,24 @@ function SetupTab() {
       {/* Overall status banner */}
       {ready ? (
         <div className="flex items-start gap-3 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-4">
-          <CheckCircle2 size={20} className="text-green-400 shrink-0 mt-0.5" />
+          <CheckCircle2 size={20} className="text-green-500 shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-bold text-white" style={H}>You&apos;re all set up</p>
-            <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>
+            <p className="text-sm font-bold text-[var(--crm-text)]" style={H}>You&apos;re all set up</p>
+            <p className="text-xs text-[var(--crm-text-2)] mt-1 leading-relaxed" style={H}>
               Everything required is connected. Add your sales reps in the Sales Reps tab and they can sign in right away.
             </p>
           </div>
         </div>
       ) : (
-        <div className="flex items-start gap-3 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 px-4 py-4">
-          <AlertTriangle size={20} className="text-[#F97316] shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 rounded-xl border border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] px-4 py-4">
+          <AlertTriangle size={20} className="text-[var(--crm-accent)] shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-bold text-white" style={H}>
+            <p className="text-sm font-bold text-[var(--crm-text)]" style={H}>
               {requiredLeft} thing{requiredLeft === 1 ? "" : "s"} left to finish setup
             </p>
-            <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>
-              Add the settings marked <span className="text-[#F97316] font-semibold">Required</span> below to your hosting
-              provider&apos;s environment variables, then redeploy. See <span className="text-white/70">SETUP.md</span> for
+            <p className="text-xs text-[var(--crm-text-2)] mt-1 leading-relaxed" style={H}>
+              Add the settings marked <span className="text-[var(--crm-accent-text)] font-semibold">Required</span> below to your hosting
+              provider&apos;s environment variables, then redeploy. See <span className="text-[var(--crm-text-2)]">SETUP.md</span> for
               step-by-step instructions on where to get each value.
             </p>
           </div>
@@ -929,10 +929,10 @@ function SetupTab() {
       {/* Each check */}
       <div className="space-y-2">
         {checks.map((c) => (
-          <div key={c.id} className="rounded-xl border border-white/[0.06] bg-[#1C1C1F] px-4 py-3.5">
+          <div key={c.id} className="rounded-xl border border-[var(--crm-border)] bg-[var(--crm-surface)] px-4 py-3.5">
             <div className="flex items-start gap-3">
               {c.ok ? (
-                <CheckCircle2 size={18} className="text-green-400 shrink-0 mt-0.5" />
+                <CheckCircle2 size={18} className="text-green-500 shrink-0 mt-0.5" />
               ) : c.required ? (
                 <X size={18} className="text-red-400 shrink-0 mt-0.5" />
               ) : (
@@ -940,20 +940,20 @@ function SetupTab() {
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-sm font-bold text-white" style={H}>{c.label}</p>
+                  <p className="text-sm font-bold text-[var(--crm-text)]" style={H}>{c.label}</p>
                   <span className={`text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5 ${
-                    c.required ? "bg-red-500/15 text-red-300" : "bg-white/10 text-white/40"
+                    c.required ? "bg-red-500/15 text-red-400" : "bg-[var(--crm-surface-3)] text-[var(--crm-text-3)]"
                   }`} style={H}>
                     {c.required ? "Required" : "Optional"}
                   </span>
                 </div>
-                <p className="text-xs text-white/50 mt-1 leading-relaxed" style={H}>
+                <p className="text-xs text-[var(--crm-text-2)] mt-1 leading-relaxed" style={H}>
                   {c.ok ? c.okText : c.problem}
                 </p>
                 {!c.ok && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {c.vars.map((v) => (
-                      <code key={v} className="text-[11px] font-mono text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 rounded px-1.5 py-0.5">
+                      <code key={v} className="text-[11px] font-mono text-[var(--crm-accent-text)] bg-[var(--crm-accent-weak)] border border-[var(--crm-accent-border)] rounded px-1.5 py-0.5">
                         {v}
                       </code>
                     ))}
@@ -966,7 +966,7 @@ function SetupTab() {
       </div>
 
       <button onClick={load}
-        className="text-xs font-semibold text-white/40 hover:text-white/70 transition-colors" style={H}>
+        className="text-xs font-semibold text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors" style={H}>
         ↻ Re-check
       </button>
     </div>
@@ -1050,19 +1050,19 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
       {showCreate && <CreateRepModal onClose={() => setShowCreate(false)} onCreated={load} />}
       {resolveSub && <ResolveModal sub={resolveSub} onClose={() => setResolveSub(null)} onResolved={load} />}
 
-      <div className="min-h-screen crm-backdrop text-white/80" style={H}>
+      <div className="min-h-screen crm-backdrop text-[var(--crm-text-2)]" style={H}>
         {/* Header */}
-        <header className="border-b border-white/[0.06] crm-chrome sticky top-0 z-40">
+        <header className="border-b border-[var(--crm-border)] crm-chrome sticky top-0 z-40">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-15 py-2.5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-[19px] font-bold tracking-tight text-white">Copper Bay<span className="text-[#F97316]">Tech</span></span>
-              <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.14em] font-semibold text-white/30 border-l border-white/10 pl-3">Admin <span className="text-white/45 normal-case tracking-normal">· {adminName}</span></span>
+              <span className="text-[19px] font-bold tracking-tight text-[var(--crm-text)]">Copper Bay<span className="text-[var(--crm-accent-text)]">Tech</span></span>
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.14em] font-semibold text-[var(--crm-text-3)] border-l border-[var(--crm-border)] pl-3">Admin <span className="text-[var(--crm-text-3)] normal-case tracking-normal">· {adminName}</span></span>
             </div>
             <div className="flex items-center gap-1">
-              <a href="/crm" className="text-xs font-medium text-white/45 hover:text-white bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 rounded-full px-2.5 py-1.5 transition-colors flex items-center gap-1.5">
+              <a href="/crm" className="text-xs font-medium text-[var(--crm-text-3)] hover:text-[var(--crm-text)] bg-[var(--crm-surface-3)] hover:bg-[var(--crm-surface-3)] border border-[var(--crm-border)] rounded-full px-2.5 py-1.5 transition-colors flex items-center gap-1.5">
                 <Eye size={12} />View as rep
               </a>
-              <button onClick={handleLogout} className="inline-flex items-center gap-1.5 text-xs font-medium text-white/35 hover:text-white/70 transition-colors px-2.5 py-1.5">
+              <button onClick={handleLogout} className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors px-2.5 py-1.5">
                 <LogOut size={13} />Sign out
               </button>
             </div>
@@ -1074,13 +1074,13 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
           {/* Overview stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {[
-              { label: "Sales Reps", val: reps.length, color: "text-white", icon: <Users size={15} /> },
-              { label: "Pending Review", val: pending.length, color: "text-[#F97316]", icon: <Send size={15} /> },
-              { label: "Pending Payout", val: `$${totalPendingPayout.toFixed(2)}`, color: "text-amber-400", icon: <DollarSign size={15} /> },
-              { label: "Total Submissions", val: submissions.length, color: "text-white/70", icon: <CheckCircle2 size={15} /> },
+              { label: "Sales Reps", val: reps.length, color: "text-[var(--crm-text)]", icon: <Users size={15} /> },
+              { label: "Pending Review", val: pending.length, color: "text-[var(--crm-accent-text)]", icon: <Send size={15} /> },
+              { label: "Pending Payout", val: `$${totalPendingPayout.toFixed(2)}`, color: "text-amber-500", icon: <DollarSign size={15} /> },
+              { label: "Total Submissions", val: submissions.length, color: "text-[var(--crm-text-2)]", icon: <CheckCircle2 size={15} /> },
             ].map(({ label, val, color, icon }) => (
               <div key={label} className="crm-surface rounded-2xl px-4 py-4">
-                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-white/40 mb-2.5" style={H}>
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--crm-text-3)] mb-2.5" style={H}>
                   <span className={color}>{icon}</span>{label}
                 </div>
                 <p className={`text-[28px] leading-none font-bold tabular-nums tracking-tight ${color}`} style={H}>{val}</p>
@@ -1093,25 +1093,25 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
 
           {/* Setup nudge — only when required items are missing and not on the Setup tab */}
           {!nudgeDismissed && setupLeft !== null && setupLeft > 0 && tab !== "setup" && (
-            <div className="flex items-center gap-3 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 px-4 py-3" style={H}>
-              <AlertTriangle size={16} className="text-[#F97316] shrink-0" />
-              <p className="text-sm text-white/80 flex-1 leading-relaxed">
-                <span className="font-bold text-white">Finish setup</span>
+            <div className="flex items-center gap-3 rounded-xl border border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] px-4 py-3" style={H}>
+              <AlertTriangle size={16} className="text-[var(--crm-accent)] shrink-0" />
+              <p className="text-sm text-[var(--crm-text-2)] flex-1 leading-relaxed">
+                <span className="font-bold text-[var(--crm-text)]">Finish setup</span>
                 {" — "}{setupLeft} required {setupLeft === 1 ? "item needs" : "items need"} attention before the CRM is fully live.
               </p>
               <button onClick={() => setTab("setup")}
-                className="text-xs font-bold text-[#F97316] hover:text-[#F97316]/80 whitespace-nowrap transition-colors">
+                className="text-xs font-bold text-[var(--crm-accent-text)] hover:opacity-80 whitespace-nowrap transition-colors">
                 Finish setup →
               </button>
               <button onClick={() => setNudgeDismissed(true)} aria-label="Dismiss setup reminder"
-                className="text-white/30 hover:text-white/60 transition-colors shrink-0">
+                className="text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors shrink-0">
                 <X size={14} />
               </button>
             </div>
           )}
 
           {/* Tabs */}
-          <div className="flex items-center gap-1 border-b border-white/[0.06] overflow-x-auto">
+          <div className="flex items-center gap-1 border-b border-[var(--crm-border)] overflow-x-auto">
             {[
               { key: "submissions", label: "Submissions", count: pending.length },
               { key: "territories", label: "Territories", count: 0 },
@@ -1124,15 +1124,15 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
             ].map(({ key, label, count }) => (
               <button key={key} onClick={() => setTab(key as typeof tab)} aria-current={tab === key ? "page" : undefined}
                 className={`relative px-4 py-3 text-sm font-semibold transition-colors flex items-center gap-2 whitespace-nowrap focus-visible:outline-none ${
-                  tab === key ? "text-[#F97316]" : "text-white/40 hover:text-white/75"
+                  tab === key ? "text-[var(--crm-accent-text)]" : "text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)]"
                 }`} style={H}>
                 {label}
                 {count > 0 && (
-                  <span className={`text-[11px] rounded-full px-2 py-0.5 font-bold transition-colors ${tab === key ? "bg-[#F97316] text-white" : "bg-white/10 text-white/50"}`}>
+                  <span className={`text-[11px] rounded-full px-2 py-0.5 font-bold transition-colors ${tab === key ? "bg-[var(--crm-accent)] text-white" : "bg-[var(--crm-surface-3)] text-[var(--crm-text-2)]"}`}>
                     {count}
                   </span>
                 )}
-                {tab === key && <span className="absolute bottom-[-1px] left-2 right-2 h-0.5 bg-[#F97316] rounded-full shadow-[0_0_10px_rgba(249,115,22,0.6)]" />}
+                {tab === key && <span className="absolute bottom-[-1px] left-2 right-2 h-0.5 bg-[var(--crm-accent)] rounded-full shadow-[0_0_10px_rgba(249,115,22,0.6)]" />}
               </button>
             ))}
           </div>
@@ -1144,7 +1144,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
                 {(["", "pending", "accepted", "rejected"] as const).map((f) => (
                   <button key={f || "all"} onClick={() => setSubFilter(f)}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all capitalize ${
-                      subFilter === f ? "bg-[#F97316]/15 text-[#F97316] border-[#F97316]/30" : "bg-white/[0.04] text-white/50 border-white/10 hover:border-white/20"
+                      subFilter === f ? "bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)] border-[var(--crm-accent-border)]" : "bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border-[var(--crm-border)] hover:border-[var(--crm-border-strong)]"
                     }`} style={H}>
                     {f || "All"} {f === "pending" && pending.length > 0 && `(${pending.length})`}
                   </button>
@@ -1153,10 +1153,10 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
 
               {loading ? (
                 <div className="flex items-center justify-center py-16">
-                  <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : submissions.length === 0 ? (
-                <div className="text-center py-16 text-white/25 text-sm" style={H}>
+                <div className="text-center py-16 text-[var(--crm-text-3)] text-sm" style={H}>
                   No submissions yet. When a rep pushes a hot lead, it appears here.
                 </div>
               ) : (
@@ -1166,8 +1166,8 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
                       <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-base font-bold text-white" style={H}>{sub.leadName}</h3>
-                            {sub.leadCity && <span className="text-xs text-white/40" style={H}>{sub.leadCity}</span>}
+                            <h3 className="text-base font-bold text-[var(--crm-text)]" style={H}>{sub.leadName}</h3>
+                            {sub.leadCity && <span className="text-xs text-[var(--crm-text-3)]" style={H}>{sub.leadCity}</span>}
                             {sub.leadTier && (
                               <span className={`text-xs px-2 py-0.5 rounded-full border font-semibold ${
                                 sub.leadTier === "A" ? "text-orange-400 bg-orange-400/10 border-orange-400/20" :
@@ -1179,20 +1179,20 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
                               </span>
                             )}
                             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
-                              sub.status === "pending" ? "text-[#F97316] bg-[#F97316]/10 border-[#F97316]/20" :
-                              sub.status === "accepted" ? "text-green-400 bg-green-400/10 border-green-400/20" :
+                              sub.status === "pending" ? "text-[var(--crm-accent-text)] bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]" :
+                              sub.status === "accepted" ? "text-green-500 bg-green-500/10 border-green-500/20" :
                               "text-zinc-500 bg-zinc-500/10 border-zinc-500/20"
                             }`} style={H}>
                               {sub.status === "pending" ? "⏳ Pending" : sub.status === "accepted" ? "✓ Accepted" : "✕ Rejected"}
                             </span>
                           </div>
-                          <p className="text-xs text-white/40 mt-1" style={H}>Submitted by <strong className="text-white/60">{sub.repName}</strong> · {new Date(sub.submittedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p>
+                          <p className="text-xs text-[var(--crm-text-3)] mt-1" style={H}>Submitted by <strong className="text-[var(--crm-text-2)]">{sub.repName}</strong> · {new Date(sub.submittedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p>
                         </div>
 
                         <div className="flex items-center gap-2 flex-wrap shrink-0">
                           {sub.status === "pending" && (
                             <button onClick={() => setResolveSub(sub)}
-                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20 hover:bg-[#F97316]/20 transition-colors"
+                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)] border border-[var(--crm-accent-border)] hover:opacity-80 transition-colors"
                               style={H}>
                               <CheckCircle2 size={13} />Review
                             </button>
@@ -1212,15 +1212,15 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
                         <div className="flex flex-col gap-1.5">
-                          {sub.leadPhone && <a href={`tel:${sub.leadPhone}`} className="text-xs text-white/60 hover:text-[#F97316] flex items-center gap-2 transition-colors" style={H}><Phone size={11} className="text-[#F97316]/50 shrink-0" />{sub.leadPhone}</a>}
-                          {sub.leadEmail && <a href={`mailto:${sub.leadEmail}`} className="text-xs text-white/60 hover:text-[#F97316] flex items-center gap-2 transition-colors" style={H}><Mail size={11} className="text-[#F97316]/50 shrink-0" />{sub.leadEmail}</a>}
-                          {sub.estimatedBudget && <p className="text-xs text-white/50 flex items-center gap-2" style={H}><DollarSign size={11} className="text-[#F97316]/50 shrink-0" />Est: {sub.estimatedBudget}</p>}
+                          {sub.leadPhone && <a href={`tel:${sub.leadPhone}`} className="text-xs text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] flex items-center gap-2 transition-colors" style={H}><Phone size={11} className="text-[var(--crm-accent)] shrink-0" />{sub.leadPhone}</a>}
+                          {sub.leadEmail && <a href={`mailto:${sub.leadEmail}`} className="text-xs text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] flex items-center gap-2 transition-colors" style={H}><Mail size={11} className="text-[var(--crm-accent)] shrink-0" />{sub.leadEmail}</a>}
+                          {sub.estimatedBudget && <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2" style={H}><DollarSign size={11} className="text-[var(--crm-accent)] shrink-0" />Est: {sub.estimatedBudget}</p>}
                           {sub.dealValue && <p className="text-xs text-green-400/70 flex items-center gap-2" style={H}><DollarSign size={11} />Deal: ${sub.dealValue.toLocaleString()}</p>}
                         </div>
                         {sub.repNotes && (
-                          <div className="sm:col-span-2 bg-[#111113] rounded-lg px-3 py-2.5">
-                            <p className="text-xs text-white/30 uppercase tracking-wider mb-1" style={H}>Rep Notes</p>
-                            <p className="text-sm text-white/70" style={H}>{sub.repNotes}</p>
+                          <div className="sm:col-span-2 bg-[var(--crm-surface-2)] rounded-lg px-3 py-2.5">
+                            <p className="text-xs text-[var(--crm-text-3)] uppercase tracking-wider mb-1" style={H}>Rep Notes</p>
+                            <p className="text-sm text-[var(--crm-text-2)]" style={H}>{sub.repNotes}</p>
                           </div>
                         )}
                       </div>
@@ -1240,17 +1240,17 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
               <div className="flex justify-end">
                 <button onClick={() => setShowCreate(true)}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ backgroundColor: "#F97316", ...H }}>
+                  style={{ backgroundColor: "var(--crm-accent)", ...H }}>
                   <Plus size={14} />Add Sales Rep
                 </button>
               </div>
 
               {loading ? (
                 <div className="flex items-center justify-center py-16">
-                  <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : reps.length === 0 ? (
-                <div className="text-center py-16 text-white/25 text-sm" style={H}>
+                <div className="text-center py-16 text-[var(--crm-text-3)] text-sm" style={H}>
                   No sales reps yet. Add one to get started.
                 </div>
               ) : (
@@ -1259,9 +1259,9 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
                     <div key={rep.id} className={`crm-surface crm-surface-hover rounded-2xl p-5 space-y-4 ${rep.active ? "" : "opacity-50"}`}>
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="font-bold text-white" style={H}>{rep.name}</p>
-                          <p className="text-xs text-white/40 mt-0.5" style={H}>{rep.email}</p>
-                          <p className="text-xs text-[#F97316]/70 mt-1" style={H}>{Math.round(rep.commissionRate * 100)}% commission</p>
+                          <p className="font-bold text-[var(--crm-text)]" style={H}>{rep.name}</p>
+                          <p className="text-xs text-[var(--crm-text-3)] mt-0.5" style={H}>{rep.email}</p>
+                          <p className="text-xs text-[var(--crm-accent-text)] mt-1" style={H}>{Math.round(rep.commissionRate * 100)}% commission</p>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <button onClick={() => toggleActive(rep.id, rep.active)}
@@ -1279,16 +1279,16 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
                           { label: "Accepted", val: rep.stats?.accepted ?? 0 },
                           { label: "Pending Payout", val: `$${(rep.stats?.pendingPayout ?? 0).toFixed(2)}` },
                         ].map(({ label, val }) => (
-                          <div key={label} className="bg-[#111113] rounded-lg px-3 py-2">
-                            <p className="text-xs text-white/30" style={H}>{label}</p>
-                            <p className="text-sm font-bold text-white/80 mt-0.5" style={H}>{val}</p>
+                          <div key={label} className="bg-[var(--crm-surface-2)] rounded-lg px-3 py-2">
+                            <p className="text-xs text-[var(--crm-text-3)]" style={H}>{label}</p>
+                            <p className="text-sm font-bold text-[var(--crm-text-2)] mt-0.5" style={H}>{val}</p>
                           </div>
                         ))}
                       </div>
 
                       {(rep.stats?.totalEarned ?? 0) > 0 && (
-                        <div className="flex items-center justify-between text-xs border-t border-white/[0.06] pt-3" style={H}>
-                          <span className="text-white/40">Total earned</span>
+                        <div className="flex items-center justify-between text-xs border-t border-[var(--crm-border)] pt-3" style={H}>
+                          <span className="text-[var(--crm-text-3)]">Total earned</span>
                           <span className="text-green-400 font-bold">${(rep.stats?.totalEarned ?? 0).toFixed(2)}</span>
                         </div>
                       )}

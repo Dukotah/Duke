@@ -76,23 +76,23 @@ export default function DemoQueue({ states, onSelectLead }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Sparkles size={16} className="text-[#F97316]" />
-          <h2 className="text-sm font-bold text-white" style={H}>New</h2>
-          {demos && <span className="text-xs text-white/35" style={H}>{demos.length}</span>}
+          <Sparkles size={16} className="text-[var(--crm-accent)]" />
+          <h2 className="text-sm font-bold text-[var(--crm-text)]" style={H}>New</h2>
+          {demos && <span className="text-xs text-[var(--crm-text-3)]" style={H}>{demos.length}</span>}
         </div>
-        <button onClick={load} className="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors" style={H}>
+        <button onClick={load} className="inline-flex items-center gap-1.5 text-xs text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors" style={H}>
           <RefreshCw size={12} />Refresh
         </button>
       </div>
-      <p className="text-xs text-white/30 leading-relaxed" style={H}>
+      <p className="text-xs text-[var(--crm-text-3)] leading-relaxed" style={H}>
         Fresh website demos built by the tool + inbound requests (people who asked to be contacted on the site). Hand-raisers show first. The full lead database lives in the All tab.
       </p>
 
       {error ? (
         <div className="flex flex-col items-center justify-center gap-3 py-16 crm-surface rounded-2xl text-center">
           <AlertCircle size={22} className="text-red-400/80" />
-          <p className="text-sm text-white/60" style={H}>{error}</p>
-          <button onClick={load} className="text-xs font-semibold text-[#F97316] hover:text-[#F97316]/80" style={H}>Try again</button>
+          <p className="text-sm text-[var(--crm-text-2)]" style={H}>{error}</p>
+          <button onClick={load} className="text-xs font-semibold text-[var(--crm-accent-text)] hover:opacity-80" style={H}>Try again</button>
         </div>
       ) : demos === null ? (
         <div className="space-y-3">
@@ -102,9 +102,9 @@ export default function DemoQueue({ states, onSelectLead }: Props) {
         </div>
       ) : demos.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-3 py-16 crm-surface rounded-2xl text-center px-6">
-          <Globe size={24} className="text-white/20" />
-          <p className="text-sm font-bold text-white/55" style={H}>Nothing new yet</p>
-          <p className="text-xs text-white/30 max-w-sm leading-relaxed" style={H}>
+          <Globe size={24} className="text-[var(--crm-text-3)]" />
+          <p className="text-sm font-bold text-[var(--crm-text-2)]" style={H}>Nothing new yet</p>
+          <p className="text-xs text-[var(--crm-text-3)] max-w-sm leading-relaxed" style={H}>
             Demos built by the website tool and inbound website requests will land here, ready to act on.
           </p>
         </div>
@@ -115,27 +115,27 @@ export default function DemoQueue({ states, onSelectLead }: Props) {
             return (
               <div key={d.id} onClick={() => onSelectLead(d)} role="button" tabIndex={0}
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelectLead(d); } }}
-                className="crm-surface crm-surface-hover rounded-2xl overflow-hidden cursor-pointer active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/40">
+                className="crm-surface crm-surface-hover rounded-2xl overflow-hidden cursor-pointer active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)]">
                 {/* Inbound (form-fill) banner — a real hand-raiser */}
                 {d.isInbound && (
-                  <div className="flex items-center gap-2 px-3.5 py-2 bg-[#F97316]/10 border-b border-[#F97316]/20">
-                    <Inbox size={13} className="text-[#F97316] shrink-0" />
-                    <span className="text-xs font-bold text-[#F97316]" style={H}>Requested contact</span>
-                    {d.createdAt && <span className="text-[11px] text-[#F97316]/60 ml-auto" style={H}>{relTime(d.createdAt)}</span>}
+                  <div className="flex items-center gap-2 px-3.5 py-2 bg-[var(--crm-accent-weak)] border-b border-[var(--crm-accent-border)]">
+                    <Inbox size={13} className="text-[var(--crm-accent)] shrink-0" />
+                    <span className="text-xs font-bold text-[var(--crm-accent-text)]" style={H}>Requested contact</span>
+                    {d.createdAt && <span className="text-[11px] text-[var(--crm-accent-text)] opacity-60 ml-auto" style={H}>{relTime(d.createdAt)}</span>}
                   </div>
                 )}
                 {/* Demo thumbnail (when a site was built) */}
                 {d.thumbnailUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={d.thumbnailUrl} alt="" loading="lazy"
-                    className="w-full aspect-[1200/630] object-cover border-b border-white/[0.06]" />
+                    className="w-full aspect-[1200/630] object-cover border-b border-[var(--crm-border)]" />
                 )}
                 {/* Body */}
                 <div className="p-3.5 space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-white truncate group-hover:text-[#F97316] transition-colors" style={H}>{d.name}</p>
-                      <p className="text-xs text-white/40 truncate" style={H}>
+                      <p className="text-sm font-bold text-[var(--crm-text)] truncate group-hover:text-[var(--crm-accent-text)] transition-colors" style={H}>{d.name}</p>
+                      <p className="text-xs text-[var(--crm-text-3)] truncate" style={H}>
                         {[d.city, d.category?.replace(/_/g, " ")].filter(Boolean).join(" · ")}
                       </p>
                     </div>
@@ -144,7 +144,7 @@ export default function DemoQueue({ states, onSelectLead }: Props) {
 
                   {/* What an inbound lead asked for */}
                   {d.isInbound && d.notes && (
-                    <p className="text-xs text-white/55 leading-snug line-clamp-2" style={H}>
+                    <p className="text-xs text-[var(--crm-text-2)] leading-snug line-clamp-2" style={H}>
                       {d.notes.replace(/^inbound[:\s-]*/i, "").trim() || "Submitted a contact request on the website."}
                     </p>
                   )}
@@ -152,7 +152,7 @@ export default function DemoQueue({ states, onSelectLead }: Props) {
                   <RecencyBadges actions={d.actions} state={state} today={todayISO} previewUrl={d.previewUrl} />
 
                   <div className="flex items-center justify-between gap-2 pt-0.5">
-                    <span className="text-[11px] text-white/30" style={H}>
+                    <span className="text-[11px] text-[var(--crm-text-3)]" style={H}>
                       {d.hasDemo
                         ? (d.linkedAt ? `Built ${relTime(d.linkedAt)}` : "Demo ready")
                         : (d.phone || d.email ? "Ready to reach out" : "")}
@@ -160,13 +160,13 @@ export default function DemoQueue({ states, onSelectLead }: Props) {
                     {d.previewUrl ? (
                       <a href={d.previewUrl} target="_blank" rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F97316] hover:text-[#F97316]/80 transition-colors" style={H}>
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--crm-accent-text)] hover:opacity-80 transition-colors" style={H}>
                         <Globe size={12} />View demo<ExternalLink size={11} className="opacity-60" />
                       </a>
                     ) : (
-                      <span className="inline-flex items-center gap-2 text-[11px] text-white/40" style={H}>
-                        {d.phone && <span className="inline-flex items-center gap-1"><Phone size={11} className="text-[#F97316]/60" />{d.phone}</span>}
-                        {!d.phone && d.email && <span className="inline-flex items-center gap-1"><Mail size={11} className="text-[#F97316]/60" />{d.email}</span>}
+                      <span className="inline-flex items-center gap-2 text-[11px] text-[var(--crm-text-3)]" style={H}>
+                        {d.phone && <span className="inline-flex items-center gap-1"><Phone size={11} className="text-[var(--crm-accent)] opacity-60" />{d.phone}</span>}
+                        {!d.phone && d.email && <span className="inline-flex items-center gap-1"><Mail size={11} className="text-[var(--crm-accent)] opacity-60" />{d.email}</span>}
                       </span>
                     )}
                   </div>

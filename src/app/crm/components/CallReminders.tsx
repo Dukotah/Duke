@@ -197,8 +197,8 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
   if (loading) {
     return (
       <div className="flex flex-col items-center gap-3 py-20">
-        <div className="w-7 h-7 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-white/30" style={H}>Loading your reminders…</p>
+        <div className="w-7 h-7 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-[var(--crm-text-3)]" style={H}>Loading your reminders…</p>
       </div>
     );
   }
@@ -207,8 +207,8 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
     return (
       <div className="flex flex-col items-center gap-3 py-16 text-center">
         <AlertTriangle size={26} className="text-red-400/70" />
-        <p className="text-sm text-white/50" style={H}>{error}</p>
-        <button onClick={load} className="inline-flex items-center gap-1.5 text-xs text-[#F97316] hover:opacity-80" style={H}>
+        <p className="text-sm text-[var(--crm-text-2)]" style={H}>{error}</p>
+        <button onClick={load} className="inline-flex items-center gap-1.5 text-xs text-[var(--crm-accent-text)] hover:opacity-80" style={H}>
           <RefreshCw size={11} />Try again
         </button>
       </div>
@@ -221,8 +221,8 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
       {/* Hero stat */}
       <div className="bg-gradient-to-br from-amber-500/15 to-amber-500/5 border border-amber-500/20 rounded-2xl px-5 py-5 flex items-center justify-between">
         <div>
-          <p className="text-3xl font-bold text-white" style={H}>{visible.length}</p>
-          <p className="text-sm text-white/50 mt-0.5" style={H}>follow-up{visible.length !== 1 ? "s" : ""} to work</p>
+          <p className="text-3xl font-bold text-[var(--crm-text)]" style={H}>{visible.length}</p>
+          <p className="text-sm text-[var(--crm-text-2)] mt-0.5" style={H}>follow-up{visible.length !== 1 ? "s" : ""} to work</p>
           {overdueCount > 0 && (
             <p className="text-xs text-red-400 mt-1 font-semibold" style={H}>⚠ {overdueCount} overdue</p>
           )}
@@ -232,7 +232,7 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
             <p className="text-xs text-green-400 font-semibold" style={H}>✓ {clearedCount} cleared</p>
           )}
           <button onClick={load}
-            className="inline-flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors"
             style={H}><RefreshCw size={11} />Refresh</button>
         </div>
       </div>
@@ -240,10 +240,10 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
       {visible.length === 0 ? (
         <div className="text-center py-16">
           <CalendarCheck size={32} className="text-green-400/40 mx-auto mb-3" />
-          <p className="text-white/60 font-semibold" style={H}>
+          <p className="text-[var(--crm-text-2)] font-semibold" style={H}>
             {clearedCount > 0 ? "All caught up — nice work!" : "No follow-ups due"}
           </p>
-          <p className="text-sm text-white/25 mt-1" style={H}>
+          <p className="text-sm text-[var(--crm-text-3)] mt-1" style={H}>
             Reminders show up here when a follow-up date arrives. Head to the Queue to make more calls.
           </p>
         </div>
@@ -257,25 +257,25 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
 
             return (
               <div key={item.leadId}
-                className="rounded-2xl border border-white/[0.06] bg-[#1C1C1F] overflow-hidden">
+                className="rounded-2xl border border-[var(--crm-border)] bg-[var(--crm-surface)] overflow-hidden">
 
                 {/* Top row — lead summary, click to open full panel */}
                 <button
                   onClick={() => lead && onSelectLead(lead)}
                   disabled={!lead}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-[#F97316]/5 disabled:cursor-default disabled:hover:bg-transparent group">
+                  className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-[var(--crm-accent-weak)] disabled:cursor-default disabled:hover:bg-transparent group">
                   <div className={`shrink-0 w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold ${
-                    lead && lead.outreach_score >= 80 ? "bg-[#F97316]/15 text-[#F97316]" :
+                    lead && lead.outreach_score >= 80 ? "bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)]" :
                     lead && lead.outreach_score >= 60 ? "bg-yellow-400/15 text-yellow-400" :
-                    "bg-white/5 text-white/40"
+                    "bg-[var(--crm-surface-3)] text-[var(--crm-text-3)]"
                   }`} style={H}>
                     {lead ? lead.outreach_score : "—"}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-white text-sm leading-tight truncate" style={H}>
+                    <p className="font-bold text-[var(--crm-text)] text-sm leading-tight truncate" style={H}>
                       {item.name ?? lead?.name ?? "Lead"}
                     </p>
-                    <p className="text-xs text-white/40 mt-0.5 truncate" style={H}>
+                    <p className="text-xs text-[var(--crm-text-3)] mt-0.5 truncate" style={H}>
                       {(() => {
                         const city = item.city ?? lead?.city ?? "";
                         const cat = (item.category ?? lead?.category ?? "").replace(/_/g, " ");
@@ -287,33 +287,33 @@ export default function CallReminders({ states, allLeads, onSelectLead, onUpdate
                         {text}
                       </span>
                       {state?.lastContacted && (
-                        <span className="text-xs text-white/30 flex items-center gap-1" style={H}>
+                        <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1" style={H}>
                           <Clock size={9} />last {state.lastContacted}
                         </span>
                       )}
                       {lead?.phone && (
-                        <span className="text-xs text-white/35 flex items-center gap-1" style={H}>
+                        <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1" style={H}>
                           <Phone size={9} />{lead.phone}
                         </span>
                       )}
                     </div>
                   </div>
-                  {lead && <ChevronRight size={16} className="text-white/20 group-hover:text-[#F97316]/60 transition-colors shrink-0" />}
+                  {lead && <ChevronRight size={16} className="text-[var(--crm-text-3)] group-hover:text-[var(--crm-accent)] transition-colors shrink-0" />}
                 </button>
 
                 {/* Action bar — call, quick-log, mark done */}
-                <div className="px-4 pb-3.5 pt-1 border-t border-white/[0.04]">
+                <div className="px-4 pb-3.5 pt-1 border-t border-[var(--crm-border)]">
                   <div className="flex items-center gap-2 mb-2.5 pt-2.5">
                     {lead?.phone && (
                       <a href={`tel:${lead.phone}`}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white transition-all active:scale-95"
-                        style={{ backgroundColor: "#F97316", ...H }}>
+                        style={{ backgroundColor: "var(--crm-accent)", ...H }}>
                         <Phone size={12} />Call
                       </a>
                     )}
                     {lead?.email && (
                       <a href={`mailto:${lead.email}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-[#F97316]/30 bg-[#F97316]/10 text-[#F97316] hover:bg-[#F97316]/20 transition-all"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)] hover:bg-[var(--crm-accent-weak)] transition-all"
                         style={H}>
                         <Mail size={12} />Email
                       </a>

@@ -55,18 +55,18 @@ interface Submission {
 
 const OUTCOMES = [
   { key: "no_answer", label: "No Answer", icon: PhoneMissed, color: "text-zinc-400", bg: "bg-zinc-400/10", border: "border-zinc-400/20", stage: "called" },
-  { key: "voicemail", label: "Left Voicemail", icon: PhoneOff, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20", stage: "voicemail" },
-  { key: "call_back", label: "Call Back Later", icon: CalendarClock, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/20", stage: "called" },
-  { key: "not_interested", label: "Not Interested", icon: ThumbsDown, color: "text-red-400", bg: "bg-red-400/10", border: "border-red-400/20", stage: "lost" },
-  { key: "interested", label: "Interested!", icon: ThumbsUp, color: "text-green-400", bg: "bg-green-400/10", border: "border-green-400/20", stage: "interested" },
+  { key: "voicemail", label: "Left Voicemail", icon: PhoneOff, color: "text-blue-500", bg: "bg-blue-400/10", border: "border-blue-400/20", stage: "voicemail" },
+  { key: "call_back", label: "Call Back Later", icon: CalendarClock, color: "text-purple-500", bg: "bg-purple-400/10", border: "border-purple-400/20", stage: "called" },
+  { key: "not_interested", label: "Not Interested", icon: ThumbsDown, color: "text-red-500", bg: "bg-red-400/10", border: "border-red-400/20", stage: "lost" },
+  { key: "interested", label: "Interested!", icon: ThumbsUp, color: "text-emerald-500", bg: "bg-green-400/10", border: "border-green-400/20", stage: "interested" },
 ];
 
 function CopyBtn({ text }: { text: string }) {
   const [ok, setOk] = useState(false);
   return (
     <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(text); setOk(true); setTimeout(() => setOk(false), 1500); }}
-      className="p-1.5 rounded-md text-white/30 hover:text-white/70 hover:bg-white/5 transition-colors">
-      {ok ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
+      className="p-1.5 rounded-md text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] hover:bg-[var(--crm-surface-3)] transition-colors">
+      {ok ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
     </button>
   );
 }
@@ -75,10 +75,10 @@ function CopyBtn({ text }: { text: string }) {
 // Returns null when no status is known (legacy leads) so nothing renders.
 function emailStatusBadge(status?: string): { label: string; cls: string } | null {
   switch ((status ?? "").toLowerCase()) {
-    case "valid": return { label: "Deliverable", cls: "text-green-400 bg-green-400/10 border-green-400/20" };
-    case "risky": return { label: "Risky", cls: "text-amber-400 bg-amber-400/10 border-amber-400/20" };
+    case "valid": return { label: "Deliverable", cls: "text-emerald-500 bg-green-400/10 border-green-400/20" };
+    case "risky": return { label: "Risky", cls: "text-amber-500 bg-amber-400/10 border-amber-400/20" };
     case "unknown": return { label: "Unverified", cls: "text-zinc-400 bg-zinc-400/10 border-zinc-400/20" };
-    case "invalid": return { label: "Invalid", cls: "text-red-400 bg-red-400/10 border-red-400/20" };
+    case "invalid": return { label: "Invalid", cls: "text-red-500 bg-red-400/10 border-red-400/20" };
     default: return null;
   }
 }
@@ -86,8 +86,8 @@ function emailStatusBadge(status?: string): { label: string; cls: string } | nul
 // Grade pill colour (lead_grade A–D), the enriched score bucket.
 function gradeCls(grade?: string): string {
   switch ((grade ?? "").toUpperCase()) {
-    case "A": return "text-orange-400 bg-orange-400/10 border-orange-400/20";
-    case "B": return "text-yellow-400 bg-yellow-400/10 border-yellow-400/20";
+    case "A": return "text-[var(--crm-accent-text)] bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]";
+    case "B": return "text-amber-500 bg-yellow-400/10 border-yellow-400/20";
     case "C": return "text-zinc-400 bg-zinc-400/10 border-zinc-400/20";
     default: return "text-zinc-500 bg-zinc-500/10 border-zinc-500/20";
   }
@@ -117,36 +117,36 @@ function SubmitModal({ lead, state, onClose, onSubmitted }: {
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative bg-[#1C1C1F] border border-white/10 rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-lg shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="relative bg-[var(--crm-surface-2)] border border-[var(--crm-border)] rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-lg shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-white" style={H}>🔥 Push to Duke</h2>
-            <p className="text-sm text-white/40 mt-0.5" style={H}>{lead.name} — {lead.city}</p>
+            <h2 className="text-lg font-bold text-[var(--crm-text)]" style={H}>🔥 Push to Duke</h2>
+            <p className="text-sm text-[var(--crm-text-3)] mt-0.5" style={H}>{lead.name} — {lead.city}</p>
           </div>
-          <button onClick={onClose} className="text-white/30 hover:text-white/60"><X size={18} /></button>
+          <button onClick={onClose} className="text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)]"><X size={18} /></button>
         </div>
         <form onSubmit={submit} className="space-y-4">
-          <div className="bg-[#111113] rounded-xl p-4 space-y-2">
-            {lead.phone && <p className="text-xs text-white/60 flex items-center gap-2" style={H}><Phone size={11} className="text-[#F97316]/60" />{lead.phone}</p>}
-            {lead.email && <p className="text-xs text-white/60 flex items-center gap-2" style={H}><Mail size={11} className="text-[#F97316]/60" />{lead.email}</p>}
+          <div className="bg-[var(--crm-surface)] rounded-xl p-4 space-y-2">
+            {lead.phone && <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2" style={H}><Phone size={11} className="text-[var(--crm-accent)]" />{lead.phone}</p>}
+            {lead.email && <p className="text-xs text-[var(--crm-text-2)] flex items-center gap-2" style={H}><Mail size={11} className="text-[var(--crm-accent)]" />{lead.email}</p>}
           </div>
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>What do they need? <span className="text-[#F97316]">*</span></label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>What do they need? <span className="text-[var(--crm-accent-text)]">*</span></label>
             <textarea value={repNotes} onChange={(e) => setRepNotes(e.target.value)} required rows={4}
               placeholder="Tell Duke exactly what happened and what this business needs. Budget, timeline, what they said — everything."
-              className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] resize-none focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Estimated Budget</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>Estimated Budget</label>
             <input value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="e.g. $2,000 — $4,000"
-              className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H} />
           </div>
-          {error && <p className="text-sm text-red-400" style={H}>{error}</p>}
+          {error && <p className="text-sm text-red-500" style={H}>{error}</p>}
           <button type="submit" disabled={loading || !repNotes}
             className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-40"
-            style={{ backgroundColor: "#F97316", ...H }}>
+            style={{ backgroundColor: "var(--crm-accent)", ...H }}>
             <Send size={14} />{loading ? "Sending…" : "Send to Duke"}
           </button>
         </form>
@@ -161,6 +161,8 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   // inline = docked beside the list (desktop cockpit). Default = right slide-over overlay.
   inline?: boolean;
 }) {
+  type TabKey = "activity" | "email" | "call" | "notes" | "details";
+  const [tab, setTab] = useState<TabKey>("activity");
   const [notes, setNotes] = useState(state.notes ?? "");
   const [showSubmit, setShowSubmit] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
@@ -411,25 +413,27 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   // on-site /schedule funnel made absolute so it works in email/SMS.
   const bookingUrl = resolveBookingUrl(calOverride);
 
+  const act = lead.actions ?? null;
+  const wasEmailed = !!act?.emailedAt || (!!state.lastContacted && (state.status === "contacted" || state.stage === "contacted"));
+
   // ── Reusable blocks ──────────────────────────────────────────────────────
-  // In inline (desktop cockpit) mode these render in a pinned zone so the
-  // primary actions stay on-screen; in overlay mode they render in the body.
+  // Each block is a self-contained section; the tabs below compose them.
 
   const recommendedBlock = lead.recommended_action ? (
-    <div className="px-5 py-3 border-b border-white/[0.06] bg-[#F97316]/[0.06]">
+    <div className="rounded-2xl border border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] px-4 py-3">
       <div className="flex items-start gap-2.5">
-        <Zap size={13} className="text-[#F97316] shrink-0 mt-0.5" />
+        <Zap size={14} className="text-[var(--crm-accent)] shrink-0 mt-0.5" />
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-white/90 leading-snug" style={H}>{lead.recommended_action}</p>
+          <p className="text-sm font-semibold text-[var(--crm-text)] leading-snug" style={H}>{lead.recommended_action}</p>
           <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
             {lead.category_value && (
-              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.category_value} value</span>
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-[var(--crm-surface-3)] text-[var(--crm-text-3)] border border-[var(--crm-border)]" style={H}>{lead.category_value} value</span>
             )}
             {lead.reach_channel && (
-              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.reach_channel}</span>
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-[var(--crm-surface-3)] text-[var(--crm-text-3)] border border-[var(--crm-border)]" style={H}>{lead.reach_channel}</span>
             )}
             {lead.need_signal && (
-              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.06] text-white/45 border border-white/[0.08]" style={H}>{lead.need_signal}</span>
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-[var(--crm-surface-3)] text-[var(--crm-text-3)] border border-[var(--crm-border)]" style={H}>{lead.need_signal}</span>
             )}
           </div>
         </div>
@@ -438,9 +442,9 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   ) : null;
 
   const emailBlock = lead.email ? (
-    <div className="px-5 py-4 border-b border-white/[0.06] bg-[#F97316]/5">
+    <div>
       {needsReview ? (
-        <div className="flex items-start gap-3 w-full py-3.5 px-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-300"
+        <div className="flex items-start gap-3 w-full py-3.5 px-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-500"
           style={H}>
           <span className="text-lg leading-none shrink-0">⚠️</span>
           <p className="text-sm font-semibold leading-snug">Demo needs review before sending — verify the preview first</p>
@@ -448,7 +452,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       ) : (
         <button onClick={() => setShowEmail(true)}
           className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl text-base font-bold text-white transition-all active:scale-95"
-          style={{ backgroundColor: "#F97316", ...H }}>
+          style={{ backgroundColor: "var(--crm-accent)", ...H }}>
           <Mail size={18} />Send Email
         </button>
       )}
@@ -457,33 +461,33 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       {cadence.next ? (
         <>
           <button onClick={() => setShowCadence((v) => !v)} className="w-full flex items-center justify-between group mt-3">
-            <span className="text-xs text-white/40 flex items-center gap-1.5 group-hover:text-white/60 transition-colors" style={H}>
-              <Repeat size={11} className="text-[#F97316]/50 shrink-0" />
-              Next: <span className="text-white/70 font-semibold">{cadence.next.label}</span>
-              <span className="text-white/30">· {cadenceDueText}</span>
+            <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1.5 group-hover:text-[var(--crm-text-2)] transition-colors" style={H}>
+              <Repeat size={11} className="text-[var(--crm-accent)] shrink-0" />
+              Next: <span className="text-[var(--crm-text-2)] font-semibold">{cadence.next.label}</span>
+              <span className="text-[var(--crm-text-3)]">· {cadenceDueText}</span>
             </span>
-            {showCadence ? <ChevronDown size={13} className="text-white/30" /> : <ChevronRight size={13} className="text-white/30" />}
+            {showCadence ? <ChevronDown size={13} className="text-[var(--crm-text-3)]" /> : <ChevronRight size={13} className="text-[var(--crm-text-3)]" />}
           </button>
           {showCadence && (
             <div className="mt-2.5 space-y-1.5">
               {cadence.cadence.map((t) => {
                 const isNext = cadence.next?.step === t.step;
                 return (
-                  <div key={t.step} className={`rounded-xl border px-3 py-2 ${isNext ? "border-[#F97316]/40 bg-[#F97316]/[0.07]" : "border-white/[0.06] bg-[#1C1C1F]"}`}>
-                    <p className="text-xs font-semibold text-white/80 flex items-center gap-2" style={H}>
-                      <span className="text-white/40">Day {t.day}</span>{t.label}
-                      {isNext && <span className="text-[10px] text-[#F97316] uppercase tracking-wider">recommended</span>}
+                  <div key={t.step} className={`rounded-xl border px-3 py-2 ${isNext ? "border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)]" : "border-[var(--crm-border)] bg-[var(--crm-surface)]"}`}>
+                    <p className="text-xs font-semibold text-[var(--crm-text-2)] flex items-center gap-2" style={H}>
+                      <span className="text-[var(--crm-text-3)]">Day {t.day}</span>{t.label}
+                      {isNext && <span className="text-[10px] text-[var(--crm-accent-text)] uppercase tracking-wider">recommended</span>}
                     </p>
-                    <p className="text-xs text-white/35 mt-0.5" style={H}>{t.purpose}</p>
+                    <p className="text-xs text-[var(--crm-text-3)] mt-0.5" style={H}>{t.purpose}</p>
                   </div>
                 );
               })}
-              <p className="text-[11px] text-white/20 leading-relaxed pt-0.5" style={H}>Timing is a guide — open Send Email and pick the matching template.</p>
+              <p className="text-[11px] text-[var(--crm-text-3)] leading-relaxed pt-0.5" style={H}>Timing is a guide — open Send Email and pick the matching template.</p>
             </div>
           )}
         </>
       ) : (
-        <p className="text-xs text-white/30 mt-3 flex items-center gap-1.5" style={H}>
+        <p className="text-xs text-[var(--crm-text-3)] mt-3 flex items-center gap-1.5" style={H}>
           <Repeat size={11} className="shrink-0" />Full 4-touch cadence sent — time to move on or call.
         </p>
       )}
@@ -492,38 +496,36 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
 
   // Email progress funnel (Sent -> Opened -> Clicked) from the durable global
   // lead_actions stamp. Shows once the lead has been emailed.
-  const act = lead.actions ?? null;
-  const wasEmailed = !!act?.emailedAt || (!!state.lastContacted && (state.status === "contacted" || state.stage === "contacted"));
   const engagementBlock = wasEmailed ? (
-    <div className="px-5 py-3 border-b border-white/[0.06]">
-      <p className="text-[11px] uppercase tracking-wider text-white/35 font-semibold mb-2" style={H}>Email progress</p>
+    <div className="rounded-2xl border border-[var(--crm-border)] bg-[var(--crm-surface)] px-4 py-3">
+      <p className="text-[11px] uppercase tracking-wider text-[var(--crm-text-3)] font-semibold mb-2" style={H}>Email progress</p>
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border text-blue-300 bg-blue-400/10 border-blue-400/20" style={H}>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border text-blue-500 bg-blue-400/10 border-blue-400/20" style={H}>
           <Mail size={12} />Sent{act?.emailedAt ? ` · ${relTime(act.emailedAt)}` : ""}
         </span>
-        <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border ${act?.openedAt ? "text-sky-300 bg-sky-400/10 border-sky-400/20" : "text-white/30 bg-white/[0.03] border-white/10"}`} style={H}>
+        <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border ${act?.openedAt ? "text-sky-500 bg-sky-400/10 border-sky-400/20" : "text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] border-[var(--crm-border)]"}`} style={H}>
           <MailOpen size={12} />{act?.openedAt ? `Opened${act.openedCount && act.openedCount > 1 ? ` ${act.openedCount}×` : ""} · ${relTime(act.openedAt)}` : "Not opened yet"}
         </span>
-        <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border ${act?.clickedAt ? "text-emerald-300 bg-emerald-400/10 border-emerald-400/30" : "text-white/30 bg-white/[0.03] border-white/10"}`} style={H}>
+        <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border ${act?.clickedAt ? "text-emerald-500 bg-emerald-400/10 border-emerald-400/30" : "text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] border-[var(--crm-border)]"}`} style={H}>
           <MousePointerClick size={12} />{act?.clickedAt ? `Clicked · ${relTime(act.clickedAt)}` : "No clicks yet"}
         </span>
         {act?.bouncedAt && (
-          <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border text-red-300 bg-red-400/10 border-red-400/30" style={H}>
+          <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold border text-red-500 bg-red-400/10 border-red-400/30" style={H}>
             <AlertTriangle size={12} />Bounced
           </span>
         )}
       </div>
       {!act?.openedAt && !act?.clickedAt && (
-        <p className="text-[10px] text-white/25 mt-1.5" style={H}>Open &amp; click tracking populates once the Resend email webhook is live.</p>
+        <p className="text-[10px] text-[var(--crm-text-3)] mt-1.5" style={H}>Open &amp; click tracking populates once the Resend email webhook is live.</p>
       )}
     </div>
   ) : null;
 
   const demoBlock = effPreviewUrl ? (
-    <div className="px-5 py-3 border-b border-white/[0.06]">
+    <div className="rounded-2xl border border-[var(--crm-border)] bg-[var(--crm-surface)] px-4 py-3">
       <div className="flex items-center gap-2">
         <a href={effPreviewUrl} target="_blank" rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold border border-[#F97316]/30 bg-[#F97316]/10 text-[#F97316] hover:bg-[#F97316]/20 transition-all active:scale-95"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold border border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)] hover:opacity-80 transition-all active:scale-95"
           style={H}>
           <Globe size={15} />View demo site<ExternalLink size={12} className="opacity-60" />
         </a>
@@ -532,14 +534,14 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       {lead.thumbnailUrl && (
         <a href={effPreviewUrl} target="_blank" rel="noopener noreferrer" className="block mt-2">
           <img src={lead.thumbnailUrl} alt="Demo preview" loading="lazy"
-            className="w-full rounded-xl border border-white/10 hover:border-[#F97316]/30 transition-colors" />
+            className="w-full rounded-xl border border-[var(--crm-border)] hover:border-[var(--crm-accent-border)] transition-colors" />
         </a>
       )}
       <button onClick={logDemoEmailed}
         className={`mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-semibold border transition-all active:scale-95 ${
           state.lastOutcome === "demo_emailed"
-            ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
-            : "border-white/15 bg-white/[0.04] text-white/70 hover:bg-white/[0.08]"
+            ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-500"
+            : "border-[var(--crm-border)] bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] hover:opacity-80"
         }`}
         style={H}>
         {state.lastOutcome === "demo_emailed"
@@ -547,41 +549,41 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
           : <><Mail size={13} />Mark demo email sent</>}
       </button>
       {effNeedsReview && (
-        <p className="mt-1.5 text-[11px] text-amber-300/80 flex items-center gap-1.5" style={H}>
+        <p className="mt-1.5 text-[11px] text-amber-500 flex items-center gap-1.5" style={H}>
           <span>⚠️</span>Demo flagged needs-review — verify before sending.
         </p>
       )}
       {lead.claimByDate && (
-        <p className="mt-1 text-[11px] text-white/35" style={H}>Offer expires {lead.claimByDate}</p>
+        <p className="mt-1 text-[11px] text-[var(--crm-text-3)]" style={H}>Offer expires {lead.claimByDate}</p>
       )}
     </div>
   ) : null;
 
   const callBlock = lead.phone ? (
-    <div className="px-5 py-3 border-b border-white/[0.06]">
+    <div>
       <a href={`tel:${lead.phone}`}
-        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold border border-white/15 bg-white/[0.04] text-white/80 hover:bg-white/[0.08] hover:text-white transition-all active:scale-95"
+        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold border border-[var(--crm-border)] bg-[var(--crm-surface-3)] text-[var(--crm-text)] hover:opacity-80 transition-all active:scale-95"
         style={H}>
-        <Phone size={15} className="text-[#F97316]" />Call {lead.phone}
+        <Phone size={15} className="text-[var(--crm-accent)]" />Call {lead.phone}
       </a>
       <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
         <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
-          callTiming.status === "good" ? "text-green-400 bg-green-400/10 border-green-400/20" :
-          callTiming.status === "ok" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
+          callTiming.status === "good" ? "text-emerald-500 bg-green-400/10 border-green-400/20" :
+          callTiming.status === "ok" ? "text-amber-500 bg-yellow-400/10 border-yellow-400/20" :
           "text-zinc-400 bg-zinc-400/10 border-zinc-400/20"
         }`} style={H}>
           {callTiming.status === "good" ? "🟢" : callTiming.status === "ok" ? "🟡" : "🔴"} {callTiming.label}
         </span>
         {state.lastContacted && (
-          <span className="text-xs text-white/30" style={H}>Last: {state.lastContacted}</span>
+          <span className="text-xs text-[var(--crm-text-3)]" style={H}>Last: {state.lastContacted}</span>
         )}
       </div>
     </div>
   ) : null;
 
   const outcomeBlock = (
-    <div className="px-5 py-4 border-b border-white/[0.06]">
-      <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Log Outcome</p>
+    <div>
+      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3" style={H}>Log Outcome</p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {OUTCOMES.map((o) => (
           <button key={o.key} onClick={() => logOutcome(o)}
@@ -592,16 +594,16 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
         ))}
         {!isSubmitted && (
           <button onClick={() => setShowSubmit(true)}
-            className="col-span-2 sm:col-span-3 flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-bold text-white border border-[#F97316]/30 bg-[#F97316]/10 hover:bg-[#F97316]/20 transition-all"
+            className="col-span-2 sm:col-span-3 flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-bold text-[var(--crm-accent-text)] border border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] hover:opacity-80 transition-all"
             style={H}>
             <Send size={13} />They&apos;re In — Push to Duke
           </button>
         )}
         {isSubmitted && (
           <div className={`col-span-2 sm:col-span-3 flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-semibold border ${
-            submission?.status === "accepted" ? "text-green-400 bg-green-400/10 border-green-400/20" :
-            submission?.status === "rejected" ? "text-red-400 bg-red-400/10 border-red-400/20" :
-            "text-[#F97316] bg-[#F97316]/10 border-[#F97316]/20"
+            submission?.status === "accepted" ? "text-emerald-500 bg-green-400/10 border-green-400/20" :
+            submission?.status === "rejected" ? "text-red-500 bg-red-400/10 border-red-400/20" :
+            "text-[var(--crm-accent-text)] bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]"
           }`} style={H}>
             {submission?.status === "accepted" ? `✓ Accepted${submission?.commissionAmount ? ` — $${submission.commissionAmount.toFixed(2)} commission` : ""}` :
              submission?.status === "rejected" ? "✕ Passed — try a different angle" :
@@ -612,20 +614,365 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
     </div>
   );
 
-  // Notes — two rows when pinned inline, five in the overlay body. Exactly one
-  // notes box renders per path (pinned for inline, body for overlay).
   const notesBlock = (
-    <div className="px-5 py-4 border-b border-white/[0.06]">
-      <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
+    <div>
+      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
         <StickyNote size={11} />Your Notes
       </p>
-      <textarea value={notes} onChange={(e) => handleNotes(e.target.value)} onBlur={handleNotesBlur} rows={inline ? 2 : 5}
+      <textarea value={notes} onChange={(e) => handleNotes(e.target.value)} onBlur={handleNotesBlur} rows={inline ? 6 : 8}
         placeholder="What did they say? Are they coming back? What's their situation?"
-        className="w-full bg-[#1C1C1F] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/80 placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/40 transition-colors"
+        className="w-full bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-xl px-4 py-3 text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] resize-none focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
         style={H} />
-      <p className="text-xs text-white/20 mt-1.5" style={H}>Auto-saved as you type</p>
+      <p className="text-xs text-[var(--crm-text-3)] mt-1.5" style={H}>Auto-saved as you type</p>
     </div>
   );
+
+  const claimBlock = (
+    <div>
+      {claim === undefined ? (
+        <div className="h-8 bg-[var(--crm-surface-3)] animate-pulse rounded-xl" />
+      ) : claim === null ? (
+        <button onClick={handleClaim} disabled={claimLoading}
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20 transition-all disabled:opacity-50"
+          style={H}>
+          <UserCheck size={14} />{claimLoading ? "Claiming…" : "Claim This Lead"}
+        </button>
+      ) : claim.userId === currentUserId || (!currentUserId) ? (
+        <div className="flex items-center gap-2">
+          <div className="flex-1 flex items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-semibold bg-green-500/10 text-emerald-500 border border-green-500/20" style={H}>
+            <Check size={14} />My Lead
+          </div>
+          <button onClick={handleUnclaim} disabled={claimLoading}
+            className="px-3 py-2.5 rounded-xl text-xs font-semibold text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] hover:text-[var(--crm-text-2)] transition-all disabled:opacity-50"
+            style={H}>
+            {claimLoading ? "…" : "Unclaim"}
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-semibold bg-zinc-500/10 text-zinc-500 border border-zinc-500/20" style={H}>
+          <Lock size={13} />Claimed by {claim.repName}
+        </div>
+      )}
+    </div>
+  );
+
+  const followUpBlock = showFollowUp ? (
+    <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 px-4 py-4">
+      <p className="text-xs font-semibold text-purple-500 uppercase tracking-wider mb-3" style={H}>📅 Follow up on:</p>
+      <div className="flex flex-wrap gap-2">
+        <button onClick={() => setFollowUpDate(todayISO)}
+          className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-500 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
+          style={H}>Today</button>
+        <button onClick={() => setFollowUpDate(tomorrowISO)}
+          className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-500 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
+          style={H}>Tomorrow</button>
+        <button onClick={() => setFollowUpDate(in3DaysISO)}
+          className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-500 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
+          style={H}>In 3 days</button>
+        <input type="date" defaultValue={todayISO}
+          onChange={(e) => { if (e.target.value) setFollowUpDate(e.target.value); }}
+          className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-500 border border-purple-500/20 focus:outline-none focus:border-purple-400/50 transition-all"
+          style={H} />
+        <button onClick={() => setShowFollowUp(false)}
+          className="px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--crm-surface-3)] text-[var(--crm-text-3)] border border-[var(--crm-border)] hover:text-[var(--crm-text-2)] transition-all"
+          style={H}>Skip</button>
+      </div>
+      {state.followUpDate && (
+        <p className="text-xs text-purple-500/70 mt-2" style={H}>Currently set: {state.followUpDate}</p>
+      )}
+    </div>
+  ) : null;
+
+  const scriptBlock = (
+    <div>
+      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3" style={H}>Your Opening Line</p>
+      <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] p-4 relative">
+        <p className="text-sm text-[var(--crm-text)] leading-relaxed italic" style={H}>&ldquo;{fullPitch}&rdquo;</p>
+        <button onClick={() => navigator.clipboard.writeText(fullPitch)}
+          className="absolute top-3 right-3 p-1.5 rounded-md text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] hover:bg-[var(--crm-surface-3)] transition-colors">
+          <Copy size={12} />
+        </button>
+      </div>
+      {lead.tier_reason && (
+        <p className="text-xs text-[var(--crm-text-3)] mt-2 px-1 leading-relaxed" style={H}>{lead.tier_reason}</p>
+      )}
+    </div>
+  );
+
+  const fullScriptBlock = (
+    <div>
+      <button onClick={() => setShowScript((v) => !v)} className="w-full flex items-center justify-between group">
+        <span className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider flex items-center gap-1.5 group-hover:text-[var(--crm-text-2)] transition-colors" style={H}>
+          <Phone size={11} />Full Call Script
+        </span>
+        {showScript ? <ChevronDown size={14} className="text-[var(--crm-text-3)]" /> : <ChevronRight size={14} className="text-[var(--crm-text-3)]" />}
+      </button>
+      {showScript && (
+        <div className="mt-3 space-y-3">
+          {callScript.map((block) => (
+            <div key={block.heading}>
+              <p className="text-[11px] font-semibold text-[var(--crm-accent-text)] uppercase tracking-wider mb-1.5" style={H}>{block.heading}</p>
+              <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] p-3 relative">
+                <div className="space-y-1.5 pr-7">
+                  {block.lines.map((line, i) => (
+                    <p key={i} className="text-sm text-[var(--crm-text-2)] leading-relaxed" style={H}>{line}</p>
+                  ))}
+                </div>
+                <button onClick={() => navigator.clipboard.writeText(block.lines.join("\n"))}
+                  className="absolute top-2.5 right-2.5 p-1.5 rounded-md text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] hover:bg-[var(--crm-surface-3)] transition-colors">
+                  <Copy size={12} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const objectionsBlock = (
+    <div>
+      <button onClick={() => setShowObjections((v) => !v)} className="w-full flex items-center justify-between group">
+        <span className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider flex items-center gap-1.5 group-hover:text-[var(--crm-text-2)] transition-colors" style={H}>
+          <MessageSquare size={11} />Objection Handling
+        </span>
+        {showObjections ? <ChevronDown size={14} className="text-[var(--crm-text-3)]" /> : <ChevronRight size={14} className="text-[var(--crm-text-3)]" />}
+      </button>
+      {showObjections && (
+        <div className="mt-3 space-y-2">
+          {objections.map((o) => (
+            <div key={o.trigger} className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] p-3">
+              <div className="flex items-start justify-between gap-2 mb-1">
+                <p className="text-xs font-semibold text-[var(--crm-text)] flex-1" style={H}>&ldquo;{o.trigger}&rdquo;</p>
+                <CopyBtn text={o.response} />
+              </div>
+              <p className="text-sm text-[var(--crm-text-2)] leading-relaxed pr-1" style={H}>{o.response}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const websiteBlock = (lead.website || lead.site_quality || lead.digital_presence) ? (
+    <div>
+      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3" style={H}>Their Website</p>
+      {lead.website ? (
+        <a href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}
+          target="_blank" rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl text-sm font-bold border border-[var(--crm-border)] bg-[var(--crm-surface-3)] text-[var(--crm-text)] hover:border-[var(--crm-border-strong)] transition-all active:scale-95"
+          style={H}>
+          <Globe size={15} className="text-[var(--crm-accent)]" />Open their site<ExternalLink size={13} className="text-[var(--crm-text-3)]" />
+        </a>
+      ) : (
+        <div className="flex items-center gap-2 w-full py-3 px-4 rounded-2xl border border-orange-400/25 bg-orange-400/[0.07] text-orange-500" style={H}>
+          <Flame size={14} className="shrink-0" /><span className="text-sm font-semibold">No website found — that&apos;s the pitch</span>
+        </div>
+      )}
+      {lead.website && websiteHost && (
+        <p className="text-[11px] text-[var(--crm-text-3)] text-center mt-1.5 truncate" style={H}>{websiteHost}</p>
+      )}
+      {/* Audit signal chips — the redesign-opportunity tells */}
+      {(lead.site_quality || lead.digital_presence || lead.builder || lead.site_load_ms) && (
+        <div className="flex flex-wrap gap-1.5 mt-3">
+          {lead.site_quality && (() => {
+            const q = lead.site_quality.toLowerCase();
+            const cls = q === "dead" ? "text-red-500 bg-red-400/10 border-red-400/20"
+              : q === "thin" ? "text-amber-500 bg-amber-400/10 border-amber-400/20"
+              : q === "good" ? "text-emerald-500 bg-green-400/10 border-green-400/20"
+              : "text-zinc-400 bg-zinc-400/10 border-zinc-400/20";
+            const label = q === "dead" ? "Site dead" : q === "thin" ? "Thin / placeholder" : q === "good" ? "Real site" : lead.site_quality;
+            return <span className={`text-[11px] px-2 py-0.5 rounded-full border ${cls}`} style={H}>{label}</span>;
+          })()}
+          {lead.digital_presence && (
+            <span className="text-[11px] px-2 py-0.5 rounded-full border border-[var(--crm-border)] bg-[var(--crm-surface-3)] text-[var(--crm-text-3)]" style={H}>
+              {lead.digital_presence === "none" ? "No online presence" : lead.digital_presence === "weak" ? "Weak presence" : "OK presence"}
+            </span>
+          )}
+          {lead.builder && (
+            <span className="text-[11px] px-2 py-0.5 rounded-full border border-yellow-400/20 bg-yellow-400/10 text-amber-500" style={H}>{lead.builder}</span>
+          )}
+          {(() => {
+            const ms = parseInt(lead.site_load_ms ?? "", 10);
+            if (!Number.isFinite(ms) || ms <= 0) return null;
+            const slow = ms > 3000;
+            return <span className={`text-[11px] px-2 py-0.5 rounded-full border ${slow ? "text-red-500 bg-red-400/10 border-red-400/20" : "text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] border-[var(--crm-border)]"}`} style={H}>Loads in {(ms / 1000).toFixed(1)}s{slow ? " · slow" : ""}</span>;
+          })()}
+        </div>
+      )}
+    </div>
+  ) : null;
+
+  const contactBlock = (
+    <div>
+      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3" style={H}>Contact Info</p>
+      <div className="space-y-2.5">
+        {/* Decision-maker (enriched, sparse) — who to ask for by name */}
+        {(lead.owner_name || lead.owner_email || lead.owner_phone) && (
+          <div className="rounded-xl border border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] p-3 space-y-1.5">
+            <p className="text-[11px] font-semibold text-[var(--crm-accent-text)] uppercase tracking-wider flex items-center gap-1.5" style={H}>
+              <UserCheck size={11} />Decision-maker
+            </p>
+            {lead.owner_name && (
+              <p className="text-sm text-[var(--crm-text)] font-semibold" style={H}>
+                {lead.owner_name}{lead.owner_title ? <span className="text-[var(--crm-text-3)] font-normal"> · {lead.owner_title}</span> : null}
+              </p>
+            )}
+            {lead.owner_email && (
+              <div className="flex items-center gap-2">
+                <Mail size={12} className="text-[var(--crm-accent)] shrink-0" />
+                <a href={`mailto:${lead.owner_email}`} className="text-xs text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] transition-colors flex-1 min-w-0 truncate" style={H}>{lead.owner_email}</a>
+                <CopyBtn text={lead.owner_email} />
+              </div>
+            )}
+            {lead.owner_phone && (
+              <div className="flex items-center gap-2">
+                <Phone size={12} className="text-[var(--crm-accent)] shrink-0" />
+                <a href={`tel:${lead.owner_phone}`} className="text-xs text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] transition-colors flex-1" style={H}>{lead.owner_phone}</a>
+                <CopyBtn text={lead.owner_phone} />
+              </div>
+            )}
+          </div>
+        )}
+        {lead.phone && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <Phone size={13} className="text-[var(--crm-accent)] shrink-0" />
+            <a href={`tel:${lead.phone}`} className="text-sm text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] transition-colors flex-1" style={H}>{lead.phone}</a>
+            {lead.phone_type && lead.phone_type !== "fixed-line-or-mobile" && (
+              <span className="text-[10px] uppercase tracking-wider text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] px-1.5 py-0.5 rounded-md shrink-0" style={H}>{lead.phone_type.replace(/-/g, " ")}</span>
+            )}
+            {lead.phone_valid === "False" && (
+              <span className="text-[10px] text-red-500 bg-red-400/10 border border-red-400/20 px-1.5 py-0.5 rounded-md shrink-0" style={H}>unverified #</span>
+            )}
+            <CopyBtn text={lead.phone} />
+          </div>
+        )}
+        {lead.email && (
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Mail size={13} className="text-[var(--crm-accent)] shrink-0" />
+              <a href={`mailto:${lead.email}`} className="text-sm text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] transition-colors flex-1 min-w-0 truncate" style={H}>{lead.email}</a>
+              {(() => {
+                const b = emailStatusBadge(lead.email_status);
+                return b
+                  ? <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ${b.cls}`} style={H}>{b.label}</span>
+                  : lead.email_owned === "1" ? <span className="text-xs text-emerald-500 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded-full shrink-0" style={H}>Business</span> : null;
+              })()}
+              <CopyBtn text={lead.email} />
+            </div>
+            {/* Free/role are NOT disqualifiers for a web-design pitch — show as
+                context, not warnings; plus any additional emails found. */}
+            {(lead.email_role === "True" || lead.email_free === "True" || lead.all_emails) && (
+              <p className="text-[11px] text-[var(--crm-text-3)] mt-1 ml-[21px]" style={H}>
+                {lead.email_role === "True" && <span>Role inbox</span>}
+                {lead.email_role === "True" && lead.email_free === "True" && <span> · </span>}
+                {lead.email_free === "True" && <span>Personal (free) provider</span>}
+                {lead.all_emails && <span>{(lead.email_role === "True" || lead.email_free === "True") ? " · " : ""}Also: {lead.all_emails.split("|").filter(Boolean).slice(0, 2).join(", ")}</span>}
+              </p>
+            )}
+          </div>
+        )}
+        {lead.website && (
+          <div className="flex items-center gap-2">
+            <ExternalLink size={13} className="text-[var(--crm-accent)] shrink-0" />
+            <a href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}
+              target="_blank" rel="noopener noreferrer"
+              className="text-sm text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] transition-colors flex-1 truncate" style={H}>
+              {websiteHost}
+              {lead.builder && <span className="ml-2 text-xs text-amber-500">({lead.builder})</span>}
+            </a>
+          </div>
+        )}
+        {/* The attached link is the public gallery URL; the demo only
+            resolves there once the Websites repo is pushed/deployed. */}
+        {genResult && (
+          <p className="text-[11px] text-amber-500" style={H}>
+            Built ✓ — push the Websites repo to deploy this demo, then the link goes live (~1 min).
+          </p>
+        )}
+        {/* Local-only: build a demo site for this lead with the /websites factory.
+            Hidden in production builds; the API route also hard-blocks prod. */}
+        {!effPreviewUrl && process.env.NODE_ENV === "development" && (
+          <div className="space-y-1.5">
+            <button
+              onClick={generateSite}
+              disabled={genState === "loading"}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-500/15 text-violet-500 border border-violet-400/25 hover:bg-violet-500/25 disabled:opacity-60 text-xs transition-colors"
+              style={H}
+            >
+              <Globe size={13} />
+              {genState === "loading" ? "Generating demo… (1–3 min)" : "Generate demo site"}
+            </button>
+            {genState === "loading" && (
+              <p className="text-[11px] text-[var(--crm-text-3)]" style={H}>Scraping the business + building the site locally…</p>
+            )}
+            {genState === "error" && (
+              <p className="text-[11px] text-red-500" style={H}>{genError}</p>
+            )}
+          </div>
+        )}
+        {lead.address && (
+          <div className="flex items-start gap-2">
+            <MapPin size={13} className="text-[var(--crm-text-3)] shrink-0 mt-0.5" />
+            <span className="text-xs text-[var(--crm-text-3)] flex-1" style={H}>{lead.address}, {lead.city} {lead.county}</span>
+          </div>
+        )}
+        {lead.socials && (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {lead.socials.split("|").filter(Boolean).map((url, i) => {
+              const label = url.includes("facebook") ? "Facebook" : url.includes("instagram") ? "Instagram" :
+                url.includes("twitter") || url.includes("x.com") ? "X / Twitter" : url.includes("linkedin") ? "LinkedIn" : "Social";
+              return (
+                <a key={i} href={url.startsWith("http") ? url : `https://${url}`} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] text-xs transition-colors"
+                  style={H}><Link size={10} />{label}</a>
+              );
+            })}
+          </div>
+        )}
+        {lead.best_contact && (
+          <p className="text-xs text-[var(--crm-accent-text)] flex items-center gap-1.5 pt-1" style={H}>
+            <Star size={10} />Best way to reach them: <strong>{lead.best_contact}</strong>
+          </p>
+        )}
+      </div>
+    </div>
+  );
+
+  const scheduleBlock = (
+    <div>
+      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
+        <CalendarClock size={11} />Schedule a Call
+      </p>
+      <div className="flex gap-2 flex-wrap">
+        {lead.email && (
+          <a href={`mailto:${lead.email}?subject=${encodeURIComponent(`Schedule a quick call — ${lead.name}`)}&body=${encodeURIComponent(`Hi, I'd love to find a time to connect! You can book a free 15-minute call here: ${bookingUrl}`)}`}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-500 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
+            <Mail size={11} />Send via Email
+          </a>
+        )}
+        {lead.phone && (
+          <a href={`sms:${lead.phone}?&body=${encodeURIComponent(`Hi! Book a free 15-minute call: ${bookingUrl}`)}`}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-500 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
+            <Phone size={11} />Send via Text
+          </a>
+        )}
+        <button onClick={() => navigator.clipboard.writeText(bookingUrl)}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--crm-surface-3)] text-[var(--crm-text-2)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] transition-all" style={H}>
+          <Copy size={11} />Copy Link
+        </button>
+      </div>
+    </div>
+  );
+
+  // ── Tabs ──────────────────────────────────────────────────────────────────
+  const TABS: { key: TabKey; label: string; icon: typeof Activity }[] = [
+    { key: "activity", label: "Activity", icon: Activity },
+    { key: "email", label: "Email", icon: Mail },
+    { key: "call", label: "Call", icon: PhoneCall },
+    { key: "notes", label: "Notes", icon: StickyNote },
+    { key: "details", label: "Details", icon: Info },
+  ];
 
   return (
     <>
@@ -642,449 +989,145 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
       <div className={inline ? "h-full w-full flex" : "fixed inset-0 z-50 flex items-end sm:items-stretch sm:justify-end"} onClick={inline ? undefined : onClose}>
         {!inline && <div className="absolute inset-0 bg-black/50 sm:bg-black/30 backdrop-blur-sm sm:backdrop-blur-none" />}
         <div className={inline
-            ? "relative bg-[#111113] w-full h-full flex flex-col overflow-hidden"
-            : "relative bg-[#111113] border-t sm:border-t-0 sm:border-l border-white/[0.07] w-full sm:w-[560px] lg:w-[680px] h-[92vh] sm:h-full flex flex-col shadow-2xl overflow-hidden rounded-t-2xl sm:rounded-none"}
+            ? "relative bg-[var(--crm-surface-2)] w-full h-full flex flex-col overflow-hidden"
+            : "relative bg-[var(--crm-surface-2)] border-t sm:border-t-0 sm:border-l border-[var(--crm-border)] w-full sm:w-[560px] lg:w-[680px] h-[92vh] sm:h-full flex flex-col shadow-2xl overflow-hidden rounded-t-2xl sm:rounded-none"}
           onClick={(e) => e.stopPropagation()}>
 
-          {/* Header */}
-          <div className="flex items-start justify-between px-5 py-4 border-b border-white/[0.06] shrink-0">
-            <div className="min-w-0 pr-4">
-              <h2 className="text-base font-bold text-white leading-tight" style={H}>{lead.name}</h2>
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="text-xs text-white/40 flex items-center gap-1" style={H}><MapPin size={10} />{lead.city}{lead.county ? `, ${lead.county}` : ""}</span>
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
-                  tier === "A" ? "text-orange-400 bg-orange-400/10 border-orange-400/20" :
-                  tier === "B" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
-                  "text-zinc-500 bg-zinc-500/10 border-zinc-500/20"
-                }`} style={H}>
-                  {tier === "A" ? <><Flame size={9} className="inline mr-1" />No Website</> :
-                   tier === "B" ? <><Zap size={9} className="inline mr-1" />DIY Site</> :
-                   <><Globe size={9} className="inline mr-1" />Has Site</>}
-                </span>
-                {lead.grade && (
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${gradeCls(lead.grade)}`} style={H}>
-                    Grade {lead.grade}{lead.lead_score != null ? ` · ${lead.lead_score}` : ""}
-                  </span>
-                )}
-                {state.callCount ? (
-                  <span className="text-xs text-white/30 flex items-center gap-1" style={H}><PhoneCall size={9} />{state.callCount} call{state.callCount !== 1 ? "s" : ""}</span>
-                ) : null}
-                <div className="relative">
-                  <button onClick={() => setShowScorePopover((v) => !v)}
-                    className="text-white/25 hover:text-white/60 transition-colors flex items-center gap-1"
-                    style={H}>
-                    <Info size={12} />
-                    <span className="text-xs">{lead.outreach_score}</span>
-                  </button>
-                  {showScorePopover && (
-                    <div className="absolute left-0 top-6 z-10 w-64 bg-[#1C1C1F] border border-white/10 rounded-xl p-3 shadow-xl text-xs text-white/70 space-y-1.5" style={H}>
-                      <p className="font-bold text-white/90">Why this score?</p>
-                      {lead.grade && <p>Grade <span className="font-semibold text-white/90">{lead.grade}</span>{lead.lead_score != null ? <> · <span className="text-[#F97316] font-semibold">{lead.lead_score}/100</span></> : null}</p>}
-                      {/* Enriched breakdown — what actually drove the score */}
-                      {lead.score_why ? (
-                        <ul className="space-y-0.5 pl-0.5">
-                          {lead.score_why.split(";").map((part) => part.trim()).filter(Boolean).map((part, i) => (
-                            <li key={i} className="flex items-start gap-1.5"><span className="text-[#F97316]/70 mt-px">•</span><span className="capitalize">{part}</span></li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <>
-                          {lead.tier_reason && <p>Tier {lead.tier}: {lead.tier_reason}</p>}
-                          {lead.industry_fit && <p>Industry fit: <span className="text-green-400">{lead.industry_fit}</span></p>}
-                          <p>Outreach score: <span className="text-[#F97316] font-semibold">{lead.outreach_score}/100</span></p>
-                        </>
-                      )}
-                      <button onClick={() => setShowScorePopover(false)} className="text-white/30 hover:text-white/60 pt-1">✕ close</button>
-                    </div>
+          {/* Sticky header — identity + status + key actions */}
+          <div className="shrink-0 border-b border-[var(--crm-border)] bg-[var(--crm-surface-2)]">
+            <div className="flex items-start justify-between px-5 pt-4 pb-3">
+              <div className="min-w-0 pr-4">
+                <h2 className="text-lg font-bold text-[var(--crm-text)] leading-tight truncate" style={H}>{lead.name}</h2>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  {lead.contact_name && (
+                    <span className="text-xs text-[var(--crm-text-2)] flex items-center gap-1" style={H}><UserCheck size={10} />{lead.contact_name}</span>
                   )}
+                  <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1" style={H}><MapPin size={10} />{lead.city}{lead.county ? `, ${lead.county}` : ""}</span>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
+                    tier === "A" ? "text-[var(--crm-accent-text)] bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]" :
+                    tier === "B" ? "text-amber-500 bg-yellow-400/10 border-yellow-400/20" :
+                    "text-zinc-500 bg-zinc-500/10 border-zinc-500/20"
+                  }`} style={H}>
+                    {tier === "A" ? <><Flame size={9} className="inline mr-1" />No Website</> :
+                     tier === "B" ? <><Zap size={9} className="inline mr-1" />DIY Site</> :
+                     <><Globe size={9} className="inline mr-1" />Has Site</>}
+                  </span>
+                  {lead.grade && (
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${gradeCls(lead.grade)}`} style={H}>
+                      Grade {lead.grade}{lead.lead_score != null ? ` · ${lead.lead_score}` : ""}
+                    </span>
+                  )}
+                  {state.callCount ? (
+                    <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1" style={H}><PhoneCall size={9} />{state.callCount} call{state.callCount !== 1 ? "s" : ""}</span>
+                  ) : null}
+                  <div className="relative">
+                    <button onClick={() => setShowScorePopover((v) => !v)}
+                      className="text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors flex items-center gap-1"
+                      style={H}>
+                      <Info size={12} />
+                      <span className="text-xs">{lead.outreach_score}</span>
+                    </button>
+                    {showScorePopover && (
+                      <div className="absolute left-0 top-6 z-10 w-64 bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-xl p-3 shadow-xl text-xs text-[var(--crm-text-2)] space-y-1.5" style={H}>
+                        <p className="font-bold text-[var(--crm-text)]">Why this score?</p>
+                        {lead.grade && <p>Grade <span className="font-semibold text-[var(--crm-text)]">{lead.grade}</span>{lead.lead_score != null ? <> · <span className="text-[var(--crm-accent-text)] font-semibold">{lead.lead_score}/100</span></> : null}</p>}
+                        {/* Enriched breakdown — what actually drove the score */}
+                        {lead.score_why ? (
+                          <ul className="space-y-0.5 pl-0.5">
+                            {lead.score_why.split(";").map((part) => part.trim()).filter(Boolean).map((part, i) => (
+                              <li key={i} className="flex items-start gap-1.5"><span className="text-[var(--crm-accent-text)] mt-px">•</span><span className="capitalize">{part}</span></li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <>
+                            {lead.tier_reason && <p>Tier {lead.tier}: {lead.tier_reason}</p>}
+                            {lead.industry_fit && <p>Industry fit: <span className="text-emerald-500">{lead.industry_fit}</span></p>}
+                            <p>Outreach score: <span className="text-[var(--crm-accent-text)] font-semibold">{lead.outreach_score}/100</span></p>
+                          </>
+                        )}
+                        <button onClick={() => setShowScorePopover(false)} className="text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] pt-1">✕ close</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
+              <button onClick={onClose} className="p-2 rounded-lg text-[var(--crm-text-3)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)] transition-colors shrink-0"><X size={18} /></button>
             </div>
-            <button onClick={onClose} className="p-2 rounded-lg text-white/30 hover:text-white hover:bg-white/5 transition-colors shrink-0"><X size={18} /></button>
+
+            {/* Claim row — ownership is a header-level concern */}
+            <div className="px-5 pb-3">{claimBlock}</div>
+
+            {/* Tab bar */}
+            <div className="flex items-stretch gap-1 px-3 -mb-px overflow-x-auto">
+              {TABS.map((t) => {
+                const active = tab === t.key;
+                return (
+                  <button key={t.key} onClick={() => setTab(t.key)}
+                    className={`relative flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold whitespace-nowrap transition-colors ${
+                      active ? "text-[var(--crm-accent-text)]" : "text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)]"
+                    }`}
+                    style={H}>
+                    <t.icon size={13} />{t.label}
+                    {active && <span className="absolute left-2 right-2 -bottom-px h-0.5 rounded-full bg-[var(--crm-accent)]" />}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Pinned primary zone (inline cockpit only) — keeps Email/Call/Outcomes/
-              Notes on-screen. Capped + internally scrollable as a last resort on
-              short viewports so the secondary body still scrolls independently. */}
-          {inline && (
-            <div className="shrink-0 overflow-y-auto border-b border-white/[0.06]" style={{ maxHeight: "55vh" }}>
-              {recommendedBlock}
-              {emailBlock}
-              {engagementBlock}
-              {demoBlock}
-              {callBlock}
-              {outcomeBlock}
-              {notesBlock}
-            </div>
-          )}
+          {/* Tab content — scrollable */}
+          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
 
-          {/* Scrollable body */}
-          <div className="flex-1 overflow-y-auto">
-
-            {/* Recommended next step (enriched) — the plain-English play for this lead */}
-            {!inline && recommendedBlock}
-
-            {/* SEND EMAIL — primary action */}
-            {!inline && emailBlock}
-
-            {/* EMAIL PROGRESS — sent / opened / clicked funnel */}
-            {!inline && engagementBlock}
-
-            {/* DEMO — view the built site + log "demo emailed" */}
-            {!inline && demoBlock}
-
-            {/* CALL — secondary (dials from your phone) */}
-            {!inline && callBlock}
-
-            {/* Claim status */}
-            <div className="px-5 py-3 border-b border-white/[0.06]">
-              {claim === undefined ? (
-                <div className="h-8 bg-white/5 animate-pulse rounded-xl" />
-              ) : claim === null ? (
-                <button onClick={handleClaim} disabled={claimLoading}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-all disabled:opacity-50"
-                  style={H}>
-                  <UserCheck size={14} />{claimLoading ? "Claiming…" : "Claim This Lead"}
-                </button>
-              ) : claim.userId === currentUserId || (!currentUserId) ? (
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 flex items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-semibold bg-green-500/10 text-green-400 border border-green-500/20" style={H}>
-                    <Check size={14} />My Lead
-                  </div>
-                  <button onClick={handleUnclaim} disabled={claimLoading}
-                    className="px-3 py-2.5 rounded-xl text-xs font-semibold text-white/40 bg-white/5 border border-white/10 hover:text-white/70 hover:bg-white/10 transition-all disabled:opacity-50"
-                    style={H}>
-                    {claimLoading ? "…" : "Unclaim"}
-                  </button>
+            {tab === "activity" && (
+              <>
+                {recommendedBlock}
+                {engagementBlock}
+                {outcomeBlock}
+                {followUpBlock}
+                <div>
+                  <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
+                    <Activity size={11} />Timeline
+                  </p>
+                  <ActivityTimeline key={activityKey} leadId={lead.id} />
                 </div>
-              ) : (
-                <div className="flex items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-semibold bg-zinc-500/10 text-zinc-500 border border-zinc-500/20" style={H}>
-                  <Lock size={13} />Claimed by {claim.repName}
-                </div>
-              )}
-            </div>
-
-            {/* Quick outcome log */}
-            {!inline && outcomeBlock}
-
-            {/* Follow-up date picker (shown after Call Back) */}
-            {showFollowUp && (
-              <div className="px-5 py-4 border-b border-white/[0.06] bg-purple-500/5">
-                <p className="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-3" style={H}>📅 Follow up on:</p>
-                <div className="flex flex-wrap gap-2">
-                  <button onClick={() => setFollowUpDate(todayISO)}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
-                    style={H}>Today</button>
-                  <button onClick={() => setFollowUpDate(tomorrowISO)}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
-                    style={H}>Tomorrow</button>
-                  <button onClick={() => setFollowUpDate(in3DaysISO)}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-all"
-                    style={H}>In 3 days</button>
-                  <input type="date" defaultValue={todayISO}
-                    onChange={(e) => { if (e.target.value) setFollowUpDate(e.target.value); }}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20 focus:outline-none focus:border-purple-400/50 transition-all"
-                    style={H} />
-                  <button onClick={() => setShowFollowUp(false)}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-white/5 text-white/30 border border-white/10 hover:text-white/60 transition-all"
-                    style={H}>Skip</button>
-                </div>
-                {state.followUpDate && (
-                  <p className="text-xs text-purple-300/60 mt-2" style={H}>Currently set: {state.followUpDate}</p>
-                )}
-              </div>
+              </>
             )}
 
-            {/* Script */}
-            <div className="px-5 py-4 border-b border-white/[0.06]">
-              <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Your Opening Line</p>
-              <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-4 relative">
-                <p className="text-sm text-white/85 leading-relaxed italic" style={H}>&ldquo;{fullPitch}&rdquo;</p>
-                <button onClick={() => navigator.clipboard.writeText(fullPitch)}
-                  className="absolute top-3 right-3 p-1.5 rounded-md text-white/20 hover:text-white/60 hover:bg-white/5 transition-colors">
-                  <Copy size={12} />
-                </button>
-              </div>
-              {lead.tier_reason && (
-                <p className="text-xs text-white/25 mt-2 px-1 leading-relaxed" style={H}>{lead.tier_reason}</p>
-              )}
-            </div>
-
-            {/* Full call script (collapsible) */}
-            <div className="px-5 py-4 border-b border-white/[0.06]">
-              <button onClick={() => setShowScript((v) => !v)} className="w-full flex items-center justify-between group">
-                <span className="text-xs font-semibold text-white/35 uppercase tracking-wider flex items-center gap-1.5 group-hover:text-white/55 transition-colors" style={H}>
-                  <Phone size={11} />Full Call Script
-                </span>
-                {showScript ? <ChevronDown size={14} className="text-white/30" /> : <ChevronRight size={14} className="text-white/30" />}
-              </button>
-              {showScript && (
-                <div className="mt-3 space-y-3">
-                  {callScript.map((block) => (
-                    <div key={block.heading}>
-                      <p className="text-[11px] font-semibold text-[#F97316]/80 uppercase tracking-wider mb-1.5" style={H}>{block.heading}</p>
-                      <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-3 relative">
-                        <div className="space-y-1.5 pr-7">
-                          {block.lines.map((line, i) => (
-                            <p key={i} className="text-sm text-white/80 leading-relaxed" style={H}>{line}</p>
-                          ))}
-                        </div>
-                        <button onClick={() => navigator.clipboard.writeText(block.lines.join("\n"))}
-                          className="absolute top-2.5 right-2.5 p-1.5 rounded-md text-white/20 hover:text-white/60 hover:bg-white/5 transition-colors">
-                          <Copy size={12} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Objection handling (collapsible) */}
-            <div className="px-5 py-4 border-b border-white/[0.06]">
-              <button onClick={() => setShowObjections((v) => !v)} className="w-full flex items-center justify-between group">
-                <span className="text-xs font-semibold text-white/35 uppercase tracking-wider flex items-center gap-1.5 group-hover:text-white/55 transition-colors" style={H}>
-                  <MessageSquare size={11} />Objection Handling
-                </span>
-                {showObjections ? <ChevronDown size={14} className="text-white/30" /> : <ChevronRight size={14} className="text-white/30" />}
-              </button>
-              {showObjections && (
-                <div className="mt-3 space-y-2">
-                  {objections.map((o) => (
-                    <div key={o.trigger} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-3">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="text-xs font-semibold text-white/80 flex-1" style={H}>&ldquo;{o.trigger}&rdquo;</p>
-                        <CopyBtn text={o.response} />
-                      </div>
-                      <p className="text-sm text-white/55 leading-relaxed pr-1" style={H}>{o.response}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Their website — quick look + audit signals (enriched) */}
-            {(lead.website || lead.site_quality || lead.digital_presence) && (
-              <div className="px-5 py-4 border-b border-white/[0.06]">
-                <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Their Website</p>
-                {lead.website ? (
-                  <a href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl text-sm font-bold border border-white/15 bg-white/[0.04] text-white/85 hover:bg-white/[0.08] hover:border-white/25 transition-all active:scale-95"
-                    style={H}>
-                    <Globe size={15} className="text-[#F97316]" />Open their site<ExternalLink size={13} className="text-white/40" />
-                  </a>
-                ) : (
-                  <div className="flex items-center gap-2 w-full py-3 px-4 rounded-2xl border border-orange-400/25 bg-orange-400/[0.07] text-orange-300" style={H}>
-                    <Flame size={14} className="shrink-0" /><span className="text-sm font-semibold">No website found — that&apos;s the pitch</span>
-                  </div>
-                )}
-                {lead.website && websiteHost && (
-                  <p className="text-[11px] text-white/30 text-center mt-1.5 truncate" style={H}>{websiteHost}</p>
-                )}
-                {/* Audit signal chips — the redesign-opportunity tells */}
-                {(lead.site_quality || lead.digital_presence || lead.builder || lead.site_load_ms) && (
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {lead.site_quality && (() => {
-                      const q = lead.site_quality.toLowerCase();
-                      const cls = q === "dead" ? "text-red-400 bg-red-400/10 border-red-400/20"
-                        : q === "thin" ? "text-amber-400 bg-amber-400/10 border-amber-400/20"
-                        : q === "good" ? "text-green-400 bg-green-400/10 border-green-400/20"
-                        : "text-zinc-400 bg-zinc-400/10 border-zinc-400/20";
-                      const label = q === "dead" ? "Site dead" : q === "thin" ? "Thin / placeholder" : q === "good" ? "Real site" : lead.site_quality;
-                      return <span className={`text-[11px] px-2 py-0.5 rounded-full border ${cls}`} style={H}>{label}</span>;
-                    })()}
-                    {lead.digital_presence && (
-                      <span className="text-[11px] px-2 py-0.5 rounded-full border border-white/[0.08] bg-white/[0.04] text-white/45" style={H}>
-                        {lead.digital_presence === "none" ? "No online presence" : lead.digital_presence === "weak" ? "Weak presence" : "OK presence"}
-                      </span>
-                    )}
-                    {lead.builder && (
-                      <span className="text-[11px] px-2 py-0.5 rounded-full border border-yellow-400/20 bg-yellow-400/10 text-yellow-400/80" style={H}>{lead.builder}</span>
-                    )}
-                    {(() => {
-                      const ms = parseInt(lead.site_load_ms ?? "", 10);
-                      if (!Number.isFinite(ms) || ms <= 0) return null;
-                      const slow = ms > 3000;
-                      return <span className={`text-[11px] px-2 py-0.5 rounded-full border ${slow ? "text-red-400 bg-red-400/10 border-red-400/20" : "text-white/45 bg-white/[0.04] border-white/[0.08]"}`} style={H}>Loads in {(ms / 1000).toFixed(1)}s{slow ? " · slow" : ""}</span>;
-                    })()}
-                  </div>
-                )}
-              </div>
+            {tab === "email" && (
+              <>
+                {recommendedBlock}
+                {emailBlock}
+                {engagementBlock}
+                {demoBlock}
+                {scheduleBlock}
+              </>
             )}
 
-            {/* Contact info */}
-            <div className="px-5 py-4 border-b border-white/[0.06]">
-              <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3" style={H}>Contact Info</p>
-              <div className="space-y-2.5">
-                {/* Decision-maker (enriched, sparse) — who to ask for by name */}
-                {(lead.owner_name || lead.owner_email || lead.owner_phone) && (
-                  <div className="rounded-xl border border-[#F97316]/20 bg-[#F97316]/[0.06] p-3 space-y-1.5">
-                    <p className="text-[11px] font-semibold text-[#F97316]/80 uppercase tracking-wider flex items-center gap-1.5" style={H}>
-                      <UserCheck size={11} />Decision-maker
-                    </p>
-                    {lead.owner_name && (
-                      <p className="text-sm text-white/85 font-semibold" style={H}>
-                        {lead.owner_name}{lead.owner_title ? <span className="text-white/40 font-normal"> · {lead.owner_title}</span> : null}
-                      </p>
-                    )}
-                    {lead.owner_email && (
-                      <div className="flex items-center gap-2">
-                        <Mail size={12} className="text-[#F97316]/60 shrink-0" />
-                        <a href={`mailto:${lead.owner_email}`} className="text-xs text-white/70 hover:text-[#F97316] transition-colors flex-1 min-w-0 truncate" style={H}>{lead.owner_email}</a>
-                        <CopyBtn text={lead.owner_email} />
-                      </div>
-                    )}
-                    {lead.owner_phone && (
-                      <div className="flex items-center gap-2">
-                        <Phone size={12} className="text-[#F97316]/60 shrink-0" />
-                        <a href={`tel:${lead.owner_phone}`} className="text-xs text-white/70 hover:text-[#F97316] transition-colors flex-1" style={H}>{lead.owner_phone}</a>
-                        <CopyBtn text={lead.owner_phone} />
-                      </div>
-                    )}
-                  </div>
-                )}
-                {lead.phone && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Phone size={13} className="text-[#F97316]/60 shrink-0" />
-                    <a href={`tel:${lead.phone}`} className="text-sm text-white/75 hover:text-[#F97316] transition-colors flex-1" style={H}>{lead.phone}</a>
-                    {lead.phone_type && lead.phone_type !== "fixed-line-or-mobile" && (
-                      <span className="text-[10px] uppercase tracking-wider text-white/40 bg-white/[0.06] border border-white/[0.08] px-1.5 py-0.5 rounded-md shrink-0" style={H}>{lead.phone_type.replace(/-/g, " ")}</span>
-                    )}
-                    {lead.phone_valid === "False" && (
-                      <span className="text-[10px] text-red-400/80 bg-red-400/10 border border-red-400/20 px-1.5 py-0.5 rounded-md shrink-0" style={H}>unverified #</span>
-                    )}
-                    <CopyBtn text={lead.phone} />
-                  </div>
-                )}
-                {lead.email && (
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Mail size={13} className="text-[#F97316]/60 shrink-0" />
-                      <a href={`mailto:${lead.email}`} className="text-sm text-white/75 hover:text-[#F97316] transition-colors flex-1 min-w-0 truncate" style={H}>{lead.email}</a>
-                      {(() => {
-                        const b = emailStatusBadge(lead.email_status);
-                        return b
-                          ? <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ${b.cls}`} style={H}>{b.label}</span>
-                          : lead.email_owned === "1" ? <span className="text-xs text-green-400/70 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded-full shrink-0" style={H}>Business</span> : null;
-                      })()}
-                      <CopyBtn text={lead.email} />
-                    </div>
-                    {/* Free/role are NOT disqualifiers for a web-design pitch — show as
-                        context, not warnings; plus any additional emails found. */}
-                    {(lead.email_role === "True" || lead.email_free === "True" || lead.all_emails) && (
-                      <p className="text-[11px] text-white/30 mt-1 ml-[21px]" style={H}>
-                        {lead.email_role === "True" && <span>Role inbox</span>}
-                        {lead.email_role === "True" && lead.email_free === "True" && <span> · </span>}
-                        {lead.email_free === "True" && <span>Personal (free) provider</span>}
-                        {lead.all_emails && <span>{(lead.email_role === "True" || lead.email_free === "True") ? " · " : ""}Also: {lead.all_emails.split("|").filter(Boolean).slice(0, 2).join(", ")}</span>}
-                      </p>
-                    )}
-                  </div>
-                )}
-                {lead.website && (
-                  <div className="flex items-center gap-2">
-                    <ExternalLink size={13} className="text-[#F97316]/60 shrink-0" />
-                    <a href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="text-sm text-white/75 hover:text-[#F97316] transition-colors flex-1 truncate" style={H}>
-                      {websiteHost}
-                      {lead.builder && <span className="ml-2 text-xs text-yellow-400/60">({lead.builder})</span>}
-                    </a>
-                  </div>
-                )}
-                {/* Demo preview + actions now live in the pinned demoBlock above
-                    (View demo site / Mark demo emailed), so it stays visible. */}
-                {/* The attached link is the public gallery URL; the demo only
-                    resolves there once the Websites repo is pushed/deployed. */}
-                {genResult && (
-                  <p className="text-[11px] text-amber-300/70" style={H}>
-                    Built ✓ — push the Websites repo to deploy this demo, then the link goes live (~1 min).
-                  </p>
-                )}
-                {/* Local-only: build a demo site for this lead with the /websites factory.
-                    Hidden in production builds; the API route also hard-blocks prod. */}
-                {!effPreviewUrl && process.env.NODE_ENV === "development" && (
-                  <div className="space-y-1.5">
-                    <button
-                      onClick={generateSite}
-                      disabled={genState === "loading"}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-500/15 text-violet-200 border border-violet-400/25 hover:bg-violet-500/25 disabled:opacity-60 text-xs transition-colors"
-                      style={H}
-                    >
-                      <Globe size={13} />
-                      {genState === "loading" ? "Generating demo… (1–3 min)" : "Generate demo site"}
-                    </button>
-                    {genState === "loading" && (
-                      <p className="text-[11px] text-white/40" style={H}>Scraping the business + building the site locally…</p>
-                    )}
-                    {genState === "error" && (
-                      <p className="text-[11px] text-red-400/80" style={H}>{genError}</p>
-                    )}
-                  </div>
-                )}
-                {lead.address && (
-                  <div className="flex items-start gap-2">
-                    <MapPin size={13} className="text-white/30 shrink-0 mt-0.5" />
-                    <span className="text-xs text-white/40 flex-1" style={H}>{lead.address}, {lead.city} {lead.county}</span>
-                  </div>
-                )}
-                {lead.socials && (
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {lead.socials.split("|").filter(Boolean).map((url, i) => {
-                      const label = url.includes("facebook") ? "Facebook" : url.includes("instagram") ? "Instagram" :
-                        url.includes("twitter") || url.includes("x.com") ? "X / Twitter" : url.includes("linkedin") ? "LinkedIn" : "Social";
-                      return (
-                        <a key={i} href={url.startsWith("http") ? url : `https://${url}`} target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:text-white hover:bg-white/10 text-xs transition-colors"
-                          style={H}><Link size={10} />{label}</a>
-                      );
-                    })}
-                  </div>
-                )}
-                {lead.best_contact && (
-                  <p className="text-xs text-[#F97316]/60 flex items-center gap-1.5 pt-1" style={H}>
-                    <Star size={10} />Best way to reach them: <strong>{lead.best_contact}</strong>
-                  </p>
-                )}
-              </div>
-            </div>
+            {tab === "call" && (
+              <>
+                {callBlock}
+                {outcomeBlock}
+                {followUpBlock}
+                {scriptBlock}
+                {fullScriptBlock}
+                {objectionsBlock}
+              </>
+            )}
 
-            {/* Schedule a call — share the booking link via email/text */}
-            <div className="px-5 py-4 border-b border-white/[0.06]">
-              <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
-                <CalendarClock size={11} />Schedule a Call
-              </p>
-              <div className="flex gap-2 flex-wrap">
-                {lead.email && (
-                  <a href={`mailto:${lead.email}?subject=${encodeURIComponent(`Schedule a quick call — ${lead.name}`)}&body=${encodeURIComponent(`Hi, I'd love to find a time to connect! You can book a free 15-minute call here: ${bookingUrl}`)}`}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
-                    <Mail size={11} />Send via Email
-                  </a>
-                )}
-                {lead.phone && (
-                  <a href={`sms:${lead.phone}?&body=${encodeURIComponent(`Hi! Book a free 15-minute call: ${bookingUrl}`)}`}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all" style={H}>
-                    <Phone size={11} />Send via Text
-                  </a>
-                )}
-                <button onClick={() => navigator.clipboard.writeText(bookingUrl)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white/5 text-white/50 border border-white/10 hover:text-white/70 hover:bg-white/10 transition-all" style={H}>
-                  <Copy size={11} />Copy Link
-                </button>
-              </div>
-            </div>
+            {tab === "notes" && (
+              <>
+                {notesBlock}
+                {scriptBlock}
+              </>
+            )}
 
-            {/* Notes — pinned above in inline mode; here only in the overlay */}
-            {!inline && notesBlock}
-
-            {/* Activity Timeline */}
-            <div className="px-5 py-4">
-              <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
-                <Activity size={11} />Activity
-              </p>
-              <ActivityTimeline key={activityKey} leadId={lead.id} />
-            </div>
+            {tab === "details" && (
+              <>
+                {contactBlock}
+                {websiteBlock}
+                {scheduleBlock}
+              </>
+            )}
 
           </div>
         </div>

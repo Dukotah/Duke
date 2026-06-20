@@ -59,15 +59,15 @@ export default function AddLeadModal({ onClose, onAdded }: Props) {
   return (
     <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative bg-[#111113] border border-white/10 rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-lg shadow-2xl max-h-[92vh] overflow-y-auto"
+      <div className="relative bg-[var(--crm-surface-2)] border border-[var(--crm-border-strong)] rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-lg shadow-2xl max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}>
 
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h2 className="text-lg font-bold text-white" style={H}>Add Lead</h2>
-            <p className="text-xs text-white/35 mt-0.5" style={H}>Manually add a business to your queue</p>
+            <h2 className="text-lg font-bold text-[var(--crm-text)]" style={H}>Add Lead</h2>
+            <p className="text-xs text-[var(--crm-text-3)] mt-0.5" style={H}>Manually add a business to your queue</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg text-white/30 hover:text-white/60 hover:bg-white/5 transition-colors">
+          <button onClick={onClose} className="p-2 rounded-lg text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] hover:bg-[var(--crm-surface-3)] transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -75,65 +75,65 @@ export default function AddLeadModal({ onClose, onAdded }: Props) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Business Name */}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>
-              Business Name <span className="text-[#F97316]">*</span>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>
+              Business Name <span className="text-[var(--crm-accent-text)]">*</span>
             </label>
             <input value={name} onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Santa Rosa Auto Repair"
-              className={`w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border text-sm text-white placeholder-white/20 focus:outline-none transition-colors ${errors.name ? "border-red-400/50 focus:border-red-400/70" : "border-white/10 focus:border-[#F97316]/50"}`}
+              className={`w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border text-sm text-[var(--crm-text)] placeholder:text-[var(--crm-text-3)] focus:outline-none transition-colors ${errors.name ? "border-red-400/50 focus:border-red-400/70" : "border-[var(--crm-border-strong)] focus:border-[var(--crm-accent-border)]"}`}
               style={H} />
-            {errors.name && <p className="text-xs text-red-400 mt-1" style={H}>{errors.name}</p>}
+            {errors.name && <p className="text-xs text-red-500 mt-1" style={H}>{errors.name}</p>}
           </div>
 
           {/* Contact Name */}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Contact Name</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>Contact Name</label>
             <input value={contactName} onChange={(e) => setContactName(e.target.value)}
               placeholder="e.g. Jordan — the person you'll greet in emails"
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border-strong)] text-sm text-[var(--crm-text)] placeholder:text-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H} />
           </div>
 
           {/* Phone + Email */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Phone</label>
+              <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>Phone</label>
               <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel"
                 placeholder="(707) 555-0100"
-                className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border-strong)] text-sm text-[var(--crm-text)] placeholder:text-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
                 style={H} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Email</label>
+              <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>Email</label>
               <input value={email} onChange={(e) => setEmail(e.target.value)} type="email"
                 placeholder="owner@biz.com"
-                className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border-strong)] text-sm text-[var(--crm-text)] placeholder:text-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
                 style={H} />
             </div>
           </div>
 
           {/* Website */}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Website</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>Website</label>
             <input value={website} onChange={(e) => setWebsite(e.target.value)}
               placeholder="https://..."
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border-strong)] text-sm text-[var(--crm-text)] placeholder:text-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H} />
           </div>
 
           {/* City + County */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>City</label>
+              <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>City</label>
               <input value={city} onChange={(e) => setCity(e.target.value)}
                 placeholder="Santa Rosa"
-                className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border-strong)] text-sm text-[var(--crm-text)] placeholder:text-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
                 style={H} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>County</label>
+              <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>County</label>
               <select value={county} onChange={(e) => setCounty(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50 transition-colors appearance-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border-strong)] text-sm text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors appearance-none"
                 style={H}>
                 <option value="">Select…</option>
                 {SONOMA_COUNTIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -143,27 +143,27 @@ export default function AddLeadModal({ onClose, onAdded }: Props) {
 
           {/* Niche */}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Niche / Industry</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>Niche / Industry</label>
             <input value={niche} onChange={(e) => setNiche(e.target.value)}
               placeholder="e.g. auto_repair, restaurant, landscaping"
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border-strong)] text-sm text-[var(--crm-text)] placeholder:text-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H} />
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Notes</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>Notes</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3}
               placeholder="Anything you know about them already…"
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white/80 placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/40 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border-strong)] text-sm text-[var(--crm-text-2)] placeholder:text-[var(--crm-text-3)] resize-none focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H} />
           </div>
 
-          {errors.form && <p className="text-sm text-red-400" style={H}>{errors.form}</p>}
+          {errors.form && <p className="text-sm text-red-500" style={H}>{errors.form}</p>}
 
           <button type="submit" disabled={loading}
             className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-opacity"
-            style={{ backgroundColor: "#F97316", ...H }}>
+            style={{ backgroundColor: "var(--crm-accent)", ...H }}>
             <Plus size={15} />{loading ? "Adding…" : "Add to Queue"}
           </button>
         </form>

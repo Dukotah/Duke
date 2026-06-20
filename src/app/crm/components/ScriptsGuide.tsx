@@ -7,10 +7,10 @@ function CopyBlock({ text }: { text: string }) {
   const [ok, setOk] = useState(false);
   const H = { fontFamily: "var(--font-heading)" };
   return (
-    <div className="relative bg-[#111113] rounded-xl border border-white/[0.06] p-4 group">
-      <p className="text-sm text-white/80 leading-relaxed italic pr-8" style={H}>&ldquo;{text}&rdquo;</p>
+    <div className="relative bg-[var(--crm-surface-2)] rounded-xl border border-[var(--crm-border)] p-4 group">
+      <p className="text-sm text-[var(--crm-text-2)] leading-relaxed italic pr-8" style={H}>&ldquo;{text}&rdquo;</p>
       <button onClick={() => { navigator.clipboard.writeText(text); setOk(true); setTimeout(() => setOk(false), 2000); }}
-        className="absolute top-3 right-3 p-1.5 rounded-md text-white/20 hover:text-white/60 hover:bg-white/5 transition-colors">
+        className="absolute top-3 right-3 p-1.5 rounded-md text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] hover:bg-[var(--crm-surface-3)] transition-colors">
         {ok ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
       </button>
     </div>
@@ -21,11 +21,11 @@ function Accordion({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
   const H = { fontFamily: "var(--font-heading)" };
   return (
-    <div className="border border-white/[0.06] rounded-xl overflow-hidden">
+    <div className="border border-[var(--crm-border)] rounded-xl overflow-hidden">
       <button onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-white/[0.02] transition-colors">
-        <span className="text-sm font-semibold text-white/80" style={H}>{question}</span>
-        {open ? <ChevronDown size={15} className="text-white/30 shrink-0" /> : <ChevronRight size={15} className="text-white/30 shrink-0" />}
+        className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[var(--crm-surface-3)] transition-colors">
+        <span className="text-sm font-semibold text-[var(--crm-text-2)]" style={H}>{question}</span>
+        {open ? <ChevronDown size={15} className="text-[var(--crm-text-3)] shrink-0" /> : <ChevronRight size={15} className="text-[var(--crm-text-3)] shrink-0" />}
       </button>
       {open && (
         <div className="px-4 pb-4">
@@ -38,7 +38,7 @@ function Accordion({ question, answer }: { question: string; answer: string }) {
 
 const SERVICES = [
   {
-    icon: Globe, color: "text-[#F97316]", bg: "bg-[#F97316]/10", border: "border-[#F97316]/20",
+    icon: Globe, color: "text-[var(--crm-accent-text)]", bg: "bg-[var(--crm-accent-weak)]", border: "border-[var(--crm-accent-border)]",
     name: "New Website", price: "$1,500 – $4,500", type: "One-time",
     tagline: "For businesses with no website at all",
     pitch: "We build fast, beautiful websites that show up on Google and actually get you customers. Starts at $1,500 — and most of our clients make that back in their first new customer.",
@@ -115,12 +115,12 @@ export default function ScriptsGuide() {
       {/* Opening scripts */}
       <div>
         <div className="mb-4">
-          <h2 className="text-base font-bold text-white" style={H}>Opening Lines</h2>
-          <p className="text-xs text-white/40 mt-0.5" style={H}>Use these when they pick up. Keep it natural — read it a few times until it sounds like you.</p>
+          <h2 className="text-base font-bold text-[var(--crm-text)]" style={H}>Opening Lines</h2>
+          <p className="text-xs text-[var(--crm-text-3)] mt-0.5" style={H}>Use these when they pick up. Keep it natural — read it a few times until it sounds like you.</p>
         </div>
         <div className="space-y-3">
           <div>
-            <p className="text-xs font-semibold text-[#F97316] uppercase tracking-wider mb-2" style={H}>They have NO website (Tier A)</p>
+            <p className="text-xs font-semibold text-[var(--crm-accent-text)] uppercase tracking-wider mb-2" style={H}>They have NO website (Tier A)</p>
             <CopyBlock text="Hey [Name], this is [Your Name] with Copper Bay Tech — we help local businesses in [City] get found online. I noticed [Business Name] doesn't have a website yet — for a [type of business], that's a lot of customers searching Google and not finding you. Do you have 2 minutes?" />
           </div>
           <div>
@@ -128,7 +128,7 @@ export default function ScriptsGuide() {
             <CopyBlock text="Hey [Name], this is [Your Name] with Copper Bay Tech — I was looking at [Business Name] online and noticed your website is on [Wix/Squarespace]. Those are fine to start, but they can hold you back on Google and look a bit template-y. We upgrade businesses to professional sites — do you have 2 minutes to talk?" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2" style={H}>Cold open (any)</p>
+            <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>Cold open (any)</p>
             <CopyBlock text="Hey [Name], this is [Your Name] with Copper Bay Tech — we help small businesses in [County] County get more customers through their website and online presence. Do you have a couple minutes, or is now a bad time?" />
           </div>
           <div>
@@ -141,14 +141,14 @@ export default function ScriptsGuide() {
       {/* Services */}
       <div>
         <div className="mb-4">
-          <h2 className="text-base font-bold text-white" style={H}>What We Sell</h2>
-          <p className="text-xs text-white/40 mt-0.5" style={H}>Tap any service to see the pitch and who it&apos;s for.</p>
+          <h2 className="text-base font-bold text-[var(--crm-text)]" style={H}>What We Sell</h2>
+          <p className="text-xs text-[var(--crm-text-3)] mt-0.5" style={H}>Tap any service to see the pitch and who it&apos;s for.</p>
         </div>
         <div className="space-y-2">
           {SERVICES.map((svc, i) => {
             const isOpen = activeService === i;
             return (
-              <div key={svc.name} className={`rounded-2xl border transition-all overflow-hidden ${isOpen ? `${svc.border} ${svc.bg}` : "border-white/[0.06] bg-[#1C1C1F]"}`}>
+              <div key={svc.name} className={`rounded-2xl border transition-all overflow-hidden ${isOpen ? `${svc.border} ${svc.bg}` : "border-[var(--crm-border)] bg-[var(--crm-surface)]"}`}>
                 <button onClick={() => setActiveService(isOpen ? null : i)}
                   className="w-full flex items-center gap-4 px-4 py-4 text-left">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${svc.bg} border ${svc.border}`}>
@@ -156,24 +156,24 @@ export default function ScriptsGuide() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-bold text-white" style={H}>{svc.name}</p>
+                      <p className="text-sm font-bold text-[var(--crm-text)]" style={H}>{svc.name}</p>
                       <span className={`text-xs font-semibold ${svc.color}`} style={H}>{svc.price}</span>
-                      <span className="text-xs text-white/30 bg-white/5 px-2 py-0.5 rounded-full" style={H}>{svc.type}</span>
+                      <span className="text-xs text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] px-2 py-0.5 rounded-full" style={H}>{svc.type}</span>
                     </div>
-                    <p className="text-xs text-white/40 mt-0.5 truncate" style={H}>{svc.tagline}</p>
+                    <p className="text-xs text-[var(--crm-text-3)] mt-0.5 truncate" style={H}>{svc.tagline}</p>
                   </div>
-                  {isOpen ? <ChevronDown size={15} className="text-white/30 shrink-0" /> : <ChevronRight size={15} className="text-white/30 shrink-0" />}
+                  {isOpen ? <ChevronDown size={15} className="text-[var(--crm-text-3)] shrink-0" /> : <ChevronRight size={15} className="text-[var(--crm-text-3)] shrink-0" />}
                 </button>
 
                 {isOpen && (
                   <div className="px-4 pb-4 space-y-3">
                     <div>
-                      <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-2" style={H}>How to pitch it</p>
+                      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2" style={H}>How to pitch it</p>
                       <CopyBlock text={svc.pitch} />
                     </div>
                     <div className={`rounded-xl border px-4 py-3 ${svc.border} ${svc.bg}`}>
-                      <p className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-1" style={H}>Best for</p>
-                      <p className="text-sm text-white/70" style={H}>{svc.who}</p>
+                      <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1" style={H}>Best for</p>
+                      <p className="text-sm text-[var(--crm-text-2)]" style={H}>{svc.who}</p>
                     </div>
                   </div>
                 )}
@@ -186,8 +186,8 @@ export default function ScriptsGuide() {
       {/* Objections */}
       <div>
         <div className="mb-4">
-          <h2 className="text-base font-bold text-white" style={H}>When They Push Back</h2>
-          <p className="text-xs text-white/40 mt-0.5" style={H}>Tap the objection to see what to say. These aren&apos;t scripts — make them your own.</p>
+          <h2 className="text-base font-bold text-[var(--crm-text)]" style={H}>When They Push Back</h2>
+          <p className="text-xs text-[var(--crm-text-3)] mt-0.5" style={H}>Tap the objection to see what to say. These aren&apos;t scripts — make them your own.</p>
         </div>
         <div className="space-y-2">
           {OBJECTIONS.map((o) => <Accordion key={o.q} question={o.q} answer={o.a} />)}
@@ -195,8 +195,8 @@ export default function ScriptsGuide() {
       </div>
 
       {/* Tips */}
-      <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5">
-        <h2 className="text-sm font-bold text-white mb-4" style={H}>💡 Quick Tips</h2>
+      <div className="bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl p-5">
+        <h2 className="text-sm font-bold text-[var(--crm-text)] mb-4" style={H}>💡 Quick Tips</h2>
         <div className="space-y-3">
           {[
             ["Call, don't text first", "A phone call gets you 5x more meetings than a cold text or email. Call during business hours — 10am–12pm and 2pm–5pm are best."],
@@ -206,10 +206,10 @@ export default function ScriptsGuide() {
             ["High score = hot lead", "Leads with scores 80+ have no website AND are in a high-fit niche AND have a phone number. Start there."],
           ].map(([title, body]) => (
             <div key={title as string} className="flex gap-3">
-              <div className="w-1 bg-[#F97316]/40 rounded-full shrink-0 mt-1" />
+              <div className="w-1 bg-[var(--crm-accent-border)] rounded-full shrink-0 mt-1" />
               <div>
-                <p className="text-sm font-semibold text-white/80" style={H}>{title}</p>
-                <p className="text-xs text-white/40 mt-0.5 leading-relaxed" style={H}>{body}</p>
+                <p className="text-sm font-semibold text-[var(--crm-text-2)]" style={H}>{title}</p>
+                <p className="text-xs text-[var(--crm-text-3)] mt-0.5 leading-relaxed" style={H}>{body}</p>
               </div>
             </div>
           ))}

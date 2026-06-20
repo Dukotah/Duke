@@ -56,44 +56,44 @@ export default function DailyGoals() {
 
   return (
           <div
-                    className="bg-[#1C1C1F] border border-white/[0.07] rounded-2xl px-5 py-4 mb-5"
+                    className="bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl px-5 py-4 mb-5"
                     style={H}
                   >
                 <div className="flex items-start gap-4 flex-wrap">
                         <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-2 flex-wrap">
                                       {streak.currentStreak > 0 ? (
-                                    <span className="text-sm font-bold text-white">
+                                    <span className="text-sm font-bold text-[var(--crm-text)]">
                                         {streak.currentStreak} day streak
                                     </span>
                                   ) : (
-                                    <span className="text-sm font-bold text-white/50">
+                                    <span className="text-sm font-bold text-[var(--crm-text-2)]">
                                                     Start your streak today!
                                     </span>
                                               )}
                                       {streak.longestStreak > 0 && (
-                                    <span className="text-xs text-white/30">
+                                    <span className="text-xs text-[var(--crm-text-3)]">
                                                     Best: {streak.longestStreak} days
                                     </span>
                                               )}
                                   </div>
                                   <div className="flex items-center justify-between mb-1.5">
-                                              <span className="text-xs text-white/50">
+                                              <span className="text-xs text-[var(--crm-text-2)]">
                                                   {"Today: "}
-                                                            <span className={goalHit ? "text-green-400 font-bold" : "text-white font-semibold"}>
+                                                            <span className={goalHit ? "text-emerald-500 font-bold" : "text-[var(--crm-text)] font-semibold"}>
                                                                 {calls}/{DAILY_GOAL} calls
                                                             </span>
                                               </span>
                                       {goalHit && (
-                                    <span className="text-xs font-bold text-green-400">Goal hit!</span>
+                                    <span className="text-xs font-bold text-emerald-500">Goal hit!</span>
                                               )}
                                   </div>
-                                  <div className="h-2.5 bg-white/[0.06] rounded-full overflow-hidden">
+                                  <div className="h-2.5 bg-[var(--crm-surface-3)] rounded-full overflow-hidden">
                                               <div
                                                                 className="h-full rounded-full transition-all duration-500"
                                                                 style={{
                                                                                     width: `${pct}%`,
-                                                                                    backgroundColor: goalHit ? "#4ade80" : "#F97316",
+                                                                                    backgroundColor: goalHit ? "var(--color-emerald-500)" : "var(--crm-accent)",
                                                                 }}
                                                               />
                                   </div>
@@ -111,17 +111,17 @@ export default function DailyGoals() {
                                                                                                                   height: barH,
                                                                                                                   backgroundColor: isToday
                                                                                                                                             ? goalHit
-                                                                                                                                              ? "#4ade80"
-                                                                                                                                              : "#F97316"
+                                                                                                                                              ? "var(--color-emerald-500)"
+                                                                                                                                              : "var(--crm-accent)"
                                                                                                                                             : day.calls > 0
-                                                                                                                                            ? "rgba(249,115,22,0.4)"
-                                                                                                                                            : "rgba(255,255,255,0.06)",
+                                                                                                                                            ? "var(--crm-accent-border)"
+                                                                                                                                            : "var(--crm-border)",
                                                                                               }}
                                                                                         />
                                                                     <span
                                                                                           className="text-[9px] font-semibold"
                                                                                           style={{
-                                                                                                                  color: isToday ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.25)",
+                                                                                                                  color: isToday ? "var(--crm-text-2)" : "var(--crm-text-3)",
                                                                                               }}
                                                                                         >
                                                                         {dayLabel}

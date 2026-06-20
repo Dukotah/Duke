@@ -35,9 +35,9 @@ function timeAgo(iso: string): string {
 }
 
 function EntryIcon({ type, outcome }: { type: ActivityEntry["type"]; outcome?: string }) {
-  if (type === "submitted") return <Send size={13} className="text-[#F97316]" />;
+  if (type === "submitted") return <Send size={13} className="text-[var(--crm-accent)]" />;
   if (type === "note") return <StickyNote size={13} className="text-yellow-400" />;
-  if (type === "email") return <Mail size={13} className={outcome === "logged" ? "text-white/40" : "text-blue-400"} />;
+  if (type === "email") return <Mail size={13} className={outcome === "logged" ? "text-[var(--crm-text-3)]" : "text-blue-400"} />;
   if (type === "call") {
     if (outcome === "no_answer") return <PhoneMissed size={13} className="text-zinc-400" />;
     if (outcome === "voicemail") return <PhoneOff size={13} className="text-blue-400" />;
@@ -46,15 +46,15 @@ function EntryIcon({ type, outcome }: { type: ActivityEntry["type"]; outcome?: s
     if (outcome === "interested") return <ThumbsUp size={13} className="text-green-400" />;
     return <Phone size={13} className="text-zinc-400" />;
   }
-  return <Clock size={13} className="text-white/30" />;
+  return <Clock size={13} className="text-[var(--crm-text-3)]" />;
 }
 
 function EntryColor(type: ActivityEntry["type"], outcome?: string): string {
-  if (type === "submitted") return "bg-[#F97316]/10 border-[#F97316]/20";
+  if (type === "submitted") return "bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]";
   if (type === "note") return "bg-yellow-400/5 border-yellow-400/15";
   if (outcome === "interested") return "bg-green-400/5 border-green-400/15";
   if (outcome === "not_interested") return "bg-red-400/5 border-red-400/15";
-  return "bg-white/[0.03] border-white/[0.06]";
+  return "bg-[var(--crm-surface-3)] border-[var(--crm-border)]";
 }
 
 export default function ActivityTimeline({ leadId }: { leadId: string }) {
@@ -75,14 +75,14 @@ export default function ActivityTimeline({ leadId }: { leadId: string }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-6">
-        <div className="w-4 h-4 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+        <div className="w-4 h-4 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!entries.length) {
     return (
-      <p className="text-xs text-white/25 text-center py-6" style={H}>No activity yet</p>
+      <p className="text-xs text-[var(--crm-text-3)] text-center py-6" style={H}>No activity yet</p>
     );
   }
 
@@ -97,7 +97,7 @@ export default function ActivityTimeline({ leadId }: { leadId: string }) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-xs font-semibold text-white/70" style={H}>
+                  <span className="text-xs font-semibold text-[var(--crm-text-2)]" style={H}>
                     {entry.type === "submitted" ? "Submitted to Duke" :
                      entry.type === "note" ? "Note saved" :
                      entry.type === "email" ? (entry.outcome === "logged" ? "Email logged" : "Email sent") :
@@ -105,16 +105,16 @@ export default function ActivityTimeline({ leadId }: { leadId: string }) {
                      entry.type}
                   </span>
                   {entry.type === "email" && entry.outcome === "logged" && (
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-white/30 bg-white/10 rounded px-1.5 py-0.5 shrink-0" style={H}>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--crm-text-3)] bg-[var(--crm-surface-3)] rounded px-1.5 py-0.5 shrink-0" style={H}>
                       not delivered
                     </span>
                   )}
                 </span>
-                <span className="text-[10px] text-white/25 shrink-0" style={H}>{timeAgo(entry.createdAt)}</span>
+                <span className="text-[10px] text-[var(--crm-text-3)] shrink-0" style={H}>{timeAgo(entry.createdAt)}</span>
               </div>
-              <p className="text-[10px] text-white/35 mt-0.5" style={H}>{entry.repName}</p>
+              <p className="text-[10px] text-[var(--crm-text-3)] mt-0.5" style={H}>{entry.repName}</p>
               {entry.note && (
-                <p className="text-xs text-white/55 mt-1 leading-relaxed" style={H}>{entry.note}</p>
+                <p className="text-xs text-[var(--crm-text-2)] mt-1 leading-relaxed" style={H}>{entry.note}</p>
               )}
             </div>
           </div>

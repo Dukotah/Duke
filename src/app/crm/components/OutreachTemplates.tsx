@@ -167,27 +167,27 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#111113]" style={H}>
+    <div className="fixed inset-0 z-50 flex flex-col bg-[var(--crm-surface-2)]" style={H}>
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.07] shrink-0">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--crm-border)] shrink-0">
         <div className="min-w-0">
-          <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <Mail size={15} className="text-[#F97316]" />Email Templates
+          <h2 className="text-base font-bold text-[var(--crm-text)] flex items-center gap-2">
+            <Mail size={15} className="text-[var(--crm-accent)]" />Email Templates
           </h2>
-          <p className="text-xs text-white/40 mt-0.5">Compose, preview, and manage your outreach scripts</p>
+          <p className="text-xs text-[var(--crm-text-3)] mt-0.5">Compose, preview, and manage your outreach scripts</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {onBulkSend && (
             <button
               onClick={onBulkSend}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white/60 bg-white/5 border border-white/10 hover:text-white hover:border-white/20 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] hover:border-[var(--crm-border-strong)] transition-colors"
               style={H}
               title="Send this template to many leads"
             >
               <Users size={13} /><span className="hidden sm:inline">Bulk send</span>
             </button>
           )}
-          <button onClick={onClose} className="p-2 rounded-lg text-white/30 hover:text-white hover:bg-white/5 transition-colors">
+          <button onClick={onClose} className="p-2 rounded-lg text-[var(--crm-text-3)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)] transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -199,17 +199,17 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
           className={`flex items-start gap-3 px-5 py-3 border-b shrink-0 ${
             mode === "live"
               ? "bg-green-500/5 border-green-500/15"
-              : "bg-yellow-400/5 border-yellow-400/15"
+              : "bg-amber-500/5 border-amber-500/15"
           }`}
         >
           {mode === "live"
-            ? <ShieldCheck size={15} className="text-green-400 shrink-0 mt-0.5" />
-            : <FlaskConical size={15} className="text-yellow-400 shrink-0 mt-0.5" />}
-          <p className="text-xs text-white/60 leading-relaxed">
+            ? <ShieldCheck size={15} className="text-green-500 shrink-0 mt-0.5" />
+            : <FlaskConical size={15} className="text-amber-500 shrink-0 mt-0.5" />}
+          <p className="text-xs text-[var(--crm-text-2)] leading-relaxed">
             {mode === "live" ? (
-              <><span className="font-bold text-white">Live delivery is on.</span> Test sends go out for real from your verified domain.</>
+              <><span className="font-bold text-[var(--crm-text)]">Live delivery is on.</span> Test sends go out for real from your verified domain.</>
             ) : (
-              <><span className="font-bold text-white">Safe practice mode.</span> Emails are tracked on lead timelines but not actually delivered. Sending stays locked until the domain is verified — this protects your domain from being flagged as spam.</>
+              <><span className="font-bold text-[var(--crm-text)]">Safe practice mode.</span> Emails are tracked on lead timelines but not actually delivered. Sending stays locked until the domain is verified — this protects your domain from being flagged as spam.</>
             )}
           </p>
         </div>
@@ -220,10 +220,10 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
           {/* Template list */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Templates</p>
+              <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider">Templates</p>
               <button
                 onClick={addTemplate}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#F97316] hover:text-[#F97316]/80 transition-colors"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--crm-accent-text)] hover:opacity-80 transition-colors"
                 title="New template"
               >
                 <Plus size={12} />New
@@ -236,12 +236,12 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
                   onClick={() => selectTemplate(t.key)}
                   className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-left transition-all ${
                     activeKey === t.key
-                      ? "bg-[#F97316]/10 border-[#F97316]/30 text-[#F97316]"
-                      : "bg-[#1C1C1F] border-white/[0.06] text-white/60 hover:border-white/20"
+                      ? "bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)] text-[var(--crm-accent-text)]"
+                      : "bg-[var(--crm-surface)] border-[var(--crm-border)] text-[var(--crm-text-2)] hover:border-[var(--crm-border-strong)]"
                   }`}
                 >
                   <span className="text-sm font-semibold truncate flex-1">{t.label}</span>
-                  {isCustomTemplate(t.key) && <Pencil size={10} className="text-white/25 shrink-0" />}
+                  {isCustomTemplate(t.key) && <Pencil size={10} className="text-[var(--crm-text-3)] shrink-0" />}
                 </button>
               ))}
             </div>
@@ -252,11 +252,11 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
             {/* Label (custom templates only) */}
             {isCustom && (
               <div>
-                <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Template Name</label>
+                <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2">Template Name</label>
                 <input
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent-border)]"
                   style={H}
                 />
               </div>
@@ -264,23 +264,23 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
 
             {/* From name */}
             <div>
-              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Your Name</label>
+              <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2">Your Name</label>
               <input
                 value={fromName}
                 onChange={(e) => setFromName(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent-border)]"
                 style={H}
               />
             </div>
 
             {/* Subject */}
             <div>
-              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Subject Line</label>
+              <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2">Subject Line</label>
               <input
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Subject — use {name}, {business}, {city}"
-                className="w-full px-4 py-2.5 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)]"
                 style={H}
               />
             </div>
@@ -288,91 +288,91 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
             {/* Body */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-semibold text-white/40 uppercase tracking-wider">Message Body</label>
+                <label className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider">Message Body</label>
                 {!isScratch && (
                   <div className="flex items-center gap-3">
-                    <button onClick={saveEdits} className="text-xs font-semibold text-white/40 hover:text-[#F97316] flex items-center gap-1 transition-colors">
-                      {savedFlash ? <><Check size={11} className="text-green-400" />Saved</> : <><Save size={11} />Save</>}
+                    <button onClick={saveEdits} className="text-xs font-semibold text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] flex items-center gap-1 transition-colors">
+                      {savedFlash ? <><Check size={11} className="text-green-500" />Saved</> : <><Save size={11} />Save</>}
                     </button>
                     {(overridden || isCustom) && (
-                      <button onClick={resetEdits} className="text-xs font-semibold text-white/30 hover:text-white/60 flex items-center gap-1 transition-colors">
+                      <button onClick={resetEdits} className="text-xs font-semibold text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] flex items-center gap-1 transition-colors">
                         <RotateCcw size={11} />Reset
                       </button>
                     )}
                     {isCustom && (
-                      <button onClick={removeTemplate} className="text-xs font-semibold text-white/30 hover:text-red-400 flex items-center gap-1 transition-colors">
+                      <button onClick={removeTemplate} className="text-xs font-semibold text-[var(--crm-text-3)] hover:text-red-500 flex items-center gap-1 transition-colors">
                         <Trash2 size={11} />Delete
                       </button>
                     )}
                   </div>
                 )}
               </div>
-              <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
+              <p className="text-xs text-[var(--crm-text-3)] mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 rows={12}
                 placeholder="Write your message…"
-                className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50 leading-relaxed"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] resize-none focus:outline-none focus:border-[var(--crm-accent-border)] leading-relaxed"
                 style={H}
               />
             </div>
 
             {/* Preview */}
-            <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-4 space-y-3">
+            <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-white/35 font-semibold uppercase tracking-wider flex items-center gap-1.5"><Eye size={12} />Live Preview</p>
+                <p className="text-xs text-[var(--crm-text-3)] font-semibold uppercase tracking-wider flex items-center gap-1.5"><Eye size={12} />Live Preview</p>
                 <div className="flex items-center gap-2">
                   <input
                     value={sample.name}
                     onChange={(e) => setSample((s) => ({ ...s, name: e.target.value }))}
-                    className="w-20 px-2 py-1 rounded-lg bg-[#111113] border border-white/10 text-xs text-white/70 focus:outline-none focus:border-[#F97316]/50"
+                    className="w-20 px-2 py-1 rounded-lg bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-xs text-[var(--crm-text-2)] focus:outline-none focus:border-[var(--crm-accent-border)]"
                     placeholder="Name"
                     style={H}
                   />
                   <input
                     value={sample.business}
                     onChange={(e) => setSample((s) => ({ ...s, business: e.target.value }))}
-                    className="w-28 px-2 py-1 rounded-lg bg-[#111113] border border-white/10 text-xs text-white/70 focus:outline-none focus:border-[#F97316]/50"
+                    className="w-28 px-2 py-1 rounded-lg bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-xs text-[var(--crm-text-2)] focus:outline-none focus:border-[var(--crm-accent-border)]"
                     placeholder="Business"
                     style={H}
                   />
                   <input
                     value={sample.city}
                     onChange={(e) => setSample((s) => ({ ...s, city: e.target.value }))}
-                    className="w-20 px-2 py-1 rounded-lg bg-[#111113] border border-white/10 text-xs text-white/70 focus:outline-none focus:border-[#F97316]/50"
+                    className="w-20 px-2 py-1 rounded-lg bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-xs text-[var(--crm-text-2)] focus:outline-none focus:border-[var(--crm-accent-border)]"
                     placeholder="City"
                     style={H}
                   />
                 </div>
               </div>
               <div>
-                <p className="text-xs text-white/40 font-semibold mb-1">Subject</p>
-                <p className="text-sm text-white font-semibold">{previewSubject || <span className="text-white/25">No subject yet</span>}</p>
+                <p className="text-xs text-[var(--crm-text-2)] font-semibold mb-1">Subject</p>
+                <p className="text-sm text-[var(--crm-text)] font-semibold">{previewSubject || <span className="text-[var(--crm-text-3)]">No subject yet</span>}</p>
               </div>
               <div>
-                <p className="text-xs text-white/40 font-semibold mb-1">Body</p>
-                <pre className="text-sm text-white/75 whitespace-pre-wrap leading-relaxed font-sans">{previewBody || <span className="text-white/25">Nothing to preview yet.</span>}</pre>
+                <p className="text-xs text-[var(--crm-text-2)] font-semibold mb-1">Body</p>
+                <pre className="text-sm text-[var(--crm-text-2)] whitespace-pre-wrap leading-relaxed font-sans">{previewBody || <span className="text-[var(--crm-text-3)]">Nothing to preview yet.</span>}</pre>
               </div>
             </div>
 
             {/* Test send */}
-            <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-4 space-y-3">
-              <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Send a Test</p>
+            <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] p-4 space-y-3">
+              <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider">Send a Test</p>
               <div className="flex gap-2">
                 <input
                   value={testEmail}
                   onChange={(e) => setTestEmail(e.target.value)}
                   placeholder="you@example.com"
                   type="email"
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50"
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)]"
                   style={H}
                 />
                 <button
                   onClick={sendTest}
                   disabled={sending || !testEmail.trim() || !subject.trim() || !body.trim()}
                   className="px-5 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-opacity shrink-0"
-                  style={{ backgroundColor: "#F97316", ...H }}
+                  style={{ backgroundColor: "var(--crm-accent)", ...H }}
                 >
                   <Send size={14} />{sending ? "Sending…" : "Test"}
                 </button>
@@ -380,15 +380,15 @@ export default function OutreachTemplates({ repName, onClose, onBulkSend }: Prop
               {sendNote && (
                 <p
                   className={`text-xs leading-relaxed ${
-                    sendNote.kind === "error" ? "text-red-400"
-                      : sendNote.kind === "logged" ? "text-yellow-400"
-                      : "text-green-400"
+                    sendNote.kind === "error" ? "text-red-500"
+                      : sendNote.kind === "logged" ? "text-amber-500"
+                      : "text-green-500"
                   }`}
                 >
                   {sendNote.text}
                 </p>
               )}
-              <p className="text-[11px] text-white/25 leading-relaxed">
+              <p className="text-[11px] text-[var(--crm-text-3)] leading-relaxed">
                 A test runs through the same outreach pipeline as real sends. If delivery isn&apos;t live yet, it&apos;s logged but not actually emailed.
               </p>
             </div>

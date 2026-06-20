@@ -17,10 +17,10 @@ interface Props {
 }
 
 const OUTCOMES: { key: string; label: string; color: string; activeColor: string }[] = [
-  { key: "no_answer",    label: "No Answer", color: "bg-zinc-700 text-zinc-300 border-zinc-600",    activeColor: "bg-zinc-500" },
-  { key: "voicemail",    label: "Voicemail",  color: "bg-blue-900/60 text-blue-300 border-blue-700", activeColor: "bg-blue-600" },
-  { key: "call_back",    label: "Call Back",  color: "bg-purple-900/60 text-purple-300 border-purple-700", activeColor: "bg-purple-600" },
-  { key: "interested",   label: "Interested", color: "bg-green-900/60 text-green-300 border-green-700",   activeColor: "bg-green-600" },
+  { key: "no_answer",    label: "No Answer", color: "bg-[var(--crm-surface-3)] text-zinc-500 border-[var(--crm-border-strong)]",    activeColor: "bg-[var(--crm-surface-3)]" },
+  { key: "voicemail",    label: "Voicemail",  color: "bg-blue-500/10 text-blue-500 border-blue-500/30", activeColor: "bg-blue-500/20" },
+  { key: "call_back",    label: "Call Back",  color: "bg-purple-500/10 text-purple-500 border-purple-500/30", activeColor: "bg-purple-500/20" },
+  { key: "interested",   label: "Interested", color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",   activeColor: "bg-emerald-500/20" },
 ];
 
 const H = { fontFamily: "var(--font-heading)" };
@@ -53,16 +53,16 @@ export default function CallTimer({ lead, onOutcome, onDismiss }: Props) {
       className="fixed left-0 right-0 z-50 px-3 py-3"
       style={{ bottom: "calc(56px + env(safe-area-inset-bottom, 0px))", ...H }}
     >
-      <div className="max-w-3xl mx-auto bg-[#1a1a1d] border border-[#F97316]/40 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="max-w-3xl mx-auto bg-[var(--crm-surface)] border border-[var(--crm-accent-border)] rounded-2xl shadow-2xl overflow-hidden">
         {/* Header row */}
-        <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-white/[0.06]">
+        <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-[var(--crm-border)]">
           <div className="flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <p className="text-sm font-bold text-white truncate" style={H}>{lead.name}</p>
-            {lead.phone && <p className="text-xs text-white/40 hidden sm:block">{lead.phone}</p>}
+            <p className="text-sm font-bold text-[var(--crm-text)] truncate" style={H}>{lead.name}</p>
+            {lead.phone && <p className="text-xs text-[var(--crm-text-2)] hidden sm:block">{lead.phone}</p>}
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm font-bold tabular-nums text-[#F97316]">{display}</span>
+            <span className="text-sm font-bold tabular-nums text-[var(--crm-accent-text)]">{display}</span>
             <button
               onClick={onDismiss}
               className="flex items-center gap-1.5 text-xs font-semibold bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-xl transition-colors"

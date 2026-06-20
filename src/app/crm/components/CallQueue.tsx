@@ -127,8 +127,8 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
   if (loading) {
     return (
       <div className="flex flex-col items-center gap-3 py-20">
-        <div className="w-7 h-7 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-white/30" style={H}>Loading your queue…</p>
+        <div className="w-7 h-7 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-[var(--crm-text-3)]" style={H}>Loading your queue…</p>
       </div>
     );
   }
@@ -152,16 +152,16 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
 
     return (
       <div onClick={handleCardClick}
-        className={`group flex flex-col px-4 py-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.99] hover:border-[#F97316]/30 hover:bg-[#F97316]/5 ${
-          priority ? "bg-[#F97316]/5 border-[#F97316]/20" : "bg-[#1C1C1F] border-white/[0.06]"
+        className={`group flex flex-col px-4 py-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.99] hover:border-[var(--crm-accent-border)] hover:bg-[var(--crm-accent-weak)] ${
+          priority ? "bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]" : "bg-[var(--crm-surface)] border-[var(--crm-border)]"
         }`}>
 
         <div className="flex items-center gap-4 w-full">
           {/* Score circle */}
           <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-base font-bold ${
-            lead.outreach_score >= 80 ? "bg-[#F97316]/15 text-[#F97316]" :
+            lead.outreach_score >= 80 ? "bg-[var(--crm-accent-weak)] text-[var(--crm-accent-text)]" :
             lead.outreach_score >= 60 ? "bg-yellow-400/15 text-yellow-400" :
-            "bg-white/5 text-white/40"
+            "bg-[var(--crm-surface-3)] text-[var(--crm-text-3)]"
           }`} style={H}>
             {lead.outreach_score}
           </div>
@@ -169,7 +169,7 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
           {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <p className="font-bold text-white text-sm leading-tight truncate" style={H}>{lead.name}</p>
+              <p className="font-bold text-[var(--crm-text)] text-sm leading-tight truncate" style={H}>{lead.name}</p>
               {lead.source === "inbound"
                 ? <span className="shrink-0 inline-flex items-center gap-0.5 text-[10px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-full" style={H}><Sparkles size={9} />Inbound</span>
                 : <>
@@ -177,13 +177,13 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
                     {lead.tier === "B" && <Zap size={12} className="text-yellow-400 shrink-0" />}
                   </>}
             </div>
-            <p className="text-xs text-white/40 mt-0.5 truncate" style={H}>
+            <p className="text-xs text-[var(--crm-text-3)] mt-0.5 truncate" style={H}>
               {lead.city} · {lead.category.replace(/_/g, " ")}
             </p>
             <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-              {lead.phone && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Phone size={9} />{lead.phone}</span>}
-              {lead.email && <span className="text-xs text-white/35 flex items-center gap-1" style={H}><Mail size={9} />{lead.email.split("@")[0]}@…</span>}
-              {callCount > 0 && <span className="text-xs text-white/25 flex items-center gap-1" style={H}><PhoneCall size={9} />{callCount}x</span>}
+              {lead.phone && <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1" style={H}><Phone size={9} />{lead.phone}</span>}
+              {lead.email && <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1" style={H}><Mail size={9} />{lead.email.split("@")[0]}@…</span>}
+              {callCount > 0 && <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1" style={H}><PhoneCall size={9} />{callCount}x</span>}
               {lead.previewUrl && <span className={`text-xs px-1.5 py-0.5 rounded-full flex items-center gap-1 border ${
                 lead.demoStatus === "needs_review"
                   ? "text-amber-300 bg-amber-400/10 border-amber-400/20"
@@ -196,15 +196,15 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
             <RecencyBadges actions={lead.actions} state={state} today={new Date(now).toISOString().slice(0, 10)} previewUrl={lead.previewUrl} className="mt-1.5" />
           </div>
 
-          <ChevronRight size={16} className="text-white/20 group-hover:text-[#F97316]/60 transition-colors shrink-0" />
+          <ChevronRight size={16} className="text-[var(--crm-text-3)] group-hover:text-[var(--crm-accent)] transition-colors shrink-0" />
         </div>
 
         {/* Inline quick actions — call or email without leaving the home screen. */}
         {(lead.phone || lead.email) && (
-          <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.05]">
+          <div className="flex gap-2 mt-3 pt-3 border-t border-[var(--crm-border)]">
             {lead.phone && (
               <a href={`tel:${lead.phone}`} onClick={stop}
-                className="flex-1 sm:flex-none sm:px-6 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/25 hover:bg-[#F97316]/20 transition-all active:scale-95"
+                className="flex-1 sm:flex-none sm:px-6 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-[var(--crm-accent-text)] bg-[var(--crm-accent-weak)] border border-[var(--crm-accent-border)] hover:opacity-80 transition-all active:scale-95"
                 style={H}>
                 <Phone size={13} />Call
               </a>
@@ -214,7 +214,7 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
                 onClick={(e) => { stop(e); if (!demoBlocksEmail) onEmailLead?.(lead); }}
                 disabled={demoBlocksEmail}
                 title={demoBlocksEmail ? "Demo needs review before emailing — open the lead to verify it" : undefined}
-                className="flex-1 sm:flex-none sm:px-6 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-white/70 bg-white/[0.04] border border-white/10 hover:text-white hover:bg-white/[0.08] hover:border-white/20 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/[0.04]"
+                className="flex-1 sm:flex-none sm:px-6 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-[var(--crm-text-2)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)] hover:border-[var(--crm-border-strong)] transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[var(--crm-surface-3)]"
                 style={H}>
                 <Mail size={13} />Email
               </button>
@@ -234,8 +234,8 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
           onClick={() => setPowerDialer((v) => !v)}
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold border transition-all ${
             powerDialer
-              ? "bg-[#F97316] text-white border-[#F97316] shadow-lg shadow-[#F97316]/30"
-              : "bg-[#1C1C1F] text-white/50 border-white/10 hover:border-[#F97316]/40 hover:text-[#F97316]"
+              ? "bg-[var(--crm-accent)] text-white border-[var(--crm-accent)] shadow-lg shadow-[var(--crm-accent-border)]"
+              : "bg-[var(--crm-surface)] text-[var(--crm-text-2)] border-[var(--crm-border)] hover:border-[var(--crm-accent-border)] hover:text-[var(--crm-accent-text)]"
           }`}
           style={H}
         >
@@ -252,16 +252,16 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
       <FollowUpBanner />
 
       {/* Hero stat */}
-      <div className="bg-gradient-to-br from-[#F97316]/15 to-[#F97316]/5 border border-[#F97316]/20 rounded-2xl px-5 py-5 flex items-center justify-between">
+      <div className="bg-gradient-to-br from-[var(--crm-accent-weak)] to-[var(--crm-accent-weak)] border border-[var(--crm-accent-border)] rounded-2xl px-5 py-5 flex items-center justify-between">
         <div>
-          <p className="text-3xl font-bold text-white" style={H}>{sorted.length}</p>
-          <p className="text-sm text-white/50 mt-0.5" style={H}>leads ready to contact</p>
-          {fresh.length > 0 && <p className="text-xs text-[#F97316] mt-1 font-semibold" style={H}>🔥 {fresh.length} never called</p>}
+          <p className="text-3xl font-bold text-[var(--crm-text)]" style={H}>{sorted.length}</p>
+          <p className="text-sm text-[var(--crm-text-2)] mt-0.5" style={H}>leads ready to contact</p>
+          {fresh.length > 0 && <p className="text-xs text-[var(--crm-accent-text)] mt-1 font-semibold" style={H}>🔥 {fresh.length} never called</p>}
         </div>
         <div className="text-right space-y-1.5">
           {followUp.length > 0 && <p className="text-xs text-purple-400 font-semibold" style={H}>↩ {followUp.length} to follow up</p>}
           <button onClick={() => { onRefresh(); load(); }}
-            className="inline-flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] transition-colors"
             style={H}><RefreshCw size={11} />Refresh</button>
         </div>
       </div>
@@ -289,11 +289,11 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
       {/* Fresh leads */}
       {fresh.length > 0 && (
         <div>
-          <p className="text-xs font-bold text-[#F97316] uppercase tracking-wider mb-3" style={H}>🔥 Fresh Leads — Never Called ({fresh.length})</p>
+          <p className="text-xs font-bold text-[var(--crm-accent-text)] uppercase tracking-wider mb-3" style={H}>🔥 Fresh Leads — Never Called ({fresh.length})</p>
           <div className="space-y-2">
             {fresh.slice(0, 30).map((l) => <LeadCard key={l.id} lead={l} />)}
             {fresh.length > 30 && (
-              <p className="text-center text-xs text-white/25 pt-2" style={H}>+ {fresh.length - 30} more — use filters in All Leads to find them</p>
+              <p className="text-center text-xs text-[var(--crm-text-3)] pt-2" style={H}>+ {fresh.length - 30} more — use filters in All Leads to find them</p>
             )}
           </div>
         </div>
@@ -311,9 +311,9 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
 
       {sorted.length === 0 && (
         <div className="text-center py-16">
-          <Star size={32} className="text-[#F97316]/30 mx-auto mb-3" />
-          <p className="text-white/50 font-semibold" style={H}>Queue is clear!</p>
-          <p className="text-sm text-white/25 mt-1" style={H}>Check the All Leads tab to find more prospects.</p>
+          <Star size={32} className="text-[var(--crm-accent)] opacity-30 mx-auto mb-3" />
+          <p className="text-[var(--crm-text-2)] font-semibold" style={H}>Queue is clear!</p>
+          <p className="text-sm text-[var(--crm-text-3)] mt-1" style={H}>Check the All Leads tab to find more prospects.</p>
         </div>
       )}
     </div>

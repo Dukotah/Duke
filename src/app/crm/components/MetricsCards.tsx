@@ -58,27 +58,27 @@ export default function MetricsCards() {
     {
       label: "Calls (recent)",
       value: calls.length,
-      icon: <Phone size={15} className="text-[#F97316]" />,
-      color: "text-white",
+      icon: <Phone size={15} className="text-[var(--crm-accent)]" />,
+      color: "text-[var(--crm-text)]",
     },
     {
       label: "Interested",
       value: interested.length,
       sub: `${conversionRate}% conversion`,
-      icon: <ThumbsUp size={15} className="text-green-400" />,
-      color: "text-green-400",
+      icon: <ThumbsUp size={15} className="text-emerald-500" />,
+      color: "text-emerald-500",
     },
     {
       label: "Emails (recent)",
       value: emails.length,
       icon: <Mail size={15} className="text-blue-400" />,
-      color: "text-white",
+      color: "text-[var(--crm-text)]",
     },
     {
       label: "Submitted (recent)",
       value: submitted.length,
       icon: <Send size={15} className="text-purple-400" />,
-      color: "text-white",
+      color: "text-[var(--crm-text)]",
     },
   ];
 
@@ -87,15 +87,15 @@ export default function MetricsCards() {
       {/* Metric cards grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {cards.map((c) => (
-          <div key={c.label} className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl px-4 py-3.5">
-            <div className="flex items-center gap-1.5 text-[11px] text-white/40 mb-1.5">
+          <div key={c.label} className="bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-2xl px-4 py-3.5">
+            <div className="flex items-center gap-1.5 text-[11px] text-[var(--crm-text-3)] mb-1.5">
               {c.icon}
               <span className="truncate">{c.label}</span>
             </div>
             <p className={`text-2xl font-bold tabular-nums ${c.color}`}>{c.value}</p>
             {c.sub && (
-              <p className="text-[10px] text-white/30 mt-0.5 flex items-center gap-1">
-                <TrendingUp size={9} className="text-[#F97316]/60" />
+              <p className="text-[10px] text-[var(--crm-text-3)] mt-0.5 flex items-center gap-1">
+                <TrendingUp size={9} className="text-[var(--crm-accent)]" />
                 {c.sub}
               </p>
             )}

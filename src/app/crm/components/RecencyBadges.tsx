@@ -205,21 +205,21 @@ export function RecencyBadges({
     const rc = a?.replyCount && a.replyCount > 1 ? ` ${a.replyCount}×` : "";
     pills.push(<Pill key="rep" icon={MessageSquareReply}
       text={a?.respondedAt ? `Replied ${relTime(a.respondedAt)}${rc}` : `Replied${rc}`}
-      cls="text-[#F97316] bg-[#F97316]/15 border-[#F97316]/40"
+      cls="text-[var(--crm-accent-text)] bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]"
       title="This lead replied to an outreach email — open the card to read it" />);
   }
   if (tags.has("bounced")) {
-    pills.push(<Pill key="bnc" icon={AlertTriangle} text="Bad email" cls="text-red-300 bg-red-400/10 border-red-400/30"
+    pills.push(<Pill key="bnc" icon={AlertTriangle} text="Bad email" cls="text-red-500 bg-red-400/10 border-red-400/30"
       title={a?.bouncedAt ? `Hard bounced / spam-flagged ${relTime(a.bouncedAt)} — do not re-email` : "Bad email — do not re-email"} />);
   }
   if (tags.has("won")) {
-    pills.push(<Pill key="won" icon={Trophy} text="Won" cls="text-green-400 bg-green-400/10 border-green-400/20" />);
+    pills.push(<Pill key="won" icon={Trophy} text="Won" cls="text-emerald-500 bg-green-400/10 border-green-400/20" />);
   }
   if (tags.has("interested")) {
-    pills.push(<Pill key="int" icon={Star} text="Interested" cls="text-[#F97316] bg-[#F97316]/10 border-[#F97316]/20" />);
+    pills.push(<Pill key="int" icon={Star} text="Interested" cls="text-[var(--crm-accent-text)] bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]" />);
   }
   if (tags.has("follow_up_due")) {
-    pills.push(<Pill key="fu" icon={CalendarClock} text="Follow-up due" cls="text-amber-300 bg-amber-400/10 border-amber-400/25" />);
+    pills.push(<Pill key="fu" icon={CalendarClock} text="Follow-up due" cls="text-amber-500 bg-amber-400/10 border-amber-400/25" />);
   }
 
   // Engagement signals — a click on the demo link is the hottest buying signal,
@@ -227,42 +227,42 @@ export function RecencyBadges({
   if (tags.has("clicked")) {
     pills.push(<Pill key="clk" icon={MousePointerClick}
       text={a?.clickedAt ? `Clicked ${relTime(a.clickedAt)}` : "Clicked"}
-      cls="text-emerald-300 bg-emerald-400/10 border-emerald-400/30"
+      cls="text-emerald-500 bg-emerald-400/10 border-emerald-400/30"
       title="Clicked a link in the email (e.g. the demo)" />);
   } else if (tags.has("opened")) {
     const oc = a?.openedCount && a.openedCount > 1 ? ` ${a.openedCount}×` : "";
     pills.push(<Pill key="opn" icon={MailOpen} text={`Opened${oc}`}
-      cls="text-sky-300 bg-sky-400/10 border-sky-400/20"
+      cls="text-sky-500 bg-sky-400/10 border-sky-400/20"
       title={a?.openedAt ? `Last opened ${relTime(a.openedAt)}` : undefined} />);
   }
 
   if (a?.emailedAt) {
     pills.push(<Pill key="em" icon={Mail} text={`Emailed ${relTime(a.emailedAt)}`}
-      cls="text-blue-300 bg-blue-400/10 border-blue-400/20"
+      cls="text-blue-400 bg-blue-400/10 border-blue-400/20"
       title={a.lastTouchedName ? `by ${a.lastTouchedName}` : undefined} />);
   } else if (tags.has("emailed")) {
-    pills.push(<Pill key="em2" icon={Mail} text="Emailed" cls="text-blue-300 bg-blue-400/10 border-blue-400/20" />);
+    pills.push(<Pill key="em2" icon={Mail} text="Emailed" cls="text-blue-400 bg-blue-400/10 border-blue-400/20" />);
   }
 
   if (tags.has("voicemail")) {
     pills.push(<Pill key="vm" icon={Voicemail} text={a?.calledAt ? `VM ${relTime(a.calledAt)}` : "Voicemail"}
-      cls="text-purple-300 bg-purple-400/10 border-purple-400/20" />);
+      cls="text-purple-400 bg-purple-400/10 border-purple-400/20" />);
   } else if (tags.has("no_answer")) {
     pills.push(<Pill key="na" icon={PhoneOff} text={a?.calledAt ? `No answer ${relTime(a.calledAt)}` : "No answer"}
       cls="text-zinc-400 bg-zinc-400/10 border-zinc-400/20" />);
   } else if (a?.calledAt) {
     pills.push(<Pill key="cl" icon={Phone} text={`Called ${relTime(a.calledAt)}`}
-      cls="text-zinc-300 bg-zinc-400/10 border-zinc-400/20"
+      cls="text-zinc-400 bg-zinc-400/10 border-zinc-400/20"
       title={a.lastTouchedName ? `by ${a.lastTouchedName}` : undefined} />);
   } else if (tags.has("called")) {
-    pills.push(<Pill key="cl2" icon={Phone} text="Called" cls="text-zinc-300 bg-zinc-400/10 border-zinc-400/20" />);
+    pills.push(<Pill key="cl2" icon={Phone} text="Called" cls="text-zinc-400 bg-zinc-400/10 border-zinc-400/20" />);
   }
 
   if (tags.has("not_interested")) {
     pills.push(<Pill key="ni" icon={XCircle} text="Pass" cls="text-zinc-500 bg-zinc-500/10 border-zinc-500/20" />);
   }
   if (tags.has("demo_sent") || previewUrl) {
-    pills.push(<Pill key="demo" icon={Globe} text="Demo" cls="text-emerald-300 bg-emerald-400/10 border-emerald-400/20" />);
+    pills.push(<Pill key="demo" icon={Globe} text="Demo" cls="text-emerald-500 bg-emerald-400/10 border-emerald-400/20" />);
   }
 
   if (pills.length === 0) return null;
@@ -272,7 +272,7 @@ export function RecencyBadges({
       {pills}
       {who && (a?.emailedAt || a?.calledAt) && (
         <span title={a?.lastTouchedName ? `Last touched by ${a.lastTouchedName}` : undefined}
-          className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-md text-[9px] font-bold text-white/70 bg-white/[0.06] border border-white/10 leading-none"
+          className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-md text-[9px] font-bold text-[var(--crm-text-2)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] leading-none"
           style={H}>
           {who}
         </span>

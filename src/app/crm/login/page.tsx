@@ -60,35 +60,35 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className="text-center mb-10">
-          <p className="text-[28px] font-bold tracking-tight text-white" style={H}>
-            Copper Bay<span className="text-[#F97316]">Tech</span>
+          <p className="text-[28px] font-bold tracking-tight text-[var(--crm-text)]" style={H}>
+            Copper Bay<span className="text-[var(--crm-accent-text)]">Tech</span>
           </p>
-          <p className="text-sm font-medium text-white/35 mt-1.5 tracking-wide" style={H}>Sales CRM</p>
+          <p className="text-sm font-medium text-[var(--crm-text-3)] mt-1.5 tracking-wide" style={H}>Sales CRM</p>
         </div>
 
         {/* Sign-in form */}
         <form onSubmit={signIn} className="space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Email</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="username"
               placeholder="you@copperbaytech.com"
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H}
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Password</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-1.5" style={H}>Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               placeholder="Your password"
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
               style={H}
             />
           </div>
@@ -98,7 +98,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={busy || !email || !password}
-            className="crm-glow-brand w-full py-3.5 rounded-xl text-sm font-bold text-white bg-[#F97316] transition-all active:scale-[0.98] hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e0e10]"
+            className="crm-glow-brand w-full py-3.5 rounded-xl text-sm font-bold text-white bg-[var(--crm-accent)] transition-all active:scale-[0.98] hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--crm-accent-border)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--crm-bg)]"
             style={H}
           >
             {submitting ? "Signing in…" : "Sign in"}
@@ -107,9 +107,9 @@ export default function LoginPage() {
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-white/25" style={H}>or quick access</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-[var(--crm-border)]" />
+          <span className="text-xs text-[var(--crm-text-3)]" style={H}>or quick access</span>
+          <div className="flex-1 h-px bg-[var(--crm-border)]" />
         </div>
 
         {/* Quick-access buttons (no password) */}
@@ -117,12 +117,12 @@ export default function LoginPage() {
           <button
             onClick={() => quickEnter("admin")}
             disabled={busy}
-            className="w-full flex items-center justify-between px-6 py-4 rounded-2xl border border-[#F97316]/30 bg-[#F97316]/10 hover:bg-[#F97316]/20 active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-between px-6 py-4 rounded-2xl border border-[var(--crm-accent-border)] bg-[var(--crm-accent-weak)] hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50"
             style={H}
           >
             <div className="text-left">
-              <p className="text-sm font-bold text-white">Admin</p>
-              <p className="text-xs text-white/40 mt-0.5">Full access · Duke</p>
+              <p className="text-sm font-bold text-[var(--crm-text)]">Admin</p>
+              <p className="text-xs text-[var(--crm-text-3)] mt-0.5">Full access · Duke</p>
             </div>
             <span className="text-xl">{quickLoading === "admin" ? "⏳" : "👑"}</span>
           </button>
@@ -130,18 +130,18 @@ export default function LoginPage() {
           <button
             onClick={() => quickEnter("rep")}
             disabled={busy}
-            className="w-full flex items-center justify-between px-6 py-4 rounded-2xl border border-white/10 bg-[#1C1C1F] hover:bg-white/5 active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-between px-6 py-4 rounded-2xl border border-[var(--crm-border)] bg-[var(--crm-surface)] hover:bg-[var(--crm-surface-3)] active:scale-[0.98] transition-all disabled:opacity-50"
             style={H}
           >
             <div className="text-left">
-              <p className="text-sm font-bold text-white">Sales Rep</p>
-              <p className="text-xs text-white/40 mt-0.5">Shared demo workspace</p>
+              <p className="text-sm font-bold text-[var(--crm-text)]">Sales Rep</p>
+              <p className="text-xs text-[var(--crm-text-3)] mt-0.5">Shared demo workspace</p>
             </div>
             <span className="text-xl">{quickLoading === "rep" ? "⏳" : "📞"}</span>
           </button>
         </div>
 
-        <p className="text-center text-xs text-white/15 mt-8" style={H}>
+        <p className="text-center text-xs text-[var(--crm-text-3)] mt-8" style={H}>
           Agents: sign in with the email & password your admin created for you.
         </p>
       </div>

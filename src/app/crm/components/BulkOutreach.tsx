@@ -58,16 +58,16 @@ function Select({ value, onChange, children, icon: Icon }: {
 }) {
   return (
     <div className="relative">
-      {Icon && <Icon size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />}
+      {Icon && <Icon size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--crm-text-3)] pointer-events-none" />}
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`${Icon ? "pl-8" : "pl-3"} pr-6 py-2 rounded-xl bg-[#111113] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50 transition-colors appearance-none`}
+        className={`${Icon ? "pl-8" : "pl-3"} pr-6 py-2 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors appearance-none`}
         style={H}
       >
         {children}
       </select>
-      <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+      <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--crm-text-3)] pointer-events-none" />
     </div>
   );
 }
@@ -281,31 +281,31 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
   const overCap = !!capacity && !atCap && selected.size > capacity.remaining;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#111113]" style={H}>
+    <div className="fixed inset-0 z-50 flex flex-col bg-[var(--crm-surface-2)]" style={H}>
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.07] shrink-0">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--crm-border)] shrink-0">
         <div>
-          <h2 className="text-base font-bold text-white">✉️ Bulk Email Outreach</h2>
+          <h2 className="text-base font-bold text-[var(--crm-text)]">✉️ Bulk Email Outreach</h2>
           {step === "select" && (
-            <p className="text-xs text-white/40 mt-0.5">
+            <p className="text-xs text-[var(--crm-text-3)] mt-0.5">
               {selected.size > 0 ? `${selected.size} leads selected` : "Select leads with emails to contact"}
             </p>
           )}
-          {step === "compose" && <p className="text-xs text-white/40 mt-0.5">Write your message</p>}
-          {step === "preview" && <p className="text-xs text-white/40 mt-0.5">Review before sending</p>}
+          {step === "compose" && <p className="text-xs text-[var(--crm-text-3)] mt-0.5">Write your message</p>}
+          {step === "preview" && <p className="text-xs text-[var(--crm-text-3)] mt-0.5">Review before sending</p>}
         </div>
-        <button onClick={onClose} className="p-2 rounded-lg text-white/30 hover:text-white hover:bg-white/5 transition-colors">
+        <button onClick={onClose} className="p-2 rounded-lg text-[var(--crm-text-3)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)] transition-colors">
           <X size={18} />
         </button>
       </div>
       {/* Booking-link banner — optional personal scheduling link appended to emails */}
-      <div className="px-5 py-3 border-b border-white/[0.06] bg-violet-500/5 shrink-0">
+      <div className="px-5 py-3 border-b border-[var(--crm-border)] bg-violet-500/5 shrink-0">
         {!showCalendlyInput ? (
           <button onClick={() => { setCalendlyDraft(calendlyLink); setShowCalendlyInput(true); }}
             className="flex items-center gap-2 text-xs text-violet-300 hover:text-violet-200 transition-colors" style={H}>
             <Calendar size={12} />
             {calendlyLink
-              ? <><span className="text-white/40">Booking link:</span><span className="truncate max-w-[220px] ml-1">{calendlyLink}</span></>
+              ? <><span className="text-[var(--crm-text-3)]">Booking link:</span><span className="truncate max-w-[220px] ml-1">{calendlyLink}</span></>
               : <span className="text-violet-400">+ Add a personal booking link to include in emails</span>}
           </button>
         ) : (
@@ -313,36 +313,36 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
             <Link size={12} className="text-violet-400 shrink-0" />
             <input value={calendlyDraft} onChange={(e) => setCalendlyDraft(e.target.value)}
               placeholder="https://calendly.com/your-name/15min"
-              className="flex-1 bg-transparent border-b border-violet-400/40 text-xs text-white placeholder-white/25 focus:outline-none pb-0.5"
+              className="flex-1 bg-transparent border-b border-violet-400/40 text-xs text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none pb-0.5"
               style={H} autoFocus
               onKeyDown={(e) => { if (e.key === "Enter") saveCalendlyLink(); if (e.key === "Escape") setShowCalendlyInput(false); }} />
             <button onClick={saveCalendlyLink} className="text-xs text-violet-300 font-semibold px-2 py-1 rounded-lg bg-violet-500/20 hover:bg-violet-500/30" style={H}>Save</button>
-            <button onClick={() => setShowCalendlyInput(false)} className="text-xs text-white/30 hover:text-white/60 px-1" style={H}>✕</button>
+            <button onClick={() => setShowCalendlyInput(false)} className="text-xs text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] px-1" style={H}>✕</button>
           </div>
         )}
       </div>
 
       {/* Daily sending capacity — warm-up ramp */}
       {capacity && (
-        <div className="px-5 py-3 border-b border-white/[0.06] shrink-0">
+        <div className="px-5 py-3 border-b border-[var(--crm-border)] shrink-0">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-semibold text-white/50 flex items-center gap-1.5" style={H}>
-              <Send size={11} className="text-[#F97316]/70" />
+            <span className="text-xs font-semibold text-[var(--crm-text-2)] flex items-center gap-1.5" style={H}>
+              <Send size={11} className="text-[var(--crm-accent)]" />
               {capacity.sentToday} / {capacity.dailyCap} sent today
             </span>
             <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
               capacity.live
-                ? "text-green-400 bg-green-400/10 border-green-400/20"
-                : "text-yellow-400 bg-yellow-400/10 border-yellow-400/20"
+                ? "text-green-500 bg-green-500/10 border-green-500/20"
+                : "text-amber-500 bg-amber-500/10 border-amber-500/20"
             }`} style={H}>
               {capacity.live ? "Live" : "Practice"}
             </span>
           </div>
-          <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
-            <div className="h-full rounded-full bg-[#F97316] transition-all"
+          <div className="h-1.5 rounded-full bg-[var(--crm-surface-3)] overflow-hidden">
+            <div className="h-full rounded-full bg-[var(--crm-accent)] transition-all"
               style={{ width: `${Math.min(100, capacity.dailyCap ? (capacity.sentToday / capacity.dailyCap) * 100 : 0)}%` }} />
           </div>
-          <p className="text-[11px] text-white/35 mt-1.5" style={H}>
+          <p className="text-[11px] text-[var(--crm-text-3)] mt-1.5" style={H}>
             {capacity.remaining > 0
               ? `${capacity.remaining} left in today's warm-up cap${capacity.live ? "" : " — sends are tracked only until the domain is verified"}`
               : "Daily cap reached — more sends unlock tomorrow"}
@@ -352,12 +352,12 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
 
       {/* Step indicator */}
       {step !== "result" && (
-        <div className="flex px-5 py-2.5 gap-2 border-b border-white/[0.06] shrink-0">
+        <div className="flex px-5 py-2.5 gap-2 border-b border-[var(--crm-border)] shrink-0">
           {(["select", "compose", "preview"] as const).map((s, i) => (
             <div key={s} className="flex items-center gap-2">
-              {i > 0 && <div className="w-4 h-px bg-white/10" />}
-              <div className={`flex items-center gap-1.5 text-xs font-semibold ${step === s ? "text-[#F97316]" : "text-white/25"}`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${step === s ? "bg-[#F97316] text-white" : "bg-white/10 text-white/30"}`}>
+              {i > 0 && <div className="w-4 h-px bg-[var(--crm-border-strong)]" />}
+              <div className={`flex items-center gap-1.5 text-xs font-semibold ${step === s ? "text-[var(--crm-accent-text)]" : "text-[var(--crm-text-3)]"}`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${step === s ? "bg-[var(--crm-accent)] text-white" : "bg-[var(--crm-surface-3)] text-[var(--crm-text-3)]"}`}>
                   {i + 1}
                 </div>
                 <span className="hidden sm:inline capitalize">{s}</span>
@@ -374,12 +374,12 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
             {/* Search & filters */}
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--crm-text-3)]" />
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="Search name, city, niche…"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)]"
                   style={H}
                 />
               </div>
@@ -413,11 +413,11 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
 
             {data && (
               <div className="flex items-center justify-between">
-                <p className="text-xs text-white/30">
-                  <span className="text-white font-semibold">{data.total.toLocaleString()}</span> leads with email
+                <p className="text-xs text-[var(--crm-text-3)]">
+                  <span className="text-[var(--crm-text)] font-semibold">{data.total.toLocaleString()}</span> leads with email
                 </p>
                 {data.leads.length > 0 && (
-                  <button onClick={toggleAll} className="text-xs text-[#F97316] hover:text-[#F97316]/80" style={H}>
+                  <button onClick={toggleAll} className="text-xs text-[var(--crm-accent-text)] hover:opacity-80" style={H}>
                     {data.leads.every((l) => selected.has(l.id)) ? "Deselect page" : "Select page"}
                   </button>
                 )}
@@ -427,7 +427,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
             {/* Lead list */}
             {loading ? (
               <div className="flex justify-center py-16">
-                <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-[var(--crm-accent)] border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
               <div className="space-y-1.5 pb-4">
@@ -439,37 +439,37 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                       onClick={() => toggleLead(lead)}
                       className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-pointer border transition-all active:scale-[0.99] ${
                         isSelected
-                          ? "bg-[#F97316]/10 border-[#F97316]/30"
-                          : "bg-[#1C1C1F] border-white/[0.06] hover:border-[#F97316]/20"
+                          ? "bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)]"
+                          : "bg-[var(--crm-surface)] border-[var(--crm-border)] hover:border-[var(--crm-accent-border)]"
                       }`}
                     >
                       <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${
-                        isSelected ? "bg-[#F97316] border-[#F97316]" : "border-white/20"
+                        isSelected ? "bg-[var(--crm-accent)] border-[var(--crm-accent)]" : "border-[var(--crm-border-strong)]"
                       }`}>
                         {isSelected && <Check size={11} className="text-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-bold text-white truncate" style={H}>{lead.name}</p>
+                          <p className="text-sm font-bold text-[var(--crm-text)] truncate" style={H}>{lead.name}</p>
                           {lead.tier === "A" && <Flame size={10} className="text-orange-400 shrink-0" />}
                           {lead.tier === "B" && <Zap size={10} className="text-yellow-400 shrink-0" />}
                         </div>
-                        <p className="text-xs text-white/35 mt-0.5 truncate" style={H}>
+                        <p className="text-xs text-[var(--crm-text-3)] mt-0.5 truncate" style={H}>
                           {lead.city} · {lead.category.replace(/_/g, " ")}
                         </p>
                       </div>
                       <div className="shrink-0 text-right">
-                        <span className="text-xs text-white/25 flex items-center gap-1.5" style={H}>
+                        <span className="text-xs text-[var(--crm-text-3)] flex items-center gap-1.5" style={H}>
                           {lead.email_status && <span className={`w-1.5 h-1.5 rounded-full ${deliverabilityDot(lead.email_status)}`} title={`Email: ${lead.email_status}`} />}
                           <Mail size={9} />{lead.email.length > 20 ? lead.email.slice(0, 18) + "…" : lead.email}
                         </span>
-                        {lead.grade && <span className="block text-[10px] text-white/20 mt-0.5" style={H}>Grade {lead.grade}</span>}
+                        {lead.grade && <span className="block text-[10px] text-[var(--crm-text-3)] mt-0.5" style={H}>Grade {lead.grade}</span>}
                       </div>
                     </div>
                   );
                 })}
                 {data?.leads.length === 0 && (
-                  <p className="text-center py-12 text-sm text-white/25">No leads with emails match your filters.</p>
+                  <p className="text-center py-12 text-sm text-[var(--crm-text-3)]">No leads with emails match your filters.</p>
                 )}
               </div>
             )}
@@ -480,14 +480,14 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="text-sm text-white/40 hover:text-white disabled:opacity-20 px-3 py-1.5 rounded-lg border border-white/10"
+                  className="text-sm text-[var(--crm-text-2)] hover:text-[var(--crm-text)] disabled:opacity-20 px-3 py-1.5 rounded-lg border border-[var(--crm-border)]"
                   style={H}
                 >← Prev</button>
-                <span className="text-xs text-white/30">{page} / {totalPages}</span>
+                <span className="text-xs text-[var(--crm-text-3)]">{page} / {totalPages}</span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="text-sm text-white/40 hover:text-white disabled:opacity-20 px-3 py-1.5 rounded-lg border border-white/10"
+                  className="text-sm text-[var(--crm-text-2)] hover:text-[var(--crm-text)] disabled:opacity-20 px-3 py-1.5 rounded-lg border border-[var(--crm-border)]"
                   style={H}
                 >Next →</button>
               </div>
@@ -501,7 +501,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
         <div className="flex-1 overflow-y-auto px-4 pt-4 space-y-4 pb-4">
           {/* Template picker */}
           <div>
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Choose a Template</p>
+            <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2">Choose a Template</p>
             <div className="flex flex-col gap-2">
               {templates.map((t) => (
                 <button
@@ -509,13 +509,13 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
                   onClick={() => applyTemplate(t.key)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all ${
                     templateKey === t.key
-                      ? "bg-[#F97316]/10 border-[#F97316]/30 text-[#F97316]"
-                      : "bg-[#1C1C1F] border-white/[0.06] text-white/60 hover:border-white/20"
+                      ? "bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)] text-[var(--crm-accent-text)]"
+                      : "bg-[var(--crm-surface)] border-[var(--crm-border)] text-[var(--crm-text-2)] hover:border-[var(--crm-border-strong)]"
                   }`}
                   style={H}
                 >
                   <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                    templateKey === t.key ? "border-[#F97316] bg-[#F97316]" : "border-white/20"
+                    templateKey === t.key ? "border-[var(--crm-accent)] bg-[var(--crm-accent)]" : "border-[var(--crm-border-strong)]"
                   }`}>
                     {templateKey === t.key && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
@@ -527,23 +527,23 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
 
           {/* From name */}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Your Name</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2">Your Name</label>
             <input
               value={fromName}
               onChange={(e) => setFromName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent-border)]"
               style={H}
             />
           </div>
 
           {/* Subject */}
           <div>
-            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Subject Line</label>
+            <label className="block text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider mb-2">Subject Line</label>
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Subject — use {name}, {business}, {city}"
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)]"
               style={H}
             />
           </div>
@@ -551,26 +551,26 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
           {/* Body */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-semibold text-white/40 uppercase tracking-wider">Message Body</label>
+              <label className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider">Message Body</label>
               {templateKey !== "custom" && (
                 <div className="flex items-center gap-3">
-                  <button onClick={saveEdits} className="text-xs font-semibold text-white/40 hover:text-[#F97316] flex items-center gap-1 transition-colors">
-                    {savedFlash ? <><Check size={11} className="text-green-400" />Saved</> : <><Save size={11} />Save edits</>}
+                  <button onClick={saveEdits} className="text-xs font-semibold text-[var(--crm-text-2)] hover:text-[var(--crm-accent-text)] flex items-center gap-1 transition-colors">
+                    {savedFlash ? <><Check size={11} className="text-green-500" />Saved</> : <><Save size={11} />Save edits</>}
                   </button>
                   {hasOverride(templateKey) && (
-                    <button onClick={resetEdits} className="text-xs font-semibold text-white/30 hover:text-white/60 flex items-center gap-1 transition-colors">
+                    <button onClick={resetEdits} className="text-xs font-semibold text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] flex items-center gap-1 transition-colors">
                       <RotateCcw size={11} />Reset
                     </button>
                   )}
                 </div>
               )}
             </div>
-            <p className="text-xs text-white/25 mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
+            <p className="text-xs text-[var(--crm-text-3)] mb-2">Variables: {"{name}"}, {"{business}"}, {"{city}"}, {"{fromName}"}</p>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={12}
-              className="w-full px-4 py-3 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50"
+              className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] resize-none focus:outline-none focus:border-[var(--crm-accent-border)]"
               style={H}
             />
           </div>
@@ -580,39 +580,39 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
       {/* STEP 3: Preview */}
       {step === "preview" && (
         <div className="flex-1 overflow-y-auto px-4 pt-4 space-y-4 pb-4">
-          <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-4 space-y-3">
+          <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] p-4 space-y-3">
             <div>
-              <p className="text-xs text-white/35 font-semibold uppercase tracking-wider mb-1">Preview — first email</p>
-              <p className="text-xs text-white/25">{selectedLeads[0]?.name} · {selectedLeads[0]?.email}</p>
+              <p className="text-xs text-[var(--crm-text-3)] font-semibold uppercase tracking-wider mb-1">Preview — first email</p>
+              <p className="text-xs text-[var(--crm-text-3)]">{selectedLeads[0]?.name} · {selectedLeads[0]?.email}</p>
             </div>
             <div>
-              <p className="text-xs text-white/40 font-semibold mb-1">Subject</p>
-              <p className="text-sm text-white font-semibold">{preview.subject}</p>
+              <p className="text-xs text-[var(--crm-text-2)] font-semibold mb-1">Subject</p>
+              <p className="text-sm text-[var(--crm-text)] font-semibold">{preview.subject}</p>
             </div>
             <div>
-              <p className="text-xs text-white/40 font-semibold mb-1">Body</p>
-              <pre className="text-sm text-white/80 whitespace-pre-wrap leading-relaxed font-sans">{preview.body}</pre>
+              <p className="text-xs text-[var(--crm-text-2)] font-semibold mb-1">Body</p>
+              <pre className="text-sm text-[var(--crm-text-2)] whitespace-pre-wrap leading-relaxed font-sans">{preview.body}</pre>
             </div>
           </div>
 
-          <div className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-4 space-y-2">
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Send Summary</p>
+          <div className="bg-[var(--crm-surface)] rounded-xl border border-[var(--crm-border)] p-4 space-y-2">
+            <p className="text-xs font-semibold text-[var(--crm-text-3)] uppercase tracking-wider">Send Summary</p>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-white/60">Total selected</span>
-              <span className="text-sm font-bold text-white">{selected.size} leads</span>
+              <span className="text-sm text-[var(--crm-text-2)]">Total selected</span>
+              <span className="text-sm font-bold text-[var(--crm-text)]">{selected.size} leads</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-white/60">All have email</span>
-              <span className="text-sm font-bold text-green-400">✓</span>
+              <span className="text-sm text-[var(--crm-text-2)]">All have email</span>
+              <span className="text-sm font-bold text-green-500">✓</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-white/60">From</span>
-              <span className="text-sm text-white/80">{fromName} via Copper Bay Tech</span>
+              <span className="text-sm text-[var(--crm-text-2)]">From</span>
+              <span className="text-sm text-[var(--crm-text-2)]">{fromName} via Copper Bay Tech</span>
             </div>
           </div>
 
           {sendError && (
-            <p className="text-sm text-red-400 px-1">{sendError}</p>
+            <p className="text-sm text-red-500 px-1">{sendError}</p>
           )}
         </div>
       )}
@@ -627,31 +627,31 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
               <>
                 <div className="text-5xl">{loggedOnly ? "📝" : "✉️"}</div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2" style={H}>{loggedOnly ? "Emails logged!" : "Emails sent!"}</h3>
-                  <p className="text-sm text-white/50">
+                  <h3 className="text-xl font-bold text-[var(--crm-text)] mb-2" style={H}>{loggedOnly ? "Emails logged!" : "Emails sent!"}</h3>
+                  <p className="text-sm text-[var(--crm-text-2)]">
                     {loggedOnly
                       ? "Delivery isn't live yet — these were tracked on lead timelines but not actually sent."
                       : "Here's how it went:"}
                   </p>
                 </div>
                 <div className="w-full max-w-xs space-y-3">
-                  <div className="flex items-center justify-between px-4 py-3 bg-green-400/10 border border-green-400/20 rounded-xl">
-                    <span className="text-sm font-semibold text-green-400">{loggedOnly ? "Logged" : "Sent"}</span>
-                    <span className="text-xl font-bold text-green-400">{result.sent}</span>
+                  <div className="flex items-center justify-between px-4 py-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                    <span className="text-sm font-semibold text-green-500">{loggedOnly ? "Logged" : "Sent"}</span>
+                    <span className="text-xl font-bold text-green-500">{result.sent}</span>
                   </div>
-                  <div className="flex items-center justify-between px-4 py-3 bg-red-400/10 border border-red-400/20 rounded-xl">
-                    <span className="text-sm font-semibold text-red-400">Failed</span>
-                    <span className="text-xl font-bold text-red-400">{result.failed}</span>
+                  <div className="flex items-center justify-between px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <span className="text-sm font-semibold text-red-500">Failed</span>
+                    <span className="text-xl font-bold text-red-500">{result.failed}</span>
                   </div>
-                  <div className="flex items-center justify-between px-4 py-3 bg-white/5 border border-white/10 rounded-xl">
-                    <span className="text-sm font-semibold text-white/40">No email</span>
-                    <span className="text-xl font-bold text-white/40">{result.skipped}</span>
+                  <div className="flex items-center justify-between px-4 py-3 bg-[var(--crm-surface-3)] border border-[var(--crm-border)] rounded-xl">
+                    <span className="text-sm font-semibold text-[var(--crm-text-2)]">No email</span>
+                    <span className="text-xl font-bold text-[var(--crm-text-2)]">{result.skipped}</span>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
                   className="px-8 py-3 rounded-xl text-sm font-bold text-white"
-                  style={{ backgroundColor: "#F97316", ...H }}
+                  style={{ backgroundColor: "var(--crm-accent)", ...H }}
                 >
                   Done
                 </button>
@@ -664,7 +664,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
       {/* Cap guard notice (preview step) */}
       {step === "preview" && (atCap || overCap) && (
         <div className="shrink-0 px-4 pt-3">
-          <p className="text-xs text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 rounded-xl px-3 py-2" style={H}>
+          <p className="text-xs text-amber-500 bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2" style={H}>
             {atCap
               ? "Daily sending cap reached — sends resume tomorrow as the warm-up ramps."
               : `Only ${capacity?.remaining} of your ${selected.size} selected will send today (daily cap). The rest will be skipped — send them tomorrow.`}
@@ -674,11 +674,11 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
 
       {/* Bottom action bar */}
       {step !== "result" && (
-        <div className="shrink-0 border-t border-white/[0.07] px-4 py-4 flex items-center gap-3">
+        <div className="shrink-0 border-t border-[var(--crm-border)] px-4 py-4 flex items-center gap-3">
           {step !== "select" && (
             <button
               onClick={() => setStep(step === "compose" ? "select" : "compose")}
-              className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+              className="px-4 py-3 rounded-xl text-sm font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] hover:bg-[var(--crm-surface-3)] hover:border-[var(--crm-border-strong)] transition-colors"
               style={H}
             >
               ← Back
@@ -690,7 +690,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
               onClick={() => setStep("compose")}
               disabled={selected.size === 0}
               className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
-              style={{ backgroundColor: "#F97316", ...H }}
+              style={{ backgroundColor: "var(--crm-accent)", ...H }}
             >
               Compose Message ({selected.size} leads) →
             </button>
@@ -701,7 +701,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
               onClick={() => setStep("preview")}
               disabled={!subject.trim() || !body.trim() || !fromName.trim()}
               className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity"
-              style={{ backgroundColor: "#F97316", ...H }}
+              style={{ backgroundColor: "var(--crm-accent)", ...H }}
             >
               Preview →
             </button>
@@ -712,7 +712,7 @@ export default function BulkOutreach({ repName, onClose }: BulkOutreachProps) {
               onClick={handleSend}
               disabled={sending || atCap}
               className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
-              style={{ backgroundColor: "#F97316", ...H }}
+              style={{ backgroundColor: "var(--crm-accent)", ...H }}
             >
               <Send size={14} />
               {sending ? "Sending…" : atCap ? "Daily cap reached" : `Send to ${selected.size} leads`}

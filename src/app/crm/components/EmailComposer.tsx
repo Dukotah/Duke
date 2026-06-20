@@ -151,32 +151,32 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
     <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       <div
-        className="relative bg-[#1C1C1F] border border-white/10 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[92vh] flex flex-col shadow-2xl"
+        className="relative bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[92vh] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between px-5 py-4 border-b border-white/[0.07] shrink-0">
+        <div className="flex items-start justify-between px-5 py-4 border-b border-[var(--crm-border)] shrink-0">
           <div className="min-w-0">
-            <h2 className="text-base font-bold text-white flex items-center gap-2" style={H}>
-              <Mail size={15} className="text-[#F97316]" />Send Email
+            <h2 className="text-base font-bold text-[var(--crm-text)] flex items-center gap-2" style={H}>
+              <Mail size={15} className="text-[var(--crm-accent)]" />Send Email
             </h2>
-            <p className="text-xs text-white/40 mt-0.5 truncate" style={H}>{lead.name} · {lead.email}</p>
+            <p className="text-xs text-[var(--crm-text-2)] mt-0.5 truncate" style={H}>{lead.name} · {lead.email}</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg text-white/30 hover:text-white hover:bg-white/5 transition-colors shrink-0"><X size={18} /></button>
+          <button onClick={onClose} className="p-2 rounded-lg text-[var(--crm-text-3)] hover:text-[var(--crm-text)] hover:bg-[var(--crm-surface-3)] transition-colors shrink-0"><X size={18} /></button>
         </div>
 
         {done ? (
           <div className="flex flex-col items-center justify-center px-6 py-12 text-center gap-4">
             <div className="text-5xl">{delivered ? "✉️" : "📝"}</div>
-            <h3 className="text-lg font-bold text-white" style={H}>
+            <h3 className="text-lg font-bold text-[var(--crm-text)]" style={H}>
               {delivered ? `Email sent to ${lead.name}` : `Email logged for ${lead.name}`}
             </h3>
-            <p className="text-sm text-white/50" style={H}>
+            <p className="text-sm text-[var(--crm-text-2)]" style={H}>
               {delivered
                 ? "Logged to their timeline. A follow up was scheduled for 3 days out."
                 : "Email delivery isn't live yet, so this was recorded on their timeline (not actually sent). A follow up was scheduled for 3 days out."}
             </p>
-            <button onClick={onClose} className="px-8 py-3 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: "#F97316", ...H }}>Done</button>
+            <button onClick={onClose} className="px-8 py-3 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: "var(--crm-accent)", ...H }}>Done</button>
           </div>
         ) : (
           <>
@@ -189,8 +189,8 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
                     onClick={() => applyTemplate(t.key)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
                       templateKey === t.key
-                        ? "bg-[#F97316]/10 border-[#F97316]/30 text-[#F97316]"
-                        : "bg-[#111113] border-white/10 text-white/50 hover:text-white/80"
+                        ? "bg-[var(--crm-accent-weak)] border-[var(--crm-accent-border)] text-[var(--crm-accent-text)]"
+                        : "bg-[var(--crm-surface-2)] border-[var(--crm-border)] text-[var(--crm-text-2)] hover:text-[var(--crm-text)]"
                     }`}
                     style={H}
                   >
@@ -201,26 +201,26 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
 
               {/* From */}
               <div>
-                <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Your Name</label>
+                <label className="block text-xs font-semibold text-[var(--crm-text-2)] uppercase tracking-wider mb-2" style={H}>Your Name</label>
                 <input value={fromName} onChange={(e) => setFromName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50" style={H} />
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent-border)]" style={H} />
               </div>
 
               {/* Subject */}
               <div>
-                <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Subject</label>
+                <label className="block text-xs font-semibold text-[var(--crm-text-2)] uppercase tracking-wider mb-2" style={H}>Subject</label>
                 <input value={subject} onChange={(e) => setSubject(e.target.value)}
                   placeholder="Subject"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50" style={H} />
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)]" style={H} />
               </div>
 
               {/* Body — already personalized for this lead; this is what sends. */}
               <div>
-                <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Message</label>
+                <label className="block text-xs font-semibold text-[var(--crm-text-2)] uppercase tracking-wider mb-2" style={H}>Message</label>
                 <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={15}
                   placeholder="Write your message…"
-                  className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50 leading-relaxed" style={H} />
-                <p className="text-xs text-white/25 mt-2" style={H}>Already filled in for {lead.name} — edit anything you like, then send. This is exactly what goes out.</p>
+                  className="w-full px-4 py-3 rounded-xl bg-[var(--crm-surface-2)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] resize-none focus:outline-none focus:border-[var(--crm-accent-border)] leading-relaxed" style={H} />
+                <p className="text-xs text-[var(--crm-text-3)] mt-2" style={H}>Already filled in for {lead.name} — edit anything you like, then send. This is exactly what goes out.</p>
               </div>
 
               {needsDemo && (
@@ -256,9 +256,9 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
             </div>
 
             {/* Action bar */}
-            <div className="shrink-0 border-t border-white/[0.07] px-5 py-4">
+            <div className="shrink-0 border-t border-[var(--crm-border)] px-5 py-4">
               {capacity && (
-                <p className={`text-xs mb-3 flex items-center gap-1.5 ${atCap ? "text-yellow-400" : "text-white/35"}`} style={H}>
+                <p className={`text-xs mb-3 flex items-center gap-1.5 ${atCap ? "text-yellow-500" : "text-[var(--crm-text-3)]"}`} style={H}>
                   <Send size={11} className="shrink-0" />
                   {atCap
                     ? "Daily sending cap reached — resumes tomorrow"
@@ -266,10 +266,10 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
                 </p>
               )}
               <div className="flex items-center gap-3">
-                <button onClick={onClose} className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors" style={H}>Cancel</button>
+                <button onClick={onClose} className="px-4 py-3 rounded-xl text-sm font-semibold text-[var(--crm-text-2)] bg-[var(--crm-surface-3)] border border-[var(--crm-border)] hover:bg-[var(--crm-surface-3)] transition-colors" style={H}>Cancel</button>
                 <button onClick={handleSend} disabled={sending || !subject.trim() || !body.trim() || atCap || needsDemo || blockedByDeliverability}
                   className="flex-1 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-opacity"
-                  style={{ backgroundColor: "#F97316", ...H }}>
+                  style={{ backgroundColor: "var(--crm-accent)", ...H }}>
                   <Send size={14} />{sending ? "Sending…" : atCap ? "Daily cap reached" : needsDemo ? "No demo built yet" : blockedByDeliverability ? "Confirm address to send" : `Send to ${lead.name}`}
                 </button>
               </div>

@@ -27,7 +27,7 @@ const STAGES = [
   { key: "to_call", label: "To Call", color: "text-blue-400", border: "border-blue-400/30", bg: "bg-blue-400/5", dot: "bg-blue-400" },
   { key: "called", label: "Called", color: "text-zinc-400", border: "border-zinc-400/20", bg: "bg-zinc-400/5", dot: "bg-zinc-400" },
   { key: "voicemail", label: "Voicemail", color: "text-purple-400", border: "border-purple-400/30", bg: "bg-purple-400/5", dot: "bg-purple-400" },
-  { key: "interested", label: "Interested", color: "text-[#F97316]", border: "border-[#F97316]/30", bg: "bg-[#F97316]/5", dot: "bg-[#F97316]" },
+  { key: "interested", label: "Interested", color: "text-[var(--crm-accent-text)]", border: "border-[var(--crm-accent-border)]", bg: "bg-[var(--crm-accent-weak)]", dot: "bg-[var(--crm-accent)]" },
   { key: "submitted", label: "Submitted", color: "text-yellow-400", border: "border-yellow-400/30", bg: "bg-yellow-400/5", dot: "bg-yellow-400" },
   { key: "won", label: "Won 🏆", color: "text-green-400", border: "border-green-400/30", bg: "bg-green-400/5", dot: "bg-green-400" },
 ];
@@ -49,9 +49,9 @@ function PipelineSelect<T extends string>({ value, onChange, children, icon: Ico
 }) {
   return (
     <div className="relative">
-      {Icon && <Icon size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />}
+      {Icon && <Icon size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--crm-text-3)] pointer-events-none" />}
       <select value={value} onChange={(e) => onChange(e.target.value as T)}
-        className={`${Icon ? "pl-8" : "pl-3"} pr-6 py-2 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50 transition-colors appearance-none`}
+        className={`${Icon ? "pl-8" : "pl-3"} pr-6 py-2 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors appearance-none`}
         style={H}>
         {children}
       </select>
@@ -64,19 +64,19 @@ function MiniCard({ lead, state, sub, onClick }: {
 }) {
   return (
     <div onClick={onClick}
-      className="bg-[#1C1C1F] border border-white/[0.06] rounded-xl p-3 cursor-pointer hover:border-[#F97316]/30 transition-all group active:scale-[0.98]">
+      className="bg-[var(--crm-surface)] border border-[var(--crm-border)] rounded-xl p-3 cursor-pointer hover:border-[var(--crm-accent-border)] transition-all group active:scale-[0.98]">
       <div className="flex items-start justify-between gap-1">
-        <p className="text-xs font-bold text-white leading-tight line-clamp-2 flex-1" style={H}>{lead.name}</p>
+        <p className="text-xs font-bold text-[var(--crm-text)] leading-tight line-clamp-2 flex-1" style={H}>{lead.name}</p>
         {lead.tier === "A" && <Flame size={10} className="text-orange-400 shrink-0 mt-0.5" />}
         {lead.tier === "B" && <Zap size={10} className="text-yellow-400 shrink-0 mt-0.5" />}
       </div>
-      <p className="text-[10px] text-white/35 mt-1 truncate" style={H}>{lead.city} · {lead.category.replace(/_/g, " ")}</p>
+      <p className="text-[10px] text-[var(--crm-text-3)] mt-1 truncate" style={H}>{lead.city} · {lead.category.replace(/_/g, " ")}</p>
       <div className="flex items-center gap-2 mt-2">
-        {lead.phone && <Phone size={9} className="text-white/25" />}
-        {lead.email && <Mail size={9} className="text-white/25" />}
-        {state.callCount && <span className="text-[10px] text-white/25" style={H}>{state.callCount}x</span>}
+        {lead.phone && <Phone size={9} className="text-[var(--crm-text-3)]" />}
+        {lead.email && <Mail size={9} className="text-[var(--crm-text-3)]" />}
+        {state.callCount && <span className="text-[10px] text-[var(--crm-text-3)]" style={H}>{state.callCount}x</span>}
         {lead.claimedBy && (
-          <span className="text-[10px] text-white/30 truncate flex items-center gap-0.5" style={H}>
+          <span className="text-[10px] text-[var(--crm-text-3)] truncate flex items-center gap-0.5" style={H}>
             <User size={8} className="shrink-0" />{lead.claimedBy.repName}
           </span>
         )}
@@ -157,8 +157,8 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-white/50" style={H}>
-            {interested > 0 && <span className="text-[#F97316] font-semibold mr-2">🔥 {interested} interested</span>}
+          <p className="text-sm text-[var(--crm-text-2)]" style={H}>
+            {interested > 0 && <span className="text-[var(--crm-accent-text)] font-semibold mr-2">🔥 {interested} interested</span>}
             {totalDeals > 0 && <span className="text-green-400 font-semibold">{totalDeals} closed</span>}
           </p>
         </div>
@@ -167,11 +167,11 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
       {/* Filter + sort controls */}
       <div className="space-y-2">
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--crm-text-3)]" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, city, niche…"
-            className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-[#1C1C1F] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+            className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-[var(--crm-surface)] border border-[var(--crm-border)] text-sm text-[var(--crm-text)] placeholder-[var(--crm-text-3)] focus:outline-none focus:border-[var(--crm-accent-border)] transition-colors"
             style={H} />
-          {q && <button onClick={() => setQ("")} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"><X size={13} /></button>}
+          {q && <button onClick={() => setQ("")} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)]"><X size={13} /></button>}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <PipelineSelect value={stageFilter} onChange={setStageFilter} icon={Filter}>
@@ -192,7 +192,7 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
           </PipelineSelect>
           {filtersActive && (
             <button onClick={() => { setQ(""); setStageFilter(""); setOwner(""); }}
-              className="inline-flex items-center gap-1 text-xs text-white/30 hover:text-white/60 px-2" style={H}>
+              className="inline-flex items-center gap-1 text-xs text-[var(--crm-text-3)] hover:text-[var(--crm-text-2)] px-2" style={H}>
               <X size={11} />Clear
             </button>
           )}
@@ -218,10 +218,10 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
                     sub={submissions.find((s) => s.leadId === lead.id)} onClick={() => onSelectLead(lead)} />
                 ))}
                 {stageLeads.length > 8 && (
-                  <p className="text-[10px] text-white/25 text-center py-2" style={H}>+{stageLeads.length - 8} more</p>
+                  <p className="text-[10px] text-[var(--crm-text-3)] text-center py-2" style={H}>+{stageLeads.length - 8} more</p>
                 )}
                 {stageLeads.length === 0 && (
-                  <p className="text-[10px] text-white/20 text-center py-4" style={H}>{filtersActive ? "No matches" : "None yet"}</p>
+                  <p className="text-[10px] text-[var(--crm-text-3)] text-center py-4" style={H}>{filtersActive ? "No matches" : "None yet"}</p>
                 )}
               </div>
             </div>
@@ -229,7 +229,7 @@ export default function Pipeline({ leads, states, submissions, onSelectLead }: P
         })}
       </div>
 
-      <p className="text-xs text-white/20 text-center" style={H}>
+      <p className="text-xs text-[var(--crm-text-3)] text-center" style={H}>
         Tap a card to update status · Stages update when you log call outcomes
       </p>
     </div>
