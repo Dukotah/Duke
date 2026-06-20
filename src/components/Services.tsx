@@ -88,29 +88,6 @@ export default function Services() {
                     {pkg.tagline}
                   </p>
 
-                  <p className="mt-5 flex items-baseline gap-1.5">
-                    {pkg.pricePrefix && (
-                      <span
-                        className="text-sm font-medium text-warm-3"
-                        style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
-                      >
-                        {pkg.pricePrefix.trim()}
-                      </span>
-                    )}
-                    <span
-                      className="text-3xl font-bold tabular-nums text-warm"
-                      style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
-                    >
-                      {pkg.price}
-                    </span>
-                    <span
-                      className="text-sm text-warm-3"
-                      style={{ fontFamily: "var(--font-body)" }}
-                    >
-                      one-time
-                    </span>
-                  </p>
-
                   <ul className="mt-6 mb-7 flex-1 space-y-2.5">
                     {pkg.features.map((feature) => (
                       <li
@@ -201,23 +178,8 @@ export default function Services() {
                     )}
                   </div>
 
-                  <p className="flex items-baseline gap-1.5">
-                    <span
-                      className="text-3xl font-bold tabular-nums text-warm"
-                      style={{ fontFamily: "var(--font-mono, var(--font-heading))" }}
-                    >
-                      {plan.price}
-                    </span>
-                    <span
-                      className="text-sm text-warm-3"
-                      style={{ fontFamily: "var(--font-body)" }}
-                    >
-                      /mo
-                    </span>
-                  </p>
-
                   <p
-                    className="mt-2 min-h-[2.75rem] text-sm text-warm-2"
+                    className="min-h-[2.75rem] text-sm text-warm-2"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     {plan.tagline}
