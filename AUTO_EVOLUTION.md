@@ -6,33 +6,37 @@
 
 ---
 
-## Epoch 22 — 2026-06-20  (ARMADA #1)
+## Epoch 23 — 2026-06-20  (ARMADA #2)
 
 ### 1. Current Status
-Green. **vitest 291 passed (38 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~26 commits ahead of `origin/main`, not pushed. **Loop is now armada-level**: each
-iteration runs a parallel multi-agent workflow + integration gate, then I verify/commit
-and fire the next. No pauses (per owner directive).
+Green. **vitest 319 passed (41 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~27 commits ahead of `origin/main`, not pushed. Armada loop running, no pauses.
 
-### 2. Completed in This Epoch (7-agent armada)
-- Handler tests added for **`export`, `goals`, `reminders`** (parallel agents). 264 → 291.
-- **`contacts`, `companies`, `deals` correctly SKIPPED** — agents verified those routes do
-  NOT exist in this branch (no such dirs under `src/app/api/crm/`). Good guardrail.
-- Integration agent fixed the `export` test hanging on the network `getLeads()` fetch by
-  stubbing `fetch` to reject — drives the route's real "CSV source unreachable → serve
-  empty + still load custom leads" path (assertions unchanged; file 11.8s → 0.7s).
+### 2. Completed in This Epoch (5-agent armada)
+- Handler tests added for **`responded`, `submit`, `activity-log`**. `activities` SKIPPED
+  (no such route — only singular `activity`, already tested). 291 → 319.
+- 🐛 **REAL BUG FOUND + FIXED (via the new test):** `responded/route.ts` built its
+  `nameById` lookup keyed only on the bare `c.id`, so replies stamped under the standard
+  feed id `custom:<id>` resolved to "Unknown lead" with blank contact fields. Fixed to
+  register BOTH `custom:<id>` and `c.id` (matching `today`/`reminders`/`export`/etc.).
+  This is the armada loop paying off — writing the contract test surfaced a live bug.
 
 ### 3. Discovered Debt / Opportunities
-- Untested routes that are real + hermetic: `responded`, `submit`, `activities`,
-  `activity-log`. Network/secret-gated (skip or stub): `leads`, `email-events`, `webhook`,
-  `cron`, `leads/generate-site`. After route coverage, rotate armadas to **adversarial
-  bug-hunt + fix**. Branch remains review/deploy-ready.
+- Route-handler coverage is essentially complete (remaining routes are network/secret-gated:
+  `leads`, `email-events`, `webhook`, `cron`, `leads/generate-site` — low test value).
+  **Rotating armadas to adversarial bug-hunt + fix** — which just proved its worth.
 
 ### 4. The Next Epoch Roadmap (armada)
-1. **Armada #2:** parallel handler tests for `responded`, `submit`, `activities`,
-   `activity-log` + integration gate.
-2. **Armada #3+:** adversarial bug-hunt → verify → fix passes across lib/crm + components,
-   with a build gate.
+1. **Armada #3:** parallel bug-finders across lib/crm + api routes + the big components +
+   db/localRedis/middleware → skeptical triage → fix confirmed real bugs + add a regression
+   test for each → build gate.
+2. Continue bug-hunt armadas until they come back clean K times, then hold.
+
+---
+
+## Epoch 22 — 2026-06-20 (ARMADA #1)
+- 7-agent armada: handler tests for `export`/`goals`/`reminders`; `contacts`/`companies`/
+  `deals` SKIPPED (don't exist); export fetch-stub fix. 264 → 291.
 
 ---
 

@@ -32,7 +32,12 @@ export async function GET(req: NextRequest) {
     // leadId → display name, from whatever source knows it.
     const nameById = new Map<string, { name: string; phone?: string; email?: string; city?: string; category?: string }>();
     for (const c of customs) {
-      nameById.set(c.id, { name: c.name, phone: c.phone, email: c.email, city: c.city, category: c.niche });
+      // Custom leads surface in feeds under their prefixed id `custom:<id>`
+      // (action stamps, demos, reminders, today all key on this form). Register
+      // both so resolution works whether the stamp used the prefixed or raw id.
+      const info = { name: c.name, phone: c.phone, email: c.email, city: c.city, category: c.niche };
+      nameById.set(`custom:${c.id}`, info);
+      nameById.set(c.id, info);
     }
     for (const e of log) {
       if (e.leadId && !nameById.has(e.leadId)) {
