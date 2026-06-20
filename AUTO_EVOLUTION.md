@@ -6,28 +6,36 @@
 
 ---
 
-## Epoch 20 — 2026-06-20
+## Epoch 21 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 258 passed (33 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~24 commits ahead of `origin/main`, not pushed. Shippable; loop on optional handler-test
+Green. **vitest 264 passed (35 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~25 commits ahead of `origin/main`, not pushed. Shippable; loop on optional handler-test
 breadth (owner can pause/deploy anytime).
 
 ### 2. Completed in This Epoch
-- **`api/crm/automation/route.test.ts`** (2): GET 401/403/200+[]; POST 401/403 + admin
-  persisting validated rules that GET returns.
-- **`api/crm/sequences/route.test.ts`** (2): GET 401 + default-steps for any authed user;
-  POST 401/403/400(empty)/200(admin override). 254 → 258.
+- **`api/crm/activity/route.test.ts`** (2): auth + required-field validation; log a call
+  entry that GET returns (with outcome).
+- **`api/crm/import-leads/route.test.ts`** (4): 401; 400 malformed body + missing csv;
+  parse + email dedup (case-insensitive, within-import); skip + report a no-name row.
+  258 → 264.
 
 ### 3. Discovered Debt / Opportunities
-- Remaining untested handlers: `activity`, `import-leads`, `export`, `contacts`,
-  `companies`, `deals`. Low marginal value. **Still recommend pausing + deploying.**
+- Remaining untested handlers: `export`, `contacts`, `companies`, `deals` (some may be
+  thin/unused stubs from the deals-board port — verify before testing). Low marginal
+  value. **Still recommend pausing + deploying.**
 
 ### 4. The Next Epoch Roadmap
 > ⚑ Owner decision point: branch is review/deploy-ready. Continuing only per the
 > "use up credits today" directive.
-1. **Handler tests for `activity` + `import-leads`** (or another batch).
+1. **Handler test for `export`** + audit `contacts`/`companies`/`deals` routes (test if
+   real; note as stubs if not).
 2. **Pause / hand off** whenever ready to review or deploy `crm-cockpit`.
+
+---
+
+## Epoch 20 — 2026-06-20
+- `api/crm/automation/route.test.ts` + `sequences/route.test.ts` (admin gates). 254 → 258.
 
 ---
 
