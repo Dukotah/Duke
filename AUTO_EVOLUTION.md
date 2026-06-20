@@ -6,60 +6,56 @@
 
 ---
 
-## Epoch 3 — 2026-06-20
+## Epoch 4 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 177 passed (13 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~7 commits ahead of `origin/main`, not pushed. Admin authorization is converging on
-the single shared `requireAdmin` helper (`lib/api.ts`). Audit this epoch confirmed
-**no missing admin guards** anywhere: every `/api/crm/admin/*` mutating handler and
-admin-only GET is gated; `broadcast` GET and `leaderboard` GET are intentionally open
-(consumed by the rep dashboard's BroadcastBanners + LeaderboardPeek).
+Green, and now **lint-pristine**: **vitest 177 passed (13 files) · tsc 0 · eslint 0
+errors / 0 warnings · next build exit 0.** Branch ~8 commits ahead of `origin/main`,
+not pushed. Dead code and CRLF churn cleared this epoch.
 
 ### 2. Completed in This Epoch
-- **Consolidated authorization** in `automation`, `merge`, and `sequences` routes onto
-  the shared `requireAdmin(req)` from `lib/api.ts`; removed their three duplicated
-  local `isAdmin`/`getUserRole` closures. Behavior-preserving (same 401-then-403 flow;
-  `sequences` GET stays intentionally open, only POST is gated). No test delta needed
-  for a pure refactor; full suite + build reverify zero regressions.
+- **Removed orphaned `src/app/crm/components/Pipeline.tsx`** — confirmed zero importers
+  (DealsBoard replaced it in the pipeline view). Dead code gone.
+- **Added root `.gitattributes`** (`* text=auto eol=lf`) — ends the per-commit
+  "LF will be replaced by CRLF" warning noise.
+- **Removed a wasted Redis round-trip in `/api/crm/demos`**: the route fetched
+  `getAllLeadStates(userId)` into an unused `states` var. Dropped the call + import —
+  clears the last remaining eslint warning AND saves a per-request Redis call.
 
 ### 3. Discovered Debt / Opportunities
-- **Remaining closure duplication (low risk, works today):** the older admin routes
-  `revenue`, `submissions`, `users`, `territory`, `admin/health`, `admin/outreach`
-  still define local `isAdmin`/`requireAdmin` closures. They can adopt the shared
-  helper too — but `broadcast` must keep its GET open (only POST/DELETE gated), so
-  that one needs per-method care.
-- Carried forward: untested Redis libs (`tasks`, `tags`, `notifications`, `smartlists`,
-  `merge`, `sequenceConfig`) need local-redis test isolation; orphaned `Pipeline.tsx`;
-  no root `.gitattributes` (CRLF churn on every commit); `demos/route.ts:20` unused-var
-  warning.
+- The CRM has solid pure-function test coverage (parser, validator, hashing) but the
+  Redis-backed libs remain integration-untested — the next high-value frontier.
+- Carried forward: local-redis test isolation needed before integration tests; the
+  older admin routes (`revenue`/`submissions`/`users`/`territory`/`admin/health`/
+  `admin/outreach`, and `broadcast` per-method) still use local admin closures rather
+  than the shared `requireAdmin`.
 
 ### 4. The Next Epoch Roadmap
-1. **Quick-win cleanup (tight, safe):** remove the orphaned `Pipeline.tsx` (confirm no
-   importers — DealsBoard replaced it), add a root `.gitattributes` (`* text=auto
-   eol=lf`) to end CRLF warnings, and clear the `demos/route.ts:20` unused-var warning
-   (prefix with `_`).
-2. **Local-redis test isolation:** add a reset/temp-file hook so the file-backed store
-   can be exercised in vitest without polluting `.local-db.json`.
-3. **Integration-test `tasks.ts` + `tags.ts`** CRUD round-trips against the isolated store.
+1. **Local-redis test isolation:** add a way to point the file-backed store at a temp
+   file (e.g. an env override read in `localRedis.ts`) or a `__reset()` so vitest can
+   exercise it without polluting `.local-db.json`. Foundation for items 2–3.
+2. **Integration-test `tasks.ts`** CRUD round-trips (create → list → update done/
+   snooze → delete) against the isolated store.
+3. **Integration-test `tags.ts`** (create/list/delete defs + add/remove/getLeadTags +
+   getAllLeadTagMap).
 4. **Integration-test `merge.ts`** key re-pointing (survivor keeps data, loser keys
    gone, no-op on equal ids) — riskiest untested module.
-5. **Finish authz consolidation:** migrate the remaining older admin routes to
-   `requireAdmin` (per-method care for `broadcast`'s open GET).
+5. **Finish authz consolidation:** migrate the remaining older admin routes to the
+   shared `requireAdmin` (per-method care for `broadcast`'s intentionally-open GET).
 
 ---
 
+## Epoch 3 — 2026-06-20
+- Consolidated `automation`/`merge`/`sequences` authorization onto the shared
+  `requireAdmin` (`lib/api.ts`); removed 3 duplicated local closures. Audit confirmed
+  no missing admin guards (`broadcast`/`leaderboard` GET intentionally rep-facing).
+
 ## Epoch 2 — 2026-06-20
-- Extracted the automation-rules validator from `automation/route.ts` into a pure
-  exported `validateRules()` in `lib/crm/automation.ts` (route imports it); removed
-  inline `sanitizeRules`/`ACTION_KINDS`.
-- Added `lib/crm/automation.test.ts` (9 cases) for the admin-rules trust boundary.
-  168 → 177 tests.
+- Extracted `validateRules()` (pure) from `automation/route.ts` to `lib/crm/
+  automation.ts`; added `automation.test.ts` (9 cases). 168 → 177.
 
 ## Epoch 1 — 2026-06-20
-- Added reusable `requireAdmin(req)` to `lib/api.ts`; enforced on the previously
-  unguarded `admin/funnel` + `admin/template-stats` GETs.
-- Added `leads/route.test.ts` (8 cases) for the `parseCSVLine` parser. 160 → 168.
-- Architecture note: `/api/crm/*` is session-gated by `src/middleware.ts` (injects
-  `x-user-id`/`x-user-role`/`x-user-name`); the admin redirect only guards the
-  `/crm/admin` *page* path, so admin-only API routes must self-enforce.
+- Added `requireAdmin(req)` to `lib/api.ts`; enforced on `admin/funnel` +
+  `admin/template-stats`. Added `leads/route.test.ts` (8 cases) for `parseCSVLine`.
+  160 → 168. Architecture note: `/api/crm/*` is session-gated by `src/middleware.ts`
+  (`x-user-id`/`x-user-role`/`x-user-name`); admin-only API routes must self-enforce.
