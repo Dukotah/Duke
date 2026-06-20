@@ -21,13 +21,13 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <>
+    <div className="theme-dark">
       <Nav />
       <main className="pt-16">
         <About />
         <Contact />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

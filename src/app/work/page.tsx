@@ -136,7 +136,7 @@ export default function Work() {
             className="pointer-events-none absolute inset-0 opacity-70"
             style={{
               background:
-                "radial-gradient(60% 50% at 15% 0%, rgba(192,122,62,0.16), transparent 60%), radial-gradient(50% 45% at 90% 10%, rgba(219,147,85,0.10), transparent 60%)",
+                "radial-gradient(60% 50% at 15% 0%, rgba(198,138,90,0.16), transparent 60%), radial-gradient(50% 45% at 90% 10%, rgba(221,170,117,0.10), transparent 60%)",
             }}
           />
           <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
@@ -188,7 +188,7 @@ export default function Work() {
                     <div className="mb-4 flex items-center gap-3">
                       <div
                         className="flex h-10 w-10 items-center justify-center rounded-xl border border-copper-dim"
-                        style={{ backgroundColor: "rgba(192,122,62,0.12)" }}
+                        style={{ backgroundColor: "rgba(198,138,90,0.12)" }}
                       >
                         <p.icon size={20} className="text-copper-bright" />
                       </div>

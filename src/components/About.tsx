@@ -30,8 +30,18 @@ const cities = [
 
 export default function About() {
   return (
-    <section id="about" className="bg-ink-0 py-24">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="about" className="relative overflow-hidden bg-ink-1 py-24">
+      {/* Warm ambient depth — keeps the page from reading as a flat black void.
+          Rationed, low-alpha copper so it lifts the canvas without glare. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(55% 45% at 12% 0%, rgba(198,138,90,0.10), transparent 60%), radial-gradient(45% 40% at 100% 100%, rgba(221,170,117,0.05), transparent 60%)",
+        }}
+      />
+      <div className="relative max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 items-start">
           {/* Left: the founder story */}
           <RevealOnScroll as="div" direction="left" distance={20} duration={0.6}>
@@ -54,7 +64,7 @@ export default function About() {
                 otherwise a polished monogram so the section never looks unfinished.
                 To enable: set FOUNDER_HEADSHOT to e.g. "/team/duke-hutcheon.jpg" */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-copper-dim ring-offset-2 ring-offset-ink-0">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-copper-dim ring-offset-2 ring-offset-ink-1">
                 {FOUNDER_HEADSHOT ? (
                   <Image
                     src={FOUNDER_HEADSHOT}

@@ -118,7 +118,7 @@ export default function Testimonials() {
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            "radial-gradient(50rem 30rem at 15% 0%, rgba(192,122,62,0.10), transparent 60%), radial-gradient(45rem 30rem at 100% 100%, rgba(219,147,85,0.07), transparent 60%)",
+            "radial-gradient(50rem 30rem at 15% 0%, rgba(198,138,90,0.10), transparent 60%), radial-gradient(45rem 30rem at 100% 100%, rgba(221,170,117,0.07), transparent 60%)",
         }}
       />
 

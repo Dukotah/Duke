@@ -94,8 +94,8 @@ export default function SpotlightCard({
           inset: 0,
           borderRadius: radius,
           background: interactive
-            ? "radial-gradient(420px circle at var(--mx, 30%) var(--my, 30%), rgba(219,147,85,0.10), transparent 55%)"
-            : "radial-gradient(360px circle at 20% 20%, rgba(192,122,62,0.07), transparent 55%)",
+            ? "radial-gradient(420px circle at var(--mx, 30%) var(--my, 30%), rgba(221,170,117,0.10), transparent 55%)"
+            : "radial-gradient(360px circle at 20% 20%, rgba(198,138,90,0.07), transparent 55%)",
           pointerEvents: "none",
           zIndex: 0,
         }}

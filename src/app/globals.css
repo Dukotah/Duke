@@ -19,17 +19,21 @@
      above (other marketing pages depend on them); the homepage opts into dark
      via its own section wrappers + the .surface-* / .hairline helpers below. */
 
-  /* canvas / depth — opacity STACKING, never black shadows */
-  --bg-0: #0E0E11;   /* deepest canvas */
-  --bg-1: #131316;   /* base surface */
-  --bg-2: #17171B;   /* raised surface (cards) */
-  --bg-3: #1E1E22;   /* hover / active surface */
+  /* canvas / depth — opacity STACKING, never black shadows.
+     Warm espresso-black (R>=G>=B) rather than a cold blue-black, so the copper
+     reads as premium metallic instead of Halloween-orange-on-pure-black. */
+  --bg-0: #141210;   /* deepest canvas (warm near-black) */
+  --bg-1: #1C1915;   /* base surface */
+  --bg-2: #24201B;   /* raised surface (cards) */
+  --bg-3: #2E2922;   /* hover / active surface */
 
-  /* accent — RATIONED. CTAs, active states, borders, focus, count-up only. */
-  --copper: #C07A3E;          /* base */
-  --copper-bright: #DB9355;   /* hover / emphasis / count-up numbers */
-  --copper-dim: rgba(192, 122, 62, 0.30);
-  --copper-glow: rgba(219, 147, 85, 0.40);
+  /* accent — RATIONED. CTAs, active states, borders, focus, count-up only.
+     Refined bronze-copper: a touch less saturated + warmer than pumpkin orange,
+     so it reads antique-metal, not Halloween. */
+  --copper: #C68A5A;          /* base (was #C07A3E) */
+  --copper-bright: #DDAA75;   /* hover / emphasis / count-up numbers (was #DB9355) */
+  --copper-dim: rgba(198, 138, 90, 0.30);
+  --copper-glow: rgba(221, 170, 117, 0.40);
 
   /* text — warm off-white, never pure white */
   --text-warm: #F4F1EC;                          /* (name avoids clobbering the

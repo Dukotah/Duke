@@ -133,7 +133,7 @@ export default function ToolsTeaser() {
         <RevealOnScroll direction="up" className="mx-auto mb-12 max-w-2xl text-center">
           <span
             className="mb-6 inline-block rounded-full border border-copper-dim px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-copper-bright"
-            style={{ ...H, backgroundColor: "rgba(192,122,62,0.10)" }}
+            style={{ ...H, backgroundColor: "rgba(198,138,90,0.10)" }}
           >
             Free tools · No signup
           </span>
@@ -185,7 +185,7 @@ export default function ToolsTeaser() {
               className="group flex h-full flex-col justify-between rounded-3xl border border-hairline bg-ink-2 p-6 transition-colors hover:border-copper-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow"
             >
               <div>
-                <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-copper-dim text-copper-bright" style={{ backgroundColor: "rgba(192,122,62,0.12)" }}>
+                <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-copper-dim text-copper-bright" style={{ backgroundColor: "rgba(198,138,90,0.12)" }}>
                   <Calculator size={19} strokeWidth={2} aria-hidden />
                 </span>
                 <h3 className="mb-2 text-lg font-bold text-warm" style={H}>
@@ -221,7 +221,7 @@ export default function ToolsTeaser() {
                 onClick={() => track("tool_open", { tool: t.href, location: "home_bento" })}
                 className="group flex h-full flex-col rounded-3xl border border-hairline bg-ink-1 p-6 transition-colors hover:border-copper-dim hover:bg-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-glow sm:flex-row sm:items-center sm:gap-5"
               >
-                <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-copper-dim text-copper-bright sm:mb-0" style={{ backgroundColor: "rgba(192,122,62,0.12)" }}>
+                <span className="mb-4 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-copper-dim text-copper-bright sm:mb-0" style={{ backgroundColor: "rgba(198,138,90,0.12)" }}>
                   <t.icon size={19} strokeWidth={2} aria-hidden />
                 </span>
                 <div className="flex-1">
@@ -273,7 +273,7 @@ function AuditIntake({
     <div className="flex h-full flex-col justify-center">
       <span
         className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-copper-dim px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-copper-bright"
-        style={{ ...H, backgroundColor: "rgba(192,122,62,0.12)" }}
+        style={{ ...H, backgroundColor: "rgba(198,138,90,0.12)" }}
       >
         <Gauge size={13} strokeWidth={2.5} aria-hidden />
         Instant site audit
@@ -513,7 +513,7 @@ function EmailReport({ url, auditData }: { url: string; auditData: AuditData }) 
     return (
       <div
         className="mt-6 flex items-start gap-3 rounded-2xl border border-copper-dim px-4 py-3.5"
-        style={{ backgroundColor: "rgba(192,122,62,0.10)" }}
+        style={{ backgroundColor: "rgba(198,138,90,0.10)" }}
         role="status"
       >
         <Check size={18} className="mt-0.5 shrink-0 text-copper-bright" aria-hidden />
