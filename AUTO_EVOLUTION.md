@@ -6,57 +6,55 @@
 
 ---
 
-## Epoch 8 — 2026-06-20
+## Epoch 9 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 204 passed (18 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~12 commits ahead of `origin/main`, not pushed. Integration-test boilerplate is now
-shared; four Redis-backed libs (tasks, tags, merge, smartlists) are covered.
+Green. **vitest 212 passed (20 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~13 commits ahead of `origin/main`, not pushed. **Every Redis-backed CRM lib now has
+integration coverage** (tasks, tags, merge, smartlists, notifications, sequenceConfig)
++ a parity guard + a pure-logic validator/parser suite.
 
 ### 2. Completed in This Epoch
-- **Extracted `src/lib/crm/testRedis.ts`** — `setupIsolatedRedis(label)` registers the
-  beforeAll/beforeEach/afterAll that point LocalRedis at an isolated temp file + flush
-  between tests. Refactored the tasks/tags/merge suites onto it (removed the
-  triplicated temp-store boilerplate).
-- **Added `src/lib/crm/smartlists.test.ts`** (5 tests): private list owner-only
-  visibility, team lists visible to all, private-before-shared ordering, owned-delete,
-  and shared-list owner-only delete. 199 → 204.
-- **Lint gotcha fixed:** a `use`-prefixed helper (`useIsolatedRedis`) tripped
-  `react-hooks/rules-of-hooks` — renamed to `setupIsolatedRedis`. (Confirmed a
-  vitest-importing helper under `src/` does NOT break `next build`.)
+- **`src/lib/crm/notifications.test.ts`** (4): newest-first add with optional fields
+  omitted + unread default; the 100-entry cap (newest retained, oldest trimmed);
+  mark-one-read-by-id; mark-all-read via `__all__` with order preserved.
+- **`src/lib/crm/sequenceConfig.test.ts`** (4): default `SEQUENCE` when unset; persisted
+  override round-trip; fallback to default on an empty saved array; fallback on a
+  corrupt stored value. 204 → 212.
 
 ### 3. Discovered Debt / Opportunities
-- `notifications.ts` and `sequenceConfig.ts` remain the last untested Redis-backed
-  libs — both now one-liners with `setupIsolatedRedis`.
+- The lib test layer is now comprehensive; the remaining frontier shifts to the **route
+  layer** (handlers are largely untested) and finishing the authz cleanup.
 - Carried forward: older admin routes still on local admin closures (vs `requireAdmin`).
-- Naming convention note for future helpers: avoid the `use*` prefix outside React
-  hooks (the lint can't tell the difference).
 
 ### 4. The Next Epoch Roadmap
-1. **Integration-test `notifications.ts`** (add → list newest-first, ~100-entry cap,
-   markNotificationRead by id + mark-all).
-2. **Integration-test `sequenceConfig.ts`** (returns the default `SEQUENCE` when unset,
-   the persisted override after `saveSequenceConfig`).
-3. **Finish authz consolidation:** migrate remaining older admin routes (`revenue`,
-   `submissions`, `users`, `territory`, `admin/health`, `admin/outreach`) to shared
-   `requireAdmin`, with per-method care for `broadcast`'s intentionally-open GET.
-4. **Audit the `/api/crm/*` non-admin routes** for consistent 401 handling + input
-   validation (parseJsonBody usage) — spot-check for any unguarded mutating route.
-5. **Consider a CONTRIBUTING/testing note** documenting the `setupIsolatedRedis`
-   pattern so future lib tests follow it.
+1. **Finish authz consolidation:** migrate the older admin routes (`revenue`,
+   `submissions`, `users`, `territory`, `admin/health`, `admin/outreach`) to the shared
+   `requireAdmin`; for `broadcast`, swap only the POST/DELETE gate and leave GET open.
+   One route per edit, verify after each.
+2. **Audit `/api/crm/*` mutating routes** for consistent 401 + `parseJsonBody` usage;
+   fix any unguarded/over-trusting handler found.
+3. **Add a short testing note** (README or CONTRIBUTING) documenting the
+   `setupIsolatedRedis` pattern for future lib tests.
+4. **Spot-check the client components** for obvious a11y/perf nits the armada may have
+   left (e.g., remaining `<img>` vs `next/image`, missing aria-labels on icon buttons).
+5. **Re-plan:** with libs + authz solid, consider light route-handler tests (e.g. a
+   thin request → response harness) if value/effort holds up.
 
 ---
 
+## Epoch 8 — 2026-06-20
+- Extracted `setupIsolatedRedis` test helper (`testRedis.ts`); refactored tasks/tags/
+  merge onto it; added `smartlists.test.ts` (5). 199 → 204.
+
 ## Epoch 7 — 2026-06-20
-- `merge.test.ts` (9): normalizers, all guard branches, end-to-end merge + delete,
-  findDuplicates email grouping. 190 → 199.
+- `merge.test.ts` (9): normalizers, all guards, end-to-end merge + delete, dedup. 190 → 199.
 
 ## Epoch 6 — 2026-06-20
 - `tags.test.ts` (6) + `localRedis.test.ts` parity guard. 183 → 190.
 
 ## Epoch 5 — 2026-06-20
-- Fixed `LocalRedis` missing 5 commands; `__resetLocalRedis()` + `tasks.test.ts` (6).
-  177 → 183.
+- Fixed `LocalRedis` missing 5 commands; `__resetLocalRedis()` + `tasks.test.ts` (6). 177 → 183.
 
 ## Epoch 4 — 2026-06-20
 - Removed orphaned `Pipeline.tsx`; `.gitattributes`; dropped a wasted query in
