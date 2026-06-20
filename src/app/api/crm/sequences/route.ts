@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { parseJsonBody, handleApiError } from "@/lib/api";
+import { parseJsonBody, handleApiError, requireAdmin } from "@/lib/api";
 import { getSequenceConfig, saveSequenceConfig } from "@/lib/crm/sequenceConfig";
 import { SequenceStep } from "@/lib/crm/sequences";
 
 function getUserId(req: NextRequest): string | null {
   return req.headers.get("x-user-id");
-}
-
-function getUserRole(req: NextRequest): string | null {
-  return req.headers.get("x-user-role");
 }
 
 // GET /api/crm/sequences — returns current sequence steps (persisted override or default)
@@ -30,10 +26,8 @@ export async function POST(req: NextRequest) {
     const userId = getUserId(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const role = getUserRole(req);
-    if (role !== "admin") {
-      return NextResponse.json({ error: "Admin only" }, { status: 403 });
-    }
+    const denied = requireAdmin(req);
+    if (denied) return denied;
 
     const parsed = await parseJsonBody<{ steps?: SequenceStep[] }>(req);
     if (!parsed.ok) return parsed.response;
