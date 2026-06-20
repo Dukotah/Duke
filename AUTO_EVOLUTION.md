@@ -6,31 +6,32 @@
 
 ---
 
-## Epoch 14 — 2026-06-20
+## Epoch 15 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 228 passed (23 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~18 commits ahead of `origin/main`, not pushed. Hardening arc complete; now adding
-incremental route-handler breadth.
+Green. **vitest 233 passed (24 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~19 commits ahead of `origin/main`, not pushed. Route-handler coverage now spans a
+per-user route, an admin-gated route, a bulk-mutation route, and the claim/cross-rep flow.
 
 ### 2. Completed in This Epoch
-- **`api/crm/bulk/route.test.ts`** (5): 401 without auth; 400 on empty/non-array
-  `leadIds`; 400 on unknown action; 400 when `setStage` is missing `payload.stage`; and
-  the `setStage` success path mutating per-user lead state (count + `getLeadState`
-  reflects the new stage) with cross-user isolation. 223 → 228.
+- **`api/crm/claim/route.test.ts`** (5): 401 unauth; 400 missing leadId/action (POST) +
+  missing leadId (GET); claim then GET reflects it; the cross-rep guard (409) with admin
+  override; owner-only unclaim (403 for a non-owner). 228 → 233.
 
 ### 3. Discovered Debt / Opportunities
-- None of real risk. Remaining is optional handler-test breadth (`claim`, `state`,
-  `tasks`, `tags`). Each adds incremental confidence only.
+- None of real risk. Only `/api/crm/state` remains on the optional handler-test list.
 
 ### 4. The Next Epoch Roadmap
-> The CRM remains shippable; these are optional. A natural point to pause/deploy.
-1. **Handler test for `/api/crm/claim`** — claim then unclaim; verify the claim record
-   + cross-rep guard (a second rep can't steal an active claim).
-2. **Handler test for `/api/crm/state`** — the stage-change path runs automations
-   without throwing when no rules are configured; persists the patch per-user.
-3. **Then pause / hand off** — flag to the owner that hardening is done; branch ready to
-   review or deploy.
+> The CRM is shippable; remaining items are optional. Natural pause/deploy point.
+1. **Handler test for `/api/crm/state`** — persists a per-user patch; the stage-change
+   path runs automations without throwing when no rules are configured.
+2. **Then pause / hand off** — surface to the owner that hardening + handler coverage are
+   done and the branch is ready to review or deploy.
+
+---
+
+## Epoch 14 — 2026-06-20
+- `api/crm/bulk/route.test.ts` (5): auth/validation + setStage mutates per-user state. 223 → 228.
 
 ---
 
