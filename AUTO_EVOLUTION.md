@@ -6,65 +6,59 @@
 
 ---
 
-## Epoch 5 — 2026-06-20
+## Epoch 6 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 183 passed (14 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
-~9 commits ahead of `origin/main`, not pushed. The Redis-backed lib layer now has its
-first real integration coverage, and a latent local-dev correctness bug is fixed.
+Green. **vitest 190 passed (16 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~10 commits ahead of `origin/main`, not pushed. Two of the Redis-backed libs (tasks,
+tags) now have integration coverage, and a standing parity guard prevents the
+epoch-5 class of local-dev bug from recurring.
 
 ### 2. Completed in This Epoch
-- **Fixed a real local-dev bug — `LocalRedis` was missing 5 commands the app uses**:
-  `hget` (11 call sites), `hdel` (6), `rpush` (2), `zrem` (1), `exists` (1).
-  Implemented all five. Previously, any feature path hitting them silently threw in
-  local dev (no Upstash) while working in prod — notably `tasks.updateTask`/`deleteTask`
-  (hget/hdel), and likely tag/smart-list deletes. **The local sandbox's task edit/
-  delete was broken until this fix.**
-- **Added `__resetLocalRedis()`** test-isolation hook to `localRedis.ts` — drops the
-  cached singleton so tests can point the store at a temp file via `LOCAL_DB_FILE`
-  without polluting the dev `.local-db.json`.
-- **Added `src/lib/crm/tasks.test.ts`** (6 integration tests over an isolated store):
-  create+defaults+trim, per-user isolation, dueAt sort, update-preserves-fields
-  (exercises `hget`), no-op update on unknown id, targeted delete (exercises `hdel`).
-  177 → 183.
+- **`src/lib/crm/tags.test.ts`** (6 integration tests over an isolated temp store):
+  create+trim, per-user isolation, assign + resolve (`getLeadTags`/`getAllLeadTagMap`),
+  idempotent `addLeadTag`, `removeLeadTag` dropping the lead entry on last tag, and the
+  `deleteTag` cascade (removes the definition AND scrubs it from every lead's list).
+- **`src/lib/localRedis.test.ts` — parity guard.** Scans `src/**` for `redis.<m>(` and
+  `getRedis().<m>(` call sites and asserts every method exists on `LocalRedis`. Passes
+  now (validates epoch 5's fix) and fails fast if future code calls an unimplemented
+  command. 183 → 190.
 
 ### 3. Discovered Debt / Opportunities
-- Now that LocalRedis is complete, the remaining Redis-backed libs (`tags`,
-  `smartlists`, `notifications`, `merge`, `sequenceConfig`) can be integration-tested
-  the same way — and any that use `hget`/`hdel`/`zrem` were also silently broken in
-  local dev before this epoch (now unblocked).
-- Consider a tiny `LocalRedis` parity check: a test asserting every method the app
-  calls on `redis.*` exists on `LocalRedis`, to catch future drift automatically.
+- `merge.ts` remains the riskiest untested module (multi-namespace key re-pointing).
+- `smartlists.ts`, `notifications.ts`, `sequenceConfig.ts` still lack integration tests
+  (now straightforward with the established temp-store harness).
+- Parity guard caveat: aliased clients (`const r = getRedis(); r.x()`) aren't scanned —
+  acceptable, but worth a comment if an alias pattern appears later.
 - Carried forward: older admin routes still on local admin closures (vs `requireAdmin`).
 
 ### 4. The Next Epoch Roadmap
-1. **Integration-test `tags.ts`** (create/list/delete defs + add/remove/getLeadTags +
-   getAllLeadTagMap) against the isolated store — likely exercises hdel too.
-2. **Integration-test `merge.ts`** key re-pointing (survivor keeps data, loser keys
-   gone, no-op on equal ids) — riskiest untested module.
-3. **Add a LocalRedis-parity guard test:** grep-style assertion that the `redis.*`
-   methods used in `src/**` all exist on `LocalRedis`, preventing silent local-dev
-   breakage when new code uses an unimplemented command.
-4. **Integration-test `smartlists.ts` + `notifications.ts`** CRUD/cap behavior.
-5. **Finish authz consolidation:** migrate remaining older admin routes to the shared
+1. **Integration-test `merge.ts`** — survivor keeps state/activity/claims, loser keys
+   removed, no-op when survivorId === loserId, graceful when ids are unknown.
+2. **Integration-test `smartlists.ts`** (private vs shared scope, create/list/delete).
+3. **Integration-test `notifications.ts`** (add/list ordering + ~100 cap + markRead).
+4. **Finish authz consolidation:** migrate remaining older admin routes to shared
    `requireAdmin` (per-method care for `broadcast`'s open GET).
+5. **Extract a shared test helper** (`isolatedRedis()` setup/teardown) to de-duplicate
+   the temp-store boilerplate now repeated across tasks/tags tests.
 
 ---
 
+## Epoch 5 — 2026-06-20
+- Fixed `LocalRedis` missing 5 commands (`hget`/`hdel`/`rpush`/`zrem`/`exists`) that
+  silently threw in local dev; added `__resetLocalRedis()` + `tasks.test.ts` (6). 177 → 183.
+
 ## Epoch 4 — 2026-06-20
-- Removed orphaned `Pipeline.tsx`; added `.gitattributes` (`* text=auto eol=lf`);
-  dropped a wasted `getAllLeadStates()` call in `/api/crm/demos`. Lint went pristine.
+- Removed orphaned `Pipeline.tsx`; `.gitattributes`; dropped a wasted query in
+  `/api/crm/demos`. Lint pristine.
 
 ## Epoch 3 — 2026-06-20
-- Consolidated `automation`/`merge`/`sequences` authz onto shared `requireAdmin`;
-  audit confirmed no missing admin guards (`broadcast`/`leaderboard` GET rep-facing).
+- Consolidated `automation`/`merge`/`sequences` authz onto shared `requireAdmin`.
 
 ## Epoch 2 — 2026-06-20
-- Extracted pure `validateRules()` to `lib/crm/automation.ts` + `automation.test.ts`
-  (9 cases). 168 → 177.
+- Extracted pure `validateRules()` + `automation.test.ts` (9). 168 → 177.
 
 ## Epoch 1 — 2026-06-20
-- Added `requireAdmin(req)` to `lib/api.ts`; enforced on `admin/funnel` +
-  `admin/template-stats`. Added `leads/route.test.ts` (8 cases). 160 → 168.
-  Architecture: `/api/crm/*` session-gated by `src/middleware.ts`; admin-only API
-  routes must self-enforce.
+- `requireAdmin(req)` in `lib/api.ts`; guarded `admin/funnel` + `admin/template-stats`;
+  `leads/route.test.ts` (8). 160 → 168. `/api/crm/*` is session-gated by middleware;
+  admin-only API routes must self-enforce.
