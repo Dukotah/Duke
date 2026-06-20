@@ -148,6 +148,27 @@ export class LocalRedis {
     return next;
   }
 
+  async hget(key: string, field: string): Promise<unknown> {
+    const e = this.alive(key);
+    if (!e || e.t !== "h") return null;
+    return e.v[field] ?? null;
+  }
+
+  async hdel(key: string, ...fields: string[]): Promise<number> {
+    const e = this.alive(key);
+    if (!e || e.t !== "h") return 0;
+    let removed = 0;
+    for (const f of fields) {
+      if (f in e.v) {
+        delete e.v[f];
+        removed++;
+      }
+    }
+    this.data[key] = { t: "h", v: e.v };
+    this.save();
+    return removed;
+  }
+
   // ── sets ────────────────────────────────────────────────────────────────────────
   async sadd(key: string, ...members: unknown[]): Promise<number> {
     const e = this.alive(key);
@@ -194,6 +215,15 @@ export class LocalRedis {
     return l.length;
   }
 
+  async rpush(key: string, ...values: unknown[]): Promise<number> {
+    const e = this.alive(key);
+    const l = e && e.t === "l" ? e.v : [];
+    for (const v of values) l.push(v); // appended to the tail, Redis-style
+    this.data[key] = { t: "l", v: l };
+    this.save();
+    return l.length;
+  }
+
   async lrange(key: string, start: number, stop: number): Promise<unknown[]> {
     const e = this.alive(key);
     if (!e || e.t !== "l") return [];
@@ -228,6 +258,16 @@ export class LocalRedis {
     return added;
   }
 
+  async zrem(key: string, ...members: string[]): Promise<number> {
+    const e = this.alive(key);
+    if (!e || e.t !== "z") return 0;
+    const before = e.v.length;
+    e.v = e.v.filter((m) => !members.includes(m.member));
+    this.data[key] = { t: "z", v: e.v };
+    this.save();
+    return before - e.v.length;
+  }
+
   async zrange(
     key: string,
     start: number,
@@ -260,6 +300,12 @@ export class LocalRedis {
     return Object.keys(this.data).filter((k) => this.alive(k) !== undefined && re.test(k));
   }
 
+  async exists(...keys: string[]): Promise<number> {
+    let count = 0;
+    for (const key of keys) if (this.alive(key) !== undefined) count++;
+    return count;
+  }
+
   async expire(key: string, seconds: number): Promise<number> {
     if (this.alive(key) === undefined) return 0;
     this.expires[key] = Date.now() + seconds * 1000;
@@ -279,4 +325,13 @@ export function getLocalRedis(): LocalRedis {
   const file = process.env.LOCAL_DB_FILE?.trim() || path.join(process.cwd(), ".local-db.json");
   _local = new LocalRedis(file);
   return _local;
+}
+
+/**
+ * Test-only: drop the cached singleton so the next `getLocalRedis()` re-reads
+ * `LOCAL_DB_FILE`. Lets vitest point the store at an isolated temp file per
+ * suite instead of polluting the dev `.local-db.json`. Not used at runtime.
+ */
+export function __resetLocalRedis(): void {
+  _local = null;
 }
