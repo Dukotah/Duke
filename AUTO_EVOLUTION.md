@@ -6,52 +6,58 @@
 
 ---
 
-## Epoch 12 — 2026-06-20
+## Epoch 13 — 2026-06-20
 
 ### 1. Current Status
-Green. **vitest 217 passed (21 files) · tsc 0 · eslint 0 (0 warnings) · next build exit 0.**
-Branch ~16 commits ahead of `origin/main`, not pushed. The route layer now has its first
-handler-level tests, and the long-standing test gap (handlers untested) is broken open.
+Green. **vitest 223 passed (22 files) · tsc 0 · eslint 0 · next build exit 0.** Branch
+~17 commits ahead of `origin/main`, not pushed. **The major hardening arc is complete**
+— security gating, the LocalRedis bug fix, full Redis-lib coverage, authz unification,
+route-body safety, and now route-handler contract tests (per-user + admin gate), with a
+testing guide for contributors.
 
 ### 2. Completed in This Epoch
-- **a11y/perf spot-check:** found the `LeadPanel` `<img>` is already handled (scoped
-  `eslint-disable` + `alt` + `loading="lazy"`, added by the polish armada) and eslint is
-  fully clean — **no churn warranted**, so none made.
-- **First route-handler tests — `src/app/api/crm/custom-leads/route.test.ts`** (5): drives
-  the exported `GET`/`POST` with real `NextRequest` objects and asserts the contract —
-  401 without `x-user-id`, 400 on malformed body, 400 on blank name, 201 on create, and
-  GET per-user isolation. Confirms `NextRequest` constructs cleanly under vitest, so this
-  harness now generalizes to the rest of the route layer. 212 → 217.
+- **Admin route-handler tests — `api/crm/admin/outreach/route.test.ts`** (6): GET/POST
+  return `403` without `x-user-role: admin`; GET `200` for admin; POST `400` on a
+  malformed body (locks the epoch-11 hardening end-to-end), `400` on an invalid email,
+  `200` + normalized email on success, then verified the address appears in the
+  suppression list. This pins the `requireAdmin` contract at the handler level.
+- **`docs/TESTING.md`** — documents the three test layers, the `setupIsolatedRedis`
+  isolation helper (+ the `use*`-prefix lint caveat), the `NextRequest` route-handler
+  pattern, the LocalRedis parity guard, and the commit gates. 217 → 223.
 
 ### 3. Discovered Debt / Opportunities
-- Route-handler testing is now unblocked. Highest next value: assert the **`requireAdmin`
-  403 contract** at the handler level (one admin route) and the **outreach POST 400** fix
-  from epoch 11 (currently only covered transitively).
-- The codebase is in strong shape; remaining work is incremental test breadth + docs.
+- No high-value debt remains. The fast-armada risks have all been retired and the test
+  pyramid now spans pure logic → Redis libs → route handlers.
+- Remaining work is **optional breadth**: handler tests for other mutating routes
+  (`bulk`, `claim`, `state`, `tasks`, `tags`) — low risk, incremental confidence, but
+  diminishing returns.
 
 ### 4. The Next Epoch Roadmap
-1. **Route-handler test for the admin authz contract:** pick one admin route (e.g.
-   `admin/users` or `admin/broadcast`) and assert 403 without `x-user-role: admin`,
-   success with it — locking in the `requireAdmin` behavior end-to-end.
-2. **Route-handler test for `admin/outreach` POST** — 403 non-admin, 400 on malformed
-   body (the epoch-11 hardening), 200 on a valid email.
-3. **Add a short testing note** (README/CONTRIBUTING) documenting `setupIsolatedRedis`
-   and the NextRequest route-handler pattern for future contributors.
-4. **Re-assess:** with security, the LocalRedis bug, full lib coverage, authz unification,
-   route-body safety, and initial route-handler tests all done, weigh whether further
-   epochs add real value or it's time to pause the loop / consider deploy.
+> NOTE: the CRM is in strong, shippable shape. Further epochs add incremental test
+> breadth rather than addressing real risk — a natural point to pause the loop and/or
+> deploy. If continuing:
+1. **Handler test for `/api/crm/bulk`** — 401 unauth, validates `{leadIds, action}`,
+   applies a simple action (e.g. `setStage`) and reflects it in lead state.
+2. **Handler test for `/api/crm/claim`** — claim/unclaim flow + cross-rep claim guard.
+3. **Handler test for `/api/crm/state`** — the stage-change path that fires automations
+   (assert it doesn't throw with no rules configured).
+4. **Then pause / hand off** — surface to the owner that the hardening is done and the
+   branch is ready to review or deploy.
 
 ---
 
+## Epoch 12 — 2026-06-20
+- First route-handler tests (`custom-leads`): 401/400/201 + per-user isolation via real
+  NextRequest. 212 → 217.
+
 ## Epoch 11 — 2026-06-20
-- Audited route body handling; hardened `admin/outreach` POST (raw req.json → parseJsonBody
-  + try/handleApiError). 212 tests.
+- Hardened `admin/outreach` POST body parsing (raw req.json → parseJsonBody). 212 tests.
 
 ## Epoch 10 — 2026-06-20
-- Finished admin authz consolidation onto shared `requireAdmin` (7 routes). 212 tests.
+- Finished admin authz consolidation onto shared `requireAdmin` (7 routes).
 
 ## Epoch 9 — 2026-06-20
-- `notifications.test.ts` + `sequenceConfig.test.ts`. All Redis libs covered. 204 → 212.
+- `notifications` + `sequenceConfig` tests. All Redis libs covered. 204 → 212.
 
 ## Epoch 8 — 2026-06-20
 - `setupIsolatedRedis` helper + `smartlists.test.ts`. 199 → 204.
