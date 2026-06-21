@@ -47,16 +47,20 @@ export async function POST(req: NextRequest) {
 
   const rawBody = await req.text();
 
-  // If a secret is configured, enforce signature verification.
-  if (secret) {
-    const valid = verifyResendSignature(rawBody, {
-      id: req.headers.get("svix-id"),
-      timestamp: req.headers.get("svix-timestamp"),
-      signature: req.headers.get("svix-signature"),
-    }, secret);
-    if (!valid) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-    }
+  // Fail closed: this endpoint is exempt from session auth in middleware, so the
+  // Svix signature is the ONLY thing protecting it. Without a configured secret
+  // any unauthenticated POST could suppress addresses or inject fake engagement
+  // events — refuse to run until the secret is set (mirrors the GitHub webhook).
+  if (!secret) {
+    return NextResponse.json({ error: "Webhook secret not configured" }, { status: 500 });
+  }
+  const valid = verifyResendSignature(rawBody, {
+    id: req.headers.get("svix-id"),
+    timestamp: req.headers.get("svix-timestamp"),
+    signature: req.headers.get("svix-signature"),
+  }, secret);
+  if (!valid) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
   let event: ResendEvent;

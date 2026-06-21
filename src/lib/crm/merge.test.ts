@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getRedis } from "@/lib/redis";
-import { createCustomLead, getCustomLeads } from "@/lib/db";
+import { createCustomLead, getCustomLeads, getActivity } from "@/lib/db";
 import {
   normEmail, normPhone, normNameCity,
   findDuplicates, mergeLeads,
@@ -90,6 +90,92 @@ describe("mergeLeads end-to-end", () => {
     // Loser custom lead is gone from storage AND its owner's index.
     expect(await redis.hgetall(`custom_lead:${loser.id}`)).toBeNull();
     expect((await getCustomLeads(U)).some((l) => l.id === loser.id)).toBe(false);
+  });
+});
+
+describe("mergeLeads regression — repointActivity trims only once", () => {
+  it("keeps the survivor's own timeline when a custom loser has both key variants", async () => {
+    const redis = getRedis();
+    const loser = await createCustomLead(U, {
+      name: "Dup Co", email: "dup@x.com", phone: "7075559999",
+      contactName: "", website: "", city: "Sonoma", county: "Sonoma", niche: "x", notes: "",
+    });
+    const loserFeedId = `custom:${loser.id}`;
+    const survivorId = "csv-survivor-act";
+
+    // Survivor's OWN history — 30 entries (well under the 50 cap on its own).
+    for (let i = 0; i < 30; i++) {
+      await redis.lpush(`activity:${survivorId}`, JSON.stringify({ id: `surv-${i}`, note: `surv ${i}` }));
+    }
+    // Loser has entries under BOTH `custom:<id>` and `<id>` (12 + 12 = 24).
+    for (let i = 0; i < 12; i++) {
+      await redis.lpush(`activity:${loserFeedId}`, JSON.stringify({ id: `lc-${i}`, note: `loser custom ${i}` }));
+    }
+    for (let i = 0; i < 12; i++) {
+      await redis.lpush(`activity:${loser.id}`, JSON.stringify({ id: `lb-${i}`, note: `loser bare ${i}` }));
+    }
+
+    const res = await mergeLeads(survivorId, loserFeedId);
+    expect(res.ok).toBe(true);
+
+    // 30 + 24 = 54 entries, capped at 50 — but the survivor's own entries must
+    // survive. Before the fix the second ltrim dropped all 30 survivor entries.
+    const merged = await getActivity(survivorId);
+    expect(merged.length).toBe(50);
+    const ids = merged.map((e) => e.id);
+    expect(ids.some((id) => id.startsWith("surv-"))).toBe(true);
+  });
+});
+
+describe("mergeLeads regression — repointReplies keeps the FIRST loser reply", () => {
+  it("does not let a second loser key overwrite the reply just copied", async () => {
+    const redis = getRedis();
+    const loser = await createCustomLead(U, {
+      name: "Reply Co", email: "reply@x.com", phone: "7075558888",
+      contactName: "", website: "", city: "Sonoma", county: "Sonoma", niche: "x", notes: "",
+    });
+    const loserFeedId = `custom:${loser.id}`;
+    const survivorId = "csv-survivor-reply";
+
+    // Survivor has NO reply; loser has a reply under BOTH key variants.
+    await redis.hset("lead_replies", { [loserFeedId]: JSON.stringify({ leadId: loserFeedId, fromEmail: "reply@x.com", body: "FIRST" }) });
+    await redis.hset("lead_replies", { [loser.id]: JSON.stringify({ leadId: loser.id, fromEmail: "reply@x.com", body: "SECOND" }) });
+
+    const res = await mergeLeads(survivorId, loserFeedId);
+    expect(res.ok).toBe(true);
+
+    // The survivor inherits the FIRST reply found (custom:<id>), not the SECOND.
+    const survRaw = await redis.hget("lead_replies", survivorId);
+    const parsed = typeof survRaw === "string" ? JSON.parse(survRaw) : survRaw;
+    expect(parsed.body).toBe("FIRST");
+    // Both loser entries are cleaned up.
+    expect(await redis.hget("lead_replies", loserFeedId)).toBeNull();
+    expect(await redis.hget("lead_replies", loser.id)).toBeNull();
+  });
+});
+
+describe("mergeLeads regression — repointSubmissions preserves the original send-time score", () => {
+  it("re-keys the submission with its original zset score, not Date.now()", async () => {
+    const redis = getRedis();
+    const loser = await createCustomLead(U, {
+      name: "Sub Co", email: "sub@x.com", phone: "7075557777",
+      contactName: "", website: "", city: "Sonoma", county: "Sonoma", niche: "x", notes: "",
+    });
+    const loserFeedId = `custom:${loser.id}`;
+    const survivorId = "csv-survivor-sub";
+    const userId = "rep-9";
+    const ORIG_SCORE = 1000; // far from Date.now()
+
+    const subId = `${userId}:${loserFeedId}`;
+    await redis.hset(`submission:${subId}`, { id: subId, userId, leadId: loserFeedId, leadName: "Sub Co" });
+    await redis.zadd("submissions:index", { score: ORIG_SCORE, member: subId });
+
+    const res = await mergeLeads(survivorId, loserFeedId);
+    expect(res.ok).toBe(true);
+
+    const newId = `${userId}:${survivorId}`;
+    const score = await redis.zscore("submissions:index", newId);
+    expect(Number(score)).toBe(ORIG_SCORE);
   });
 });
 

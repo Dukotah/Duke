@@ -39,6 +39,27 @@ describe("smart lists store", () => {
     expect(ids).toEqual([b.id]);
   });
 
+  it("keeps newest-first order after deleting a private list (regression)", async () => {
+    // Created oldest→newest, so getSmartLists returns [c, b, a] (newest-first).
+    const a = await createSmartList(U, { name: "a", scope: "private", filters: {} });
+    const b = await createSmartList(U, { name: "b", scope: "private", filters: {} });
+    const c = await createSmartList(U, { name: "c", scope: "private", filters: {} });
+    expect((await getSmartLists(U)).map((x) => x.id)).toEqual([c.id, b.id, a.id]);
+
+    // Delete the middle one; the rewrite must preserve newest-first ordering.
+    await deleteSmartList(U, b.id);
+    expect((await getSmartLists(U)).map((x) => x.id)).toEqual([c.id, a.id]);
+  });
+
+  it("keeps newest-first order after deleting a shared team list (regression)", async () => {
+    const a = await createSmartList(U, { name: "ta", scope: "team", filters: {} });
+    const b = await createSmartList(U, { name: "tb", scope: "team", filters: {} });
+    const c = await createSmartList(U, { name: "tc", scope: "team", filters: {} });
+    await deleteSmartList(U, b.id);
+    const shared = (await getSmartLists("user-2")).map((x) => x.id);
+    expect(shared).toEqual([c.id, a.id]);
+  });
+
   it("only the owner can delete a shared team list", async () => {
     const team = await createSmartList(U, { name: "owned", scope: "team", filters: {} });
     await deleteSmartList("user-2", team.id); // non-owner → silent no-op

@@ -284,7 +284,10 @@ export async function addActivity(
 export async function getActivity(leadId: string): Promise<ActivityEntry[]> {
   const redis = getRedis();
   const items = await redis.lrange(`activity:${leadId}`, 0, -1);
-  return (items as string[]).map((s) => JSON.parse(s) as ActivityEntry);
+  // Upstash auto-deserializes JSON list items back to objects, so an element may
+  // already be parsed; JSON.parse on a non-string throws. Tolerate both shapes,
+  // matching getAllOutreachLog / findLeadByEmail / readList.
+  return (items as unknown[]).map((s) => (typeof s === "string" ? JSON.parse(s) : s) as ActivityEntry);
 }
 
 export async function deleteActivity(leadId: string): Promise<void> {
@@ -696,6 +699,10 @@ export async function claimLead(leadId: string, userId: string, repName: string)
   await redis.hset(`claim:${leadId}`, claim as unknown as Record<string, unknown>);
   await redis.expire(`claim:${leadId}`, 60 * 60 * 24 * 30); // 30 days
   await redis.sadd(`claimed_by_user:${userId}`, leadId);
+  // Mirror the 30-day TTL onto the reverse index so it can't outlive the claim
+  // hash and surface phantom claims via getClaimedLeadIds after expiry. A fresh
+  // claim for the same user simply resets the TTL.
+  await redis.expire(`claimed_by_user:${userId}`, 60 * 60 * 24 * 30);
   return claim;
 }
 
@@ -760,10 +767,22 @@ export async function getTerritory(userId: string): Promise<Territory | null> {
   const redis = getRedis();
   const raw = await redis.hgetall(`territory:${userId}`);
   if (!raw || !raw.userId) return null;
+  // Upstash auto-deserializes JSON hash values, so counties/niches may already be
+  // arrays; JSON.parse on an array coerces it to a CSV string and throws. Tolerate
+  // both the pre-parsed array (Upstash) and the JSON string (LocalRedis) shapes.
+  const parseArr = (v: unknown): string[] => {
+    if (Array.isArray(v)) return v as string[];
+    try {
+      const p = JSON.parse((v as string) ?? "[]");
+      return Array.isArray(p) ? (p as string[]) : [];
+    } catch {
+      return [];
+    }
+  };
   return {
     userId: raw.userId as string,
-    counties: JSON.parse((raw.counties as string) ?? "[]"),
-    niches: JSON.parse((raw.niches as string) ?? "[]"),
+    counties: parseArr(raw.counties),
+    niches: parseArr(raw.niches),
     updatedAt: raw.updatedAt as string,
   };
 }

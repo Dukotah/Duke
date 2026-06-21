@@ -80,8 +80,10 @@ export async function deleteSmartList(userId: string, id: string): Promise<void>
     // Found in private — rewrite
     await redis.del(privateKey(userId));
     if (newPriv.length > 0) {
-      // Re-push in reverse (oldest first) so LPUSH re-inverts to newest-first
-      for (let i = newPriv.length - 1; i >= 0; i--) {
+      // newPriv is already newest-first (it came from LRANGE 0 -1). RPUSH in that
+      // same order so the rewritten list keeps newest-at-head; iterating in
+      // reverse here would invert the order on every subsequent LRANGE.
+      for (let i = 0; i < newPriv.length; i++) {
         await redis.rpush(privateKey(userId), JSON.stringify(newPriv[i]));
       }
     }
@@ -97,7 +99,8 @@ export async function deleteSmartList(userId: string, id: string): Promise<void>
   const newShared = shared.filter((l) => l.id !== id);
   await redis.del(SHARED_KEY);
   if (newShared.length > 0) {
-    for (let i = newShared.length - 1; i >= 0; i--) {
+    // Keep newest-first order (see private-list rewrite above).
+    for (let i = 0; i < newShared.length; i++) {
       await redis.rpush(SHARED_KEY, JSON.stringify(newShared[i]));
     }
   }

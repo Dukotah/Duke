@@ -29,4 +29,15 @@ describe("sequence config", () => {
     await getRedis().set("sequence:config", "not-json{");
     expect(await getSequenceConfig()).toEqual(SEQUENCE);
   });
+
+  it("returns a pre-parsed array (Upstash auto-deserialization) instead of discarding it", async () => {
+    // Upstash's REST client auto-deserializes JSON, so redis.get() can hand back
+    // an already-parsed array. JSON.parse on that throws and used to silently drop
+    // the admin's saved override. Simulate by storing the array shape directly.
+    const custom = [...SEQUENCE, ...SEQUENCE];
+    await getRedis().set("sequence:config", custom as unknown as string);
+    const got = await getSequenceConfig();
+    expect(got).toHaveLength(SEQUENCE.length * 2);
+    expect(got).toEqual(custom);
+  });
 });

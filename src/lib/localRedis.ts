@@ -268,6 +268,13 @@ export class LocalRedis {
     return before - e.v.length;
   }
 
+  async zscore(key: string, member: string): Promise<number | null> {
+    const e = this.alive(key);
+    if (!e || e.t !== "z") return null;
+    const found = e.v.find((m) => m.member === member);
+    return found ? found.score : null;
+  }
+
   async zrange(
     key: string,
     start: number,
@@ -311,6 +318,15 @@ export class LocalRedis {
     this.expires[key] = Date.now() + seconds * 1000;
     this.save();
     return 1;
+  }
+
+  // Remaining TTL in milliseconds (-2 = no key, -1 = no expiry), mirroring Redis
+  // PTTL. Used by tests to assert a key carries an expiry.
+  async pttl(key: string): Promise<number> {
+    if (this.alive(key) === undefined) return -2;
+    const exp = this.expires[key];
+    if (exp === undefined) return -1;
+    return Math.max(exp - Date.now(), 0);
   }
 
   async ping(): Promise<string> {

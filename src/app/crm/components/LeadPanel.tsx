@@ -187,8 +187,15 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const prevNotes = useRef(state.notes ?? "");
   const H = { fontFamily: "var(--font-heading)" };
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- sync notes field when the selected lead changes
-  useEffect(() => { setNotes(state.notes ?? ""); prevNotes.current = state.notes ?? ""; }, [state.notes]);
+  useEffect(() => {
+    // Cancel any pending debounced save before swapping in the new lead's notes —
+    // otherwise a timer queued for the PREVIOUS lead fires after the switch and
+    // onUpdate() writes the old text onto the NOW-selected lead, corrupting it.
+    if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync notes field when the selected lead changes
+    setNotes(state.notes ?? "");
+    prevNotes.current = state.notes ?? "";
+  }, [state.notes]);
 
   // A rep can paste a personal scheduling link (shared per-browser via lib/booking);
   // read it client-side so it overrides the on-site booking page when present.

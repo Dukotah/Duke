@@ -978,20 +978,34 @@ function CRMWorkspace({ userId, userName, role }: { userId: string; userName: st
       call_back: "call_back",
       interested: "interested",
     };
+    // Map the outcome to a status the same way LeadPanel.logOutcome does, so a
+    // PowerDialer "not_interested" / "call_back" doesn't get flattened to
+    // "contacted" (which would leave dead leads in the active queue).
+    const status: LeadState["status"] =
+      outcome === "not_interested"
+        ? "not_interested"
+        : outcome === "interested" || outcome === "call_back"
+          ? "follow_up"
+          : "contacted";
     const patch: Partial<LeadState> = {
       stage: outcomeToStage[outcome] ?? "called",
-      status: outcome === "interested" ? "contacted" : "contacted",
+      status,
       lastOutcome: outcome,
       lastContacted: new Date().toISOString(),
     };
+    // Compute the new call count from the current snapshot ONCE so the optimistic
+    // update and the persisted value agree. Reading states[leadId] inside the
+    // fetch body would send a stale (closed-over) count on rapid back-to-back
+    // calls from the PowerDialer.
+    const newCount = (states[leadId]?.callCount ?? 0) + 1;
     setStates((prev) => {
       const cur = prev[leadId] ?? { status: "new", stage: "to_call", notes: "" };
-      return { ...prev, [leadId]: { ...cur, ...patch, callCount: (cur.callCount ?? 0) + 1 } };
+      return { ...prev, [leadId]: { ...cur, ...patch, callCount: newCount } };
     });
     await fetch("/api/crm/state", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ leadId, ...patch, callCount: ((states[leadId]?.callCount ?? 0) + 1) }),
+      body: JSON.stringify({ leadId, ...patch, callCount: newCount }),
     });
     // Mirror the durable, cross-rep action stamp (mirrors LeadPanel.logOutcome
     // and CallReminders.logDisposition). /api/crm/state is PER-USER only, so

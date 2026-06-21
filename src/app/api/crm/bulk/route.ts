@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setLeadState, stampLeadAction, claimLead } from "@/lib/db";
 import { getRedis } from "@/lib/redis";
-import { parseJsonBody, handleApiError } from "@/lib/api";
+import { parseJsonBody, handleApiError, requireAdmin } from "@/lib/api";
 import { SEQUENCE, personalizeSequence } from "@/lib/crm/sequences";
 
 function getUserId(req: NextRequest): string | null {
@@ -127,6 +127,11 @@ export async function POST(req: NextRequest) {
         })
       );
     } else if (action === "reassign") {
+      // Reassigning leads to an arbitrary user is an admin-only operation — a rep
+      // must not be able to claim/steal leads for themselves or others via bulk,
+      // bypassing the ownership/admin checks in the single-lead /api/crm/claim route.
+      const denied = requireAdmin(req);
+      if (denied) return denied;
       // payload: { toUserId: string, toRepName: string }
       const toUserId = (payload.toUserId as string | undefined)?.trim();
       const toRepName = (payload.toRepName as string | undefined)?.trim() ?? "Unknown";

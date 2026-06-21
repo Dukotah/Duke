@@ -13,6 +13,11 @@ export async function middleware(req: NextRequest) {
   // authenticated by its Svix signature inside the route handler, not by the
   // CRM session, so it has to bypass the auth gate like login/logout do.
   if (pathname.startsWith("/api/crm/email-events")) return NextResponse.next();
+  // Inbound reply webhook — also called server-to-server by the email provider
+  // with no session cookie. It enforces its own auth via CRM_INBOUND_SECRET
+  // (x-inbound-secret header / ?secret= query), so it must bypass the session
+  // gate or every inbound reply 401s before reaching the handler.
+  if (pathname.startsWith("/api/crm/inbound")) return NextResponse.next();
 
   const token = req.cookies.get("crm_session")?.value;
   const secret = getSessionSecret();

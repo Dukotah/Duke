@@ -242,13 +242,14 @@ async function repointActivity(survivorFeedId: string, loser: DuplicateLead, tou
   // Survivor timeline lives at activity:<survivorFeedId>. We import addActivity-
   // style raw writes via the redis client to preserve original timestamps/authors.
   const redis = getRedis();
+  const survKey = `activity:${survivorFeedId}`;
+  let pushedAny = false;
   for (const lk of loserKeys) {
     const entries = await getActivity(lk); // newest-first
     if (!entries.length) continue;
     // rpush in chronological (oldest-first) order so the survivor list keeps
     // newest-at-head ordering after we re-prepend below.
     const chrono = [...entries].reverse();
-    const survKey = `activity:${survivorFeedId}`;
     for (const e of chrono) {
       // lpush newest to head one at a time; since chrono is oldest-first, the
       // final head is the newest loser entry. This interleaves loser history
@@ -256,10 +257,14 @@ async function repointActivity(survivorFeedId: string, loser: DuplicateLead, tou
       // never drops a record.
       await redis.lpush(survKey, JSON.stringify(e));
     }
-    await redis.ltrim(survKey, 0, 49);
     await redis.del(`activity:${lk}`);
     touched.push(`activity ${lk} -> ${survKey} (${entries.length})`);
+    pushedAny = true;
   }
+  // Trim ONCE after all loser keys are merged. Trimming inside the loop would
+  // drop the survivor's own (now tail-end) entries on the second iteration when
+  // a custom loser has entries under BOTH key variants — silent timeline loss.
+  if (pushedAny) await redis.ltrim(survKey, 0, 49);
 }
 
 // Merge a global lead_actions record from loser into survivor. lead_actions is a
@@ -329,13 +334,17 @@ async function repointReplies(survivorFeedId: string, loser: DuplicateLead, touc
   const redis = getRedis();
   const KEY = "lead_replies";
   const loserKeys = loser.isCustom ? [`custom:${loser.rawId}`, loser.rawId] : [loser.id];
-  const survHas = (await redis.hget(KEY, survivorFeedId)) != null;
+  // Mutable: once we copy the FIRST loser reply onto the survivor, later loser
+  // keys must not overwrite it (a custom loser can have a reply under BOTH
+  // `custom:<id>` and `<id>`; keep the first one found, don't clobber it).
+  let survHas = (await redis.hget(KEY, survivorFeedId)) != null;
   for (const lk of loserKeys) {
     const raw = await redis.hget(KEY, lk);
     if (raw == null) continue;
     if (!survHas) {
       await redis.hset(KEY, { [survivorFeedId]: typeof raw === "string" ? raw : JSON.stringify(raw) });
       touched.push(`lead_replies ${lk} -> ${survivorFeedId}`);
+      survHas = true;
     }
     await redis.hdel(KEY, lk);
   }
@@ -429,7 +438,11 @@ async function repointSubmissions(survivorFeedId: string, loser: DuplicateLead, 
         const moved = { ...raw, id: newId, leadId: survivorFeedId };
         await redis.hset(`submission:${newId}`, moved as Record<string, unknown>);
         // preserve original score (send time) if present, else now
-        await redis.zadd("submissions:index", { score: Date.now(), member: newId });
+        const origScore = await redis.zscore("submissions:index", String(raw.id));
+        await redis.zadd("submissions:index", {
+          score: origScore != null ? Number(origScore) : Date.now(),
+          member: newId,
+        });
         touched.push(`submission ${raw.id} -> ${newId}`);
       }
       // drop the loser submission + its index entry

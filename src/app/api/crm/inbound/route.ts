@@ -9,9 +9,8 @@
 // and set OUTREACH_REPLY_TO to it so outbound sends route replies here.
 //
 // Auth: set CRM_INBOUND_SECRET and pass it as the `x-inbound-secret` header (or
-// `?secret=` query). If the env var is set we fail closed on a mismatch; if it's
-// unset we allow the request but log a warning (mirrors how email-events treats
-// an unconfigured secret as "allow + proceed").
+// `?secret=` query). We fail closed — a missing secret returns 500 and a
+// mismatch returns 401 — so the endpoint can never run unauthenticated.
 
 import { NextRequest, NextResponse } from "next/server";
 import { findLeadByEmail, recordInboundReply } from "@/lib/db";
@@ -24,12 +23,15 @@ export async function POST(req: NextRequest) {
     req.nextUrl.searchParams.get("secret") ??
     undefined;
 
-  if (secret) {
-    if (provided !== secret) {
-      return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
-    }
-  } else {
-    console.warn("[Inbound] CRM_INBOUND_SECRET is not set — accepting inbound reply without verification");
+  // Fail closed: middleware bypasses session auth for this webhook (the provider
+  // calls it server-to-server with no cookie), so the shared secret is the only
+  // gate. Without it, anyone who knows the URL could inject fake replies and
+  // respondedAt stamps onto leads — refuse to run until it's configured.
+  if (!secret) {
+    return NextResponse.json({ error: "CRM_INBOUND_SECRET not configured" }, { status: 500 });
+  }
+  if (provided !== secret) {
+    return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
   }
 
   let payload: InboundPayload;
