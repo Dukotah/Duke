@@ -55,10 +55,19 @@ interface Props {
   onClose: () => void;
   // Called after a successful send so the parent can refresh state/activity.
   onSent?: () => void;
+  // Email-sending profile of the signed-in rep. "restricted" locks editing to
+  // approved templates (the server renders from templateKey regardless). Default "full".
+  emailMode?: "full" | "restricted" | "off";
 }
 
-export default function EmailComposer({ lead, repName, onClose, onSent }: Props) {
-  const [templates] = useState<EmailTemplate[]>(() => loadTemplates());
+export default function EmailComposer({ lead, repName, onClose, onSent, emailMode = "full" }: Props) {
+  const restricted = emailMode === "restricted";
+  // Restricted reps only get the approved built-in templates (no free-form
+  // "custom" scratch, no rep-authored ones). Server enforces this too.
+  const [templates] = useState<EmailTemplate[]>(() =>
+    restricted
+      ? loadTemplates().filter((t) => t.key !== "custom" && !t.key.startsWith("custom_"))
+      : loadTemplates());
   const initialTemplate = pickInitialTemplate(templates, lead);
   // The editable fields hold the FINAL personalized text for this lead (tokens
   // already filled in), so what the rep sees is exactly what sends — one message,
@@ -129,6 +138,7 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
           subject,
           body,
           fromName,
+          templateKey,
         }),
       });
       const d = await res.json();
@@ -209,18 +219,22 @@ export default function EmailComposer({ lead, repName, onClose, onSent }: Props)
               {/* Subject */}
               <div>
                 <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Subject</label>
-                <input value={subject} onChange={(e) => setSubject(e.target.value)}
+                <input value={subject} onChange={(e) => setSubject(e.target.value)} readOnly={restricted}
                   placeholder="Subject"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50" style={H} />
+                  className={`w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 ${restricted ? "opacity-70 cursor-not-allowed" : ""}`} style={H} />
               </div>
 
               {/* Body — already personalized for this lead; this is what sends. */}
               <div>
                 <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Message</label>
-                <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={15}
+                <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={15} readOnly={restricted}
                   placeholder="Write your message…"
-                  className="w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50 leading-relaxed" style={H} />
-                <p className="text-xs text-white/25 mt-2" style={H}>Already filled in for {lead.name} — edit anything you like, then send. This is exactly what goes out.</p>
+                  className={`w-full px-4 py-3 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/50 leading-relaxed ${restricted ? "opacity-70 cursor-not-allowed" : ""}`} style={H} />
+                <p className="text-xs text-white/25 mt-2" style={H}>
+                  {restricted
+                    ? `Approved template, personalized for ${lead.name}. Pick a different template above to change it.`
+                    : `Already filled in for ${lead.name} — edit anything you like, then send. This is exactly what goes out.`}
+                </p>
               </div>
 
               {needsDemo && (

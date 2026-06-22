@@ -5,7 +5,7 @@ import {
   X, Phone, Mail, Globe, MapPin, ExternalLink, Copy, Check,
   StickyNote, Send, Star, Link, Flame, Zap,
   PhoneCall, PhoneMissed, PhoneOff, ThumbsUp, ThumbsDown,
-  CalendarClock, Activity, Lock, UserCheck, Info,
+  CalendarClock, Activity, Lock, UserCheck, UserPlus, Info,
   ChevronDown, ChevronRight, MessageSquare, Repeat,
   MailOpen, MousePointerClick, AlertTriangle,
 } from "lucide-react";
@@ -35,6 +35,8 @@ interface Lead {
   demoCategory?: string | null;
   claimByDate?: string | null;
   thumbnailUrl?: string | null;
+  assignedTo?: { userId: string; repName: string } | null;
+  doNotCall?: boolean; // phone is on the Do-Not-Call list (compliance)
 }
 
 interface LeadState {
@@ -155,8 +157,10 @@ function SubmitModal({ lead, state, onClose, onSubmitted }: {
   );
 }
 
-export default function LeadPanel({ lead, state, submission, repName, onClose, onUpdate, onSubmitted, inline = false }: {
+export default function LeadPanel({ lead, state, submission, repName, role = "rep", emailMode = "full", onClose, onUpdate, onSubmitted, inline = false }: {
   lead: Lead; state: LeadState; submission?: Submission; repName: string;
+  role?: "admin" | "rep";
+  emailMode?: "full" | "restricted" | "off";
   onClose: () => void; onUpdate: (patch: Partial<LeadState>) => void; onSubmitted: () => void;
   // inline = docked beside the list (desktop cockpit). Default = right slide-over overlay.
   inline?: boolean;
@@ -168,7 +172,20 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
   const [claim, setClaim] = useState<{ userId: string; repName: string } | null | undefined>(undefined);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [claimLoading, setClaimLoading] = useState(false);
+  // Admin-only durable assignment (who owns this lead).
+  const [assignedTo, setAssignedTo] = useState<{ userId: string; repName: string } | null>(lead.assignedTo ?? null);
+  const [reps, setReps] = useState<{ id: string; name: string }[]>([]);
+  const [assignLoading, setAssignLoading] = useState(false);
+  // Rep-to-rep handoff (reps only, on leads they own). `handoffReps` is the safe
+  // id+name list from /api/crm/reps; admins reuse the assign bar instead.
+  const [handoffReps, setHandoffReps] = useState<{ id: string; name: string }[]>([]);
+  const [handoffNote, setHandoffNote] = useState("");
+  const [handoffLoading, setHandoffLoading] = useState(false);
+  const [handoffDone, setHandoffDone] = useState(false);
   const [showFollowUp, setShowFollowUp] = useState(false);
+  // Do-Not-Call (compliance) — local mirror of the lead's DNC flag + in-flight state.
+  const [doNotCall, setDoNotCall] = useState<boolean>(!!lead.doNotCall);
+  const [dncLoading, setDncLoading] = useState(false);
   const [showScorePopover, setShowScorePopover] = useState(false);
   const [showScript, setShowScript] = useState(false);
   const [showObjections, setShowObjections] = useState(false);
@@ -218,6 +235,120 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fallback read of user id from cookie on mount
     if (match) setCurrentUserId(decodeURIComponent(match[1]));
   }, [lead.id]);
+
+  // Keep the assignment in sync when the selected lead changes; load the rep list
+  // once for the admin assign dropdown.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync owner + reset handoff UI when the selected lead changes
+    setAssignedTo(lead.assignedTo ?? null);
+    setHandoffDone(false);
+  }, [lead.id, lead.assignedTo]);
+
+  // Keep the Do-Not-Call flag in sync when the selected lead changes.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync DNC flag when the selected lead changes
+    setDoNotCall(!!lead.doNotCall);
+  }, [lead.id, lead.doNotCall]);
+
+  async function toggleDoNotCall() {
+    if (!lead.phone) return;
+    const next = !doNotCall;
+    setDncLoading(true);
+    setDoNotCall(next); // optimistic
+    try {
+      const res = await fetch("/api/crm/dnc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: lead.phone, action: next ? "add" : "remove" }),
+      });
+      if (!res.ok) {
+        setDoNotCall(!next); // roll back
+        const d = await res.json().catch(() => ({}));
+        alert(d.error ?? "Failed to update Do-Not-Call");
+      }
+    } catch {
+      setDoNotCall(!next);
+    } finally {
+      setDncLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (role !== "admin") return;
+    fetch("/api/crm/admin/users")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const list = Array.isArray(d) ? d : d?.users;
+        if (Array.isArray(list)) setReps(list.map((u: { id: string; name: string }) => ({ id: u.id, name: u.name })));
+      })
+      .catch(() => {});
+  }, [role]);
+
+  // Reps get a safe id+name list (no admin data) to hand a lead off to a
+  // teammate. Skipped for admins, who already have the assign bar.
+  useEffect(() => {
+    if (role === "admin") return;
+    fetch("/api/crm/reps")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (Array.isArray(d?.reps)) setHandoffReps(d.reps as { id: string; name: string }[]);
+      })
+      .catch(() => {});
+  }, [role]);
+
+  async function handleHandoff(toUserId: string) {
+    if (!toUserId) return;
+    setHandoffLoading(true);
+    try {
+      const res = await fetch("/api/crm/handoff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId: lead.id, toUserId, note: handoffNote.trim() || undefined }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) {
+        const rep = handoffReps.find((r) => r.id === toUserId);
+        setAssignedTo({ userId: toUserId, repName: d.assignment?.repName ?? rep?.name ?? "Rep" });
+        setHandoffNote("");
+        setHandoffDone(true);
+        setActivityKey((k) => k + 1);
+      } else {
+        alert(d.error ?? "Failed to hand off");
+      }
+    } catch { /* non-fatal */ }
+    finally { setHandoffLoading(false); }
+  }
+
+  async function handleAssign(userId: string) {
+    if (!userId) return;
+    setAssignLoading(true);
+    try {
+      const res = await fetch("/api/crm/admin/assign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "assign", userId, leadIds: [lead.id] }),
+      });
+      const d = await res.json();
+      if (res.ok) {
+        const rep = reps.find((r) => r.id === userId);
+        setAssignedTo({ userId, repName: d.repName ?? rep?.name ?? "Rep" });
+      }
+    } catch { /* non-fatal */ }
+    finally { setAssignLoading(false); }
+  }
+
+  async function handleUnassign() {
+    setAssignLoading(true);
+    try {
+      const res = await fetch("/api/crm/admin/assign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "unassign", leadIds: [lead.id] }),
+      });
+      if (res.ok) setAssignedTo(null);
+    } catch { /* non-fatal */ }
+    finally { setAssignLoading(false); }
+  }
 
   async function handleClaim() {
     setClaimLoading(true);
@@ -559,11 +690,26 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
 
   const callBlock = lead.phone ? (
     <div className="px-5 py-3 border-b border-white/[0.06]">
+      {doNotCall && (
+        <div className="mb-2 flex items-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold border border-red-400/30 bg-red-400/10 text-red-300" style={H}>
+          <PhoneOff size={13} className="shrink-0" />On the Do-Not-Call list — do not dial this business.
+        </div>
+      )}
       <a href={`tel:${lead.phone}`}
         className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold border border-white/15 bg-white/[0.04] text-white/80 hover:bg-white/[0.08] hover:text-white transition-all active:scale-95"
         style={H}>
         <Phone size={15} className="text-[#F97316]" />Call {lead.phone}
       </a>
+      <button onClick={toggleDoNotCall} disabled={dncLoading}
+        className={`mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-semibold border transition-all active:scale-95 disabled:opacity-50 ${
+          doNotCall
+            ? "border-white/15 bg-white/[0.04] text-white/60 hover:bg-white/[0.08] hover:text-white"
+            : "border-red-400/25 bg-red-400/5 text-red-300/90 hover:bg-red-400/10"
+        }`}
+        style={H}>
+        <PhoneOff size={13} className="shrink-0" />
+        {dncLoading ? "Saving…" : doNotCall ? "Remove from Do-Not-Call" : "Mark Do Not Call"}
+      </button>
       <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
         <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
           callTiming.status === "good" ? "text-green-400 bg-green-400/10 border-green-400/20" :
@@ -627,6 +773,45 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
     </div>
   );
 
+  // Rep-to-rep handoff — only for reps on a lead they currently own. Admins use
+  // the assign bar at the top instead. Moves ownership and drops a context note
+  // on the timeline so the receiving rep is up to speed.
+  const ownsLead = !!assignedTo && !!currentUserId && assignedTo.userId === currentUserId;
+  const handoffBlock = role !== "admin" && ownsLead ? (
+    <div className="px-5 py-4 border-b border-white/[0.06]">
+      <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3 flex items-center gap-1.5" style={H}>
+        <UserPlus size={11} />Hand off to…
+      </p>
+      {handoffDone ? (
+        <p className="text-xs text-green-400 flex items-center gap-1.5" style={H}>
+          <Check size={13} />Handed off to {assignedTo?.repName}.
+        </p>
+      ) : (
+        <div className="space-y-2">
+          <textarea
+            value={handoffNote}
+            onChange={(e) => setHandoffNote(e.target.value)}
+            rows={2}
+            placeholder="Optional note for the rep taking over — context, where you left off…"
+            className="w-full bg-[#1C1C1F] border border-white/10 rounded-xl px-3 py-2 text-sm text-white/80 placeholder-white/20 resize-none focus:outline-none focus:border-[#F97316]/40 transition-colors"
+            style={H} />
+          <select
+            defaultValue=""
+            disabled={handoffLoading}
+            onChange={(e) => { const v = e.target.value; if (v) handleHandoff(v); e.target.value = ""; }}
+            className="w-full bg-[#1C1C1F] border border-white/10 rounded-lg px-2 py-2 text-xs text-white/80 focus:outline-none focus:border-[#F97316]/40 disabled:opacity-50"
+            style={H}>
+            <option value="" disabled>{handoffLoading ? "Handing off…" : "Choose a rep to hand off to…"}</option>
+            {handoffReps.filter((r) => r.id !== currentUserId).map((r) => (
+              <option key={r.id} value={r.id}>{r.name}</option>
+            ))}
+          </select>
+          <p className="text-[11px] text-white/25" style={H}>They become the owner and see your note on the timeline.</p>
+        </div>
+      )}
+    </div>
+  ) : null;
+
   return (
     <>
       {showSubmit && <SubmitModal lead={lead} state={state} onClose={() => setShowSubmit(false)} onSubmitted={handleSubmitted} />}
@@ -634,6 +819,7 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
         <EmailComposer
           lead={{ id: lead.id, name: lead.name, contactName: lead.contact_name, email: lead.email, city: lead.city, previewUrl: lead.previewUrl ?? undefined, claimByDate: lead.claimByDate ?? undefined, demoCategory: lead.demoCategory ?? undefined, website: lead.website, siteQuality: lead.site_quality, emailStatus: lead.email_status }}
           repName={repName}
+          emailMode={emailMode}
           onClose={() => setShowEmail(false)}
           onSent={handleEmailSent}
         />
@@ -664,6 +850,11 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                 {lead.grade && (
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${gradeCls(lead.grade)}`} style={H}>
                     Grade {lead.grade}{lead.lead_score != null ? ` · ${lead.lead_score}` : ""}
+                  </span>
+                )}
+                {doNotCall && (
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full border text-red-400 bg-red-400/10 border-red-400/20 flex items-center gap-1" style={H}>
+                    <PhoneOff size={9} />Do Not Call
                   </span>
                 )}
                 {state.callCount ? (
@@ -702,6 +893,38 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
             </div>
             <button onClick={onClose} className="p-2 rounded-lg text-white/30 hover:text-white hover:bg-white/5 transition-colors shrink-0"><X size={18} /></button>
           </div>
+
+          {/* Assignment bar (admin only) — exclusive, durable ownership. Decides which
+              rep sees this lead in their queue. Distinct from the soft self-claim below. */}
+          {role === "admin" && (
+            <div className="flex items-center gap-2 flex-wrap px-5 py-2.5 border-b border-white/[0.06] bg-white/[0.015] shrink-0">
+              <span className="text-xs font-semibold text-white/35 uppercase tracking-wider flex items-center gap-1.5" style={H}>
+                <UserCheck size={11} />Assigned
+              </span>
+              {assignedTo ? (
+                <span className="text-xs font-semibold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2 py-0.5 rounded-full" style={H}>{assignedTo.repName}</span>
+              ) : (
+                <span className="text-xs text-white/30" style={H}>Unassigned (in the open pool)</span>
+              )}
+              <div className="ml-auto flex items-center gap-2">
+                <select
+                  defaultValue=""
+                  disabled={assignLoading}
+                  onChange={(e) => { const v = e.target.value; if (v) handleAssign(v); e.target.value = ""; }}
+                  className="bg-[#1C1C1F] border border-white/10 rounded-lg px-2 py-1 text-xs text-white/80 focus:outline-none focus:border-[#F97316]/40 disabled:opacity-50"
+                  style={H}>
+                  <option value="" disabled>{assignedTo ? "Reassign to…" : "Assign to…"}</option>
+                  {reps.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </select>
+                {assignedTo && (
+                  <button onClick={handleUnassign} disabled={assignLoading}
+                    className="text-xs font-semibold text-white/50 hover:text-red-300 border border-white/10 hover:border-red-400/30 rounded-lg px-2 py-1 transition-colors disabled:opacity-50" style={H}>
+                    Unassign
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Pinned primary zone (inline cockpit only) — keeps Email/Call/Outcomes/
               Notes on-screen. Capped + internally scrollable as a last resort on
@@ -763,6 +986,9 @@ export default function LeadPanel({ lead, state, submission, repName, onClose, o
                 </div>
               )}
             </div>
+
+            {/* Hand off to another rep (reps, on leads they own) */}
+            {handoffBlock}
 
             {/* Quick outcome log */}
             {!inline && outcomeBlock}

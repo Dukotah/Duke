@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -49,3 +50,4 @@ next-env.d.ts
 
 # Lead-data CSVs are never committed (contain PII; app loads leads from a remote URL)
 public/*.csv
+.gstack/

@@ -5,7 +5,7 @@ import { Phone, Mail, Flame, Zap, ChevronRight, RefreshCw, Star, PhoneCall, Spar
 import DailyGoals from "./DailyGoals";
 import MetricsCards from "./MetricsCards";
 import FollowUpBanner from "./FollowUpBanner";
-import { RecencyBadges, type LeadAction } from "./RecencyBadges";
+import { deriveHeat, HeatPill, LeadStatusBlock, type LeadAction } from "./RecencyBadges";
 
 interface Lead {
   id: string; name: string; category: string; phone: string; email: string;
@@ -18,6 +18,7 @@ interface Lead {
   actions?: LeadAction | null;
   // Passed through to the inline email composer (all optional — sparse on legacy leads).
   contact_name?: string; email_status?: string; claimByDate?: string | null;
+  doNotCall?: boolean; // phone is on the Do-Not-Call list — excluded from the queue
 }
 
 interface LeadState {
@@ -113,6 +114,8 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
     if (pA !== pB) return pA - pB;
     return b.outreach_score - a.outreach_score;
   }).filter((l) => {
+    // Compliance: never surface a Do-Not-Call business in the call queue.
+    if (l.doNotCall) return false;
     const s = states[l.id];
     return !s || (s.stage !== "lost" && s.stage !== "won" && s.stage !== "submitted" && s.status !== "not_interested");
   });
@@ -169,6 +172,7 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
           {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
+              <HeatPill heat={deriveHeat(lead.actions, state, new Date(now).toISOString().slice(0, 10), { previewUrl: lead.previewUrl })} />
               <p className="font-bold text-white text-sm leading-tight truncate" style={H}>{lead.name}</p>
               {lead.source === "inbound"
                 ? <span className="shrink-0 inline-flex items-center gap-0.5 text-[10px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-full" style={H}><Sparkles size={9} />Inbound</span>
@@ -192,8 +196,8 @@ export default function CallQueue({ states, onSelectLead, onRefresh, onDialerSta
               {lastOutcome && <span className={`text-xs ${lastOutcome.color}`} style={H}>{lastOutcome.label}</span>}
               {isStale(state) && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full" style={H}>{getStaleDays(state)}d ago</span>}
             </div>
-            {/* Durable cross-rep recency badges — what's been done, by whom. */}
-            <RecencyBadges actions={lead.actions} state={state} today={new Date(now).toISOString().slice(0, 10)} previewUrl={lead.previewUrl} className="mt-1.5" />
+            {/* Heat + Next move: the one instruction (history shown inline above). */}
+            <LeadStatusBlock actions={lead.actions} state={state} today={new Date(now).toISOString().slice(0, 10)} previewUrl={lead.previewUrl} showMeta={false} className="mt-1.5" />
           </div>
 
           <ChevronRight size={16} className="text-white/20 group-hover:text-[#F97316]/60 transition-colors shrink-0" />

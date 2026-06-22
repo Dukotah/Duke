@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 import LeadPanel from "./components/LeadPanel";
 import AddLeadModal from "./components/AddLeadModal";
 import CallTimer from "./components/CallTimer";
-import { RecencyBadges, deriveTags, TAG_DEFS, type LeadAction, type TagKey } from "./components/RecencyBadges";
+import { deriveTags, deriveHeat, HeatPill, LeadStatusBlock, TAG_DEFS, type LeadAction, type TagKey } from "./components/RecencyBadges";
 
 // ─── Broadcast Banner ─────────────────────────────────────────────────────────
 
@@ -209,16 +209,6 @@ function ScoreBar({ score }: { score: number }) {
   );
 }
 
-function StatusBadge({ stage, status }: { stage?: string; status: string }) {
-  if (stage === "interested") return <span className="text-xs font-semibold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2 py-0.5 rounded-full" style={H}>Interested</span>;
-  if (stage === "submitted") return <span className="text-xs font-semibold text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-2 py-0.5 rounded-full" style={H}>Submitted</span>;
-  if (stage === "won" || status === "won") return <span className="text-xs font-semibold text-green-400 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded-full" style={H}>Won 🏆</span>;
-  if (status === "not_interested") return <span className="text-xs font-semibold text-zinc-500 bg-zinc-500/10 border border-zinc-500/20 px-2 py-0.5 rounded-full" style={H}>Pass</span>;
-  if (stage === "voicemail") return <span className="text-xs font-semibold text-blue-400 bg-blue-400/10 border border-blue-400/20 px-2 py-0.5 rounded-full" style={H}>Voicemail</span>;
-  if (stage === "called" || status === "contacted") return <span className="text-xs font-semibold text-zinc-400 bg-zinc-400/10 border border-zinc-400/20 px-2 py-0.5 rounded-full" style={H}>Called</span>;
-  return <span className="text-xs font-semibold text-blue-400/60 bg-blue-400/5 border border-blue-400/10 px-2 py-0.5 rounded-full" style={H}>New</span>;
-}
-
 function Select({ value, onChange, children, icon: Icon }: {
   value: string; onChange: (v: string) => void; children: React.ReactNode;
   icon?: React.ComponentType<{ size?: number; className?: string }>;
@@ -237,7 +227,7 @@ function Select({ value, onChange, children, icon: Icon }: {
 
 // ─── All Leads table view ─────────────────────────────────────────────────────
 
-function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string; selectedLeadId?: string | null }) {
+function AllLeads({ states, onSelectLead, userName, selectedLeadId, emailMode = "full" }: { states: Record<string, LeadState>; onSelectLead: (l: Lead) => void; userName: string; selectedLeadId?: string | null; emailMode?: "full" | "restricted" | "off" }) {
   const [data, setData] = useState<LeadsResponse | null>(null);
   const [showBulkOutreach, setShowBulkOutreach] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -293,7 +283,7 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
 
   return (
     <div className="space-y-3">
-      {showBulkOutreach && <BulkOutreach repName={userName} onClose={() => setShowBulkOutreach(false)} />}
+      {showBulkOutreach && emailMode === "full" && <BulkOutreach repName={userName} onClose={() => setShowBulkOutreach(false)} />}
       {/* Search */}
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -309,12 +299,14 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
           <Filter size={13} />
           {activeFilters > 0 && <span className="bg-[#F97316] text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">{activeFilters}</span>}
         </button>
-        <button onClick={() => setShowBulkOutreach(true)}
-          className="inline-flex items-center gap-1.5 px-3 rounded-xl text-sm bg-[#1C1C1F] text-white/50 border border-white/10 hover:text-white/80 hover:border-white/20 transition-all"
-          title="Bulk Email" style={H}>
-          <Mail size={13} />
-          <span className="hidden sm:inline">Bulk Email</span>
-        </button>
+        {emailMode === "full" && (
+          <button onClick={() => setShowBulkOutreach(true)}
+            className="inline-flex items-center gap-1.5 px-3 rounded-xl text-sm bg-[#1C1C1F] text-white/50 border border-white/10 hover:text-white/80 hover:border-white/20 transition-all"
+            title="Bulk Email" style={H}>
+            <Mail size={13} />
+            <span className="hidden sm:inline">Bulk Email</span>
+          </button>
+        )}
       </div>
 
       {showFilters && (
@@ -450,6 +442,7 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
         <div className="space-y-1.5">
           {visibleLeads.map((lead) => {
             const state = states[lead.id];
+            const heat = deriveHeat(lead.actions, state, todayISO, { previewUrl: lead.previewUrl });
             return (
               <div key={lead.id} onClick={() => onSelectLead(lead)} role="button" tabIndex={0}
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelectLead(lead); } }}
@@ -461,6 +454,7 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
+                    <HeatPill heat={heat} />
                     <p className="text-sm font-bold text-white truncate group-hover:text-[#F97316] transition-colors" style={H}>{lead.name}</p>
                     {lead.tier === "A" && <Flame size={11} className="text-orange-400 shrink-0" />}
                     {lead.tier === "B" && <Zap size={11} className="text-yellow-400 shrink-0" />}
@@ -472,13 +466,12 @@ function AllLeads({ states, onSelectLead, userName, selectedLeadId }: { states: 
                       }`} style={H}>{lead.grade}</span>
                     )}
                   </div>
-                  <p className="text-xs text-white/40 mt-0.5 capitalize" style={H}>{lead.city} · {lead.category.replace(/_/g, " ")}</p>
-                  <div className="flex items-center gap-3 mt-2">
-                    <ScoreBar score={lead.outreach_score} />
-                    {state && <StatusBadge stage={state.stage} status={state.status} />}
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p className="text-xs text-white/40 capitalize truncate" style={H}>{lead.city} · {lead.category.replace(/_/g, " ")}</p>
+                    <span className="ml-auto shrink-0"><ScoreBar score={lead.outreach_score} /></span>
                   </div>
-                  {/* Durable cross-rep recency badges — what's been done, by whom. */}
-                  <RecencyBadges actions={lead.actions} state={state} today={todayISO} previewUrl={lead.previewUrl} className="mt-2" />
+                  {/* Heat + Next move: one instruction + quiet history, replacing the badge pile. */}
+                  <LeadStatusBlock actions={lead.actions} state={state} today={todayISO} previewUrl={lead.previewUrl} className="mt-2" />
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   {lead.phone && <span className="text-xs text-white/35 hidden sm:flex items-center gap-1 tabular-nums" style={H}><Phone size={9} />{lead.phone}</span>}
@@ -555,6 +548,15 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
   // Desktop = dock the lead detail beside the list (cockpit). Mobile keeps the
   // slide-over overlay. Default false so SSR/first paint matches the mobile path.
   const [isDesktop, setIsDesktop] = useState(false);
+  // This rep's email-sending profile (drives whether the bulk composer shows and
+  // whether the single composer locks to approved templates). Default "full".
+  const [emailMode, setEmailMode] = useState<"full" | "restricted" | "off">(role === "admin" ? "full" : "restricted");
+
+  useEffect(() => {
+    fetch("/api/crm/me").then((r) => (r.ok ? r.json() : null)).then((d) => {
+      if (d?.emailMode) setEmailMode(d.emailMode);
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
@@ -699,6 +701,8 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
           state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
           submission={submissions.find((s) => s.leadId === selectedLead.id)}
           repName={userName}
+          role={role}
+          emailMode={emailMode}
           onClose={() => setSelectedLead(null)}
           onUpdate={(patch) => updateState(selectedLead.id, patch)}
           onSubmitted={refreshSubs} />
@@ -717,6 +721,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
             emailStatus: emailLead.email_status,
           }}
           repName={userName}
+          emailMode={emailMode}
           onClose={() => setEmailLead(null)}
           onSent={handleQueueEmailSent}
         />
@@ -881,7 +886,7 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
               />
             )}
             {view === "all" && (
-              <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} selectedLeadId={selectedLead?.id} />
+              <AllLeads states={states} onSelectLead={setSelectedLead} userName={userName} selectedLeadId={selectedLead?.id} emailMode={emailMode} />
             )}
             {view === "pipeline" && (
               <Pipeline leads={allLeads} states={states} submissions={submissions} onSelectLead={(l) => setSelectedLead(l as Lead)} />
@@ -897,6 +902,8 @@ export default function CRMDashboard({ userId, userName, role }: { userId: strin
                   state={states[selectedLead.id] ?? { status: "new", stage: "to_call", notes: "" }}
                   submission={submissions.find((s) => s.leadId === selectedLead.id)}
                   repName={userName}
+                  role={role}
+                  emailMode={emailMode}
                   onClose={() => setSelectedLead(null)}
                   onUpdate={(patch) => updateState(selectedLead.id, patch)}
                   onSubmitted={refreshSubs} />

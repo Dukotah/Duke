@@ -14,7 +14,7 @@ import { track } from "@/lib/analytics";
 // Second-line words reveal one at a time over a copper gradient-clip. Kept in
 // markup (real text), so the headline is still server-rendered for LCP and the
 // stagger is the only thing the client adds.
-const LINE_TWO = ["for", "life."];
+const LINE_TWO = ["Handled", "for", "life."];
 
 export default function Hero() {
   const reduce = useReducedMotion();
@@ -46,7 +46,7 @@ export default function Hero() {
             <span className="absolute inline-flex h-full w-full rounded-full bg-copper-bright opacity-60 motion-safe:animate-ping" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-copper-bright" />
           </span>
-          Websites, handled — for life
+          A website that brings you customers
         </RevealOnScroll>
 
         {/*
@@ -60,7 +60,7 @@ export default function Hero() {
           className="max-w-4xl text-balance text-[2.6rem] font-bold leading-[1.05] tracking-tight text-warm sm:text-6xl md:text-7xl"
           style={{ fontFamily: "var(--font-heading)" }}
         >
-          <span className="block">Websites, handled.</span>
+          <span className="block">More customers.</span>
           <span className="mt-1 block">
             {LINE_TWO.map((word, i) => (
               <motion.span
@@ -113,9 +113,9 @@ export default function Hero() {
           className="mt-8 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2 md:text-xl"
           style={{ fontFamily: "var(--font-body)" }}
         >
-          Your site, built once and looked after for good — design, hosting,
-          updates, security and support folded into one calm care plan. You run
-          your business; we handle the web.
+          We build you a site that gets found and gets the phone ringing — then
+          run the hosting, updates, security and improvements for good. You run
+          your business; we bring you the customers.
         </RevealOnScroll>
 
         {/* CTAs. The primary is reachable and clickable the instant it paints —

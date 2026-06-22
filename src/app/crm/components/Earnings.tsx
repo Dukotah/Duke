@@ -197,6 +197,85 @@ export default function Earnings({ states, repName }: Props) {
         </div>
       )}
 
+      {/* Payout Statement — accepted deals, line items */}
+      {accepted.length > 0 && (
+        <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5">
+          <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
+            <h2 className="text-sm font-bold text-white" style={H}>Payout Statement</h2>
+            <span className="text-xs text-white/30" style={H}>{accepted.length} accepted deal{accepted.length !== 1 ? "s" : ""}</span>
+          </div>
+          <p className="text-xs text-white/30 mb-4" style={H}>Commission on every deal Duke accepts. Pending = earned, not yet paid out.</p>
+
+          {/* Summary line: lifetime / pending / paid */}
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div>
+              <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider" style={H}>Lifetime Earned</p>
+              <p className="text-xl font-bold text-white tabular-nums" style={H}>${totalEarned.toFixed(2)}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-[#F97316]/80 uppercase tracking-wider" style={H}>Pending</p>
+              <p className="text-xl font-bold text-[#F97316] tabular-nums" style={H}>${pendingTotal.toFixed(2)}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-green-400/80 uppercase tracking-wider" style={H}>Paid</p>
+              <p className="text-xl font-bold text-green-400 tabular-nums" style={H}>${paidTotal.toFixed(2)}</p>
+            </div>
+          </div>
+
+          {/* Line items */}
+          <div className="space-y-1.5">
+            {/* Header row */}
+            <div className="hidden sm:grid grid-cols-12 gap-2 px-3 pb-1 text-[10px] font-semibold text-white/30 uppercase tracking-wider" style={H}>
+              <span className="col-span-4">Deal</span>
+              <span className="col-span-2 text-right">Deal Value</span>
+              <span className="col-span-3 text-right">Commission</span>
+              <span className="col-span-3 text-right">Status</span>
+            </div>
+            {[...accepted]
+              .sort((a, b) => new Date(b.resolvedAt ?? b.submittedAt).getTime() - new Date(a.resolvedAt ?? a.submittedAt).getTime())
+              .map((sub) => {
+                const dateStr = new Date(sub.resolvedAt ?? sub.submittedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+                return (
+                  <div key={sub.id} className="grid grid-cols-12 gap-2 items-center bg-white/[0.02] border border-white/[0.04] rounded-lg px-3 py-2.5">
+                    <div className="col-span-12 sm:col-span-4 min-w-0">
+                      <p className="text-sm font-semibold text-white truncate" style={H}>{sub.leadName}</p>
+                      <p className="text-[11px] text-white/30" style={H}>{sub.leadCity ? `${sub.leadCity} · ` : ""}{dateStr}</p>
+                    </div>
+                    <div className="col-span-4 sm:col-span-2 sm:text-right">
+                      <span className="sm:hidden text-[10px] text-white/30 mr-1" style={H}>Value:</span>
+                      <span className="text-sm text-white/70 tabular-nums" style={H}>{sub.dealValue != null ? `$${sub.dealValue.toLocaleString()}` : "—"}</span>
+                    </div>
+                    <div className="col-span-4 sm:col-span-3 sm:text-right">
+                      <span className="sm:hidden text-[10px] text-white/30 mr-1" style={H}>Comm:</span>
+                      <span className="text-sm font-bold text-white tabular-nums" style={H}>{sub.commissionAmount != null ? `$${sub.commissionAmount.toFixed(2)}` : "—"}</span>
+                    </div>
+                    <div className="col-span-4 sm:col-span-3 sm:text-right">
+                      {sub.commissionPaid ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-green-400 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded-full" style={H}>
+                          <Check size={11} /> Paid
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2 py-0.5 rounded-full" style={H}>
+                          <Clock size={11} /> Pending
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+
+          {/* Totals footer */}
+          <div className="grid grid-cols-12 gap-2 items-center mt-2 px-3 pt-2 border-t border-white/[0.06]">
+            <span className="col-span-6 sm:col-span-6 text-xs font-semibold text-white/40 uppercase tracking-wider" style={H}>Total Commission</span>
+            <span className="col-span-6 sm:col-span-3 text-right text-sm font-bold text-white tabular-nums" style={H}>${totalEarned.toFixed(2)}</span>
+            <span className="hidden sm:block sm:col-span-3 text-right text-[11px] text-white/30" style={H}>
+              ${paidTotal.toFixed(2)} paid · ${pendingTotal.toFixed(2)} pending
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Submissions history */}
       <div>
         <h2 className="text-sm font-bold text-white mb-3" style={H}>Your Submissions</h2>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday, stampLeadAction, getLeadPreviewObjects, previewKey } from "@/lib/db";
+import { addActivity, getLeadState, setLeadState, getSuppressedEmails, getEmailedToday, markEmailedToday, stampLeadAction, getLeadPreviewObjects, previewKey, recordEmailSend, getUserById, getLeadAssignment, getCustomLeads } from "@/lib/db";
+import { DEFAULT_TEMPLATES } from "@/app/crm/components/emailTemplates";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
 import { getSessionSecret } from "@/lib/session";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
@@ -20,6 +21,9 @@ interface OutreachBody {
   subject: string;
   body: string;
   fromName: string;
+  // Approved template key. Required for restricted accounts (the server renders
+  // from it and ignores any client-supplied subject/body); optional otherwise.
+  templateKey?: string;
   // When set, this is a test send: deliver/practice exactly as usual but skip
   // all persistence (tracking, lead state, activity) and don't consume the
   // daily sending budget — so a test never mutates CRM data or warm-up cap.
@@ -59,6 +63,27 @@ function buildFooter(unsubUrl: string): string {
     `\n${MAILING_ADDRESS}`;
 }
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Render the plain-text email as simple HTML that LOOKS identical to the text
+// version (same words, same line breaks, no styling chrome) — recipients can't
+// tell the difference. The one functional reason we send HTML at all: Resend's
+// click tracking only fires on real <a> anchors, so we autolink bare URLs (the
+// demo link, the unsubscribe link). Open tracking stays OFF, so no pixel is
+// added. `fullText` is the already-personalized body + footer.
+function textToHtml(fullText: string): string {
+  const escaped = escapeHtml(fullText);
+  // Autolink http(s) URLs; trailing sentence punctuation is left outside the link.
+  const linked = escaped.replace(
+    /(https?:\/\/[^\s<]+?)([.,;:!?)]*)(?=\s|$)/g,
+    (_m, url, trail) => `<a href="${url}" style="color:#2563eb">${url}</a>${trail}`,
+  );
+  const withBreaks = linked.replace(/\n/g, "<br>\n");
+  return `<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111">${withBreaks}</body></html>`;
+}
+
 // Today's sending status for the signed-in rep, so the UI can show the warm-up
 // ramp (how many of the daily cap are left) and whether sends go out live or
 // are track-only. Read-only — never mutates the counter.
@@ -69,11 +94,16 @@ export async function GET(req: NextRequest) {
   const redis = getRedis();
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const sentToday = parseInt((await redis.get(`outreach:${userId}:${today}`) as string | null) ?? "0", 10);
-  const dailyCap = dailyCapFor(today);
+  const sender = await getUserById(userId);
+  const emailMode = sender?.emailMode ?? "full";
+  const restrictedCap = emailMode === "restricted"
+    ? (parseInt(process.env.OUTREACH_RESTRICTED_DAILY_CAP ?? "15", 10) || 15)
+    : Infinity;
+  const dailyCap = Math.min(dailyCapFor(today), restrictedCap);
   const remaining = Math.max(0, dailyCap - sentToday);
   const live = canDeliverGate(process.env.RESEND_API_KEY, process.env.OUTREACH_DOMAIN_VERIFIED);
 
-  return NextResponse.json({ sentToday, dailyCap, remaining, live });
+  return NextResponse.json({ sentToday, dailyCap, remaining, live, emailMode });
 }
 
 export async function POST(req: NextRequest) {
@@ -90,25 +120,65 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { leads, subject, body: emailBody, fromName } = body;
+  const { leads, fromName } = body;
+  let subject = body.subject;
+  let emailBody = body.body;
   const isTest = body.test === true;
 
   if (!leads || !Array.isArray(leads) || leads.length === 0) {
     return NextResponse.json({ error: "leads array is required" }, { status: 400 });
   }
-  if (!subject || !emailBody || !fromName) {
-    return NextResponse.json({ error: "subject, body, and fromName are required" }, { status: 400 });
-  }
   if (leads.length > MAX_PER_REQUEST) {
     return NextResponse.json({ error: `Max ${MAX_PER_REQUEST} leads per request` }, { status: 400 });
+  }
+
+  // ── Email-mode enforcement (the real boundary — the UI is only a hint) ──────────
+  // A contractor's account can be "restricted" (templated, one lead at a time,
+  // own leads only, low cap) or "off" (phone only). This is enforced here so a
+  // stale client or a direct API call can't bypass it. Undefined = "full".
+  const sender = await getUserById(senderId);
+  const emailMode = sender?.emailMode ?? "full";
+  let restrictedCap = Infinity;
+  if (emailMode === "off") {
+    return NextResponse.json({ error: "Email sending is disabled for your account (phone only)." }, { status: 403 });
+  }
+  if (emailMode === "restricted") {
+    if (leads.length !== 1) {
+      return NextResponse.json({ error: "Your account sends to one lead at a time." }, { status: 403 });
+    }
+    const tmpl = DEFAULT_TEMPLATES.find((t) => t.key === body.templateKey && t.key !== "custom");
+    if (!tmpl) {
+      return NextResponse.json({ error: "Your account must send an approved template." }, { status: 403 });
+    }
+    // Server renders from the approved template — any client edits are ignored.
+    subject = tmpl.subject;
+    emailBody = tmpl.body;
+    // Ownership: restricted reps may only email a lead assigned to them (or one
+    // of their own custom/inbound leads).
+    const target = leads[0];
+    const asg = await getLeadAssignment(target.id);
+    let owns = asg?.userId === senderId;
+    if (!owns && target.id.startsWith("custom:")) {
+      const mine = await getCustomLeads(senderId);
+      owns = mine.some((cl) => `custom:${cl.id}` === target.id);
+    }
+    if (!owns) {
+      return NextResponse.json({ error: "You can only email leads assigned to you." }, { status: 403 });
+    }
+    restrictedCap = parseInt(process.env.OUTREACH_RESTRICTED_DAILY_CAP ?? "15", 10) || 15;
+  }
+
+  if (!subject || !emailBody || !fromName) {
+    return NextResponse.json({ error: "subject, body, and fromName are required" }, { status: 400 });
   }
 
   const redis = getRedis();
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const dailyKey = `outreach:${userId}:${today}`;
 
-  // Check daily limit (warm-up ramp aware)
-  const maxPerDay = dailyCapFor(today);
+  // Check daily limit (warm-up ramp aware). Restricted accounts get the lower of
+  // the warm-up cap and their own per-rep restricted cap.
+  const maxPerDay = Math.min(dailyCapFor(today), restrictedCap);
   const sentToday = parseInt((await redis.get(dailyKey) as string | null) ?? "0", 10);
 
   // Drop malformed addresses (they hard-bounce), anyone who unsubscribed (never
@@ -253,6 +323,7 @@ export async function POST(req: NextRequest) {
     }
 
     const unsubUrl = await unsubscribeUrl(lead.email, secret);
+    const fullText = personalizedBody + buildFooter(unsubUrl);
 
     try {
       const res = await fetch("https://api.resend.com/emails", {
@@ -266,7 +337,11 @@ export async function POST(req: NextRequest) {
           reply_to: REPLY_TO,
           to: [lead.email],
           subject: personalizedSubject,
-          text: personalizedBody + buildFooter(unsubUrl),
+          text: fullText,
+          // Multipart HTML twin of the text above — visually identical, but gives
+          // Resend real anchors to rewrite so click tracking works. (Open tracking
+          // is intentionally left OFF at the domain level, so no pixel is added.)
+          html: textToHtml(fullText),
           // RFC 8058 one-click unsubscribe — required by Gmail/Yahoo bulk
           // sender rules and a major signal against being marked as spam.
           headers: {
@@ -279,12 +354,20 @@ export async function POST(req: NextRequest) {
       if (res.ok) {
         sent++;
         delivered++;
+        // Resend returns the new email's id; remember which lead it maps to so the
+        // webhook can correlate clicks/bounces exactly by id (not by guessing from
+        // the recipient address against a capped log). Body read is best-effort.
+        let emailId: string | undefined;
+        try { emailId = ((await res.json()) as { id?: string })?.id; } catch { /* non-JSON body — skip id capture */ }
         // Close the loop: record on the lead's timeline and schedule a follow-up,
         // and claim the address in today's cross-rep dedup set so no one re-sends.
         // Failures here must not flip a successful send into a "failed".
         try {
           await track(lead, personalizedSubject, sentAt, true);
-          if (!isTest) await markEmailedToday(today, lead.email);
+          if (!isTest) {
+            await markEmailedToday(today, lead.email);
+            if (emailId) await recordEmailSend(emailId, { userId: senderId, leadId: lead.id, leadName: lead.name });
+          }
         } catch (logErr) {
           console.error(`[Outreach] Delivered to ${lead.email} but failed to log activity/follow-up:`, logErr);
         }

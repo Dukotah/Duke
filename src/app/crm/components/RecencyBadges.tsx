@@ -9,7 +9,7 @@
 import {
   Mail, Phone, Voicemail, Star, CalendarClock, XCircle, Trophy,
   Globe, PhoneOff, CircleDashed, MailOpen, MousePointerClick, AlertTriangle,
-  MessageSquareReply,
+  MessageSquareReply, ChevronRight,
 } from "lucide-react";
 
 const H = { fontFamily: "var(--font-heading)" };
@@ -276,6 +276,168 @@ export function RecencyBadges({
           style={H}>
           {who}
         </span>
+      )}
+    </div>
+  );
+}
+
+// ─── Heat: one glanceable temperature ───────────────────────────────────────────
+//
+// The badge pile above answers "what has happened?" (a history log). A caller
+// working a list needs two faster answers: "how hot is this?" and "what's my
+// next move?". `deriveHeat` collapses everything into a SINGLE primary status via
+// a strict priority cascade (first match wins), and `deriveNextAction` turns that
+// into one instruction. The pile/filters (deriveTags) stay intact for the
+// admin/detail views — this is an additive presentation layer.
+
+export type HeatLevel = "won" | "hot" | "warm" | "cold" | "new" | "pass";
+
+export interface Heat {
+  level: HeatLevel;
+  label: string;
+  emoji: string;
+  cls: string; // pill classes (color = temperature)
+}
+
+const HEAT_STYLES: Record<HeatLevel, { label: string; emoji: string; cls: string }> = {
+  won:  { label: "WON",  emoji: "✅", cls: "text-green-400 bg-green-400/10 border-green-400/30" },
+  hot:  { label: "HOT",  emoji: "🔥", cls: "text-[#F97316] bg-[#F97316]/15 border-[#F97316]/40" },
+  warm: { label: "WARM", emoji: "🟡", cls: "text-amber-300 bg-amber-400/10 border-amber-400/25" },
+  cold: { label: "COLD", emoji: "🔵", cls: "text-sky-300/80 bg-sky-400/[0.07] border-sky-400/20" },
+  new:  { label: "NEW",  emoji: "⚪", cls: "text-zinc-300 bg-white/[0.06] border-white/15" },
+  pass: { label: "PASS", emoji: "⚫", cls: "text-zinc-500 bg-zinc-500/10 border-zinc-500/20" },
+};
+
+// First match wins. Order encodes "hottest live signal beats older/cooler ones".
+export function deriveHeat(
+  actions: LeadAction | null | undefined,
+  state: LeadStateLike | null | undefined,
+  today: string,
+  _extra?: { previewUrl?: string | null }
+): Heat {
+  const a = actions ?? {};
+  const s = state ?? {};
+  const lastOutcome = (a.lastOutcome ?? s.lastOutcome ?? "").toLowerCase();
+  const status = (a.status ?? s.status ?? "").toLowerCase();
+  const stage = (s.stage ?? "").toLowerCase();
+  const called = !!a.calledAt || (a.callCount ?? s.callCount ?? 0) > 0;
+  const emailed = !!a.emailedAt || (s.lastContacted != null && (status === "contacted" || stage === "contacted"));
+  const fuDay = dayOf(a.followUpDate ?? s.followUpDate);
+  const terminal = status === "won" || status === "not_interested" || ["won", "lost", "submitted"].includes(stage);
+  const mk = (level: HeatLevel): Heat => ({ level, ...HEAT_STYLES[level] });
+
+  if (status === "won" || stage === "won" || lastOutcome === "won") return mk("won");
+  if (!!a.notInterestedAt || status === "not_interested" || lastOutcome === "not_interested") return mk("pass");
+  if (a.respondedAt) return mk("hot");
+  if (!!a.interestedAt || lastOutcome === "interested" || stage === "interested") return mk("hot");
+  if (a.clickedAt) return mk("hot");
+  if (fuDay && !terminal && fuDay <= today) return mk("warm");
+  if (a.openedAt) return mk("warm");
+  if (emailed || called) return mk("cold");
+  return mk("new");
+}
+
+// ─── Next action: the one instruction ───────────────────────────────────────────
+
+export interface NextAction { text: string; urgent: boolean }
+
+export function deriveNextAction(
+  actions: LeadAction | null | undefined,
+  state: LeadStateLike | null | undefined,
+  today: string,
+  extra?: { previewUrl?: string | null }
+): NextAction {
+  const a = actions ?? {};
+  const s = state ?? {};
+  const lastOutcome = (a.lastOutcome ?? s.lastOutcome ?? "").toLowerCase();
+  const status = (a.status ?? s.status ?? "").toLowerCase();
+  const stage = (s.stage ?? "").toLowerCase();
+  const hasDemo = !!extra?.previewUrl;
+  const called = !!a.calledAt || (a.callCount ?? s.callCount ?? 0) > 0;
+  const fuDay = dayOf(a.followUpDate ?? s.followUpDate);
+  const terminal = status === "won" || status === "not_interested" || ["won", "lost", "submitted"].includes(stage);
+
+  if (status === "won" || stage === "won" || lastOutcome === "won")
+    return { text: "Closed — won", urgent: false };
+  if (!!a.notInterestedAt || status === "not_interested" || lastOutcome === "not_interested")
+    return { text: "Passed — no action", urgent: false };
+  if (a.respondedAt)
+    return { text: `Read & reply${a.respondedAt ? ` — replied ${relTime(a.respondedAt)}` : ""}`, urgent: true };
+  if (!!a.interestedAt || lastOutcome === "interested" || stage === "interested")
+    return hasDemo
+      ? { text: "Send demo & close", urgent: true }
+      : { text: "Push to Duke — build demo", urgent: true };
+  if (a.clickedAt)
+    return { text: `Call back — clicked ${relTime(a.clickedAt)}`, urgent: true };
+  if (fuDay && !terminal && fuDay <= today)
+    return { text: "Follow up today", urgent: true };
+  if (a.openedAt)
+    return { text: "Call to follow up — opened", urgent: false };
+  if (lastOutcome === "voicemail" || stage === "voicemail")
+    return { text: "Try again — left voicemail", urgent: false };
+  if (lastOutcome === "no_answer")
+    return { text: "Try again — no answer", urgent: false };
+  if (called)
+    return { text: "Follow up", urgent: false };
+  if (a.emailedAt)
+    return { text: "Call to follow up — emailed", urgent: false };
+  return { text: "Call — never contacted", urgent: false };
+}
+
+// Compact, low-emphasis history string parts: demo · emailed 3d · called 1d · ⚠ bad email
+export function leadMetaParts(
+  actions: LeadAction | null | undefined,
+  _state: LeadStateLike | null | undefined,
+  extra?: { previewUrl?: string | null }
+): string[] {
+  const a = actions ?? {};
+  const parts: string[] = [];
+  if (extra?.previewUrl) parts.push("demo");
+  if (a.emailedAt) parts.push(`emailed ${relTime(a.emailedAt)}`);
+  if (a.clickedAt) parts.push(`clicked ${relTime(a.clickedAt)}`);
+  else if (a.openedAt) parts.push(`opened${a.openedCount && a.openedCount > 1 ? ` ${a.openedCount}×` : ""}`);
+  if (a.calledAt) parts.push(`called ${relTime(a.calledAt)}`);
+  if (a.bouncedAt) parts.push("⚠ bad email");
+  return parts;
+}
+
+// ─── Presentation: HeatPill + LeadStatusBlock (the "Heat + Next move" card) ──────
+
+export function HeatPill({ heat, className = "" }: { heat: Heat; className?: string }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold border leading-none tracking-wide shrink-0 ${heat.cls} ${className}`}
+      style={H}>
+      <span aria-hidden className="text-[9px] leading-none">{heat.emoji}</span>
+      {heat.label}
+    </span>
+  );
+}
+
+// The instruction line + a quiet meta line. Pair with <HeatPill> on the name row.
+export function LeadStatusBlock({
+  actions, state, today, previewUrl, showMeta = true, className = "",
+}: {
+  actions?: LeadAction | null;
+  state?: LeadStateLike | null;
+  today: string;
+  previewUrl?: string | null;
+  showMeta?: boolean;
+  className?: string;
+}) {
+  const next = deriveNextAction(actions, state, today, { previewUrl });
+  const meta = showMeta ? leadMetaParts(actions, state, { previewUrl }) : [];
+  const who = showMeta ? initials(actions?.lastTouchedName) : "";
+  const metaText = [meta.join(" · "), who].filter(Boolean).join(meta.length && who ? " · " : "");
+
+  return (
+    <div className={className}>
+      <p className={`flex items-center gap-1 text-xs font-semibold ${next.urgent ? "text-[#F97316]" : "text-white/70"}`} style={H}>
+        <ChevronRight size={11} className="shrink-0" />
+        <span className="truncate">Next: {next.text}</span>
+      </p>
+      {metaText && (
+        <p className="text-[11px] text-white/35 mt-0.5 truncate" style={H} title={metaText}>{metaText}</p>
       )}
     </div>
   );

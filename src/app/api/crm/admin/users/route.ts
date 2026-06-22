@@ -19,15 +19,16 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     if (!isAdmin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    const parsed = await parseJsonBody<{ name?: string; email?: string; password?: string; commissionRate?: string | number }>(req);
+    const parsed = await parseJsonBody<{ name?: string; email?: string; password?: string; commissionRate?: string | number; emailMode?: "full" | "restricted" | "off" }>(req);
     if (!parsed.ok) return parsed.response;
-    const { name, email, password, commissionRate } = parsed.data;
+    const { name, email, password, commissionRate, emailMode } = parsed.data;
     if (!name || !email || !password) return NextResponse.json({ error: "name, email, password required" }, { status: 400 });
 
     const user = await createUser({
       name, email, passwordHash: await hashPassword(password),
       role: "rep", commissionRate: parseFloat(String(commissionRate)) || 0.1,
       active: true,
+      emailMode: emailMode === "full" || emailMode === "off" ? emailMode : "restricted",
     });
     const { passwordHash: _, ...pub } = user;
     void _;
@@ -48,7 +49,15 @@ export async function PATCH(req: NextRequest) {
     const user = await getUserById(id);
     if (!user) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const update: Record<string, unknown> = { ...patch };
+    // Allowlist patchable fields (no blind mass-assignment of raw user fields like
+    // passwordHash/role/id) and validate enums.
+    const ALLOWED = new Set(["name", "email", "commissionRate", "active", "emailMode"]);
+    const update: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(patch)) {
+      if (!ALLOWED.has(k)) continue;
+      if (k === "emailMode" && !["full", "restricted", "off"].includes(String(v))) continue;
+      update[k] = v;
+    }
     if (password) update.passwordHash = await hashPassword(password);
     await updateUser(id, update);
     return NextResponse.json({ ok: true });

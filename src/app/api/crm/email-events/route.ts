@@ -9,7 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyResendSignature } from "@/lib/crm/webhook";
 import { getRedis } from "@/lib/redis";
-import { setLeadState, addActivity, suppressEmail, getLeadState, stampLeadAction } from "@/lib/db";
+import { setLeadState, addActivity, suppressEmail, getLeadState, stampLeadAction, getEmailSend } from "@/lib/db";
 
 type ResendEvent = {
   type: string;
@@ -72,8 +72,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: "no recipient" });
   }
 
-  // Find the lead this email belongs to.
-  const match = await findLeadByEmail(recipientEmail);
+  // Find the lead this email belongs to. Prefer the exact email_id→lead mapping
+  // we stored at send time (reliable no matter how many emails have gone out
+  // since); fall back to matching the recipient address in the recent outreach
+  // log for any older/untracked send.
+  const match =
+    (data?.email_id ? await getEmailSend(data.email_id) : null) ??
+    (await findLeadByEmail(recipientEmail));
 
   // Map Resend event types to CRM status.
   const statusMap: Record<string, string> = {

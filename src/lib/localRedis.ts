@@ -138,6 +138,24 @@ export class LocalRedis {
     return Object.keys(e.v).length ? { ...e.v } : null;
   }
 
+  async hget(key: string, field: string): Promise<unknown> {
+    const e = this.alive(key);
+    if (!e || e.t !== "h") return null;
+    return field in e.v ? e.v[field] : null;
+  }
+
+  async hdel(key: string, ...fields: string[]): Promise<number> {
+    const e = this.alive(key);
+    if (!e || e.t !== "h") return 0;
+    let removed = 0;
+    for (const f of fields) {
+      if (f in e.v) { delete e.v[f]; removed++; }
+    }
+    this.data[key] = { t: "h", v: e.v };
+    this.save();
+    return removed;
+  }
+
   async hincrby(key: string, field: string, by: number): Promise<number> {
     const e = this.alive(key);
     const h = e && e.t === "h" ? e.v : {};

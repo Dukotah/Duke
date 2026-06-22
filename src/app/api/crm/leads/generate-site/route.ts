@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
   const name = String(body.name ?? "").trim();
   if (!name) return NextResponse.json({ error: "Lead name is required" }, { status: 400 });
 
-  const scriptPath = path.join(factoryDir, "scripts", "generate-prospects.mjs");
+  const scriptPath = path.join(factoryDir, "scripts", "generate.mjs");
   try {
     await fs.access(scriptPath);
   } catch {
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
   const dataDir = path.join(factoryDir, "data");
   const manifestPath = path.join(dataDir, "outreach-links.json");
 
-  // Snapshot the batch manifest BEFORE running (generate-prospects overwrites it).
+  // Snapshot the batch manifest BEFORE running (generate.mjs overwrites it).
   const existing = await readManifest(manifestPath);
 
   // Write a 1-row CSV for just this lead.

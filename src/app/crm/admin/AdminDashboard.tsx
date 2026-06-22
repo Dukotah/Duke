@@ -14,6 +14,7 @@ import SuppressionTab from "./SuppressionTab";
 interface PublicUser {
   id: string; name: string; email: string; role: "admin" | "rep";
   commissionRate: number; active: boolean; createdAt: string;
+  emailMode?: "full" | "restricted" | "off";
 }
 
 interface RepStats {
@@ -55,7 +56,7 @@ interface Broadcast {
 // ─── Create Rep Modal ─────────────────────────────────────────────────────────
 
 function CreateRepModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
-  const [form, setForm] = useState({ name: "", email: "", password: "", commissionRate: "0.10" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", commissionRate: "0.10", emailMode: "restricted" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
@@ -105,6 +106,17 @@ function CreateRepModal({ onClose, onCreated }: { onClose: () => void; onCreated
               ))}
             </select>
           </div>
+          <div>
+            <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Email access</label>
+            <select value={form.emailMode} onChange={(e) => set("emailMode", e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white focus:outline-none focus:border-[#F97316]/50 transition-colors"
+              style={H}>
+              <option value="restricted">Restricted — approved templates, 1 lead at a time (recommended for contractors)</option>
+              <option value="off">Phone only — no email sending</option>
+              <option value="full">Full — compose & bulk send (trusted/internal)</option>
+            </select>
+            <p className="text-xs text-white/25 mt-1.5" style={H}>Protects the sending domain. You can change this later.</p>
+          </div>
           {error && <p className="text-sm text-red-400" style={H}>{error}</p>}
           <button type="submit" disabled={loading}
             className="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-all"
@@ -119,11 +131,46 @@ function CreateRepModal({ onClose, onCreated }: { onClose: () => void; onCreated
 
 // ─── Resolve submission modal ─────────────────────────────────────────────────
 
-function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: () => void; onResolved: () => void }) {
+interface CommissionTier { min: number; max?: number; rate: number }
+
+// Mirror of computeCommission in src/lib/db.ts: tiered rate when a band matches,
+// otherwise the rep's flat rate. Kept in sync for the live preview only — the
+// server recomputes authoritatively on accept.
+function previewCommission(
+  dealValue: number,
+  flatRate: number,
+  tiers: CommissionTier[] | null
+): { amount: number; rate: number; tiered: boolean } {
+  let tierRate: number | null = null;
+  if (tiers && tiers.length) {
+    for (const t of tiers) {
+      if (dealValue >= t.min && (t.max === undefined || dealValue < t.max)) { tierRate = t.rate; break; }
+    }
+  }
+  const rate = tierRate ?? flatRate;
+  return { amount: Math.round(dealValue * rate * 100) / 100, rate, tiered: tierRate !== null };
+}
+
+function ResolveModal({ sub, repRate, onClose, onResolved }: { sub: Submission; repRate: number; onClose: () => void; onResolved: () => void }) {
   const [action, setAction] = useState<"accept" | "reject">("accept");
   const [dealValue, setDealValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [tiers, setTiers] = useState<CommissionTier[] | null>(null);
   const H = { fontFamily: "var(--font-heading)" };
+
+  // Load the active commission tiers (if any) so the deal-value preview matches
+  // what the server will persist on accept. Falls back silently to the flat rate.
+  useEffect(() => {
+    fetch("/api/crm/admin/settings")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d) setTiers(d.commissionTiers ?? null); })
+      .catch(() => {});
+  }, []);
+
+  const dealNum = parseFloat(dealValue);
+  const preview = dealValue && Number.isFinite(dealNum) && dealNum > 0
+    ? previewCommission(dealNum, repRate, tiers)
+    : null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -182,7 +229,17 @@ function ResolveModal({ sub, onClose, onResolved }: { sub: Submission; onClose: 
                 placeholder="e.g. 2500" min="0" step="50"
                 className="w-full px-4 py-2.5 rounded-xl bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors"
                 style={H} />
-              {dealValue && <p className="text-xs text-green-400/70 mt-1" style={H}>Commission auto-calculated at rep&apos;s rate</p>}
+              {preview ? (
+                <p className="text-xs text-green-400/80 mt-1.5" style={H}>
+                  Commission: <span className="font-semibold">${preview.amount.toFixed(2)}</span>
+                  {" "}({(preview.rate * 100).toFixed(preview.rate * 100 % 1 === 0 ? 0 : 1)}%
+                  {preview.tiered ? " — tiered" : " — flat rate"})
+                </p>
+              ) : (
+                <p className="text-xs text-white/30 mt-1.5" style={H}>
+                  Enter a deal value to preview the commission{tiers && tiers.length ? " (tiered rates active)" : ""}.
+                </p>
+              )}
             </div>
           )}
           <button type="submit" disabled={loading}
@@ -327,6 +384,220 @@ function LeaderboardTab() {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Quotas & per-contractor P&L ──────────────────────────────────────────────
+// Set a per-rep quota (calls/week, deals/month) and see progress against it using
+// the existing leaderboard call/deal counts. The P&L is read-only: revenue from a
+// rep's accepted deals (sum of dealValue) minus commission paid out to them.
+
+interface QuotaData {
+  userId: string; callsPerWeek: number; dealsPerMonth: number; updatedAt: string;
+}
+
+function ProgressBar({ value, target, accent }: { value: number; target: number; accent: string }) {
+  const pct = target > 0 ? Math.min(100, Math.round((value / target) * 100)) : 0;
+  const met = target > 0 && value >= target;
+  return (
+    <div className="mt-1.5">
+      <div className="h-1.5 w-full rounded-full bg-white/[0.06] overflow-hidden">
+        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: met ? "#22c55e" : accent }} />
+      </div>
+    </div>
+  );
+}
+
+function QuotasPnLTab({ reps }: { reps: RepWithStats[] }) {
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [quotas, setQuotas] = useState<Record<string, QuotaData>>({});
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editCalls, setEditCalls] = useState("");
+  const [editDeals, setEditDeals] = useState("");
+  const [saving, setSaving] = useState(false);
+  const H = { fontFamily: "var(--font-heading)" };
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/crm/admin/leaderboard").then((r) => (r.ok ? r.json() : { leaderboard: [] })),
+      fetch("/api/crm/admin/quota").then((r) => (r.ok ? r.json() : { quotas: {} })),
+      fetch("/api/crm/admin/submissions").then((r) => (r.ok ? r.json() : { submissions: [] })),
+    ])
+      .then(([lb, q, s]) => {
+        setEntries(lb.leaderboard ?? []);
+        setQuotas(q.quotas ?? {});
+        setSubmissions(s.submissions ?? []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  function startEdit(rep: RepWithStats) {
+    setEditing(rep.id);
+    const q = quotas[rep.id];
+    setEditCalls(q ? String(q.callsPerWeek) : "");
+    setEditDeals(q ? String(q.dealsPerMonth) : "");
+  }
+
+  async function saveQuota(userId: string) {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/crm/admin/quota", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, callsPerWeek: Number(editCalls) || 0, dealsPerMonth: Number(editDeals) || 0 }),
+      });
+      if (res.ok) {
+        const d = await res.json();
+        setQuotas((prev) => ({ ...prev, [userId]: d.quota }));
+        setEditing(null);
+      }
+    } finally { setSaving(false); }
+  }
+
+  async function clearQuota(userId: string) {
+    await fetch("/api/crm/admin/quota", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+    setQuotas((prev) => { const n = { ...prev }; delete n[userId]; return n; });
+    setEditing(null);
+  }
+
+  // Per-contractor P&L from accepted deals: revenue (dealValue) minus commission.
+  function pnlFor(userId: string) {
+    const accepted = submissions.filter((s) => s.userId === userId && s.status === "accepted");
+    const revenue = accepted.reduce((sum, s) => sum + (s.dealValue ?? 0), 0);
+    const commission = accepted.reduce((sum, s) => sum + (s.commissionAmount ?? 0), 0);
+    return { deals: accepted.length, revenue, commission, net: revenue - commission };
+  }
+
+  if (loading) return (
+    <div className="flex items-center justify-center py-16">
+      <div className="w-6 h-6 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (reps.length === 0) return (
+    <div className="text-center py-16 text-white/25 text-sm" style={H}>No sales reps yet. Add reps to set quotas.</div>
+  );
+
+  // Roll-up totals across all contractors for the P&L header.
+  const totals = reps.reduce(
+    (acc, rep) => { const p = pnlFor(rep.id); acc.revenue += p.revenue; acc.commission += p.commission; acc.net += p.net; return acc; },
+    { revenue: 0, commission: 0, net: 0 }
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* P&L roll-up */}
+      <div className="grid grid-cols-3 gap-2.5">
+        {[
+          { label: "Accepted Revenue", val: `$${totals.revenue.toLocaleString()}`, color: "text-white" },
+          { label: "Commission Paid", val: `$${totals.commission.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, color: "text-amber-400" },
+          { label: "Net Margin", val: `$${totals.net.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, color: "text-green-400" },
+        ].map(({ label, val, color }) => (
+          <div key={label} className="crm-surface rounded-2xl px-4 py-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-white/40 mb-2" style={H}>{label}</p>
+            <p className={`text-2xl leading-none font-bold tabular-nums tracking-tight ${color}`} style={H}>{val}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Per-rep quota + P&L cards */}
+      <div className="space-y-2">
+        {reps.map((rep) => {
+          const lb = entries.find((e) => e.userId === rep.id);
+          const calls = lb?.callsThisMonth ?? 0;
+          const dealsThisMonth = lb?.acceptedThisMonth ?? 0;
+          const q = quotas[rep.id];
+          const pnl = pnlFor(rep.id);
+          const isEditing = editing === rep.id;
+          return (
+            <div key={rep.id} className="bg-[#1C1C1F] rounded-xl border border-white/[0.06] p-5">
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="min-w-0">
+                  <p className="font-bold text-white" style={H}>{rep.name}</p>
+                  <p className="text-xs text-white/40 mt-0.5" style={H}>{rep.email}</p>
+                </div>
+                <button onClick={() => isEditing ? setEditing(null) : startEdit(rep)}
+                  className="text-xs px-3 py-1.5 rounded-lg border border-white/10 text-white/40 hover:text-white/70 hover:border-white/20 transition-colors"
+                  style={H}>
+                  {isEditing ? "Cancel" : q ? "Edit Quota" : "Set Quota"}
+                </button>
+              </div>
+
+              {/* Progress vs quota */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                <div className="bg-[#111113] rounded-lg px-3 py-2.5">
+                  <div className="flex items-center justify-between text-xs" style={H}>
+                    <span className="text-white/40">Calls (this month)</span>
+                    <span className="text-white/80 font-semibold tabular-nums">{calls}{q?.callsPerWeek ? ` / ~${q.callsPerWeek * 4}` : ""}</span>
+                  </div>
+                  {q?.callsPerWeek ? <ProgressBar value={calls} target={q.callsPerWeek * 4} accent="#F97316" /> : <p className="text-xs text-white/25 mt-1" style={H}>No quota set</p>}
+                </div>
+                <div className="bg-[#111113] rounded-lg px-3 py-2.5">
+                  <div className="flex items-center justify-between text-xs" style={H}>
+                    <span className="text-white/40">Deals (this month)</span>
+                    <span className="text-white/80 font-semibold tabular-nums">{dealsThisMonth}{q?.dealsPerMonth ? ` / ${q.dealsPerMonth}` : ""}</span>
+                  </div>
+                  {q?.dealsPerMonth ? <ProgressBar value={dealsThisMonth} target={q.dealsPerMonth} accent="#3b82f6" /> : <p className="text-xs text-white/25 mt-1" style={H}>No quota set</p>}
+                </div>
+              </div>
+
+              {/* P&L */}
+              <div className="grid grid-cols-4 gap-2 mt-3">
+                {[
+                  { label: "Deals", val: String(pnl.deals) },
+                  { label: "Revenue", val: `$${pnl.revenue.toLocaleString()}` },
+                  { label: "Commission", val: `$${pnl.commission.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
+                  { label: "Net", val: `$${pnl.net.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
+                ].map(({ label, val }) => (
+                  <div key={label} className="bg-[#111113] rounded-lg px-3 py-2">
+                    <p className="text-xs text-white/30" style={H}>{label}</p>
+                    <p className={`text-sm font-bold mt-0.5 ${label === "Net" ? "text-green-400" : label === "Commission" ? "text-amber-400" : "text-white/80"}`} style={H}>{val}</p>
+                  </div>
+                ))}
+              </div>
+
+              {isEditing && (
+                <div className="mt-4 space-y-3 border-t border-white/[0.06] pt-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Calls / week</label>
+                      <input type="number" min="0" value={editCalls} onChange={(e) => setEditCalls(e.target.value)} placeholder="e.g. 100"
+                        className="w-full px-3 py-2 rounded-lg bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors" style={H} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Deals / month</label>
+                      <input type="number" min="0" value={editDeals} onChange={(e) => setEditDeals(e.target.value)} placeholder="e.g. 4"
+                        className="w-full px-3 py-2 rounded-lg bg-[#111113] border border-white/10 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F97316]/50 transition-colors" style={H} />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => saveQuota(rep.id)} disabled={saving}
+                      className="px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-40 transition-all hover:opacity-90"
+                      style={{ backgroundColor: "#F97316", ...H }}>
+                      {saving ? "Saving…" : "Save Quota"}
+                    </button>
+                    {q && (
+                      <button onClick={() => clearQuota(rep.id)}
+                        className="px-4 py-2 rounded-xl text-sm font-semibold text-red-400 bg-red-400/10 border border-red-400/20 hover:bg-red-400/15 transition-all"
+                        style={H}>
+                        Clear Quota
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -574,6 +845,145 @@ interface Territory {
 
 const ALL_COUNTIES = ["Sonoma", "Napa", "Marin", "Mendocino", "Lake", "Solano"];
 const COMMON_NICHES = ["restaurant", "salon", "retail", "auto_repair", "dental", "law_office", "real_estate", "contractor", "plumber", "electrician", "gym", "spa", "cafe", "bakery", "bar"];
+
+// ─── Bulk Assign Panel ────────────────────────────────────────────────────────
+// Hand a batch of UNASSIGNED leads to one or more reps without hand-picking ids:
+// pick reps, optionally narrow by county/niche, set a count, and Assign. With one
+// rep selected it's a direct bulk assign; with several it round-robins evenly.
+
+function BulkAssignPanel({ reps }: { reps: RepWithStats[] }) {
+  const H = { fontFamily: "var(--font-heading)" };
+  const activeReps = reps.filter((r) => r.active);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [county, setCounty] = useState("");
+  const [niche, setNiche] = useState("");
+  const [count, setCount] = useState("25");
+  const [assigning, setAssigning] = useState(false);
+  const [result, setResult] = useState<
+    { count: number; available: number; perRep: { userId: string; repName: string; count: number }[] } | null
+  >(null);
+  const [error, setError] = useState("");
+
+  function toggleRep(id: string) {
+    setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setResult(null);
+  }
+
+  async function assign() {
+    if (selected.length === 0) { setError("Pick at least one rep."); return; }
+    const n = parseInt(count, 10);
+    if (!Number.isFinite(n) || n < 1) { setError("Enter how many leads to assign."); return; }
+    setAssigning(true); setError(""); setResult(null);
+    try {
+      const roundRobin = selected.length > 1;
+      const res = await fetch("/api/crm/admin/bulk-assign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          strategy: roundRobin ? "round_robin" : "direct",
+          ...(roundRobin ? { userIds: selected } : { userId: selected[0] }),
+          county,
+          niche,
+          count: n,
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok) { setError(d.error ?? "Failed to assign"); return; }
+      setResult({ count: d.count ?? 0, available: d.available ?? 0, perRep: d.perRep ?? [] });
+    } catch {
+      setError("Network error — please retry.");
+    } finally {
+      setAssigning(false);
+    }
+  }
+
+  return (
+    <div className="bg-[#1C1C1F] border border-white/[0.06] rounded-2xl p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <Users size={14} className="text-[#F97316]" />
+        <h3 className="text-sm font-bold text-white" style={H}>Bulk Assign Leads</h3>
+      </div>
+      <p className="text-xs text-white/40 leading-relaxed" style={H}>
+        Pull the first N <span className="text-white/60">unassigned</span> leads matching the filter and hand them out.
+        Select one rep for a direct bulk assign, or several to round-robin evenly across them.
+      </p>
+
+      {activeReps.length === 0 ? (
+        <p className="text-xs text-white/30" style={H}>No active reps to assign to.</p>
+      ) : (
+        <>
+          {/* Reps */}
+          <div>
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2" style={H}>Reps (pick 2+ to round-robin)</p>
+            <div className="flex flex-wrap gap-2">
+              {activeReps.map((rep) => (
+                <button key={rep.id} type="button" onClick={() => toggleRep(rep.id)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${selected.includes(rep.id) ? "bg-[#F97316]/15 text-[#F97316] border-[#F97316]/30" : "bg-white/[0.04] text-white/50 border-white/10 hover:border-white/20"}`}
+                  style={H}>{rep.name}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Filters + count */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>County</label>
+              <select value={county} onChange={(e) => { setCounty(e.target.value); setResult(null); }}
+                className="w-full px-3 py-2 rounded-lg bg-[#111113] border border-white/10 text-xs text-white/80 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                style={H}>
+                <option value="">Any county</option>
+                {ALL_COUNTIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>Niche</label>
+              <select value={niche} onChange={(e) => { setNiche(e.target.value); setResult(null); }}
+                className="w-full px-3 py-2 rounded-lg bg-[#111113] border border-white/10 text-xs text-white/80 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                style={H}>
+                <option value="">Any niche</option>
+                {COMMON_NICHES.map((n) => <option key={n} value={n}>{n.replace(/_/g, " ")}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5" style={H}>How many</label>
+              <input type="number" min={1} max={500} value={count}
+                onChange={(e) => { setCount(e.target.value); setResult(null); }}
+                className="w-full px-3 py-2 rounded-lg bg-[#111113] border border-white/10 text-xs text-white/80 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                style={H} />
+            </div>
+          </div>
+
+          {error && <p className="text-xs text-red-400" style={H}>{error}</p>}
+
+          {result && (
+            <div className="rounded-xl border border-green-400/20 bg-green-400/10 px-4 py-3 space-y-1" style={H}>
+              <p className="text-sm font-bold text-white">
+                {result.count > 0
+                  ? `Assigned ${result.count} lead${result.count === 1 ? "" : "s"}.`
+                  : "No matching unassigned leads to assign."}
+              </p>
+              {result.perRep.length > 0 && (
+                <p className="text-xs text-white/60">
+                  {result.perRep.map((p) => `${p.repName}: ${p.count}`).join(" · ")}
+                </p>
+              )}
+              {result.available > result.count && (
+                <p className="text-xs text-white/40">{result.available} matching unassigned leads available in total.</p>
+              )}
+            </div>
+          )}
+
+          <button onClick={assign} disabled={assigning || selected.length === 0}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-40 transition-all hover:opacity-90"
+            style={{ backgroundColor: "#F97316", ...H }}>
+            <Users size={14} />
+            {assigning ? "Assigning…" : selected.length > 1 ? `Round-robin to ${selected.length} reps` : "Assign"}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
 
 function TerritoryTab({ reps }: { reps: RepWithStats[] }) {
   const [territories, setTerritories] = useState<Record<string, Territory>>({});
@@ -1036,6 +1446,17 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
     load();
   }
 
+  async function setEmailMode(id: string, emailMode: "full" | "restricted" | "off") {
+    // Optimistic update so the select reflects the new value immediately.
+    setReps((prev) => prev.map((r) => (r.id === id ? { ...r, emailMode } : r)));
+    await fetch("/api/crm/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, emailMode }),
+    });
+    load();
+  }
+
   async function handleLogout() {
     await fetch("/api/crm/logout", { method: "POST" });
     router.push("/crm/login");
@@ -1048,7 +1469,7 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
   return (
     <>
       {showCreate && <CreateRepModal onClose={() => setShowCreate(false)} onCreated={load} />}
-      {resolveSub && <ResolveModal sub={resolveSub} onClose={() => setResolveSub(null)} onResolved={load} />}
+      {resolveSub && <ResolveModal sub={resolveSub} repRate={reps.find((r) => r.id === resolveSub.userId)?.commissionRate ?? 0} onClose={() => setResolveSub(null)} onResolved={load} />}
 
       <div className="min-h-screen crm-backdrop text-white/80" style={H}>
         {/* Header */}
@@ -1232,7 +1653,12 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
           )}
 
           {/* Territories tab */}
-          {tab === "territories" && <TerritoryTab reps={reps} />}
+          {tab === "territories" && (
+            <div className="space-y-4">
+              <BulkAssignPanel reps={reps} />
+              <TerritoryTab reps={reps} />
+            </div>
+          )}
 
           {/* Reps tab */}
           {tab === "reps" && (
@@ -1286,6 +1712,17 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
                         ))}
                       </div>
 
+                      <div className="border-t border-white/[0.06] pt-3">
+                        <label className="block text-xs font-semibold text-white/30 uppercase tracking-wider mb-1.5" style={H}>Email access</label>
+                        <select value={rep.emailMode ?? "restricted"} onChange={(e) => setEmailMode(rep.id, e.target.value as "full" | "restricted" | "off")}
+                          className="w-full px-3 py-2 rounded-lg bg-[#111113] border border-white/10 text-xs text-white/80 focus:outline-none focus:border-[#F97316]/50 transition-colors"
+                          style={H}>
+                          <option value="restricted">Restricted — approved templates</option>
+                          <option value="off">Phone only — no email</option>
+                          <option value="full">Full — compose &amp; bulk</option>
+                        </select>
+                      </div>
+
                       {(rep.stats?.totalEarned ?? 0) > 0 && (
                         <div className="flex items-center justify-between text-xs border-t border-white/[0.06] pt-3" style={H}>
                           <span className="text-white/40">Total earned</span>
@@ -1306,7 +1743,16 @@ export default function AdminDashboard({ adminName }: { adminName: string }) {
 
           {tab === "setup" && <SetupTab />}
 
-          {tab === "leaderboard" && <LeaderboardTab />}
+          {tab === "leaderboard" && (
+            <div className="space-y-8">
+              <LeaderboardTab />
+              <div className="border-t border-white/[0.06] pt-6">
+                <h3 className="text-sm font-bold text-white mb-1" style={H}>Quotas &amp; Per-Contractor P&amp;L</h3>
+                <p className="text-xs text-white/40 mb-4" style={H}>Set per-rep targets and track revenue minus commission on accepted deals.</p>
+                <QuotasPnLTab reps={reps} />
+              </div>
+            </div>
+          )}
 
           {/* Revenue tab */}
           {tab === "revenue" && <RevenueTab />}

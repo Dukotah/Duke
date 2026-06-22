@@ -41,6 +41,11 @@ export interface User {
   commissionRate: number; // e.g. 0.10 = 10%
   createdAt: string;
   active: boolean;
+  // Email-sending profile. Undefined is treated as "full" (legacy/admin).
+  //   full       — compose & send freely (default for the owner/admin)
+  //   restricted — templated, one lead at a time, daily-capped, own leads only
+  //   off        — phone only; cannot send any outreach email
+  emailMode?: "full" | "restricted" | "off";
 }
 
 export type PublicUser = Omit<User, "passwordHash">;
@@ -207,10 +212,11 @@ export async function resolveSubmission(
   const sub = raw as unknown as Submission;
 
   const user = await getUserById(sub.userId);
-  const commissionAmount =
-    status === "accepted" && dealValue && user
-      ? Math.round(dealValue * user.commissionRate * 100) / 100
-      : undefined;
+  let commissionAmount: number | undefined;
+  if (status === "accepted" && dealValue && user) {
+    const tiers = await getCommissionTiers();
+    commissionAmount = computeCommission(dealValue, user.commissionRate, tiers).amount;
+  }
 
   const updated: Partial<Submission> = {
     status,
@@ -226,6 +232,104 @@ export async function resolveSubmission(
 export async function markCommissionPaid(subId: string): Promise<void> {
   const redis = getRedis();
   await redis.hset(`submission:${subId}`, { commissionPaid: true });
+}
+
+// ─── Tiered commission rates ───────────────────────────────────────────────────
+// Optional deal-value bands that override the rep's flat commissionRate at
+// deal-accept time. A band applies when `min <= dealValue < max` (max omitted =
+// open-ended top band). Stored as one JSON value in a global settings hash so the
+// admin can edit it; absent config falls back to DEFAULT_COMMISSION_TIERS, and a
+// dealValue that matches no band falls back to the rep's flat rate. Historical
+// commissions are never recomputed — this only fires when a submission is accepted.
+
+export interface CommissionTier {
+  min: number;      // inclusive lower bound on dealValue
+  max?: number;     // exclusive upper bound; omitted = open-ended top band
+  rate: number;     // commission rate for this band, e.g. 0.15 = 15%
+}
+
+// Sane out-of-the-box ladder: <1000 → 10%, 1000–2999 → 15%, 3000+ → 20%.
+export const DEFAULT_COMMISSION_TIERS: CommissionTier[] = [
+  { min: 0, max: 1000, rate: 0.1 },
+  { min: 1000, max: 3000, rate: 0.15 },
+  { min: 3000, rate: 0.2 },
+];
+
+const SETTINGS_KEY = "crm_settings";
+const COMMISSION_TIERS_FIELD = "commissionTiers";
+
+// Validate + normalize a raw tier array (drops malformed entries, sorts by min).
+function sanitizeTiers(raw: unknown): CommissionTier[] | null {
+  if (!Array.isArray(raw)) return null;
+  const tiers: CommissionTier[] = [];
+  for (const t of raw) {
+    if (!t || typeof t !== "object") continue;
+    const o = t as Record<string, unknown>;
+    const min = Number(o.min);
+    const rate = Number(o.rate);
+    if (!Number.isFinite(min) || min < 0) continue;
+    if (!Number.isFinite(rate) || rate < 0 || rate > 1) continue;
+    const tier: CommissionTier = { min, rate };
+    if (o.max !== undefined && o.max !== null && o.max !== "") {
+      const max = Number(o.max);
+      if (Number.isFinite(max) && max > min) tier.max = max;
+    }
+    tiers.push(tier);
+  }
+  if (!tiers.length) return null;
+  tiers.sort((a, b) => a.min - b.min);
+  return tiers;
+}
+
+// Read the configured commission tiers, or null when none are set (caller then
+// uses the rep's flat rate). Tolerant of Upstash auto-parse.
+export async function getCommissionTiers(): Promise<CommissionTier[] | null> {
+  const redis = getRedis();
+  const raw = await redis.hget(SETTINGS_KEY, COMMISSION_TIERS_FIELD);
+  if (raw == null) return null;
+  try {
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    return sanitizeTiers(parsed);
+  } catch {
+    return null;
+  }
+}
+
+// Persist (or clear) the admin-set commission tiers. Passing an empty/invalid
+// array clears the override so the flat per-rep rate applies again.
+export async function setCommissionTiers(tiers: unknown): Promise<CommissionTier[] | null> {
+  const redis = getRedis();
+  const clean = sanitizeTiers(tiers);
+  if (!clean) {
+    await redis.hdel(SETTINGS_KEY, COMMISSION_TIERS_FIELD);
+    return null;
+  }
+  await redis.hset(SETTINGS_KEY, { [COMMISSION_TIERS_FIELD]: JSON.stringify(clean) });
+  return clean;
+}
+
+// Find the rate for a dealValue within a tier set. Returns null when no band
+// matches so the caller can fall back to the rep's flat rate.
+export function rateForDealValue(dealValue: number, tiers: CommissionTier[]): number | null {
+  for (const t of tiers) {
+    const aboveMin = dealValue >= t.min;
+    const belowMax = t.max === undefined || dealValue < t.max;
+    if (aboveMin && belowMax) return t.rate;
+  }
+  return null;
+}
+
+// Compute the commission amount for an accepted deal. Uses the tiered rate when a
+// band matches, otherwise the rep's flat rate. Rounded to cents.
+export function computeCommission(
+  dealValue: number,
+  flatRate: number,
+  tiers?: CommissionTier[] | null
+): { amount: number; rate: number; tiered: boolean } {
+  const tierRate = tiers && tiers.length ? rateForDealValue(dealValue, tiers) : null;
+  const rate = tierRate ?? flatRate;
+  const amount = Math.round(dealValue * rate * 100) / 100;
+  return { amount, rate, tiered: tierRate !== null };
 }
 
 export async function getRepStats(userId: string) {
@@ -734,6 +838,104 @@ export async function getAllClaims(): Promise<LeadClaim[]> {
   return claims.filter(Boolean) as LeadClaim[];
 }
 
+// ─── Lead Assignments (durable, exclusive — admin-controlled ownership) ─────────
+//
+// Distinct from claims: a *claim* is a rep self-service "I'm working this now"
+// (soft, 30-day TTL). An *assignment* is admin-controlled, durable, and EXCLUSIVE
+// — a lead belongs to exactly one rep, so two cold-callers never dial the same
+// business. Assigning a lead that's already owned MOVES it to the new owner.
+// Stored as one global hash (leadId → JSON) so the leads API can scope a whole
+// page with a single HGETALL, mirroring the lead_actions pattern.
+
+export interface LeadAssignment {
+  leadId: string;
+  userId: string;
+  repName: string;
+  assignedAt: string;
+  assignedBy: string; // admin user id/name who made the assignment
+}
+
+const LEAD_ASSIGNMENTS_KEY = "lead_assignments";
+
+export async function getLeadAssignment(leadId: string): Promise<LeadAssignment | null> {
+  const redis = getRedis();
+  const raw = await redis.hget(LEAD_ASSIGNMENTS_KEY, leadId);
+  if (raw == null) return null;
+  try {
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (parsed && typeof parsed === "object" && (parsed as LeadAssignment).userId) return parsed as LeadAssignment;
+  } catch { /* skip malformed */ }
+  return null;
+}
+
+export async function getAllAssignments(): Promise<Record<string, LeadAssignment>> {
+  const redis = getRedis();
+  const all = (await redis.hgetall(LEAD_ASSIGNMENTS_KEY)) as Record<string, unknown> | null;
+  if (!all) return {};
+  const out: Record<string, LeadAssignment> = {};
+  for (const [k, v] of Object.entries(all)) {
+    try {
+      const parsed = typeof v === "string" ? JSON.parse(v) : v;
+      if (parsed && typeof parsed === "object" && (parsed as LeadAssignment).userId) out[k] = parsed as LeadAssignment;
+    } catch { /* skip malformed entry */ }
+  }
+  return out;
+}
+
+export async function getAssignedLeadIds(userId: string): Promise<string[]> {
+  const redis = getRedis();
+  const ids = await redis.smembers(`assigned_to:${userId}`);
+  return ids as string[];
+}
+
+// Assign one lead to a rep. Exclusive: if already owned by someone else, the lead
+// is moved (removed from the previous owner's set). Idempotent for the same owner.
+export async function assignLead(
+  leadId: string, userId: string, repName: string, assignedBy: string
+): Promise<LeadAssignment> {
+  const redis = getRedis();
+  const prev = await getLeadAssignment(leadId);
+  if (prev && prev.userId !== userId) {
+    await redis.srem(`assigned_to:${prev.userId}`, leadId);
+  }
+  const a: LeadAssignment = { leadId, userId, repName, assignedAt: new Date().toISOString(), assignedBy };
+  await redis.hset(LEAD_ASSIGNMENTS_KEY, { [leadId]: JSON.stringify(a) });
+  await redis.sadd(`assigned_to:${userId}`, leadId);
+  return a;
+}
+
+// Bulk assign. Returns how many were written.
+export async function assignLeads(
+  leadIds: string[], userId: string, repName: string, assignedBy: string
+): Promise<number> {
+  let n = 0;
+  for (const id of leadIds) {
+    if (!id) continue;
+    await assignLead(id, userId, repName, assignedBy);
+    n++;
+  }
+  return n;
+}
+
+// Remove an assignment entirely (lead returns to the unassigned pool).
+export async function unassignLead(leadId: string): Promise<void> {
+  const redis = getRedis();
+  const prev = await getLeadAssignment(leadId);
+  if (!prev) return;
+  await redis.hdel(LEAD_ASSIGNMENTS_KEY, leadId);
+  await redis.srem(`assigned_to:${prev.userId}`, leadId);
+}
+
+export async function unassignLeads(leadIds: string[]): Promise<number> {
+  let n = 0;
+  for (const id of leadIds) {
+    if (!id) continue;
+    await unassignLead(id);
+    n++;
+  }
+  return n;
+}
+
 // ─── Territories ──────────────────────────────────────────────────────────────
 
 export interface Territory {
@@ -782,6 +984,70 @@ export async function getAllTerritories(): Promise<Record<string, Territory>> {
     (ids as string[]).map(async (id) => {
       const t = await getTerritory(id as string);
       if (t) result[id as string] = t;
+    })
+  );
+  return result;
+}
+
+// ─── Quotas (per-rep targets) ──────────────────────────────────────────────────
+// Per-rep performance targets, stored one-hash-per-rep mirroring the Territory
+// pattern (`quota:{userId}`). Drives the admin's progress-vs-quota view alongside
+// the existing call/submission stats. Additive and read-mostly; absent = no quota.
+
+export interface Quota {
+  userId: string;
+  callsPerWeek: number;
+  dealsPerMonth: number;
+  updatedAt: string;
+}
+
+export async function setQuota(
+  userId: string,
+  quota: { callsPerWeek: number; dealsPerMonth: number }
+): Promise<Quota> {
+  const redis = getRedis();
+  const q: Quota = {
+    userId,
+    callsPerWeek: Math.max(0, Math.round(quota.callsPerWeek || 0)),
+    dealsPerMonth: Math.max(0, Math.round(quota.dealsPerMonth || 0)),
+    updatedAt: new Date().toISOString(),
+  };
+  await redis.hset(`quota:${userId}`, {
+    userId: q.userId,
+    callsPerWeek: q.callsPerWeek,
+    dealsPerMonth: q.dealsPerMonth,
+    updatedAt: q.updatedAt,
+  });
+  await redis.sadd("quotas:index", userId);
+  return q;
+}
+
+export async function getQuota(userId: string): Promise<Quota | null> {
+  const redis = getRedis();
+  const raw = await redis.hgetall(`quota:${userId}`);
+  if (!raw || !raw.userId) return null;
+  return {
+    userId: raw.userId as string,
+    callsPerWeek: Number(raw.callsPerWeek ?? 0),
+    dealsPerMonth: Number(raw.dealsPerMonth ?? 0),
+    updatedAt: String(raw.updatedAt ?? ""),
+  };
+}
+
+export async function deleteQuota(userId: string): Promise<void> {
+  const redis = getRedis();
+  await redis.del(`quota:${userId}`);
+  await redis.srem("quotas:index", userId);
+}
+
+export async function getAllQuotas(): Promise<Record<string, Quota>> {
+  const redis = getRedis();
+  const ids = await redis.smembers("quotas:index");
+  const result: Record<string, Quota> = {};
+  await Promise.all(
+    (ids as string[]).map(async (id) => {
+      const q = await getQuota(id as string);
+      if (q) result[id as string] = q;
     })
   );
   return result;
@@ -950,6 +1216,61 @@ export async function unsuppressEmail(email: string): Promise<void> {
   await redis.srem(SUPPRESS_KEY, email.toLowerCase().trim());
 }
 
+// ─── Do-Not-Call list (cold-call compliance) ──────────────────────────────────
+// The phone equivalent of the email suppression list. A business that asks not to
+// be called (or that a rep flags) goes here so the call queue skips it. Stored as
+// a set of normalized digits-only phone numbers, mirroring the suppression set.
+
+const DNC_KEY = "outreach:do_not_call";
+
+// Normalize any phone string to bare digits so formatting differences
+// ("(707) 555-1212", "+1 707-555-1212", "7075551212") all match. A leading US
+// country code "1" on an 11-digit number is stripped so +1 numbers match their
+// 10-digit form.
+export function normalizePhone(phone: string): string {
+  let digits = (phone ?? "").replace(/\D+/g, "");
+  if (digits.length === 11 && digits.startsWith("1")) digits = digits.slice(1);
+  return digits;
+}
+
+// Mark a phone number do-not-call. `by` (userId/name) is accepted for parity with
+// addDoNotCall callers/audit but the set only stores the normalized number.
+export async function addDoNotCall(phone: string, by?: string): Promise<void> {
+  void by;
+  const norm = normalizePhone(phone);
+  if (!norm) return;
+  const redis = getRedis();
+  await redis.sadd(DNC_KEY, norm);
+}
+
+// Re-allow a number that was previously marked do-not-call (admin action).
+export async function removeDoNotCall(phone: string): Promise<void> {
+  const norm = normalizePhone(phone);
+  if (!norm) return;
+  const redis = getRedis();
+  await redis.srem(DNC_KEY, norm);
+}
+
+// All do-not-call numbers, normalized to digits-only.
+export async function getDoNotCallPhones(): Promise<string[]> {
+  const redis = getRedis();
+  const members = await redis.smembers(DNC_KEY);
+  return (members as string[]).map((p) => normalizePhone(p));
+}
+
+export async function getDoNotCallCount(): Promise<number> {
+  const redis = getRedis();
+  return (await redis.scard(DNC_KEY)) as number;
+}
+
+// Is this phone number on the do-not-call list?
+export async function isDoNotCall(phone: string): Promise<boolean> {
+  const norm = normalizePhone(phone);
+  if (!norm) return false;
+  const phones = await getDoNotCallPhones();
+  return phones.includes(norm);
+}
+
 // ─── Cross-rep daily email dedup ──────────────────────────────────────────────
 // A shared, date-scoped set of every address actually emailed today, across ALL
 // reps. Two reps working the same queue must not both email the same business in
@@ -972,6 +1293,42 @@ export async function markEmailedToday(date: string, email: string): Promise<voi
   const key = EMAILED_TODAY_KEY(date);
   await redis.sadd(key, email.toLowerCase().trim());
   await redis.expire(key, EMAILED_TODAY_TTL);
+}
+
+// ─── Resend email_id → lead mapping ───────────────────────────────────────────
+// Stored at send time so inbound Resend webhook events (clicked/opened/bounced/
+// complained) correlate back to the exact lead by the email's own id — instead of
+// guessing from the recipient address against a capped recent-sends log (which
+// silently dropped older sends). Keyed by Resend's email id; 45-day TTL comfortably
+// covers the window in which engagement events realistically arrive.
+
+const EMAIL_SEND_PREFIX = "resend_email:";
+const EMAIL_SEND_TTL = 60 * 60 * 24 * 45; // 45 days, in seconds
+
+export interface EmailSendRef {
+  userId: string;
+  leadId: string;
+  leadName?: string;
+}
+
+// Remember which lead a delivered Resend email belongs to.
+export async function recordEmailSend(emailId: string, ref: EmailSendRef): Promise<void> {
+  if (!emailId) return;
+  const redis = getRedis();
+  await redis.set(`${EMAIL_SEND_PREFIX}${emailId}`, JSON.stringify(ref), { ex: EMAIL_SEND_TTL });
+}
+
+// Resolve the lead a Resend email_id was sent to. Null when unknown/expired.
+export async function getEmailSend(emailId: string): Promise<EmailSendRef | null> {
+  if (!emailId) return null;
+  const redis = getRedis();
+  const raw = await redis.get(`${EMAIL_SEND_PREFIX}${emailId}`);
+  if (raw == null) return null;
+  try {
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (parsed && typeof parsed === "object") return parsed as EmailSendRef;
+  } catch { /* malformed — fall through */ }
+  return null;
 }
 
 // ─── Outreach send log (for admin email tracking) ─────────────────────────────
@@ -1182,4 +1539,75 @@ export async function getWeeklyCallHistory(userId: string): Promise<{ date: stri
     result.push({ date, calls: Number(raw ?? 0) });
   }
   return result;
+}
+
+// ─── Lead-fetch audit log (anti-exfiltration) ─────────────────────────────────
+// Every rep lead-list fetch is appended to a capped per-user Redis list
+// `lead_audit:{userId}` so an admin can spot bulk-scraping behavior (a rep paging
+// through the whole list, or pulling thousands of rows). Newest-first (lpush +
+// ltrim). All callers SWALLOW failures — auditing must never break a lead fetch.
+
+export interface LeadAuditEntry {
+  userId: string;
+  /** ISO-8601 timestamp of the fetch. */
+  at: string;
+  /** Requested page number. */
+  page: number;
+  /** Number of leads returned on this page. */
+  count: number;
+  /** Total leads matching the rep's filters (across all pages). */
+  total: number;
+  /** Active query/filter params on the request (only the non-empty ones). */
+  filters: Record<string, string>;
+}
+
+const LEAD_AUDIT_CAP = 500;
+
+export async function logLeadFetch(entry: LeadAuditEntry): Promise<void> {
+  try {
+    const redis = getRedis();
+    const key = `lead_audit:${entry.userId}`;
+    await redis.lpush(key, JSON.stringify(entry));
+    await redis.ltrim(key, 0, LEAD_AUDIT_CAP - 1);
+  } catch {
+    // Best-effort: never let an audit-write failure surface to the rep.
+  }
+}
+
+// Recent audit entries. With a userId → just that rep's list; otherwise the
+// newest entries merged across every rep (admin overview). `limit` caps the
+// returned rows after the cross-user merge.
+export async function getLeadAudit(
+  userId?: string,
+  limit = 200
+): Promise<LeadAuditEntry[]> {
+  const redis = getRedis();
+  const parse = (raw: unknown): LeadAuditEntry | null => {
+    try {
+      const e = typeof raw === "string" ? JSON.parse(raw) : raw;
+      return e && typeof e === "object" ? (e as LeadAuditEntry) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  if (userId) {
+    const items = (await redis.lrange(`lead_audit:${userId}`, 0, limit - 1)) as unknown[];
+    return items.map(parse).filter((e): e is LeadAuditEntry => !!e);
+  }
+
+  const keys = (await redis.keys("lead_audit:*")) as string[];
+  if (!keys.length) return [];
+  const all: LeadAuditEntry[] = [];
+  await Promise.all(
+    keys.map(async (key) => {
+      const items = (await redis.lrange(key, 0, limit - 1)) as unknown[];
+      for (const raw of items) {
+        const e = parse(raw);
+        if (e) all.push(e);
+      }
+    })
+  );
+  all.sort((a, b) => (b.at ?? "").localeCompare(a.at ?? ""));
+  return all.slice(0, limit);
 }

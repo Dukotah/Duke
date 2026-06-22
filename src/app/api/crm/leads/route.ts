@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCustomLeads, getAllClaims, getTerritory, getLeadPreviewObjects, previewKey, getLeadActions, type LeadActions } from "@/lib/db";
+import { getCustomLeads, getAllClaims, getAllAssignments, getTerritory, getLeadPreviewObjects, previewKey, getLeadActions, getDoNotCallPhones, normalizePhone, logLeadFetch, type LeadActions } from "@/lib/db";
+import { rateLimit } from "@/lib/rateLimit";
 
 // Lead source CSV. Defaults to the national deduped export, but can be pointed at
 // a per-region deep-enriched export (e.g. santa_rosa_ENRICHED_crm.csv hosted on
@@ -89,11 +90,19 @@ export interface Lead {
   thumbnailUrl?: string | null;
   /** Durable, cross-rep action stamps (emailedAt/calledAt/lastOutcome/who…). */
   actions?: LeadActions | null;
+  /** True when this lead's phone is on the Do-Not-Call list (compliance flag). */
+  doNotCall?: boolean;
 }
 
 let cachedLeads: Lead[] | null = null;
 let cacheTime = 0;
 const CACHE_TTL = 1000 * 60 * 60;
+
+// Per-rep anti-scrape cap on /api/crm/leads. A human working the queue refreshes/
+// pages a handful of times a minute; a scraper hammers it. 60 fetches per minute
+// is generous for real use but well below an exfiltration run. Tunable via env.
+const LEADS_RATE_LIMIT = Math.max(1, parseInt(process.env.LEADS_RATE_LIMIT ?? "60", 10) || 60);
+const LEADS_RATE_WINDOW_SEC = Math.max(1, parseInt(process.env.LEADS_RATE_WINDOW_SEC ?? "60", 10) || 60);
 
 export function clearLeadsCache() {
   cachedLeads = null;
@@ -120,7 +129,7 @@ function parseCSVLine(line: string): string[] {
   return result;
 }
 
-async function getLeads(): Promise<Lead[]> {
+export async function getLeads(): Promise<Lead[]> {
   if (cachedLeads && Date.now() - cacheTime < CACHE_TTL) return cachedLeads;
 
   // Resilient load: the base lead list comes from an external CSV. If that source
@@ -283,12 +292,53 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(100, parseInt(sp.get("limit") ?? "50"));
 
     const userId = req.headers.get("x-user-id");
+    const isAdmin = req.headers.get("x-user-role") === "admin";
+
+    // Anti-exfiltration rate limit: cap a single rep to LEADS_RATE_LIMIT lead-list
+    // fetches per rolling window. Admins are exempt (they legitimately page the
+    // whole list). Fails OPEN — rateLimit() swallows Redis errors and returns ok,
+    // so an infra hiccup never 429s/500s a real rep mid-call.
+    if (userId && !isAdmin) {
+      const { ok, remaining } = await rateLimit(`leads:${userId}`, {
+        limit: LEADS_RATE_LIMIT,
+        windowSec: LEADS_RATE_WINDOW_SEC,
+      });
+      if (!ok) {
+        return NextResponse.json(
+          { error: "You're loading leads too quickly. Please wait a moment and try again." },
+          { status: 429, headers: { "Retry-After": String(LEADS_RATE_WINDOW_SEC) } }
+        );
+      }
+      void remaining;
+    }
 
     const all = await getLeads();
+    // One HGETALL of durable assignments — used both to SCOPE a rep's queue and to
+    // annotate each card with its owner for the admin view.
+    const assignmentMap = await getAllAssignments();
     let filtered = all;
 
-    // Territory filtering — apply unless allTerritories=1
-    if (userId && !allTerritories) {
+    // Scope a non-admin rep to ONLY the leads they're allowed to work:
+    //   • a lead assigned to them (exclusive ownership), OR
+    //   • an unassigned lead that falls in their territory (county/niche).
+    // A lead assigned to a different rep is hidden even if it's in this rep's
+    // territory, so two cold-callers never dial the same business. A rep with no
+    // territory and no assignments sees no cold leads (only their own custom ones).
+    // Reps canNOT widen scope via allTerritories — that override is admin-only.
+    if (userId && !isAdmin) {
+      const territory = await getTerritory(userId);
+      filtered = filtered.filter((l) => {
+        const asg = assignmentMap[l.id];
+        if (asg) return asg.userId === userId;
+        if (!territory) return false;
+        const countyOk = territory.counties.length === 0
+          || territory.counties.some((c) => c.toLowerCase() === l.county.toLowerCase());
+        const nicheOk = territory.niches.length === 0
+          || territory.niches.some((n) => n.toLowerCase() === l.category.toLowerCase());
+        return countyOk && nicheOk;
+      });
+    } else if (userId && !allTerritories) {
+      // Admin may optionally narrow their own view by a territory they set.
       const territory = await getTerritory(userId);
       if (territory) {
         if (territory.counties.length > 0) {
@@ -404,11 +454,18 @@ export async function GET(req: NextRequest) {
     const previews = await getLeadPreviewObjects();
     // Durable cross-rep action stamps — one HGETALL enriches the whole page.
     const actionsMap = await getLeadActions();
+    // Do-Not-Call list — one SMEMBERS, matched on normalized phone. Leads on the
+    // list are FLAGGED (doNotCall: true), never removed from the result.
+    const dncSet = new Set(await getDoNotCallPhones());
     const leads = pageLeads.map((l) => {
       const pkg = previews[previewKey(l.name)];
+      const asg = assignmentMap[l.id];
+      const normPhone = normalizePhone(l.phone);
       return {
         ...l,
+        doNotCall: !!normPhone && dncSet.has(normPhone),
         claimedBy: claimMap[l.id] ?? null,
+        assignedTo: asg ? { userId: asg.userId, repName: asg.repName } : null,
         previewUrl: pkg?.previewUrl ?? null,
         demoStatus: pkg?.status ?? null,
         demoFlags: pkg?.flags ?? null,
@@ -432,6 +489,26 @@ export async function GET(req: NextRequest) {
 
     // Territory info for current user
     const territory = userId ? await getTerritory(userId) : null;
+
+    // Audit trail: stamp each rep lead-list fetch so an admin can spot bulk
+    // scraping (heavy paging, large result pulls). Fire-and-forget — logLeadFetch
+    // swallows its own failures, and we don't await so it never delays the page.
+    if (userId && !isAdmin) {
+      const activeFilters: Record<string, string> = {};
+      for (const k of ["q", "county", "niche", "tier", "industryFit", "bestContact", "hasEmail", "hasWebsite", "emailStatus", "grade", "reachChannel", "sortBy"]) {
+        const v = sp.get(k);
+        if (v) activeFilters[k] = v;
+      }
+      if (hotLeads) activeFilters.hotLeads = "1";
+      void logLeadFetch({
+        userId,
+        at: new Date().toISOString(),
+        page,
+        count: leads.length,
+        total,
+        filters: activeFilters,
+      });
+    }
 
     return NextResponse.json({ leads, total, page, limit, counties, niches, tierCounts, territory });
   } catch (err) {
