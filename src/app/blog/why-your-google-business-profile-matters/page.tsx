@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function GoogleBusinessProfilePost() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-0">
       <JsonLd schema={blogPostingSchema({ title: "Why Your Google Business Profile Is the Most Important Page You Don't Own", description: "Most Sonoma County small businesses ignore their Google Business Profile. Here's why it matters more than your website for local search, and exactly what to fix today.", url: "https://copperbaytech.com/blog/why-your-google-business-profile-matters", datePublished: "2026-02-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Google Business Profile Matters" }])} />
       <Nav light />
@@ -118,13 +118,13 @@ export default function GoogleBusinessProfilePost() {
             </p>
           </div>
 
-          <div className="mt-12 rounded-2xl p-6 border border-[#18181B]/10 bg-[#FAFAF9]">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-2" style={{ fontFamily: "var(--font-heading)" }}>Free Resource</p>
-            <h3 className="text-[#18181B] font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Check your website&apos;s SEO health</h3>
-            <p className="text-[#3F3F46]/60 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
+          <div className="mt-12 rounded-2xl p-6 border border-hairline bg-ink-0">
+            <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-2" style={{ fontFamily: "var(--font-heading)" }}>Free Resource</p>
+            <h3 className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Check your website&apos;s SEO health</h3>
+            <p className="text-zinc-400 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
               Our free tools page checks SEO, speed, SSL, and more in one audit — no signup required.
             </p>
-            <a href="/tools/health-check" className="inline-block bg-[#F97316] hover:bg-[#ea6c0a] text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
+            <a href="/tools/health-check" className="inline-block bg-copper hover:bg-copper-bright text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
               Run a Free SEO Audit
             </a>
           </div>

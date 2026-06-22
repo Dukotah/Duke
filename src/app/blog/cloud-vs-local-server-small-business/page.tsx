@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function CloudVsLocalPost() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-0">
       <JsonLd schema={blogPostingSchema({ title: "Cloud vs. Local Server: What's Actually Right for Your Small Business?", description: "Should your small business move to the cloud or keep a local server? Here's a direct comparison for businesses with 3–30 employees — including when local still makes sense.", url: "https://copperbaytech.com/blog/cloud-vs-local-server-small-business", datePublished: "2026-03-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Cloud vs Local Server" }])} />
       <Nav light />
@@ -80,16 +80,16 @@ export default function CloudVsLocalPost() {
 
             <h2>Side by side for a 10-person office</h2>
 
-            <div className="not-prose my-6 rounded-xl overflow-hidden border border-[#18181B]/10">
+            <div className="not-prose my-6 rounded-xl overflow-hidden border border-hairline">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-[#18181B] text-white">
+                  <tr className="bg-ink-2 text-white">
                     <th className="text-left px-4 py-3 font-semibold">Factor</th>
                     <th className="text-left px-4 py-3 font-semibold">Local Server</th>
-                    <th className="text-left px-4 py-3 font-semibold text-[#F97316]">Cloud</th>
+                    <th className="text-left px-4 py-3 font-semibold text-copper-bright">Cloud</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#18181B]/8">
+                <tbody className="divide-y divide-hairline">
                   {[
                     ["Upfront cost", "$2,000–$5,000 hardware", "$0"],
                     ["Ongoing cost", "$0–$200/mo (maintenance)", "$70–$200/mo (subscriptions)"],
@@ -100,10 +100,10 @@ export default function CloudVsLocalPost() {
                     ["Internet dependency", "Not required for local access", "Required"],
                     ["IT overhead", "Higher — needs maintenance", "Lower"],
                   ].map(([factor, local, cloud], i) => (
-                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#FAFAF9]"}>
-                      <td className="px-4 py-3 font-semibold text-[#18181B]">{factor}</td>
-                      <td className="px-4 py-3 text-[#3F3F46]/70">{local}</td>
-                      <td className="px-4 py-3 text-[#3F3F46]/70">{cloud}</td>
+                    <tr key={i} className={i % 2 === 0 ? "bg-ink-0" : "bg-ink-0"}>
+                      <td className="px-4 py-3 font-semibold text-white">{factor}</td>
+                      <td className="px-4 py-3 text-zinc-400">{local}</td>
+                      <td className="px-4 py-3 text-zinc-400">{cloud}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -142,13 +142,13 @@ export default function CloudVsLocalPost() {
             </p>
           </div>
 
-          <div className="mt-12 rounded-2xl p-6 border border-[#18181B]/10 bg-[#FAFAF9]">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-2" style={{ fontFamily: "var(--font-heading)" }}>Thinking About Moving to the Cloud?</p>
-            <h3 className="text-[#18181B] font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>We&apos;ve done this for offices your size</h3>
-            <p className="text-[#3F3F46]/60 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
+          <div className="mt-12 rounded-2xl p-6 border border-hairline bg-ink-0">
+            <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-2" style={{ fontFamily: "var(--font-heading)" }}>Thinking About Moving to the Cloud?</p>
+            <h3 className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>We&apos;ve done this for offices your size</h3>
+            <p className="text-zinc-400 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
               Free 30-minute consultation — we&apos;ll look at your current setup and tell you exactly what a migration would look like and what it would cost.
             </p>
-            <a href="/schedule" className="inline-block bg-[#F97316] hover:bg-[#ea6c0a] text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
+            <a href="/schedule" className="inline-block bg-copper hover:bg-copper-bright text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
               Book a Free Consultation
             </a>
           </div>

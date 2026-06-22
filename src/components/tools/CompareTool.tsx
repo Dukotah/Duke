@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
 
 interface CompareResult {
   url: string;
@@ -32,7 +30,7 @@ function ScoreBar({ score, label }: { score: number | null; label: string }) {
         <span className="text-zinc-400 text-xs">{label}</span>
         <span className="text-sm font-bold" style={{ color }}>{score ?? "—"}</span>
       </div>
-      <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-ink-3 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{ width: `${pct}%`, backgroundColor: color }}
@@ -45,7 +43,7 @@ function ScoreBar({ score, label }: { score: number | null; label: string }) {
 function WinnerBadge({ side }: { side: "left" | "right" | "tie" }) {
   if (side === "tie") return <span className="text-zinc-500 text-[10px] font-semibold uppercase tracking-wider">Tie</span>;
   return (
-    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${side === "left" ? "bg-orange-500/20 text-orange-400" : "bg-blue-500/20 text-blue-400"}`}>
+    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${side === "left" ? "bg-copper/20 text-copper-bright" : "bg-ink-3 text-zinc-300"}`}>
       {side === "left" ? "You win" : "They win"}
     </span>
   );
@@ -53,8 +51,8 @@ function WinnerBadge({ side }: { side: "left" | "right" | "tie" }) {
 
 function CompareColumn({ result, color, label }: { result: CompareResult | null; loading: boolean; color: string; label: string }) {
   return (
-    <div className="flex-1 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-      <div className="px-5 py-4 border-b border-zinc-800" style={{ borderTop: `3px solid ${color}` }}>
+    <div className="flex-1 bg-ink-2 border border-hairline rounded-2xl overflow-hidden">
+      <div className="px-5 py-4 border-b border-hairline" style={{ borderTop: `3px solid ${color}` }}>
         <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color }}>{label}</p>
         <p className="text-white font-bold text-sm truncate">{result?.url ?? "—"}</p>
       </div>
@@ -64,7 +62,7 @@ function CompareColumn({ result, color, label }: { result: CompareResult | null;
           <ScoreBar score={result.seo} label="SEO" />
           <ScoreBar score={result.mobile} label="Mobile" />
           <ScoreBar score={result.accessibility} label="Accessibility" />
-          <div className="pt-2 border-t border-zinc-800 space-y-2">
+          <div className="pt-2 border-t border-hairline space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-zinc-400 text-xs">SSL Valid</span>
               <span className={`text-xs font-bold ${result.ssl ? "text-green-400" : "text-red-400"}`}>
@@ -121,7 +119,7 @@ function compareWinner(a: number | null, b: number | null): "left" | "right" | "
   return "tie";
 }
 
-export default function CompareClient() {
+export default function CompareTool() {
   const [urlA, setUrlA] = useState("");
   const [urlB, setUrlB] = useState("");
   const [loading, setLoading] = useState(false);
@@ -154,17 +152,15 @@ export default function CompareClient() {
   const hasResults = resultA !== null && resultB !== null;
 
   return (
-    <div className="min-h-screen bg-[#18181B] text-white">
-      <Nav />
-
-      <section className="pt-32 pb-12 px-6 text-center">
+    <div className="text-white">
+      <section className="pt-6 pb-12 px-0 text-center">
         <div className="max-w-2xl mx-auto">
-          <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
+          <span className="inline-block bg-copper/10 text-copper-bright text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-copper/25">
             Free Tool
           </span>
           <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
             Compare Your Site to{" "}
-            <span className="text-orange-400">Competitors</span>
+            <span className="text-copper-bright">Competitors</span>
           </h1>
           <p className="text-zinc-400 text-lg mb-10 max-w-xl mx-auto">
             Enter two URLs and see a side-by-side breakdown — speed, SEO, mobile, SSL, and accessibility. No signup, no fluff.
@@ -173,32 +169,32 @@ export default function CompareClient() {
           <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl mx-auto">
             <div className="grid sm:grid-cols-2 gap-3">
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-400 text-[10px] font-bold uppercase tracking-wider">You</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-copper-bright text-[10px] font-bold uppercase tracking-wider">You</span>
                 <input
                   type="text"
                   value={urlA}
                   onChange={e => setUrlA(e.target.value)}
                   placeholder="yoursite.com"
                   disabled={loading}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-full pl-12 pr-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors text-sm"
+                  className="w-full bg-ink-2 border border-hairline rounded-full pl-12 pr-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-copper focus:border-copper transition-colors text-sm"
                 />
               </div>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400 text-[10px] font-bold uppercase tracking-wider">Them</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 text-[10px] font-bold uppercase tracking-wider">Them</span>
                 <input
                   type="text"
                   value={urlB}
                   onChange={e => setUrlB(e.target.value)}
                   placeholder="competitor.com"
                   disabled={loading}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-full pl-12 pr-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors text-sm"
+                  className="w-full bg-ink-2 border border-hairline rounded-full pl-12 pr-5 py-3.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-copper focus:border-copper transition-colors text-sm"
                 />
               </div>
             </div>
             <button
               type="submit"
               disabled={loading || !urlA.trim() || !urlB.trim()}
-              className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-10 py-3.5 rounded-full transition-colors text-sm"
+              className="bg-copper hover:bg-copper-bright disabled:opacity-50 disabled:cursor-not-allowed text-ink-0 font-bold px-10 py-3.5 rounded-full transition-colors text-sm"
             >
               {loading ? "Analyzing both sites…" : "Run Comparison"}
             </button>
@@ -217,11 +213,11 @@ export default function CompareClient() {
         <section className="px-6 pb-16">
           <div className="max-w-4xl mx-auto flex gap-4">
             {[0, 1].map(i => (
-              <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-3 animate-pulse">
-                <div className="h-4 bg-zinc-800 rounded w-1/3" />
-                <div className="h-3 bg-zinc-800 rounded w-2/3" />
+              <div key={i} className="flex-1 bg-ink-2 border border-hairline rounded-2xl p-5 space-y-3 animate-pulse">
+                <div className="h-4 bg-ink-3 rounded w-1/3" />
+                <div className="h-3 bg-ink-3 rounded w-2/3" />
                 {[0, 1, 2, 3].map(j => (
-                  <div key={j} className="h-8 bg-zinc-800 rounded" />
+                  <div key={j} className="h-8 bg-ink-3 rounded" />
                 ))}
               </div>
             ))}
@@ -234,11 +230,11 @@ export default function CompareClient() {
         <section className="px-6 pb-16">
           <div className="max-w-4xl mx-auto space-y-6">
             {/* Scorecard overview */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-zinc-800">
+            <div className="bg-ink-2 border border-hairline rounded-2xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-hairline">
                 <h2 className="text-white font-bold">Head-to-Head Scorecard</h2>
               </div>
-              <div className="divide-y divide-zinc-800">
+              <div className="divide-y divide-hairline">
                 {categories.map(({ key, label }) => {
                   const a = resultA[key] as number | null;
                   const b = resultB[key] as number | null;
@@ -249,11 +245,11 @@ export default function CompareClient() {
                       <div className="flex-1 flex items-center gap-3">
                         <span className="text-sm font-bold w-8 text-right" style={{ color: scoreColor(a) }}>{a ?? "—"}</span>
                         <div className="flex-1 flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden flex justify-end">
+                          <div className="flex-1 h-2 bg-ink-3 rounded-full overflow-hidden flex justify-end">
                             <div className="h-full rounded-full transition-all" style={{ width: `${a ?? 0}%`, backgroundColor: scoreColor(a) }} />
                           </div>
-                          <div className="w-px h-4 bg-zinc-700 flex-shrink-0" />
-                          <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                          <div className="w-px h-4 bg-ink-3 flex-shrink-0" />
+                          <div className="flex-1 h-2 bg-ink-3 rounded-full overflow-hidden">
                             <div className="h-full rounded-full transition-all" style={{ width: `${b ?? 0}%`, backgroundColor: scoreColor(b) }} />
                           </div>
                         </div>
@@ -270,20 +266,20 @@ export default function CompareClient() {
 
             {/* Side by side detail */}
             <div className="flex gap-4">
-              <CompareColumn result={resultA} loading={false} color="#F97316" label="Your Site" />
-              <CompareColumn result={resultB} loading={false} color="#60A5FA" label="Competitor" />
+              <CompareColumn result={resultA} loading={false} color="#DDAA75" label="Your Site" />
+              <CompareColumn result={resultB} loading={false} color="#A1A1AA" label="Competitor" />
             </div>
 
             {/* CTA */}
-            <div className="rounded-2xl p-6 text-center border border-orange-500/30" style={{ background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
-              <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">Falling behind?</p>
+            <div className="rounded-2xl p-6 text-center border border-copper/30" style={{ background: "linear-gradient(135deg, #18181B 0%, #1C1917 100%)" }}>
+              <p className="text-copper-bright text-xs font-semibold uppercase tracking-wider mb-2">Falling behind?</p>
               <h4 className="text-white text-xl font-black mb-2">We can close the gap — fast</h4>
               <p className="text-zinc-400 text-sm mb-5 max-w-sm mx-auto">
                 Copper Bay Tech specializes in rapidly improving site scores for Sonoma County businesses. Free 30-min consultation.
               </p>
               <Link
                 href="/#contact"
-                className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
+                className="inline-block bg-copper hover:bg-copper-bright text-ink-0 font-bold px-8 py-3 rounded-full transition-colors text-sm"
               >
                 Get a Free Review
               </Link>
@@ -304,7 +300,7 @@ export default function CompareClient() {
                 { icon: "📱", label: "Mobile", desc: "Mobile responsiveness" },
                 { icon: "♿", label: "Accessibility", desc: "WCAG compliance score" },
               ].map(item => (
-                <div key={item.label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
+                <div key={item.label} className="bg-ink-2 border border-hairline rounded-xl p-4 text-center">
                   <div className="text-2xl mb-2">{item.icon}</div>
                   <p className="text-white font-bold text-xs mb-1">{item.label}</p>
                   <p className="text-zinc-500 text-[11px]">{item.desc}</p>
@@ -314,8 +310,6 @@ export default function CompareClient() {
           </div>
         </section>
       )}
-
-      <Footer />
     </div>
   );
 }

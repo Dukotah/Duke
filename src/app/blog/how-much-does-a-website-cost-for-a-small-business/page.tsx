@@ -31,15 +31,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Web Development" title="How Much Does a Website Cost for a Small Business in 2026?" date="January 1, 2026" readTime="7 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <div className="prose prose-zinc max-w-none text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
                 &quot;How much does a website cost?&quot; is one of the most Googled questions in small business — and one of the least honestly answered. The real answer depends on who builds it, what you need, and what &quot;cheap&quot; actually costs you over time. Here&apos;s a straight breakdown.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 The three paths: DIY, freelancer, or agency
               </h2>
               <p className="mb-6">
@@ -49,7 +49,7 @@ export default function Article() {
                 None of these is the &quot;right&quot; answer for everyone. The question is what your website needs to actually do for your business.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What actually drives the cost up
               </h2>
               <p className="mb-6">
@@ -63,7 +63,7 @@ export default function Article() {
                 <li><strong>Ongoing maintenance.</strong> Plugins break, security patches are needed, things change. Budget $100–$300/month for ongoing care, or plan to handle it yourself.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 The real cost of going cheap
               </h2>
               <p className="mb-6">
@@ -73,7 +73,7 @@ export default function Article() {
                 A cheap website isn&apos;t just an aesthetic problem. Slow sites lose visitors. Sites without proper SEO structure don&apos;t rank. Sites that aren&apos;t mobile-friendly penalize you in Google search. Sites without SSL certificates get flagged as &quot;Not Secure.&quot; These aren&apos;t cosmetic issues — they directly affect whether customers trust you and whether they find you at all.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What a reasonable budget looks like in 2026
               </h2>
               <p className="mb-6">
@@ -83,7 +83,7 @@ export default function Article() {
                 If you&apos;re in a competitive local market — wine country tourism, legal services, real estate — investing toward the higher end pays for itself quickly if the site converts even a handful of additional leads per year.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Questions to ask before hiring anyone
               </h2>
               <p className="mb-6">
@@ -100,20 +100,20 @@ export default function Article() {
                 If any of those questions are answered evasively, keep looking. A good web developer has nothing to hide.
               </p>
 
-              <div className="mt-12 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-                <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="mt-12 p-6 rounded-2xl bg-ink-0 border border-hairline">
+                <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                   The bottom line
                 </p>
-                <p className="text-sm text-[#3F3F46]/60">
+                <p className="text-sm text-zinc-400">
                   For most small businesses, the sweet spot is $4,000–$6,000 upfront with a reasonable monthly retainer. Treat your website like a storefront, not a one-time expense — and it&apos;ll pay you back.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
+            <div className="mt-16 rounded-2xl bg-ink-2 p-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>

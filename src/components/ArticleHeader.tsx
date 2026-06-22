@@ -22,7 +22,7 @@ export default function ArticleHeader({
   const color = tagColor(tag);
   const HEAD = { fontFamily: "var(--font-heading)" };
   return (
-    <section className="pt-32 pb-10 bg-[#18181B]">
+    <section className="pt-32 pb-10 bg-ink-0">
       <div className="max-w-2xl mx-auto px-6">
         <Link
           href="/blog"

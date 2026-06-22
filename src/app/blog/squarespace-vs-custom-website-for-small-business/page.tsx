@@ -74,78 +74,78 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Web Development" title="Squarespace vs Custom Website for Small Business: An Honest Comparison" date="June 4, 2026" readTime="7 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
-            <p className="text-lg text-[#3F3F46]/70 mb-6 leading-relaxed">
+            <p className="text-lg text-zinc-400 mb-6 leading-relaxed">
               Squarespace, Wix, and similar builders have gotten genuinely good. For some businesses, they&apos;re the right call — full stop. For others, they quietly become the reason the phone doesn&apos;t ring. The difference usually comes down to how much you rely on your website to generate leads.
             </p>
-            <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
+            <p className="text-zinc-400 mb-10 leading-relaxed">
               This is an honest breakdown — not a pitch for one side. We build custom sites, but we&apos;ll tell you plainly when a builder is the smarter move.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-2" style={{ fontFamily: "var(--font-heading)" }}>
               Website Builders (Squarespace, Wix, Weebly)
             </h2>
-            <p className="text-[#3F3F46]/60 text-sm mb-6">~$200–$400/year all-in</p>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
+            <p className="text-zinc-400 text-sm mb-6">~$200–$400/year all-in</p>
+            <p className="text-zinc-400 mb-4 leading-relaxed">
               Builder platforms let you pick a template, drag in your content, and launch — often in a weekend. Hosting, SSL certificates, and software updates are bundled into the subscription. For a business that genuinely just needs a digital presence (contact info, hours, a photo gallery), that&apos;s a reasonable deal.
             </p>
 
-            <h3 className="font-bold text-[#18181B] mb-3" style={{ fontFamily: "var(--font-heading)" }}>What builders do well:</h3>
+            <h3 className="font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>What builders do well:</h3>
             <ul className="space-y-2 mb-6">
               {builderPros.map((pro) => (
-                <li key={pro} className="flex items-start gap-3 text-sm text-[#3F3F46]/70">
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-[#F97316] flex-shrink-0" />
+                <li key={pro} className="flex items-start gap-3 text-sm text-zinc-400">
+                  <span className="mt-1.5 w-2 h-2 rounded-full bg-copper flex-shrink-0" />
                   {pro}
                 </li>
               ))}
             </ul>
 
-            <h3 className="font-bold text-[#18181B] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Where they fall short:</h3>
+            <h3 className="font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Where they fall short:</h3>
             <ul className="space-y-2 mb-10">
               {builderCons.map((con) => (
-                <li key={con} className="flex items-start gap-3 text-sm text-[#3F3F46]/70">
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-[#18181B]/30 flex-shrink-0" />
+                <li key={con} className="flex items-start gap-3 text-sm text-zinc-400">
+                  <span className="mt-1.5 w-2 h-2 rounded-full bg-ink-2/30 flex-shrink-0" />
                   {con}
                 </li>
               ))}
             </ul>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-2" style={{ fontFamily: "var(--font-heading)" }}>
               Custom-Coded Website
             </h2>
-            <p className="text-[#3F3F46]/60 text-sm mb-6">$2,500–$7,500 one-time (typical small-business scope)</p>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
+            <p className="text-zinc-400 text-sm mb-6">$2,500–$7,500 one-time (typical small-business scope)</p>
+            <p className="text-zinc-400 mb-4 leading-relaxed">
               A custom site is built from the ground up for your business. The code is purpose-written, the design is yours, and nothing is shared with thousands of other sites running the same template. For businesses in competitive local markets — like most Sonoma County service businesses — that difference shows up in search rankings and conversion rates.
             </p>
 
-            <h3 className="font-bold text-[#18181B] mb-3" style={{ fontFamily: "var(--font-heading)" }}>What custom sites do well:</h3>
+            <h3 className="font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>What custom sites do well:</h3>
             <ul className="space-y-2 mb-6">
               {customPros.map((pro) => (
-                <li key={pro} className="flex items-start gap-3 text-sm text-[#3F3F46]/70">
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-[#F97316] flex-shrink-0" />
+                <li key={pro} className="flex items-start gap-3 text-sm text-zinc-400">
+                  <span className="mt-1.5 w-2 h-2 rounded-full bg-copper flex-shrink-0" />
                   {pro}
                 </li>
               ))}
             </ul>
 
-            <h3 className="font-bold text-[#18181B] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Where they fall short:</h3>
+            <h3 className="font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Where they fall short:</h3>
             <ul className="space-y-2 mb-10">
               {customCons.map((con) => (
-                <li key={con} className="flex items-start gap-3 text-sm text-[#3F3F46]/70">
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-[#18181B]/30 flex-shrink-0" />
+                <li key={con} className="flex items-start gap-3 text-sm text-zinc-400">
+                  <span className="mt-1.5 w-2 h-2 rounded-full bg-ink-2/30 flex-shrink-0" />
                   {con}
                 </li>
               ))}
             </ul>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               So which is right for you?
             </h2>
 
             <div className="grid sm:grid-cols-2 gap-4 mb-10">
-              <div className="rounded-xl border border-[#18181B]/10 p-5 bg-[#FAFAF9]">
-                <p className="font-bold text-[#18181B] mb-3 text-sm" style={{ fontFamily: "var(--font-heading)" }}>A builder is the right call if:</p>
+              <div className="rounded-xl border border-hairline p-5 bg-ink-0">
+                <p className="font-bold text-white mb-3 text-sm" style={{ fontFamily: "var(--font-heading)" }}>A builder is the right call if:</p>
                 <ul className="space-y-2">
                   {[
                     "You&apos;re pre-revenue or testing a new business idea",
@@ -153,15 +153,15 @@ export default function Article() {
                     "Budget is very tight and speed to launch matters most",
                     "You don&apos;t plan to grow the site beyond a few pages",
                   ].map((item) => (
-                    <li key={item} className="text-xs text-[#3F3F46]/70 flex items-start gap-2">
-                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0" />
+                    <li key={item} className="text-xs text-zinc-400 flex items-start gap-2">
+                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-copper flex-shrink-0" />
                       <span dangerouslySetInnerHTML={{ __html: item }} />
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="rounded-xl border border-[#18181B]/10 p-5 bg-[#FAFAF9]">
-                <p className="font-bold text-[#18181B] mb-3 text-sm" style={{ fontFamily: "var(--font-heading)" }}>Custom pays off if:</p>
+              <div className="rounded-xl border border-hairline p-5 bg-ink-0">
+                <p className="font-bold text-white mb-3 text-sm" style={{ fontFamily: "var(--font-heading)" }}>Custom pays off if:</p>
                 <ul className="space-y-2">
                   {[
                     "You rely on the site to generate calls, bookings, or quote requests",
@@ -169,8 +169,8 @@ export default function Article() {
                     "Your competitors have strong sites — you need an edge",
                     "You&apos;re planning to add e-commerce, booking, or integrations",
                   ].map((item) => (
-                    <li key={item} className="text-xs text-[#3F3F46]/70 flex items-start gap-2">
-                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0" />
+                    <li key={item} className="text-xs text-zinc-400 flex items-start gap-2">
+                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-copper flex-shrink-0" />
                       <span dangerouslySetInnerHTML={{ __html: item }} />
                     </li>
                   ))}
@@ -178,52 +178,52 @@ export default function Article() {
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               The SEO ceiling problem
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
+            <p className="text-zinc-400 mb-4 leading-relaxed">
               This is the one area where the gap between builders and custom sites is most consequential for small businesses. Builders give you the basics — title tags, meta descriptions, a sitemap. But Google&apos;s ranking algorithm cares deeply about page speed (Core Web Vitals), structured data (schema markup), mobile usability, and site architecture. Builder platforms have improved here, but you&apos;re working within constraints you can&apos;t control.
             </p>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
-              For a Sonoma County plumber, landscaper, or accountant trying to rank in Santa Rosa, Petaluma, or Healdsburg search results, that ceiling matters. A faster, cleaner, properly structured site is easier for Google to crawl and more likely to earn a top-three local ranking. Check out our <Link href="/web-design-sonoma-county" className="text-[#F97316] hover:underline">Sonoma County web design services</Link> if you want to understand what we optimize for specifically.
+            <p className="text-zinc-400 mb-8 leading-relaxed">
+              For a Sonoma County plumber, landscaper, or accountant trying to rank in Santa Rosa, Petaluma, or Healdsburg search results, that ceiling matters. A faster, cleaner, properly structured site is easier for Google to crawl and more likely to earn a top-three local ranking. Check out our <Link href="/web-design-sonoma-county" className="text-copper-bright hover:underline">Sonoma County web design services</Link> if you want to understand what we optimize for specifically.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               The total cost of ownership question
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
-              Builders feel cheap because the upfront cost is low. But $300/year compounds: over five years that&apos;s $1,500 paid to a platform you don&apos;t own, with no equity in the asset. A custom site built for $3,500 typically has hosting costs of $20–$50/month — much of which you&apos;d pay regardless — and you own the code outright. See our <Link href="/pricing" className="text-[#F97316] hover:underline">pricing page</Link> for current flat-fee ranges.
+            <p className="text-zinc-400 mb-4 leading-relaxed">
+              Builders feel cheap because the upfront cost is low. But $300/year compounds: over five years that&apos;s $1,500 paid to a platform you don&apos;t own, with no equity in the asset. A custom site built for $3,500 typically has hosting costs of $20–$50/month — much of which you&apos;d pay regardless — and you own the code outright. See our <Link href="/pricing" className="text-copper-bright hover:underline">pricing page</Link> for current flat-fee ranges.
             </p>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-zinc-400 mb-8 leading-relaxed">
               None of that math matters if a builder is genuinely enough for your business right now. It only matters when you&apos;re paying for a platform that&apos;s capping your growth.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Lock-in is a real risk
             </h2>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-zinc-400 mb-8 leading-relaxed">
               One thing most builder comparisons gloss over: when you leave Squarespace or Wix, you start from scratch. Your content doesn&apos;t export cleanly. Your domain transfers, but your design, your pages, your SEO work — none of it migrates to a new platform in usable form. Businesses that outgrow a builder often spend more rebuilding than they would have spent starting with a custom site. That&apos;s not a reason to avoid builders forever, but it&apos;s worth factoring in if you have any plans to scale.
             </p>
 
-            <div className="mt-10 p-6 rounded-2xl bg-[#18181B] text-white">
-              <p className="text-sm font-semibold mb-2 text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>Not sure which direction makes sense?</p>
+            <div className="mt-10 p-6 rounded-2xl bg-ink-2 text-white">
+              <p className="text-sm font-semibold mb-2 text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>Not sure which direction makes sense?</p>
               <p className="text-sm text-white/70 mb-4">
                 We&apos;ll give you a straight answer based on your business, your market, and your budget — no pressure either way. If a builder is genuinely the right call for you right now, we&apos;ll say so.
               </p>
               <Link
                 href="/get-started"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Get a free consultation <ArrowRight size={14} />
               </Link>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+            <div className="mt-10 pt-8 border-t border-hairline flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-zinc-300/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
-              <Link href="/get-started" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/get-started" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Free Website Consultation <ArrowRight size={14} />
               </Link>
             </div>

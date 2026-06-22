@@ -76,27 +76,27 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Web Development" title="How to Speed Up Your Business Website (Without a Developer)" date="June 1, 2026" readTime="5 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
-            <p className="text-lg text-[#3F3F46]/70 mb-6 leading-relaxed">
+            <p className="text-lg text-zinc-400 mb-6 leading-relaxed">
               A one-second delay in page load time reduces conversions by 7%. Google uses page speed as a ranking factor. And visitors — especially on mobile — will leave before your page finishes loading. The good news: several of the biggest improvements don&apos;t require a developer.
             </p>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-6"
+              className="text-2xl font-bold text-white mt-10 mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Test your speed first
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
-              Before making any changes, run your site through <strong className="text-[#18181B]">PageSpeed Insights</strong> (pagespeed.web.dev) and <strong className="text-[#18181B]">GTmetrix</strong> (gtmetrix.com). Both are free and give you a score plus a prioritized list of what&apos;s slowing your site down. Screenshot your scores before making changes so you can measure improvement.
+            <p className="text-zinc-400 mb-4 leading-relaxed">
+              Before making any changes, run your site through <strong className="text-white">PageSpeed Insights</strong> (pagespeed.web.dev) and <strong className="text-white">GTmetrix</strong> (gtmetrix.com). Both are free and give you a score plus a prioritized list of what&apos;s slowing your site down. Screenshot your scores before making changes so you can measure improvement.
             </p>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-zinc-400 mb-8 leading-relaxed">
               A score below 50 on PageSpeed Insights (mobile) means you have significant problems. 50–79 is average. 80+ is good. Most small business sites we see come in at 30–50 on mobile, which means there&apos;s real room for improvement.
             </p>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-6"
+              className="text-2xl font-bold text-white mt-10 mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               5 things you can do yourself
@@ -106,9 +106,9 @@ export default function Article() {
               {diyFixes.map((fix) => (
                 <div key={fix.num} className="flex gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-xl bg-[#18181B] flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-xl bg-ink-2 flex items-center justify-center">
                       <span
-                        className="text-sm font-bold text-[#F97316]"
+                        className="text-sm font-bold text-copper-bright"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {fix.num}
@@ -117,19 +117,19 @@ export default function Article() {
                   </div>
                   <div>
                     <h3
-                      className="font-bold text-[#18181B] mb-1"
+                      className="font-bold text-white mb-1"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {fix.title}
                     </h3>
-                    <p className="text-sm text-[#3F3F46]/70 leading-relaxed">{fix.desc}</p>
+                    <p className="text-sm text-zinc-400 leading-relaxed">{fix.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-6"
+              className="text-2xl font-bold text-white mt-10 mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               3 things that require a developer
@@ -138,35 +138,35 @@ export default function Article() {
               {devFixes.map(({ title, desc }) => (
                 <div
                   key={title}
-                  className="rounded-xl border border-[#18181B]/10 p-5 bg-[#FAFAF9]"
+                  className="rounded-xl border border-hairline p-5 bg-ink-0"
                 >
                   <p
-                    className="font-semibold text-[#18181B] text-sm mb-2"
+                    className="font-semibold text-white text-sm mb-2"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {title}
                   </p>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed">{desc}</p>
+                  <p className="text-sm text-zinc-400 leading-relaxed">{desc}</p>
                 </div>
               ))}
             </div>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+              className="text-2xl font-bold text-white mt-10 mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               When it&apos;s time to just rebuild
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
+            <p className="text-zinc-400 mb-4 leading-relaxed">
               Some sites are built on foundations that can&apos;t be meaningfully optimized — bloated page builders, outdated CMS versions, or frameworks that weren&apos;t designed for performance. If you&apos;ve done everything above and still can&apos;t get above a 50 on mobile PageSpeed Insights, the platform itself is the problem.
             </p>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-zinc-400 mb-8 leading-relaxed">
               A modern rebuild — using a framework like Next.js or a well-configured WordPress setup — will routinely score 90+ out of the box. If your site is older than 4–5 years, a rebuild often makes more sense economically than trying to optimize something that was never built well.
             </p>
 
-            <div className="mt-10 p-6 rounded-2xl bg-[#18181B] text-white">
+            <div className="mt-10 p-6 rounded-2xl bg-ink-2 text-white">
               <p
-                className="text-sm font-semibold mb-2 text-[#F97316]"
+                className="text-sm font-semibold mb-2 text-copper-bright"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Want to know exactly what&apos;s slowing your site down?
@@ -176,24 +176,24 @@ export default function Article() {
               </p>
               <Link
                 href="/audit"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Run a Free Website Audit <ArrowRight size={14} />
               </Link>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="mt-10 pt-8 border-t border-hairline flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link
                 href="/blog"
-                className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors"
+                className="inline-flex items-center gap-2 text-sm text-zinc-300/50 hover:text-white transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
               <Link
                 href="/#contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Get a Free Consultation <ArrowRight size={14} />

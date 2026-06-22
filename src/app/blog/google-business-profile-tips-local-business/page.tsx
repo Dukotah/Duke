@@ -31,15 +31,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Web Development" title="Google Business Profile Tips That Actually Get You Found Locally" date="March 1, 2026" readTime="6 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <div className="prose prose-zinc max-w-none text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
                 When someone in Santa Rosa searches &quot;electrician near me&quot; or a tourist in Healdsburg searches &quot;best lunch,&quot; Google decides which businesses to show in the local pack — those prominent map results at the top of the page. Your Google Business Profile is the single biggest lever you control in that decision. Here&apos;s how to use it.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Fill out every single field — completely
               </h2>
               <p className="mb-6">
@@ -57,7 +57,7 @@ export default function Article() {
                 <li><strong>Services/menu:</strong> If applicable, list your services or menu items with descriptions. This gives Google more content to match against search queries.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Photos: more than you think you need
               </h2>
               <p className="mb-6">
@@ -77,7 +77,7 @@ export default function Article() {
                 Add new photos regularly. Google sees activity as a signal of an engaged, active business.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Reviews: volume, recency, and response matter
               </h2>
               <p className="mb-6">
@@ -93,7 +93,7 @@ export default function Article() {
                 <li>Never respond to negative reviews with defensiveness or excuses — future readers are watching.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Posts: the underused feature that signals activity
               </h2>
               <p className="mb-6">
@@ -106,7 +106,7 @@ export default function Article() {
                 Keep posts short, include a photo, and add a call-to-action button (Book, Order online, Learn more). A lunch special, a weekend event, or a seasonal promotion takes two minutes to post and keeps your listing fresh.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Q&A: answer questions before they&apos;re asked
               </h2>
               <p className="mb-6">
@@ -116,20 +116,20 @@ export default function Article() {
                 Log in and proactively post the questions customers ask most often — parking, reservations, accessibility, payment methods, whether you&apos;re dog-friendly — and answer them yourself. This fills out your listing with useful information and reduces the chance of incorrect community answers.
               </p>
 
-              <div className="mt-12 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-                <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="mt-12 p-6 rounded-2xl bg-ink-0 border border-hairline">
+                <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                   The bottom line
                 </p>
-                <p className="text-sm text-[#3F3F46]/60">
+                <p className="text-sm text-zinc-400">
                   Google Business Profile is free, and most of your competitors aren&apos;t using it well. Spend two hours getting it fully set up, then 15 minutes a week on maintenance. The local visibility payoff is significant.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
+            <div className="mt-16 rounded-2xl bg-ink-2 p-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>

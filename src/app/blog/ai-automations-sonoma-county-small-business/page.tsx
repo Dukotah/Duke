@@ -97,52 +97,52 @@ export default function Article() {
           readTime="7 min read"
         />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
             <div style={{ fontFamily: "var(--font-body)" }}>
-              <p className="text-lg text-[#3F3F46]/70 leading-relaxed mb-8">
+              <p className="text-lg text-zinc-400 leading-relaxed mb-8">
                 There&apos;s a lot of noise about AI right now, and most of it isn&apos;t aimed at a plumber in Rohnert Park or a salon in Petaluma. This post is. These are five specific automations that a local service business can actually implement, what they cost in setup time, and what you should realistically expect from each. No fabricated statistics, no vague promises about &ldquo;10x productivity.&rdquo;
               </p>
 
               <div className="space-y-8 mb-10">
                 {automations.map((a) => (
-                  <div key={a.num} className="rounded-xl border border-[#18181B]/10 p-6 bg-[#FAFAF9]">
+                  <div key={a.num} className="rounded-xl border border-hairline p-6 bg-ink-0">
                     <div className="flex items-start gap-4 mb-3">
                       <span
-                        className="text-3xl font-bold text-[#18181B]/10 leading-none select-none"
+                        className="text-3xl font-bold text-white/10 leading-none select-none"
                         style={{ fontFamily: "var(--font-heading)" }}
                         aria-hidden="true"
                       >
                         {a.num}
                       </span>
                       <h2
-                        className="text-lg font-bold text-[#18181B] mt-1"
+                        className="text-lg font-bold text-white mt-1"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {a.title}
                       </h2>
                     </div>
-                    <p className="text-xs font-semibold text-[#3F3F46]/50 uppercase tracking-widest mb-3">
+                    <p className="text-xs font-semibold text-zinc-300/50 uppercase tracking-widest mb-3">
                       Good fit: {a.who}
                     </p>
-                    <p className="text-sm text-[#3F3F46]/70 leading-relaxed mb-3">{a.what}</p>
-                    <div className="border-t border-[#18181B]/8 pt-3">
-                      <p className="text-xs font-semibold text-[#18181B]/50 uppercase tracking-widest mb-1">
+                    <p className="text-sm text-zinc-400 leading-relaxed mb-3">{a.what}</p>
+                    <div className="border-t border-hairline pt-3">
+                      <p className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-1">
                         Honest take
                       </p>
-                      <p className="text-sm text-[#3F3F46]/60 leading-relaxed">{a.honest}</p>
+                      <p className="text-sm text-zinc-400 leading-relaxed">{a.honest}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
               <h2
-                className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+                className="text-2xl font-bold text-white mt-10 mb-4"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 What to skip (for now)
               </h2>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
+              <p className="text-zinc-400 leading-relaxed mb-4">
                 A few categories that get heavily marketed to small businesses but are worth being cautious about:
               </p>
               <ul className="space-y-3 mb-8">
@@ -151,27 +151,27 @@ export default function Article() {
                   "AI tools that give prices or make commitments without a human check — if the AI quotes a job wrong, you own the error. Keep anything involving money in human hands.",
                   "Any tool where you can't clearly see where your customer data is stored and who can access it. Read the privacy terms before connecting a customer list.",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm text-[#3F3F46]/70">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#18181B]/30 flex-shrink-0 mt-1.5" />
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-zinc-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-ink-2/30 flex-shrink-0 mt-1.5" />
                     {item}
                   </li>
                 ))}
               </ul>
 
               <h2
-                className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+                className="text-2xl font-bold text-white mt-10 mb-4"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 How to decide where to start
               </h2>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
+              <p className="text-zinc-400 leading-relaxed mb-4">
                 The best starting point is the one that addresses your most obvious leak. For most service businesses, that&apos;s one of two things: missed calls or slow lead response. Both are fixable with straightforward tools, both show results quickly, and neither requires replacing your existing workflow — they layer on top of it.
               </p>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-8">
+              <p className="text-zinc-400 leading-relaxed mb-8">
                 The trap to avoid is trying to implement everything at once. Add one automation, watch it for a few weeks, confirm it&apos;s working, then add the next. Each piece should clearly earn its keep before you build on it.
               </p>
 
-              <div className="bg-[#18181B] rounded-xl p-6 text-center">
+              <div className="bg-ink-2 rounded-xl p-6 text-center">
                 <p
                   className="text-white font-bold text-lg mb-2"
                   style={{ fontFamily: "var(--font-heading)" }}
@@ -183,7 +183,7 @@ export default function Article() {
                 </p>
                 <Link
                   href="/ai-integration-small-business"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   Explore AI Integration <ArrowRight size={14} />

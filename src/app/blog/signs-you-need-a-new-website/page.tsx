@@ -33,15 +33,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Web Development" title={"7 Signs It’s Time for a New Business Website (Not Just a Refresh)"} date="April 2026" readTime="6 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <div className="prose prose-zinc max-w-none text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
                 There&apos;s a difference between a website that needs a few updates and one that&apos;s fundamentally broken. Tweaking colors and swapping photos on a bad foundation doesn&apos;t fix the foundation. Here are seven signs your business needs a new website — not just a touch-up.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 1. It doesn&apos;t look right on a phone
               </h2>
               <p className="mb-6">
@@ -51,7 +51,7 @@ export default function Article() {
                 Test yours right now: open it on your phone and try to complete the most common action a customer would take (call you, find your hours, submit a form). If it&apos;s frustrating, it&apos;s costing you.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 2. It loads slowly
               </h2>
               <p className="mb-6">
@@ -61,7 +61,7 @@ export default function Article() {
                 Slow sites are often a symptom of bad hosting, unoptimized images, or a bloated WordPress theme with dozens of plugins. Sometimes these can be fixed; often the fastest path is a rebuild on a leaner foundation.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 3. You can&apos;t update it yourself
               </h2>
               <p className="mb-6">
@@ -71,7 +71,7 @@ export default function Article() {
                 This matters practically: businesses that can update their own sites keep them current. Businesses that can&apos;t end up with outdated information — closed-down specials, wrong hours, staff who left two years ago — which erodes trust.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 4. Google can&apos;t find you
               </h2>
               <p className="mb-6">
@@ -81,7 +81,7 @@ export default function Article() {
                 Older websites were often built without any SEO consideration. Retrofitting SEO onto a poorly structured site has real limits. Sometimes rebuilding with proper SEO architecture from the start is faster and more effective.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 5. The design looks like 2014
               </h2>
               <p className="mb-6">
@@ -91,14 +91,14 @@ export default function Article() {
                 You don&apos;t need the flashiest site on the internet. You need one that looks professional, loads cleanly, and communicates competence. A dated site undermines that regardless of how good your actual work is.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 6. You&apos;re embarrassed to share the URL
               </h2>
               <p className="mb-6">
                 This is the most honest test. When you hand someone a business card or send a follow-up email, do you think &quot;I hope they don&apos;t actually visit the website&quot;? That feeling is data. Your website is often the first place a prospective customer goes after meeting you. If you already know it won&apos;t make a good impression, it won&apos;t.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 7. Your business has changed but your site hasn&apos;t
               </h2>
               <p className="mb-6">
@@ -108,20 +108,20 @@ export default function Article() {
                 Sometimes this is a content problem (fixable with updates). But if the site&apos;s structure, navigation, and overall positioning don&apos;t match where your business is now, a rebuild gives you the chance to start fresh and build something that actually fits.
               </p>
 
-              <div className="mt-12 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-                <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="mt-12 p-6 rounded-2xl bg-ink-0 border border-hairline">
+                <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                   The bottom line
                 </p>
-                <p className="text-sm text-[#3F3F46]/60">
+                <p className="text-sm text-zinc-400">
                   If two or more of these apply to your site, a refresh probably won&apos;t fix it. The good news: a well-built new website pays for itself quickly in leads, credibility, and time saved.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
+            <div className="mt-16 rounded-2xl bg-ink-2 p-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>

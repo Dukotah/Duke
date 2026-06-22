@@ -31,15 +31,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Cybersecurity" title="Do Small Businesses Really Need Cybersecurity? (Yes, Here&apos;s Why)" date="February 1, 2026" readTime="6 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <div className="prose prose-zinc max-w-none text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
                 &quot;We&apos;re too small to be a target.&quot; It&apos;s the most dangerous sentence in small business IT. And it&apos;s wrong. Here&apos;s what the data actually shows — and what happens to businesses that find out the hard way.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 The myth: hackers only target big companies
               </h2>
               <p className="mb-6">
@@ -49,7 +49,7 @@ export default function Article() {
                 The reality: <strong>43% of cyberattacks target small businesses</strong>, according to Verizon&apos;s annual Data Breach Investigations Report. Small businesses are attacked not because they&apos;re valuable targets individually — but because they&apos;re easy targets collectively. Automated tools scan the internet looking for vulnerable systems, and they don&apos;t care how many employees you have.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What a real attack looks like for a small business
               </h2>
               <p className="mb-6">
@@ -65,7 +65,7 @@ export default function Article() {
                 The average cost of a data breach for a small business is now over $200,000. <strong>60% of small businesses close within six months of a major cyberattack.</strong> This isn&apos;t theoretical — it&apos;s well-documented.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Why small businesses are easier targets
               </h2>
               <p className="mb-6">
@@ -75,7 +75,7 @@ export default function Article() {
                 Many small businesses also run outdated software — old versions of Windows, unpatched plugins on their websites, routers that haven&apos;t been updated since they were installed. Every unpatched vulnerability is a door left open.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Actionable steps you can take right now
               </h2>
               <p className="mb-6">
@@ -89,7 +89,7 @@ export default function Article() {
                 <li><strong>Train your team.</strong> A 30-minute phishing awareness session is enough to catch most attacks. Teach people to verify wire transfer requests by phone, not just email.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Security doesn&apos;t have to be expensive
               </h2>
               <p className="mb-6">
@@ -99,20 +99,20 @@ export default function Article() {
                 The question isn&apos;t whether you can afford security. It&apos;s whether you can afford the alternative.
               </p>
 
-              <div className="mt-12 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-                <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="mt-12 p-6 rounded-2xl bg-ink-0 border border-hairline">
+                <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                   The bottom line
                 </p>
-                <p className="text-sm text-[#3F3F46]/60">
+                <p className="text-sm text-zinc-400">
                   Small businesses are targeted constantly — they just rarely hear about it until it&apos;s too late. A few basic safeguards can block the overwhelming majority of attacks. Start with MFA, backups, and staff awareness.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
+            <div className="mt-16 rounded-2xl bg-ink-2 p-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>

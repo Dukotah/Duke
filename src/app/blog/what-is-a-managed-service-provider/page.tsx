@@ -33,30 +33,30 @@ export default function Article() {
       <main>
         <ArticleHeader tag="IT Support" title="What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One?" date="June 1, 2026" readTime="5 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
-            <p className="text-lg text-[#3F3F46]/70 mb-6 leading-relaxed">
+            <p className="text-lg text-zinc-400 mb-6 leading-relaxed">
               If you&apos;ve started looking for IT support, you&apos;ve probably run into the term &quot;MSP&quot; without a clear explanation of what it actually means. Here&apos;s the plain-English version — and how to figure out whether your business actually needs one.
             </p>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+              className="text-2xl font-bold text-white mt-10 mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               The three models: MSP, break-fix, and in-house IT
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
-              <strong className="text-[#18181B]">Break-fix</strong> is exactly what it sounds like: something breaks, you call someone, they fix it, you pay an hourly rate. No ongoing relationship, no proactive maintenance, no one watching your systems. It&apos;s the cheapest option until something catastrophic happens.
+            <p className="text-zinc-400 mb-4 leading-relaxed">
+              <strong className="text-white">Break-fix</strong> is exactly what it sounds like: something breaks, you call someone, they fix it, you pay an hourly rate. No ongoing relationship, no proactive maintenance, no one watching your systems. It&apos;s the cheapest option until something catastrophic happens.
             </p>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
-              <strong className="text-[#18181B]">In-house IT</strong> means hiring a full-time employee (or two) to manage your technology. It&apos;s the right model for larger companies with complex infrastructure, but for most small businesses the cost is prohibitive — a mid-level IT person in Sonoma County runs $70,000–$95,000 per year, before benefits.
+            <p className="text-zinc-400 mb-4 leading-relaxed">
+              <strong className="text-white">In-house IT</strong> means hiring a full-time employee (or two) to manage your technology. It&apos;s the right model for larger companies with complex infrastructure, but for most small businesses the cost is prohibitive — a mid-level IT person in Sonoma County runs $70,000–$95,000 per year, before benefits.
             </p>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
-              <strong className="text-[#18181B]">A managed service provider (MSP)</strong> sits between the two. You pay a monthly retainer and get ongoing monitoring, maintenance, security updates, and support — all included. The MSP becomes your external IT department. You get predictable costs and proactive care instead of reactive fixes.
+            <p className="text-zinc-400 mb-8 leading-relaxed">
+              <strong className="text-white">A managed service provider (MSP)</strong> sits between the two. You pay a monthly retainer and get ongoing monitoring, maintenance, security updates, and support — all included. The MSP becomes your external IT department. You get predictable costs and proactive care instead of reactive fixes.
             </p>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+              className="text-2xl font-bold text-white mt-10 mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               What MSPs typically cover
@@ -72,14 +72,14 @@ export default function Article() {
                 "Vendor management (dealing with your ISP, software vendors, etc.)",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-[#F97316] flex-shrink-0" />
-                  <span className="text-sm text-[#3F3F46]/70">{item}</span>
+                  <span className="mt-1.5 w-2 h-2 rounded-full bg-copper flex-shrink-0" />
+                  <span className="text-sm text-zinc-400">{item}</span>
                 </li>
               ))}
             </ul>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+              className="text-2xl font-bold text-white mt-10 mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               When it makes sense to hire an MSP
@@ -105,34 +105,34 @@ export default function Article() {
               ].map(({ trigger, why }) => (
                 <div
                   key={trigger}
-                  className="rounded-xl border border-[#18181B]/10 p-5 bg-[#FAFAF9]"
+                  className="rounded-xl border border-hairline p-5 bg-ink-0"
                 >
                   <p
-                    className="font-semibold text-[#18181B] text-sm mb-1"
+                    className="font-semibold text-white text-sm mb-1"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {trigger}
                   </p>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed">{why}</p>
+                  <p className="text-sm text-zinc-400 leading-relaxed">{why}</p>
                 </div>
               ))}
             </div>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+              className="text-2xl font-bold text-white mt-10 mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               When it doesn&apos;t make sense
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
+            <p className="text-zinc-400 mb-4 leading-relaxed">
               If you&apos;re a 1–2 person business with straightforward tech needs — a couple of laptops, a basic website, cloud-based tools — a full MSP retainer is probably overkill. Break-fix support or an occasional consultant is more cost-effective.
             </p>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-zinc-400 mb-8 leading-relaxed">
               Similarly, if your tech is extremely simple and rarely causes problems, the overhead of a managed relationship may not be worth it yet. The right time to engage an MSP is usually just before you actually need one — not after something breaks.
             </p>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+              className="text-2xl font-bold text-white mt-10 mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               What to look for in an MSP
@@ -147,28 +147,28 @@ export default function Article() {
                 "A security-first approach, not just reactive support",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-[#F97316] flex-shrink-0" />
-                  <span className="text-sm text-[#3F3F46]/70">{item}</span>
+                  <span className="mt-1.5 w-2 h-2 rounded-full bg-copper flex-shrink-0" />
+                  <span className="text-sm text-zinc-400">{item}</span>
                 </li>
               ))}
             </ul>
 
             <h2
-              className="text-2xl font-bold text-[#18181B] mt-10 mb-4"
+              className="text-2xl font-bold text-white mt-10 mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               How Copper Bay Tech&apos;s model works
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
+            <p className="text-zinc-400 mb-4 leading-relaxed">
               We operate differently from a traditional MSP. Traditional MSPs often use a one-size-fits-all pricing model that includes services you don&apos;t need and excludes things you do. We build flat-rate retainers around what your specific business actually requires — whether that&apos;s monitoring, security, help desk, or all three.
             </p>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-zinc-400 mb-8 leading-relaxed">
               We&apos;re local to Sonoma County, which means on-site support when you need it, not just remote tickets. And we don&apos;t require long-term contracts — we keep clients because the service is good, not because they&apos;re locked in.
             </p>
 
-            <div className="mt-10 p-6 rounded-2xl bg-[#18181B] text-white">
+            <div className="mt-10 p-6 rounded-2xl bg-ink-2 text-white">
               <p
-                className="text-sm font-semibold mb-2 text-[#F97316]"
+                className="text-sm font-semibold mb-2 text-copper-bright"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Not sure what you actually need?
@@ -178,17 +178,17 @@ export default function Article() {
               </p>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="mt-10 pt-8 border-t border-hairline flex flex-col sm:flex-row gap-4 items-center justify-between">
               <Link
                 href="/blog"
-                className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors"
+                className="inline-flex items-center gap-2 text-sm text-zinc-300/50 hover:text-white transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
               <Link
                 href="/#contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Get a Free IT Assessment <ArrowRight size={14} />

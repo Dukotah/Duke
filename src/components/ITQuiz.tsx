@@ -159,7 +159,7 @@ export default function ITQuiz() {
   const progress = ((current) / questions.length) * 100;
 
   return (
-    <section id="quiz" className="py-24 bg-[#18181B]">
+    <section id="quiz" className="pt-6 pb-12 bg-ink-1">
       <div className="max-w-2xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -169,7 +169,7 @@ export default function ITQuiz() {
           className="text-center mb-12"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Free Self-Assessment
@@ -188,13 +188,13 @@ export default function ITQuiz() {
           </p>
         </motion.div>
 
-        <div className="bg-[#1F1F23] rounded-2xl border border-white/10 overflow-hidden">
+        <div className="bg-ink-2 rounded-2xl border border-hairline overflow-hidden">
           {!done ? (
             <>
               {/* Progress bar */}
               <div className="h-1 bg-white/10">
                 <motion.div
-                  className="h-full bg-[#F97316]"
+                  className="h-full bg-copper"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.3 }}
@@ -233,7 +233,7 @@ export default function ITQuiz() {
                           onClick={() => setSelected(opt.risk)}
                           className={`w-full text-left px-5 py-4 rounded-xl border text-sm transition-all ${
                             selected === opt.risk
-                              ? "border-[#F97316] bg-[#F97316]/10 text-white"
+                              ? "border-copper bg-copper/10 text-white"
                               : "border-white/10 bg-white/5 text-white/70 hover:border-white/30 hover:bg-white/8"
                           }`}
                           style={{ fontFamily: "var(--font-body)" }}
@@ -249,7 +249,7 @@ export default function ITQuiz() {
                   <button
                     onClick={handleNext}
                     disabled={selected === null}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {current + 1 === questions.length ? "See My Results" : "Next"}
@@ -292,7 +292,7 @@ export default function ITQuiz() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
                 <Link
                   href="/schedule"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {result.cta} <ArrowRight size={15} />

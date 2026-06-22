@@ -30,6 +30,55 @@ type Post = {
 };
 
 const posts: Post[] = [
+  // June 2026 — AI integration by industry
+  {
+    slug: "ai-for-sonoma-county-wineries",
+    tag: "AI & Automation",
+    title: "How AI Actually Helps a Sonoma County Winery (2026)",
+    excerpt: "The practical, no-hype ways Sonoma County wineries use AI in 2026 — booking tasting-room calls 24/7, keeping wine-club members re-ordering, and clearing DTC busywork — plus what to skip.",
+    readTime: "7 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "ai-for-restaurants-sonoma-county",
+    tag: "AI & Automation",
+    title: "How AI Actually Helps a Sonoma County Restaurant (2026)",
+    excerpt: "A no-hype, owner-to-owner guide to AI for Sonoma County restaurants — stopping missed reservation and takeout calls, automating ordering, reviews, and reminders, and clearing back-office busywork.",
+    readTime: "7 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "ai-for-home-services-sonoma-county",
+    tag: "AI & Automation",
+    title: "How AI Helps a Sonoma County HVAC, Plumbing or Electrical Business (2026)",
+    excerpt: "Practical AI for the trades — capture every missed call from the field, book jobs 24/7, follow up on quotes, and generate reviews so leads stop walking to the competitor who picked up.",
+    readTime: "7 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "ai-for-healthcare-practices-sonoma-county",
+    tag: "AI & Automation",
+    title: "How AI Helps a Sonoma County Healthcare or Dental Practice (2026)",
+    excerpt: "Practical, HIPAA-aware ways small healthcare and dental practices can use AI in 2026 — cutting no-shows, handling after-hours calls, easing intake, and running recalls — without putting patient data at risk.",
+    readTime: "7 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "ai-for-real-estate-sonoma-county",
+    tag: "AI & Automation",
+    title: "How AI Helps a Sonoma County Real Estate Agent (2026)",
+    excerpt: "Practical, no-hype AI for Sonoma County agents and brokerages: instant lead response that wins listings, 24/7 inquiry handling, automated buyer/seller nurture, and CRM follow-up that actually happens.",
+    readTime: "6 min read",
+    date: "June 2026",
+  },
+  {
+    slug: "ai-for-professional-services-sonoma-county",
+    tag: "AI & Automation",
+    title: "How AI Helps a Sonoma County Law, Accounting or Consulting Firm (2026)",
+    excerpt: "Practical AI for Sonoma County professional firms in 2026 — client intake, after-hours inquiries, document drafting, meeting notes, and billing — with confidentiality and human review kept front and center.",
+    readTime: "7 min read",
+    date: "June 2026",
+  },
   // June 2026 — comparison guides
   {
     slug: "squarespace-vs-custom-website-for-small-business",
@@ -313,34 +362,29 @@ const posts: Post[] = [
 
 export default function BlogPage() {
   return (
-    <>
+    <div className="theme-dark min-h-screen bg-ink-0 text-white">
       <Nav />
-      <main>
+      <main className="pt-16">
         {/* Hero */}
-        <section className="pt-32 pb-16 bg-[#18181B]">
-          <div className="max-w-4xl mx-auto px-6">
-            <span
-              className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
-              style={{
-                backgroundColor: "rgba(249,115,22,0.15)",
-                color: "#F97316",
-                fontFamily: "var(--font-heading)",
-              }}
-            >
+        <section className="relative overflow-hidden bg-ink-0 px-6 pt-20 pb-12">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10"
+            style={{
+              background:
+                "radial-gradient(55% 45% at 20% 0%, rgba(221,170,117,0.10) 0%, rgba(221,170,117,0) 70%)",
+            }}
+          />
+          <div className="mx-auto max-w-4xl">
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-copper-dim bg-copper/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-copper-bright">
               Resources
             </span>
-            <h1
-              className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
+            <h1 className="mb-4 text-4xl font-bold leading-tight text-white md:text-5xl">
               Practical tech advice for
               <br />
-              <span style={{ color: "#F97316" }}>Sonoma County businesses.</span>
+              <span className="text-copper-bright">Sonoma County businesses.</span>
             </h1>
-            <p
-              className="text-white/60 text-lg max-w-xl"
-              style={{ fontFamily: "var(--font-body)" }}
-            >
+            <p className="max-w-xl text-lg text-zinc-400">
               No jargon, no fluff. Just honest guidance on websites, IT, and security for local business owners.
             </p>
           </div>
@@ -350,31 +394,19 @@ export default function BlogPage() {
         <BlogIndex posts={posts} />
 
         {/* CTA */}
-        <section className="pb-20 bg-[#FAFAF9]">
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="rounded-2xl bg-[#18181B] p-10 text-center">
-              <p
-                className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
+        <section className="bg-ink-0 pb-20">
+          <div className="mx-auto max-w-5xl px-6">
+            <div className="rounded-2xl border border-copper-dim bg-ink-1 p-10 text-center">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-copper-bright">
                 Want personalized advice?
               </p>
-              <h3
-                className="text-2xl font-bold text-white mb-3"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Skip the reading — just ask us.
-              </h3>
-              <p
-                className="text-white/60 text-sm mb-6 max-w-md mx-auto"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
+              <h3 className="mb-3 text-2xl font-bold text-white">Skip the reading — just ask us.</h3>
+              <p className="mx-auto mb-6 max-w-md text-sm text-zinc-400">
                 Free 30-minute consultation. We&apos;ll tell you exactly where you stand and what matters most for your business.
               </p>
               <Link
                 href="/#contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
-                style={{ fontFamily: "var(--font-heading)" }}
+                className="inline-flex items-center gap-2 rounded-full bg-copper px-6 py-3 text-sm font-bold text-ink-0 transition-colors hover:bg-copper-bright"
               >
                 Get a Free Consultation <ArrowRight size={15} />
               </Link>
@@ -383,6 +415,6 @@ export default function BlogPage() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

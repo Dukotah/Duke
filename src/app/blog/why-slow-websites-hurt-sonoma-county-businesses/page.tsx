@@ -27,17 +27,17 @@ export default function Post() {
       <ArticleHeader tag="Web Performance" title="Why a Slow Website Is Costing Your Sonoma County Business Customers" date="May 30, 2026" readTime="5 min read" />
       <main className="max-w-2xl mx-auto px-6 py-24">
 
-      <div className="prose-content space-y-6 text-[#3F3F46] leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+      <div className="prose-content space-y-6 text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-        <p className="text-lg text-[#3F3F46]/80">
-          Here&apos;s a number that should make you uncomfortable: <strong className="text-[#18181B]">53% of mobile visitors abandon a site that takes more than 3 seconds to load.</strong> More than half. Gone before they even see what you offer.
+        <p className="text-lg text-zinc-300">
+          Here&apos;s a number that should make you uncomfortable: <strong className="text-white">53% of mobile visitors abandon a site that takes more than 3 seconds to load.</strong> More than half. Gone before they even see what you offer.
         </p>
 
         <p>
           For a restaurant in Petaluma or a contractor in Santa Rosa, that&apos;s not an abstract statistic — that&apos;s a customer who found you on Google, clicked your link, waited two seconds, and went to your competitor instead.
         </p>
 
-        <h2 className="text-xl font-bold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-bold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           Google ranks fast sites higher
         </h2>
         <p>
@@ -47,7 +47,7 @@ export default function Post() {
           If your site scores poorly, Google pushes you down in local search results. That means when someone in Rohnert Park searches &quot;plumber near me,&quot; a faster competitor shows up above you — even if you&apos;ve been in business for 20 years and they just opened.
         </p>
 
-        <h2 className="text-xl font-bold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-bold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           What&apos;s usually causing it
         </h2>
         <p>
@@ -61,7 +61,7 @@ export default function Post() {
           <li><strong>Third-party scripts</strong> — live chat widgets, booking plugins, social media feeds — each one adds load time. Most aren&apos;t worth what they cost in speed.</li>
         </ul>
 
-        <h2 className="text-xl font-bold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-bold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           How to check your own site right now
         </h2>
         <p>
@@ -71,7 +71,7 @@ export default function Post() {
           You can also use Google&apos;s own tool at <strong>pagespeed.web.dev</strong> for more detail.
         </p>
 
-        <h2 className="text-xl font-bold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-bold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           What a real fix looks like
         </h2>
         <p>
@@ -83,16 +83,16 @@ export default function Post() {
           <li><strong>Score below 50:</strong> Often a sign the site needs to be rebuilt. Template-based sites in this range rarely get meaningfully faster without starting over.</li>
         </ul>
 
-        <div className="bg-[#FAFAF9] border border-[#18181B]/8 rounded-xl p-6 mt-10">
-          <p className="font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+        <div className="bg-ink-0 border border-hairline rounded-xl p-6 mt-10">
+          <p className="font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
             Want to know exactly what&apos;s holding your site back?
           </p>
-          <p className="text-sm text-[#3F3F46]/60 mb-4">
+          <p className="text-sm text-zinc-400 mb-4">
             I offer a free 15-minute call where I&apos;ll walk through your audit results and tell you honestly what I&apos;d recommend — whether that&apos;s a quick fix, a bigger project, or nothing at all.
           </p>
           <Link
             href="/#contact"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Book a free consultation

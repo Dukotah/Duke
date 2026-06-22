@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function RansomwarePost() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-0">
       <JsonLd schema={blogPostingSchema({ title: "What Is Ransomware and How Do Small Businesses Actually Stop It?", description: "Ransomware attacks on small businesses are up 300%. This is what it is, how it gets in, and the specific steps Sonoma County business owners can take to protect themselves.", url: "https://copperbaytech.com/blog/what-is-ransomware-and-how-do-you-stop-it", datePublished: "2026-02-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "What Is Ransomware" }])} />
       <Nav light />
@@ -138,13 +138,13 @@ export default function RansomwarePost() {
             </p>
           </div>
 
-          <div className="mt-12 rounded-2xl p-6 border border-[#18181B]/10 bg-[#FAFAF9]">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-2" style={{ fontFamily: "var(--font-heading)" }}>Free Consultation</p>
-            <h3 className="text-[#18181B] font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Not sure how exposed you are?</h3>
-            <p className="text-[#3F3F46]/60 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
+          <div className="mt-12 rounded-2xl p-6 border border-hairline bg-ink-0">
+            <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-2" style={{ fontFamily: "var(--font-heading)" }}>Free Consultation</p>
+            <h3 className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Not sure how exposed you are?</h3>
+            <p className="text-zinc-400 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
               We run security audits for Sonoma County businesses — half-day, written report, prioritized remediation. Free 30-min consultation to discuss your situation.
             </p>
-            <a href="/schedule" className="inline-block bg-[#F97316] hover:bg-[#ea6c0a] text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
+            <a href="/schedule" className="inline-block bg-copper hover:bg-copper-bright text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
               Book a Free Consultation
             </a>
           </div>

@@ -71,33 +71,33 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Local SEO" title="How to Get Your Sonoma County Business to Rank Higher on Google Maps" date="June 1, 2026" readTime="5 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
-            <p className="text-lg text-[#3F3F46]/70 mb-6 leading-relaxed">
+            <p className="text-lg text-zinc-400 mb-6 leading-relaxed">
               When someone in Santa Rosa searches &quot;accountant near me,&quot; they don&apos;t scroll through ten blue links — they click one of the three businesses in the Map Pack. That map pack is where local search is won or lost, and most small businesses have no idea why they&apos;re not in it.
             </p>
-            <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
+            <p className="text-zinc-400 mb-10 leading-relaxed">
               Here&apos;s how Google decides which businesses to show — and exactly what you can do to move up.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               The 3 factors Google uses to rank local businesses
             </h2>
 
             <div className="space-y-4 mb-10">
               {factors.map((factor) => (
-                <div key={factor.label} className="rounded-xl border border-[#18181B]/10 p-5 bg-[#FAFAF9]">
-                  <h3 className="font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{factor.label}</h3>
-                  <p className="text-sm text-[#3F3F46]/70 leading-relaxed">{factor.desc}</p>
+                <div key={factor.label} className="rounded-xl border border-hairline p-5 bg-ink-0">
+                  <h3 className="font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{factor.label}</h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed">{factor.desc}</p>
                 </div>
               ))}
             </div>
 
-            <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
+            <p className="text-zinc-400 mb-10 leading-relaxed">
               Distance is largely out of your control. Relevance and prominence are not. Here&apos;s how to work both.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               Actionable steps to rank higher
             </h2>
 
@@ -105,22 +105,22 @@ export default function Article() {
               {actions.map((action, i) => (
                 <div key={action.title} className="flex gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-xl bg-[#18181B] flex items-center justify-center">
-                      <span className="text-xs font-bold text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>0{i + 1}</span>
+                    <div className="w-10 h-10 rounded-xl bg-ink-2 flex items-center justify-center">
+                      <span className="text-xs font-bold text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>0{i + 1}</span>
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{action.title}</h3>
-                    <p className="text-sm text-[#3F3F46]/70 leading-relaxed">{action.body}</p>
+                    <h3 className="font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{action.title}</h3>
+                    <p className="text-sm text-zinc-400 leading-relaxed">{action.body}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               How to ask for reviews without being awkward about it
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
+            <p className="text-zinc-400 mb-4 leading-relaxed">
               Most businesses hesitate here, but the ask is simpler than you think:
             </p>
             <ul className="space-y-3 mb-10">
@@ -130,39 +130,39 @@ export default function Article() {
                 "Then text or email them the direct link. Don't make them hunt for your business on Google.",
                 "Follow up once if you don't hear back. Not more than that.",
               ].map((tip) => (
-                <li key={tip} className="flex items-start gap-3 p-4 rounded-xl bg-[#FAFAF9] border border-[#18181B]/10">
-                  <CheckCircle size={16} className="flex-shrink-0 mt-0.5" color="#F97316" />
-                  <span className="text-sm text-[#3F3F46]/70">{tip}</span>
+                <li key={tip} className="flex items-start gap-3 p-4 rounded-xl bg-ink-0 border border-hairline">
+                  <CheckCircle size={16} className="flex-shrink-0 mt-0.5" color="#DDAA75" />
+                  <span className="text-sm text-zinc-400">{tip}</span>
                 </li>
               ))}
             </ul>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               What timeframe to expect
             </h2>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-zinc-400 mb-8 leading-relaxed">
               Local SEO isn&apos;t instant. A fully optimized GBP with a handful of new reviews typically starts showing ranking improvements within 4–8 weeks. Consistent effort over 3–6 months can move you from invisible to the Map Pack for your most important keywords. For businesses in smaller Sonoma County cities like Sebastopol, Rohnert Park, or Healdsburg, competition is lower and results often come faster than in larger markets.
             </p>
 
-            <div className="mt-10 p-6 rounded-2xl bg-[#18181B] text-white">
-              <p className="text-sm font-semibold mb-2 text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>Find out where you stand</p>
+            <div className="mt-10 p-6 rounded-2xl bg-ink-2 text-white">
+              <p className="text-sm font-semibold mb-2 text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>Find out where you stand</p>
               <p className="text-sm text-white/70 mb-4">
                 We offer a free local SEO audit for Sonoma County businesses — we&apos;ll review your GBP, check your citation consistency, and tell you exactly what&apos;s holding your Maps ranking back.
               </p>
               <Link
                 href="/#contact"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Free local SEO audit <ArrowRight size={14} />
               </Link>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+            <div className="mt-10 pt-8 border-t border-hairline flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-zinc-300/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Free Consultation <ArrowRight size={14} />
               </Link>
             </div>

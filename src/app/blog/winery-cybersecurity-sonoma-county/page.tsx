@@ -33,15 +33,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Cybersecurity" title="Why Sonoma County Wineries Are a Cybersecurity Target (And What to Do About It)" date="April 1, 2026" readTime="6 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <div className="prose prose-zinc max-w-none text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
                 The wine industry feels like it belongs to a different era — rolling vineyards, handcrafted production, relationships built over decades. But the back office of a modern Sonoma County winery is digital infrastructure: POS terminals, wine club platforms, reservation systems, email lists, supplier networks, and financial accounts. All of it is a target.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What makes wineries attractive targets
               </h2>
               <p className="mb-6">
@@ -57,7 +57,7 @@ export default function Article() {
                 Add to this that many family-owned wineries run lean operations without dedicated IT staff, and the picture becomes clear: valuable data, limited defenses.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 The attacks that actually happen
               </h2>
               <p className="mb-6">
@@ -73,7 +73,7 @@ export default function Article() {
                 <strong>Payment skimming.</strong> Malware installed on a tasting room POS silently copies card data for weeks before it&apos;s detected. The breach isn&apos;t discovered until customers start reporting fraudulent charges.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Securing your tasting room
               </h2>
               <p className="mb-6">
@@ -85,7 +85,7 @@ export default function Article() {
                 <li><strong>Restrict physical access.</strong> POS terminals should only be accessible to staff who need them. Shared login credentials are a compliance risk and a security one.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Protecting wine club member data
               </h2>
               <p className="mb-6">
@@ -98,7 +98,7 @@ export default function Article() {
                 <li>Have a plan for what you&apos;d do if there were a breach — including how you&apos;d notify affected members.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 The three things to do this week
               </h2>
               <p className="mb-6">
@@ -110,20 +110,20 @@ export default function Article() {
                 <li><strong>Call your IT contact or find one.</strong> A 30-minute conversation with a local IT professional who understands the wine industry&apos;s specific risks is worth more than a generic security checklist.</li>
               </ul>
 
-              <div className="mt-12 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-                <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="mt-12 p-6 rounded-2xl bg-ink-0 border border-hairline">
+                <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                   The bottom line
                 </p>
-                <p className="text-sm text-[#3F3F46]/60">
+                <p className="text-sm text-zinc-400">
                   Sonoma County wineries hold valuable data and are often underprotected. The specific risks — POS data, wine club member records, supplier payment fraud — are manageable with the right safeguards. Don&apos;t wait for an incident to find out where your gaps are.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
+            <div className="mt-16 rounded-2xl bg-ink-2 p-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>

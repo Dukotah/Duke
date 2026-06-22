@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function WebsiteCostPost() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-0">
       <JsonLd schema={blogPostingSchema({ title: "How Much Should a Small Business Website Cost? (Honest Answer)", description: "Website pricing ranges wildly — from $500 DIY to $50,000 agency builds. Here's what actually drives the cost and what Sonoma County small businesses should realistically expect to pay.", url: "https://copperbaytech.com/blog/how-much-should-a-small-business-website-cost", datePublished: "2026-04-01" })} />
       <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Blog", url: "https://copperbaytech.com/blog" }, { name: "Small Business Website Cost" }])} />
       <Nav light />
@@ -119,13 +119,13 @@ export default function WebsiteCostPost() {
             </p>
           </div>
 
-          <div className="mt-12 rounded-2xl p-6 border border-[#18181B]/10 bg-[#FAFAF9]">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-2" style={{ fontFamily: "var(--font-heading)" }}>Get an Estimate</p>
-            <h3 className="text-[#18181B] font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Estimate your project cost in 2 minutes</h3>
-            <p className="text-[#3F3F46]/60 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
+          <div className="mt-12 rounded-2xl p-6 border border-hairline bg-ink-0">
+            <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-2" style={{ fontFamily: "var(--font-heading)" }}>Get an Estimate</p>
+            <h3 className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Estimate your project cost in 2 minutes</h3>
+            <p className="text-zinc-400 text-sm mb-4" style={{ fontFamily: "var(--font-body)" }}>
               Our pricing estimator asks a few questions about your project and gives you a realistic ballpark — no email required.
             </p>
-            <Link href="/tools/website-cost-estimator" className="inline-block bg-[#F97316] hover:bg-[#ea6c0a] text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
+            <Link href="/tools/website-cost-estimator" className="inline-block bg-copper hover:bg-copper-bright text-white font-bold px-6 py-2.5 rounded-full transition-colors text-sm" style={{ fontFamily: "var(--font-heading)" }}>
               Try the Estimator
             </Link>
           </div>

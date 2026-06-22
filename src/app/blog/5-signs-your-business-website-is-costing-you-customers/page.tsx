@@ -66,40 +66,40 @@ export default function Article() {
       <Nav />
       <main>
         <ArticleHeader tag="Web Development" title="5 Signs Your Business Website Is Costing You Customers Right Now" date="February 1, 2026" readTime="4 min read" />
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <p className="text-lg text-[#3F3F46]/70 mb-10 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="text-lg text-zinc-400 mb-10 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
               Most business owners don&apos;t realize their website is a problem until a customer mentions it — or worse, they never find out because the visitor just left. Here are five things to check right now, no technical knowledge required.
             </p>
             <div className="space-y-8">
               {signs.map((s) => (
                 <div key={s.num} className="flex gap-6">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-xl bg-[#18181B] flex items-center justify-center">
-                      <span className="text-sm font-bold text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>{s.num}</span>
+                    <div className="w-12 h-12 rounded-xl bg-ink-2 flex items-center justify-center">
+                      <span className="text-sm font-bold text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>{s.num}</span>
                     </div>
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{s.title}</h2>
-                    <p className="text-[#3F3F46]/70 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{s.body}</p>
+                    <h2 className="text-xl font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{s.title}</h2>
+                    <p className="text-zinc-400 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{s.body}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-12 p-6 rounded-2xl bg-[#18181B] text-white">
-              <p className="text-sm font-semibold mb-2 text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>Quick action</p>
+            <div className="mt-12 p-6 rounded-2xl bg-ink-2 text-white">
+              <p className="text-sm font-semibold mb-2 text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>Quick action</p>
               <p className="text-sm text-white/70 mb-4" style={{ fontFamily: "var(--font-body)" }}>
                 Run a free audit at our Website Health Check tool — it checks speed, SSL, SEO, broken links, and mobile readiness in about 30 seconds.
               </p>
-              <Link href="/tools" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/tools" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Run Free Website Audit <ArrowRight size={14} />
               </Link>
             </div>
-            <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+            <div className="mt-10 pt-8 border-t border-hairline flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-zinc-300/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Get Your Site Fixed <ArrowRight size={14} />
               </Link>
             </div>

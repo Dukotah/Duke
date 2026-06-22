@@ -72,26 +72,26 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Local SEO" title="How to Set Up and Optimize Your Google Business Profile in Sonoma County" date="June 1, 2026" readTime="6 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
-            <p className="text-lg text-[#3F3F46]/70 mb-6 leading-relaxed">
+            <p className="text-lg text-zinc-400 mb-6 leading-relaxed">
               If a Petaluma resident searches &quot;plumber near me&quot; or &quot;wine tasting in Healdsburg,&quot; the first thing they see is the Google Map Pack — three local businesses displayed with ratings, hours, and directions. Getting into that pack is one of the highest-ROI things a local business can do. Your Google Business Profile (GBP) is how you get there.
             </p>
-            <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
+            <p className="text-zinc-400 mb-10 leading-relaxed">
               Most businesses either haven&apos;t claimed their profile, or they have a half-complete listing sitting there making them look unprofessional. Here&apos;s how to do it right.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Why Google Business Profile matters
             </h2>
-            <p className="text-[#3F3F46]/70 mb-6 leading-relaxed">
+            <p className="text-zinc-400 mb-6 leading-relaxed">
               Nearly half of all Google searches have local intent — people looking for things near them. Google Business Profile is how Google decides which local businesses to show for those searches. It&apos;s free, it feeds directly into Google Maps, and it works especially well for service-area businesses in places like Santa Rosa, Sebastopol, Sonoma, and Windsor.
             </p>
-            <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
+            <p className="text-zinc-400 mb-10 leading-relaxed">
               A well-optimized profile can generate more leads than a mediocre website. And unlike paid ads, once you set it up and earn reviews, the leads keep coming without ongoing ad spend.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               Step-by-step setup and optimization
             </h2>
 
@@ -99,19 +99,19 @@ export default function Article() {
               {steps.map((step) => (
                 <div key={step.num} className="flex gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-xl bg-[#18181B] flex items-center justify-center">
-                      <span className="text-sm font-bold text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>{step.num}</span>
+                    <div className="w-12 h-12 rounded-xl bg-ink-2 flex items-center justify-center">
+                      <span className="text-sm font-bold text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>{step.num}</span>
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{step.title}</h3>
-                    <p className="text-sm text-[#3F3F46]/70 leading-relaxed">{step.body}</p>
+                    <h3 className="font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{step.title}</h3>
+                    <p className="text-sm text-zinc-400 leading-relaxed">{step.body}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Sonoma County-specific tips
             </h2>
             <ul className="space-y-3 mb-10">
@@ -121,14 +121,14 @@ export default function Article() {
                 "Respond to every review, good and bad, within 24 hours. In a tight-knit community like Sonoma County, your responsiveness signals trustworthiness to both Google and potential customers.",
                 "Use your GBP posts to highlight Sonoma County-relevant events — harvest season, local festivals, or partnerships with local organizations.",
               ].map((tip) => (
-                <li key={tip} className="flex items-start gap-3 p-4 rounded-xl bg-[#FAFAF9] border border-[#18181B]/10">
-                  <CheckCircle size={16} className="flex-shrink-0 mt-0.5" color="#F97316" />
-                  <span className="text-sm text-[#3F3F46]/70">{tip}</span>
+                <li key={tip} className="flex items-start gap-3 p-4 rounded-xl bg-ink-0 border border-hairline">
+                  <CheckCircle size={16} className="flex-shrink-0 mt-0.5" color="#DDAA75" />
+                  <span className="text-sm text-zinc-400">{tip}</span>
                 </li>
               ))}
             </ul>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Common mistakes to avoid
             </h2>
             <div className="space-y-3 mb-10">
@@ -137,23 +137,23 @@ export default function Article() {
                 { mistake: "Keyword-stuffing your business name", fix: "Don't add 'Best Plumber Sonoma County' to your business name — it violates Google's guidelines and can get your listing suspended." },
                 { mistake: "Ignoring negative reviews", fix: "A thoughtful, professional response to a bad review often looks better than perfect 5-star ratings with no response at all." },
               ].map((item) => (
-                <div key={item.mistake} className="rounded-xl border border-[#18181B]/10 p-5 bg-[#FAFAF9]">
-                  <h3 className="font-semibold text-[#18181B] text-sm mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+                <div key={item.mistake} className="rounded-xl border border-hairline p-5 bg-ink-0">
+                  <h3 className="font-semibold text-white text-sm mb-1" style={{ fontFamily: "var(--font-heading)" }}>
                     ✗ {item.mistake}
                   </h3>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed">{item.fix}</p>
+                  <p className="text-sm text-zinc-400 leading-relaxed">{item.fix}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-10 p-6 rounded-2xl bg-[#18181B] text-white">
-              <p className="text-sm font-semibold mb-2 text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>Not sure where you stand?</p>
+            <div className="mt-10 p-6 rounded-2xl bg-ink-2 text-white">
+              <p className="text-sm font-semibold mb-2 text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>Not sure where you stand?</p>
               <p className="text-sm text-white/70 mb-4">
                 We offer a free local SEO review for Sonoma County businesses — we&apos;ll audit your GBP, check your citations, and tell you exactly what&apos;s holding your rankings back.
               </p>
               <Link
                 href="/#contact"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Get a free local SEO review <ArrowRight size={14} />
@@ -162,11 +162,11 @@ export default function Article() {
 
             <BlogEmailCapture />
 
-            <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+            <div className="mt-10 pt-8 border-t border-hairline flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-zinc-300/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Free Consultation <ArrowRight size={14} />
               </Link>
             </div>

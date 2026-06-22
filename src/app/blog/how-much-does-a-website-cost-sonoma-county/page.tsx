@@ -46,15 +46,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Web Development" title="How Much Does a Website Cost in Sonoma County? (2026)" date="May 1, 2026" readTime="6 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
             <div className="prose prose-zinc max-w-none" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 leading-relaxed mb-8">
+              <p className="text-lg text-zinc-400 leading-relaxed mb-8">
                 The honest answer is: it depends — but that&apos;s a cop-out, and you deserve better. Here&apos;s what website projects actually cost in Sonoma County in 2026, broken down by who&apos;s building it and what you&apos;re getting.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 The four tiers you&apos;ll encounter
               </h2>
 
@@ -81,20 +81,20 @@ export default function Article() {
                     honest: "Appropriate for complex applications, e-commerce at scale, or enterprise requirements. For a local services business, you're paying for overhead — account managers, project managers, layers between you and the person building your site. Not necessary for most.",
                   },
                 ].map((t) => (
-                  <div key={t.tier} className="border border-[#18181B]/10 rounded-xl p-6 bg-[#FAFAF9]">
+                  <div key={t.tier} className="border border-hairline rounded-xl p-6 bg-ink-0">
                     <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
-                      <h3 className="text-base font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>{t.tier}</h3>
-                      <span className="text-sm font-bold text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>{t.range}</span>
+                      <h3 className="text-base font-bold text-white" style={{ fontFamily: "var(--font-heading)" }}>{t.tier}</h3>
+                      <span className="text-sm font-bold text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>{t.range}</span>
                     </div>
-                    <p className="text-sm text-[#3F3F46]/60 leading-relaxed">{t.honest}</p>
+                    <p className="text-sm text-zinc-400 leading-relaxed">{t.honest}</p>
                   </div>
                 ))}
               </div>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What drives costs up
               </h2>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
+              <p className="text-zinc-400 leading-relaxed mb-4">
                 Within any tier, these factors push the price higher:
               </p>
               <ul className="space-y-2 mb-8">
@@ -106,14 +106,14 @@ export default function Article() {
                   "Complex forms, calculators, or interactive features",
                   "Multilingual content",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm text-[#3F3F46]/70">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0 mt-1.5" />
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-zinc-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-copper flex-shrink-0 mt-1.5" />
                     {item}
                   </li>
                 ))}
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Red flags to watch for when getting quotes
               </h2>
               <ul className="space-y-2 mb-8">
@@ -124,34 +124,34 @@ export default function Article() {
                   "They show you templates and call it \"custom design\"",
                   "You can't easily get your own files and hosting access if you leave",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm text-[#3F3F46]/70">
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-zinc-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0 mt-1.5" />
                     {item}
                   </li>
                 ))}
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What Copper Bay Tech charges
               </h2>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
+              <p className="text-zinc-400 leading-relaxed mb-4">
                 Most small business websites we build fall between <strong>$2,500 and $4,500</strong> flat. That includes custom design and code (no templates), mobile-first build, local SEO setup, Google Business Profile configuration, contact form with spam filtering, and hosting setup.
               </p>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
+              <p className="text-zinc-400 leading-relaxed mb-4">
                 You get a specific quote before any work starts. If you go ahead, that number doesn&apos;t change.
               </p>
-              <p className="text-sm text-[#3F3F46]/60 mb-8">
+              <p className="text-sm text-zinc-400 mb-8">
                 Want to estimate your project before reaching out?{" "}
-                <Link href="/tools/website-cost-estimator" className="text-[#F97316] hover:underline font-medium">
+                <Link href="/tools/website-cost-estimator" className="text-copper-bright hover:underline font-medium">
                   Try our free website cost estimator
                 </Link>{" "}
                 — no email required.
               </p>
 
-              <div className="bg-[#18181B] rounded-xl p-6 text-center">
+              <div className="bg-ink-2 rounded-xl p-6 text-center">
                 <p className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Want an exact number for your project?</p>
                 <p className="text-white/60 text-sm mb-5" style={{ fontFamily: "var(--font-body)" }}>Free 30-minute call. We&apos;ll look at what you need and give you a flat-fee quote.</p>
-                <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+                <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                   Get a Quote <ArrowRight size={14} />
                 </Link>
               </div>
@@ -159,9 +159,9 @@ export default function Article() {
           </div>
         </section>
 
-        <section className="py-16 bg-[#FAFAF9]">
+        <section className="py-16 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <h2 className="text-2xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mb-8" style={{ fontFamily: "var(--font-heading)" }}>
               Frequently Asked Questions
             </h2>
             <div className="space-y-4">
@@ -171,18 +171,18 @@ export default function Article() {
                 { q: "How long does it take to build a small business website?", a: "A custom small business website typically takes 2–4 weeks from kickoff to launch. Copper Bay Tech targets 2–3 weeks for most projects." },
                 { q: "Should I use Squarespace or a custom-coded website?", a: "Squarespace is fine for very simple sites. Custom-coded sites load faster, rank better in Google, and are built specifically for your business — no platform lock-in. For most Sonoma County businesses trying to win local search, custom is worth the investment." },
               ].map((item) => (
-                <div key={item.q} className="border border-[#18181B]/10 rounded-xl p-6 bg-white">
-                  <p className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                    <span className="text-[#F97316] mr-2">Q.</span>{item.q}
+                <div key={item.q} className="border border-hairline rounded-xl p-6 bg-ink-0">
+                  <p className="text-base font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                    <span className="text-copper-bright mr-2">Q.</span>{item.q}
                   </p>
-                  <p className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item.a}</p>
+                  <p className="text-sm text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item.a}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="py-16 bg-[#18181B]">
+        <section className="py-16 bg-ink-2">
           <div className="max-w-2xl mx-auto px-6 text-center">
             <h2 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Need a website quote for your Sonoma County business?
@@ -190,7 +190,7 @@ export default function Article() {
             <p className="text-white/60 mb-8 max-w-lg mx-auto" style={{ fontFamily: "var(--font-body)" }}>
               We build custom-coded sites starting at a flat fee — no surprises. Get a free consultation.
             </p>
-            <Link href="/web-design-sonoma-county" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+            <Link href="/web-design-sonoma-county" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
               See Web Design Pricing <ArrowRight size={14} />
             </Link>
           </div>

@@ -31,15 +31,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="IT Support" title="How to Back Up Your Small Business Data (The Right Way)" date="May 1, 2026" readTime="6 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <div className="prose prose-zinc max-w-none text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
                 Nearly every small business owner thinks they have backups. Many of them are wrong — and they find out at the worst possible time. Here&apos;s how to do it correctly so that if something goes wrong, recovery is measured in hours, not weeks.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Why most small business backups fail
               </h2>
               <p className="mb-6">
@@ -52,7 +52,7 @@ export default function Article() {
                 <li><strong>Nobody has ever tested a restore.</strong> A backup is only as good as your ability to actually restore from it. Many businesses have never tried — until the day they have to.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 The 3-2-1 rule: the standard that works
               </h2>
               <p className="mb-6">
@@ -67,7 +67,7 @@ export default function Article() {
                 For most small businesses, this translates to: automated daily backups to cloud storage (offsite copy) plus a local external drive backup for faster restores. That&apos;s it.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Cloud vs. local backup — you need both
               </h2>
               <p className="mb-6">
@@ -80,7 +80,7 @@ export default function Article() {
                 The combination of both gives you speed (local) and disaster protection (cloud). Choosing one or the other means accepting a gap.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Ransomware-proofing your backups
               </h2>
               <p className="mb-6">
@@ -96,7 +96,7 @@ export default function Article() {
                 <li><strong>Don&apos;t let backups run under admin credentials.</strong> Use a dedicated, limited backup account so that compromised credentials can&apos;t reach your backup systems.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Test your restore — at least once a year
               </h2>
               <p className="mb-6">
@@ -109,20 +109,20 @@ export default function Article() {
                 Also document your recovery process. When something goes wrong, stress levels are high and clear steps matter. Know in advance: where are the backups, who has the credentials, how long does a restore take, and who do you call for help?
               </p>
 
-              <div className="mt-12 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-                <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="mt-12 p-6 rounded-2xl bg-ink-0 border border-hairline">
+                <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                   The bottom line
                 </p>
-                <p className="text-sm text-[#3F3F46]/60">
+                <p className="text-sm text-zinc-400">
                   Follow the 3-2-1 rule, enable versioning, keep one copy offsite, and test a restore every year. Set up automated daily backups to cloud storage and you&apos;ve covered the overwhelming majority of failure scenarios.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
+            <div className="mt-16 rounded-2xl bg-ink-2 p-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>

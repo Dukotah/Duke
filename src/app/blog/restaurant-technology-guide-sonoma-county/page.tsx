@@ -31,15 +31,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="IT Support" title="The Small Restaurant Owner&apos;s Guide to Technology in Sonoma County" date="March 1, 2026" readTime="7 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <div className="prose prose-zinc max-w-none text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
                 Running a restaurant in Sonoma County means navigating tourists, wine country foot traffic, seasonal rushes, and a customer base that expects seamless online experiences and reliable in-person service. Technology either helps you deliver that — or quietly gets in the way. Here&apos;s a practical breakdown of what actually matters.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Your POS system is your business&apos;s nervous system
               </h2>
               <p className="mb-6">
@@ -52,7 +52,7 @@ export default function Article() {
                 Whatever you run, make sure it&apos;s on a dedicated, secured network — not the same WiFi your customers use. POS systems can be compromised through shared networks, and the consequences (stolen card data, regulatory fines) are severe.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 WiFi: your customers expect it to work
               </h2>
               <p className="mb-6">
@@ -65,7 +65,7 @@ export default function Article() {
                 Coverage also matters. Dead spots near the back patio or upstairs dining room mean staff can&apos;t run tickets and guests get frustrated. A proper commercial WiFi setup — not a consumer router from Best Buy — handles coverage and traffic reliably. In buildings with thick walls or outdoor seating common in older Sonoma and Healdsburg properties, you&apos;ll likely need access points in multiple locations.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Online ordering and reservations
               </h2>
               <p className="mb-6">
@@ -78,7 +78,7 @@ export default function Article() {
                 Make sure your online menu is current. A customer who orders something that&apos;s been off the menu for six months is a bad review waiting to happen.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Reviews and reputation management
               </h2>
               <p className="mb-6">
@@ -93,7 +93,7 @@ export default function Article() {
                 <li>Don&apos;t pay for fake reviews or try to game Yelp&apos;s system. The penalties and customer backlash aren&apos;t worth it.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Data backup: the thing nobody thinks about until they lose everything
               </h2>
               <p className="mb-6">
@@ -103,27 +103,27 @@ export default function Article() {
                 Most cloud-based POS systems handle their own data backup — but verify this explicitly with your provider. For anything running locally (on-premise servers, local accounting files, back-office computers), set up automated backups to a cloud service like Backblaze or Wasabi. Configure them to run daily, and test a restore at least once a year. Most people only discover their backup wasn&apos;t working when they actually need it.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 When to get outside help
               </h2>
               <p className="mb-6">
                 Most restaurant owners are experts at hospitality, not IT. And that&apos;s fine — you don&apos;t need to become one. But having a local IT contact you can call when the POS goes down on a Friday night, the WiFi dies mid-service, or you need to securely onboard new staff devices is genuinely valuable. The cost of a local IT relationship is far lower than the cost of a service outage during a full Saturday in August.
               </p>
 
-              <div className="mt-12 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-                <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="mt-12 p-6 rounded-2xl bg-ink-0 border border-hairline">
+                <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                   The bottom line
                 </p>
-                <p className="text-sm text-[#3F3F46]/60">
+                <p className="text-sm text-zinc-400">
                   Technology should make your restaurant run smoother, not add stress. Separate your networks, back up your data, respond to your reviews, and build a relationship with a local IT pro before you&apos;re in crisis mode.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
+            <div className="mt-16 rounded-2xl bg-ink-2 p-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>

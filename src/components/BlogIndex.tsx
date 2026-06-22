@@ -14,25 +14,20 @@ export type Post = {
   date: string;
 };
 
-const HEAD = { fontFamily: "var(--font-heading)" };
-const BODY = { fontFamily: "var(--font-body)" };
-
 function MetaRow({ post }: { post: Post }) {
   const color = tagColor(post.tag);
   return (
-    <div className="flex flex-wrap items-center gap-3 mb-4">
+    <div className="mb-4 flex flex-wrap items-center gap-3">
       <span
-        className="text-xs font-semibold uppercase tracking-widest px-2.5 py-1 rounded-md"
-        style={{ ...HEAD, color, backgroundColor: `${color}14` }}
+        className="rounded-md px-2.5 py-1 text-xs font-semibold uppercase tracking-widest"
+        style={{ color, backgroundColor: `${color}1f` }}
       >
         {post.tag}
       </span>
-      <span className="flex items-center gap-1.5 text-xs text-[#3F3F46]/70" style={BODY}>
+      <span className="flex items-center gap-1.5 text-xs text-zinc-500">
         <Clock size={12} aria-hidden /> {post.readTime}
       </span>
-      <span className="text-xs text-[#3F3F46]/70" style={BODY}>
-        {post.date}
-      </span>
+      <span className="text-xs text-zinc-500">{post.date}</span>
     </div>
   );
 }
@@ -42,24 +37,16 @@ function Card({ post }: { post: Post }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group relative flex flex-col h-full rounded-2xl bg-white border border-[#18181B]/10 hover:border-[#18181B]/25 transition-all overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2"
+      className="cbt-rise group relative flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-ink-1 transition-all hover:-translate-y-0.5 hover:border-copper-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper"
     >
       <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: color }} />
-      <div className="p-7 pl-8 flex flex-col flex-1">
+      <div className="flex flex-1 flex-col p-7 pl-8">
         <MetaRow post={post} />
-        <h3
-          className="text-lg font-bold text-[#18181B] mb-2.5 leading-snug group-hover:text-[#F97316] transition-colors"
-          style={HEAD}
-        >
+        <h3 className="mb-2.5 text-lg font-bold leading-snug text-white transition-colors group-hover:text-copper-bright">
           {post.title}
         </h3>
-        <p className="text-sm text-[#3F3F46]/70 leading-relaxed mb-5 flex-1" style={BODY}>
-          {post.excerpt}
-        </p>
-        <span
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-on-light group-hover:gap-2.5 transition-all mt-auto"
-          style={HEAD}
-        >
+        <p className="mb-5 flex-1 text-sm leading-relaxed text-zinc-400">{post.excerpt}</p>
+        <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-copper-bright transition-all group-hover:gap-2.5">
           Read article <ArrowRight size={14} aria-hidden />
         </span>
       </div>
@@ -76,13 +63,13 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
   // matching post is equal weight in the grid.
   const featured = active === "All" ? filtered[0] : null;
   const grid = featured ? filtered.slice(1) : filtered;
-  const featuredColor = featured ? tagColor(featured.tag) : "#F97316";
+  const featuredColor = featured ? tagColor(featured.tag) : "#DDAA75";
 
   return (
-    <section className="py-14 bg-[#FAFAF9]">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="bg-ink-0 py-14">
+      <div className="mx-auto max-w-5xl px-6">
         {/* Category filter */}
-        <div className="flex flex-wrap gap-2 mb-10" role="group" aria-label="Filter articles by category">
+        <div className="mb-10 flex flex-wrap gap-2" role="group" aria-label="Filter articles by category">
           {categories.map((cat) => {
             const on = active === cat;
             return (
@@ -90,11 +77,11 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
                 key={cat}
                 onClick={() => setActive(cat)}
                 aria-pressed={on}
-                className="px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2"
-                style={
-                  on
-                    ? { ...HEAD, backgroundColor: "#18181B", color: "#fff" }
-                    : { ...HEAD, backgroundColor: "#fff", color: "#3F3F46", border: "1px solid rgba(24,24,27,0.12)" }
+                className={
+                  "rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper " +
+                  (on
+                    ? "bg-copper text-ink-0"
+                    : "border border-hairline bg-ink-1 text-zinc-300 hover:border-copper-dim hover:text-white")
                 }
               >
                 {cat}
@@ -107,32 +94,19 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
         {featured && (
           <Link
             href={`/blog/${featured.slug}`}
-            className="group relative block mb-8 rounded-2xl bg-white border border-[#18181B]/10 hover:border-[#18181B]/25 transition-all overflow-hidden shadow-sm hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2"
+            className="cbt-rise group relative mb-8 block overflow-hidden rounded-2xl border border-hairline bg-ink-1 transition-all hover:border-copper-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper"
           >
             <span aria-hidden className="absolute inset-y-0 left-0 w-1.5" style={{ backgroundColor: featuredColor }} />
-            <div className="p-8 md:p-10 pl-9 md:pl-12">
-              <div className="flex items-center gap-3 mb-4">
-                <span
-                  className="text-[11px] font-bold uppercase tracking-[0.2em]"
-                  style={{ ...HEAD, color: "#F97316" }}
-                >
-                  Latest
-                </span>
+            <div className="p-8 pl-9 md:p-10 md:pl-12">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-copper-bright">Latest</span>
               </div>
               <MetaRow post={featured} />
-              <h2
-                className="text-2xl md:text-3xl font-bold text-[#18181B] mb-3 leading-tight group-hover:text-[#F97316] transition-colors"
-                style={HEAD}
-              >
+              <h2 className="mb-3 text-2xl font-bold leading-tight text-white transition-colors group-hover:text-copper-bright md:text-3xl">
                 {featured.title}
               </h2>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-5 max-w-2xl md:text-lg" style={BODY}>
-                {featured.excerpt}
-              </p>
-              <span
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-on-light group-hover:gap-2.5 transition-all"
-                style={HEAD}
-              >
+              <p className="mb-5 max-w-2xl leading-relaxed text-zinc-400 md:text-lg">{featured.excerpt}</p>
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-copper-bright transition-all group-hover:gap-2.5">
                 Read article <ArrowRight size={15} aria-hidden />
               </span>
             </div>
@@ -140,7 +114,7 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
         )}
 
         {/* Grid */}
-        <div className="grid sm:grid-cols-2 gap-6">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {grid.map((post) => (
             <Card key={post.slug} post={post} />
           ))}

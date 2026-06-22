@@ -45,15 +45,15 @@ export default function Article() {
       <main>
         <ArticleHeader tag="IT Support" title="What Is Managed IT Support — and Does Your Business Need It?" date="February 1, 2026" readTime="6 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="prose prose-zinc max-w-none text-[#3F3F46]/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+            <div className="prose prose-zinc max-w-none text-zinc-300 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
 
-              <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
                 Most small businesses run IT the same way they handle a leaky pipe: ignore it until it becomes a crisis, then call someone to fix it and pay whatever it costs. There&apos;s a better way — and it&apos;s predictable, proactive, and often cheaper in the long run.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Break/fix IT: the old model
               </h2>
               <p className="mb-6">
@@ -66,7 +66,7 @@ export default function Article() {
                 Break/fix also has a subtle misalignment of incentives. The IT company makes more money when things break more often. That&apos;s not a great foundation for a long-term relationship.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What managed IT support actually means
               </h2>
               <p className="mb-6">
@@ -80,7 +80,7 @@ export default function Article() {
                 <li><strong>Strategic guidance.</strong> A good MSP will tell you when hardware is aging out, when a software decision is risky, or when your setup has gaps — before they become emergencies.</li>
               </ul>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What does managed IT cost?
               </h2>
               <p className="mb-6">
@@ -93,7 +93,7 @@ export default function Article() {
                 It&apos;s also worth noting that the flat-fee model makes budgeting much easier. You know exactly what IT costs every month, rather than getting surprise invoices that blow your budget.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Who managed IT is (and isn&apos;t) right for
               </h2>
               <p className="mb-6">
@@ -110,7 +110,7 @@ export default function Article() {
                 If you&apos;re a solo operator with a laptop and a G Suite account, break/fix or even self-managed IT is probably fine. But once you have a team, shared files, a server or cloud infrastructure, and customer data — the risk profile changes and managed support starts to pay for itself.
               </p>
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What to look for in an MSP
               </h2>
               <p className="mb-6">
@@ -127,29 +127,29 @@ export default function Article() {
                 A trustworthy MSP will answer all of these clearly and put them in writing.
               </p>
 
-              <div className="mt-12 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-                <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="mt-12 p-6 rounded-2xl bg-ink-0 border border-hairline">
+                <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                   The bottom line
                 </p>
-                <p className="text-sm text-[#3F3F46]/60">
+                <p className="text-sm text-zinc-400">
                   Break/fix IT is reactive, unpredictable, and misaligned with your interests. Managed IT support is proactive, predictable, and gives you a real partner instead of a vendor you only talk to when things go wrong.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 rounded-2xl bg-[#18181B] p-8 text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
+            <div className="mt-16 rounded-2xl bg-ink-2 p-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3" style={{ fontFamily: "var(--font-heading)" }}>Ready to take action?</p>
               <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-heading)" }}>Talk to a local IT expert — free.</h3>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Book a Free Consultation <ArrowRight size={15} />
               </Link>
             </div>
           </div>
         </section>
 
-        <section className="py-16 bg-[#FAFAF9]">
+        <section className="py-16 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
-            <h2 className="text-2xl font-bold text-[#18181B] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mb-8" style={{ fontFamily: "var(--font-heading)" }}>
               Frequently Asked Questions
             </h2>
             <div className="space-y-4">
@@ -159,18 +159,18 @@ export default function Article() {
                 { q: "Is managed IT support worth it for a small business?", a: "For businesses that rely on their technology daily (most do), managed IT pays for itself by preventing costly downtime, data loss, and security incidents. It also replaces unpredictable hourly bills with a predictable monthly cost." },
                 { q: "How much does managed IT support cost per month?", a: "Most managed IT providers charge $75–$150 per user per month. A 5-person office might pay $500–$750/month for full managed IT support, compared to $150–$300/hour for emergency break-fix calls." },
               ].map((item) => (
-                <div key={item.q} className="border border-[#18181B]/10 rounded-xl p-6 bg-white">
-                  <p className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                    <span className="text-[#F97316] mr-2">Q.</span>{item.q}
+                <div key={item.q} className="border border-hairline rounded-xl p-6 bg-ink-0">
+                  <p className="text-base font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                    <span className="text-copper-bright mr-2">Q.</span>{item.q}
                   </p>
-                  <p className="text-sm text-[#3F3F46]/70 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item.a}</p>
+                  <p className="text-sm text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{item.a}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="py-16 bg-[#18181B]">
+        <section className="py-16 bg-ink-2">
           <div className="max-w-2xl mx-auto px-6 text-center">
             <h2 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Interested in managed IT support for your business?
@@ -178,7 +178,7 @@ export default function Article() {
             <p className="text-white/60 mb-8 max-w-lg mx-auto" style={{ fontFamily: "var(--font-body)" }}>
               We offer flat-fee, month-to-month IT support for Sonoma County small businesses. No contracts, no ticket queues.
             </p>
-            <Link href="/it-support-sonoma-county" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+            <Link href="/it-support-sonoma-county" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
               See How It Works <ArrowRight size={14} />
             </Link>
           </div>

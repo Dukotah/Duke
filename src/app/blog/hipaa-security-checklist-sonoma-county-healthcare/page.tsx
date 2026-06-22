@@ -90,29 +90,29 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Cybersecurity" title="HIPAA Security Checklist for Sonoma County Healthcare Practices" date="May 1, 2026" readTime="7 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6">
             <div style={{ fontFamily: "var(--font-body)" }}>
-              <p className="text-lg text-[#3F3F46]/70 leading-relaxed mb-4">
+              <p className="text-lg text-zinc-400 leading-relaxed mb-4">
                 HIPAA is not just a compliance checkbox — it&apos;s a minimum baseline for protecting your patients and your practice. Most small healthcare practices in Sonoma County have significant gaps, usually not from negligence but from never having had someone audit the technical side.
               </p>
-              <p className="text-[#3F3F46]/60 text-sm leading-relaxed mb-8 p-4 rounded-lg bg-[#FAFAF9] border border-[#18181B]/10">
+              <p className="text-zinc-400 text-sm leading-relaxed mb-8 p-4 rounded-lg bg-ink-0 border border-hairline">
                 <strong>Disclaimer:</strong> This checklist covers technical safeguards under the HIPAA Security Rule. It is not legal advice. For full compliance assessment including administrative and physical safeguards, consult a qualified HIPAA consultant or attorney.
               </p>
 
               <div className="flex items-center gap-4 mb-6 text-xs">
-                <div className="flex items-center gap-1.5"><CheckCircle2 size={14} color="#DC2626" /><span className="text-[#3F3F46]/60">= Required / critical gap if missing</span></div>
-                <div className="flex items-center gap-1.5"><CheckCircle2 size={14} color="#22C55E" /><span className="text-[#3F3F46]/60">= Best practice</span></div>
+                <div className="flex items-center gap-1.5"><CheckCircle2 size={14} color="#DC2626" /><span className="text-zinc-400">= Required / critical gap if missing</span></div>
+                <div className="flex items-center gap-1.5"><CheckCircle2 size={14} color="#22C55E" /><span className="text-zinc-400">= Best practice</span></div>
               </div>
 
               {checks.map((cat) => (
                 <div key={cat.category} className="mb-8">
-                  <h2 className="text-xl font-bold text-[#18181B] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{cat.category}</h2>
+                  <h2 className="text-xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>{cat.category}</h2>
                   <div className="space-y-2">
                     {cat.items.map((item) => (
-                      <div key={item.label} className="flex items-start gap-3 p-3 rounded-lg bg-[#FAFAF9] border border-[#18181B]/6">
+                      <div key={item.label} className="flex items-start gap-3 p-3 rounded-lg bg-ink-0 border border-hairline">
                         <CheckCircle2 size={16} color={item.critical ? "#DC2626" : "#22C55E"} className="flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-[#3F3F46]/70">{item.label}</span>
+                        <span className="text-sm text-zinc-400">{item.label}</span>
                         {item.critical && (
                           <span className="ml-auto text-[10px] font-semibold text-red-500 bg-red-50 border border-red-200 px-2 py-0.5 rounded flex-shrink-0" style={{ fontFamily: "var(--font-heading)" }}>Required</span>
                         )}
@@ -122,10 +122,10 @@ export default function Article() {
                 </div>
               ))}
 
-              <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 The most common gaps we find
               </h2>
-              <p className="text-[#3F3F46]/70 leading-relaxed mb-4">
+              <p className="text-zinc-400 leading-relaxed mb-4">
                 When we run security assessments for healthcare practices in Sonoma County, these four issues come up almost every time:
               </p>
               <ul className="space-y-3 mb-8">
@@ -135,17 +135,17 @@ export default function Article() {
                   { issue: "Untested backups", detail: "Many practices have backups running — they just haven't tested whether those backups can actually be restored. A backup you've never tested is a backup you can't count on." },
                   { issue: "No written Security Risk Analysis", detail: "HIPAA requires a documented risk analysis. If you've never done one, you're out of compliance regardless of how good your technical controls are." },
                 ].map((item) => (
-                  <li key={item.issue} className="rounded-xl border border-[#18181B]/8 p-4 bg-[#FAFAF9]">
-                    <p className="text-sm font-bold text-[#18181B] mb-1" style={{ fontFamily: "var(--font-heading)" }}>{item.issue}</p>
-                    <p className="text-sm text-[#3F3F46]/60">{item.detail}</p>
+                  <li key={item.issue} className="rounded-xl border border-hairline p-4 bg-ink-0">
+                    <p className="text-sm font-bold text-white mb-1" style={{ fontFamily: "var(--font-heading)" }}>{item.issue}</p>
+                    <p className="text-sm text-zinc-400">{item.detail}</p>
                   </li>
                 ))}
               </ul>
 
-              <div className="bg-[#18181B] rounded-xl p-6 text-center">
+              <div className="bg-ink-2 rounded-xl p-6 text-center">
                 <p className="text-white font-bold text-lg mb-2" style={{ fontFamily: "var(--font-heading)" }}>Want a hands-on security assessment for your practice?</p>
                 <p className="text-white/60 text-sm mb-5">We run practical HIPAA-aligned security audits for small healthcare practices in Sonoma County. Most critical issues are fixed same day.</p>
-                <Link href="/cybersecurity-small-business" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+                <Link href="/cybersecurity-small-business" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                   Book a Security Audit <ArrowRight size={14} />
                 </Link>
               </div>

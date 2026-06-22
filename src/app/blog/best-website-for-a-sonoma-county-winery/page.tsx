@@ -49,61 +49,61 @@ export default function Article() {
       <main>
         <ArticleHeader tag="Web Development" title="What Makes a Great Website for a Sonoma County Winery?" date="May 1, 2026" readTime="5 min read" />
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-ink-0">
           <div className="max-w-2xl mx-auto px-6" style={{ fontFamily: "var(--font-body)" }}>
-            <p className="text-lg text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
               For most Sonoma County wineries, the website is the first — and sometimes only — impression a potential visitor gets before deciding whether to show up. And yet, most winery websites are slow, hard to navigate on a phone, and missing basic things like a functional reservation system or an address that&apos;s easy to find.
             </p>
-            <p className="text-[#3F3F46]/70 mb-10 leading-relaxed">
+            <p className="text-zinc-400 mb-10 leading-relaxed">
               Here&apos;s what actually moves the needle for tasting room visits, wine club signups, and DTC sales.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               The non-negotiables
             </h2>
             <ul className="space-y-3 mb-10">
               {mustHaves.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <CheckCircle size={16} className="flex-shrink-0 mt-0.5" color="#16A34A" />
-                  <span className="text-sm text-[#3F3F46]/70">{item}</span>
+                  <span className="text-sm text-zinc-400">{item}</span>
                 </li>
               ))}
             </ul>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               The most common mistakes
             </h2>
             <div className="space-y-5 mb-10">
               {mistakes.map((m) => (
-                <div key={m.title} className="rounded-xl border border-[#18181B]/10 p-5 bg-[#FAFAF9]">
-                  <h3 className="font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{m.title}</h3>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed">{m.desc}</p>
+                <div key={m.title} className="rounded-xl border border-hairline p-5 bg-ink-0">
+                  <h3 className="font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{m.title}</h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed">{m.desc}</p>
                 </div>
               ))}
             </div>
 
-            <h2 className="text-2xl font-bold text-[#18181B] mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-2xl font-bold text-white mt-10 mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               What does a winery website actually cost?
             </h2>
-            <p className="text-[#3F3F46]/70 mb-4 leading-relaxed">
-              A professionally built winery site with reservations, an online shop, events calendar, and local SEO typically runs <strong className="text-[#18181B]">$4,000–$7,000</strong>. That&apos;s a fraction of what a single slow weekend costs in missed tasting room revenue.
+            <p className="text-zinc-400 mb-4 leading-relaxed">
+              A professionally built winery site with reservations, an online shop, events calendar, and local SEO typically runs <strong className="text-white">$4,000–$7,000</strong>. That&apos;s a fraction of what a single slow weekend costs in missed tasting room revenue.
             </p>
-            <p className="text-[#3F3F46]/70 mb-8 leading-relaxed">
+            <p className="text-zinc-400 mb-8 leading-relaxed">
               Template builders like Squarespace and Wix are an option, but they come with real tradeoffs: slow performance, limited reservation integrations, and little control over local SEO. For a winery doing meaningful volume, a custom-built site pays for itself quickly.
             </p>
 
-            <div className="mt-10 p-6 rounded-2xl bg-[#FAFAF9] border border-[#18181B]/10">
-              <p className="text-sm font-semibold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>Quick self-check</p>
-              <p className="text-sm text-[#3F3F46]/60">
+            <div className="mt-10 p-6 rounded-2xl bg-ink-0 border border-hairline">
+              <p className="text-sm font-semibold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>Quick self-check</p>
+              <p className="text-sm text-zinc-400">
                 Pull out your phone and Google &quot;wine tasting [your city].&quot; Does your winery appear? Click your website. Does it load in under 3 seconds? Is your reservation link immediately visible? If any of those are a no — there&apos;s room to grow.
               </p>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+            <div className="mt-10 pt-8 border-t border-hairline flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-zinc-300/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 <ArrowLeft size={14} /> Back to Resources
               </Link>
-              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+              <Link href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-copper hover:bg-copper-bright transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
                 Get a Free Website Review <ArrowRight size={14} />
               </Link>
             </div>
