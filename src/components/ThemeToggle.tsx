@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { applyTheme } from "@/lib/theme";
 
-// Dark/light toggle. Default is dark; setting data-theme="light" on <html> flips
-// the design-token + Tailwind color variables (see globals.css) into a true
-// daytime light theme. Choice persists in localStorage; a no-flash init script
-// in the root layout applies it before paint.
+// Dark/light toggle. Default is dark; light mode sets CSS variables on <html> at
+// runtime (see @/lib/theme) — robust against the build's CSS pruning. The choice
+// persists in localStorage and is applied before paint by the init script in the
+// root layout.
 export default function ThemeToggle() {
   const [light, setLight] = useState(false);
 
@@ -17,9 +18,7 @@ export default function ThemeToggle() {
   function toggle() {
     const next = !light;
     setLight(next);
-    const root = document.documentElement;
-    if (next) root.setAttribute("data-theme", "light");
-    else root.removeAttribute("data-theme");
+    applyTheme(next);
     try {
       localStorage.setItem("cbt-theme", next ? "light" : "dark");
     } catch {

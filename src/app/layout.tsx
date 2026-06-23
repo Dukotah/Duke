@@ -101,7 +101,7 @@ export default function RootLayout({
             <script
               dangerouslySetInnerHTML={{
                 __html:
-                  "(function(){try{if(localStorage.getItem('cbt-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();",
+                  "(function(){try{if(localStorage.getItem('cbt-theme')==='light'){var r=document.documentElement,v={'--bg-0':'#FBF9F6','--bg-1':'#FFFFFF','--bg-2':'#F4F1EA','--bg-3':'#E8E1D6','--text-warm':'#1C1814','--text-2':'rgba(28,24,20,.7)','--text-3':'rgba(28,24,20,.45)','--hairline':'rgba(28,24,20,.12)','--copper':'#B5703C','--copper-bright':'#A85F2A','--copper-dim':'rgba(168,95,42,.32)','--color-white':'#1C1814','--color-zinc-300':'#3F3F46','--color-zinc-400':'#52525B','--color-zinc-500':'#6B6B72','--color-zinc-600':'#3F3F46'};r.setAttribute('data-theme','light');r.style.colorScheme='light';for(var k in v)r.style.setProperty(k,v[k]);}}catch(e){}})();",
               }}
             />
                   </head>
