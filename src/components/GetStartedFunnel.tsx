@@ -96,7 +96,7 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
       <div className="flex items-center justify-between mb-2">
         <span
           className="text-xs font-semibold uppercase tracking-widest"
-          style={{ color: "#F97316", fontFamily: "var(--font-heading)" }}
+          style={{ color: "#DDAA75", fontFamily: "var(--font-heading)" }}
         >
           Step {step} of {total}
         </span>
@@ -118,7 +118,7 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
       >
         <div
           className="h-full rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${pct}%`, backgroundColor: "#F97316" }}
+          style={{ width: `${pct}%`, backgroundColor: "#C68A5A" }}
         />
       </div>
     </div>
@@ -139,11 +139,11 @@ function ServiceCard({
       type="button"
       onClick={() => onSelect(option.value)}
       aria-pressed={selected}
-      className="w-full text-left rounded-xl p-4 border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+      className="w-full text-left rounded-xl p-4 border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
       style={{
-        borderColor: selected ? "#F97316" : "rgba(255,255,255,0.1)",
+        borderColor: selected ? "#C68A5A" : "rgba(255,255,255,0.1)",
         backgroundColor: selected
-          ? "rgba(249,115,22,0.12)"
+          ? "rgba(221,170,117,0.12)"
           : "rgba(255,255,255,0.04)",
       }}
     >
@@ -177,14 +177,14 @@ function ChipButton({
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
-      className="px-4 py-2.5 rounded-lg text-sm font-medium border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+      className="px-4 py-2.5 rounded-lg text-sm font-medium border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
       style={{
         fontFamily: "var(--font-heading)",
-        borderColor: selected ? "#F97316" : "rgba(255,255,255,0.1)",
+        borderColor: selected ? "#C68A5A" : "rgba(255,255,255,0.1)",
         backgroundColor: selected
-          ? "rgba(249,115,22,0.12)"
+          ? "rgba(221,170,117,0.12)"
           : "rgba(255,255,255,0.04)",
-        color: selected ? "#F97316" : "rgba(255,255,255,0.7)",
+        color: selected ? "#DDAA75" : "rgba(255,255,255,0.7)",
       }}
     >
       {label}
@@ -289,10 +289,10 @@ export default function GetStartedFunnel() {
   // ── Input helpers ────────────────────────────────────────────────────────────
 
   const inputBase =
-    "w-full px-4 py-3 rounded-md border bg-white/5 text-white text-sm placeholder-white/30 outline-none transition-all focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316]";
+    "w-full px-4 py-3 rounded-md border bg-ink-2 text-white text-sm placeholder-zinc-500 outline-none transition-all focus:ring-2 focus:ring-copper focus:border-copper";
 
   const inputClass = (hasError: boolean) =>
-    `${inputBase} ${hasError ? "border-red-500" : "border-white/10"}`;
+    `${inputBase} ${hasError ? "border-red-500" : "border-hairline"}`;
 
   const labelClass =
     "block text-xs font-semibold uppercase tracking-widest text-white/50 mb-1.5";
@@ -334,8 +334,8 @@ export default function GetStartedFunnel() {
             type="button"
             onClick={handleNext}
             disabled={!service}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
-            style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-bold text-ink-0 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+            style={{ backgroundColor: "#C68A5A", fontFamily: "var(--font-heading)" }}
           >
             Next <ArrowRight size={15} />
           </button>
@@ -400,7 +400,7 @@ export default function GetStartedFunnel() {
             <button
               type="button"
               onClick={handleBack}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-sm font-semibold text-white/70 border border-white/10 hover:border-white/25 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-sm font-semibold text-zinc-300 border border-hairline hover:border-copper-dim transition-colors outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               <ArrowLeft size={15} /> Back
@@ -409,8 +409,8 @@ export default function GetStartedFunnel() {
               type="button"
               onClick={handleNext}
               disabled={!budget || !timeline}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
-              style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-bold text-ink-0 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+              style={{ backgroundColor: "#C68A5A", fontFamily: "var(--font-heading)" }}
             >
               Next <ArrowRight size={15} />
             </button>
@@ -613,7 +613,7 @@ export default function GetStartedFunnel() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-sm font-semibold text-white/70 border border-white/10 hover:border-white/25 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-sm font-semibold text-zinc-300 border border-hairline hover:border-copper-dim transition-colors outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <ArrowLeft size={15} /> Back
@@ -621,8 +621,8 @@ export default function GetStartedFunnel() {
               <button
                 type="submit"
                 disabled={submitStatus === "loading"}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
-                style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-bold text-ink-0 transition-all duration-200 disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+                style={{ backgroundColor: "#C68A5A", fontFamily: "var(--font-heading)" }}
               >
                 {submitStatus === "loading" ? (
                   "Sending..."
@@ -641,7 +641,7 @@ export default function GetStartedFunnel() {
               Or book a free 30-minute call directly —{" "}
               <a
                 href={BOOKING_URL}
-                className="underline text-white/50 hover:text-white/70 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] rounded-sm"
+                className="underline text-white/50 hover:text-white/70 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-copper rounded-sm"
               >
                 pick a time
               </a>
@@ -651,21 +651,21 @@ export default function GetStartedFunnel() {
       )}
 
       {/* ── Secondary contact row (all steps) ─────────────────────────────── */}
-      <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-6">
+      <div className="mt-12 pt-8 border-t border-hairline flex flex-col sm:flex-row items-center justify-center gap-6">
         <a
           href={PHONE_HREF}
-          className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] rounded-sm"
+          className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-copper rounded-sm"
           style={{ fontFamily: "var(--font-heading)" }}
         >
-          <Phone size={14} className="text-[#F97316]" />
+          <Phone size={14} className="text-copper-bright" />
           {PHONE}
         </a>
         <a
           href="mailto:contact@copperbaytech.com"
-          className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] rounded-sm"
+          className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-copper rounded-sm"
           style={{ fontFamily: "var(--font-heading)" }}
         >
-          <Mail size={14} className="text-[#F97316]" />
+          <Mail size={14} className="text-copper-bright" />
           contact@copperbaytech.com
         </a>
       </div>

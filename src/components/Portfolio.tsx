@@ -124,7 +124,7 @@ export default function Portfolio() {
   if (liveProjects.length === 0) return null;
 
   return (
-    <section id="portfolio" className="py-24 bg-[#FAFAF9]">
+    <section id="portfolio" className="py-24 bg-ink-1">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 20 }}
@@ -134,19 +134,19 @@ export default function Portfolio() {
           className="mb-14 text-center"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Our Work
           </p>
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#18181B] leading-tight"
+            className="text-4xl md:text-5xl font-bold text-white leading-tight"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             A look at what we build.
           </h2>
           <p
-            className="mx-auto mt-4 max-w-xl text-[#3F3F46]/60"
+            className="mx-auto mt-4 max-w-xl text-zinc-400"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Starting with this site — built on the same custom stack we deliver
@@ -169,7 +169,7 @@ export default function Portfolio() {
               >
                 <Wrapper
                   {...(p.url ? { href: p.url, target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="group block overflow-hidden rounded-2xl border border-[#18181B]/10 bg-white transition-shadow hover:shadow-lg"
+                  className="group block overflow-hidden rounded-2xl border border-hairline bg-ink-2 transition-colors hover:border-copper-dim"
                 >
                   {/* Thumbnail / mockup frame */}
                   <div className="relative aspect-[4/3] overflow-hidden">
@@ -193,7 +193,7 @@ export default function Portfolio() {
                     {/* "Preview" tag — keep until a real, approved screenshot is in place */}
                     {p.sample && (
                       <span
-                        className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#18181B]/70 backdrop-blur"
+                        className="absolute left-3 top-3 rounded-full bg-ink-0/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-300 backdrop-blur"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         Preview
@@ -205,20 +205,20 @@ export default function Portfolio() {
                   <div className="flex items-start justify-between gap-3 p-5">
                     <div className="min-w-0">
                       <p
-                        className="mb-1 text-xs font-semibold uppercase tracking-widest text-gold-on-light"
+                        className="mb-1 text-xs font-semibold uppercase tracking-widest text-copper-bright"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {p.category}
                       </p>
                       <p
-                        className="text-base font-semibold leading-snug text-[#18181B]"
+                        className="text-base font-semibold leading-snug text-white"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {p.title}
                       </p>
                       {p.description && (
                         <p
-                          className="mt-1.5 text-xs leading-relaxed text-[#3F3F46]/55"
+                          className="mt-1.5 text-xs leading-relaxed text-zinc-400"
                           style={{ fontFamily: "var(--font-body)" }}
                         >
                           {p.description}
@@ -228,7 +228,7 @@ export default function Portfolio() {
                     {p.url && (
                       <ArrowUpRight
                         size={18}
-                        className="mt-0.5 flex-shrink-0 text-[#3F3F46]/40 transition-colors group-hover:text-[#F97316]"
+                        className="mt-0.5 flex-shrink-0 text-zinc-400 transition-colors group-hover:text-copper-bright"
                       />
                     )}
                   </div>
@@ -247,7 +247,7 @@ export default function Portfolio() {
         >
           <Link
             href={BOOKING_URL}
-            className="inline-flex items-center gap-2 rounded-md bg-[#F97316] px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#ea6c0a]"
+            className="inline-flex items-center gap-2 rounded-md bg-copper px-7 py-3 text-sm font-bold text-ink-0 transition-colors hover:bg-copper-bright"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Book a free consultation <ArrowRight size={15} />

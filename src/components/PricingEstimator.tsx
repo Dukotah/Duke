@@ -132,7 +132,7 @@ export default function PricingEstimator() {
   const progress = ((current) / steps.length) * 100;
 
   return (
-    <section id="estimator" className="py-24 bg-[#FAFAF9]">
+    <section id="estimator" className="py-24 bg-ink-0">
       <div className="max-w-2xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -142,32 +142,32 @@ export default function PricingEstimator() {
           className="text-center mb-12"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Transparent Pricing
           </p>
           <h2
-            className="text-4xl font-bold text-[#18181B] mb-4"
+            className="text-4xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What might it cost?
           </h2>
           <p
-            className="text-[#3F3F46]/60 text-lg"
+            className="text-zinc-400 text-lg"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Answer 4 quick questions and get a rough ballpark — no email required.
           </p>
         </motion.div>
 
-        <div className="bg-white rounded-2xl border border-[#18181B]/10 shadow-sm overflow-hidden">
+        <div className="bg-ink-1 rounded-2xl border border-hairline overflow-hidden">
           {!done ? (
             <>
               {/* Progress */}
-              <div className="h-1 bg-[#18181B]/8">
+              <div className="h-1 bg-white/[0.04]">
                 <motion.div
-                  className="h-full bg-[#F97316]"
+                  className="h-full bg-copper"
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.3 }}
                 />
@@ -176,19 +176,19 @@ export default function PricingEstimator() {
               <div className="p-8">
                 <div className="mb-6">
                   <span
-                    className="text-xs font-semibold uppercase tracking-widest text-[#3F3F46]/40"
+                    className="text-xs font-semibold uppercase tracking-widest text-zinc-400"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Step {current + 1} of {steps.length}
                   </span>
                   <h3
-                    className="text-xl font-bold text-[#18181B] mt-2"
+                    className="text-xl font-bold text-white mt-2"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {step.question}
                   </h3>
                   {step.subtitle && (
-                    <p className="text-sm text-[#3F3F46]/50 mt-1" style={{ fontFamily: "var(--font-body)" }}>
+                    <p className="text-sm text-zinc-400 mt-1" style={{ fontFamily: "var(--font-body)" }}>
                       {step.subtitle}
                     </p>
                   )}
@@ -203,8 +203,8 @@ export default function PricingEstimator() {
                         onClick={() => toggleOption(opt.value)}
                         className={`text-left px-5 py-4 rounded-xl border text-sm transition-all ${
                           isSelected
-                            ? "border-[#18181B] bg-[#18181B] text-white"
-                            : "border-[#18181B]/15 bg-[#FAFAF9] text-[#3F3F46]/80 hover:border-[#18181B]/40"
+                            ? "border-copper bg-copper text-ink-0"
+                            : "border-hairline bg-ink-2 text-zinc-300 hover:border-copper-dim"
                         }`}
                         style={{ fontFamily: "var(--font-body)" }}
                       >
@@ -212,12 +212,12 @@ export default function PricingEstimator() {
                           {opt.label}
                         </span>
                         {opt.note && (
-                          <span className={`flex items-center gap-1 mt-1 text-xs ${isSelected ? "text-white/60" : "text-[#3F3F46]/40"}`}>
+                          <span className={`flex items-center gap-1 mt-1 text-xs ${isSelected ? "text-ink-0/70" : "text-zinc-400"}`}>
                             <Info size={11} /> {opt.note}
                           </span>
                         )}
                         {opt.modifier > 0 && (
-                          <span className={`block mt-1 text-xs ${isSelected ? "text-white/60" : "text-[#3F3F46]/40"}`}>
+                          <span className={`block mt-1 text-xs ${isSelected ? "text-ink-0/70" : "text-zinc-400"}`}>
                             +~${opt.modifier.toLocaleString()}
                           </span>
                         )}
@@ -230,7 +230,7 @@ export default function PricingEstimator() {
                   <button
                     onClick={handleNext}
                     disabled={!canNext}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#18181B] hover:bg-[#111113] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:ring-copper"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {current + 1 === steps.length ? "Get My Estimate" : "Next"}
@@ -246,27 +246,27 @@ export default function PricingEstimator() {
               className="p-8 text-center"
             >
               <p
-                className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-3"
+                className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Rough Estimate
               </p>
               <p
-                className="text-5xl font-bold text-[#18181B] mb-2"
+                className="text-5xl font-bold text-white mb-2"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {formatRange(estLow, estHigh)}
               </p>
               <p
-                className="text-[#3F3F46]/50 text-sm mb-8"
+                className="text-zinc-400 text-sm mb-8"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 This is a ballpark only — not a quote. Actual pricing depends on specifics.
                 We provide a flat-fee proposal after a free consultation.
               </p>
-              <div className="bg-[#FAFAF9] rounded-xl p-5 mb-8 text-left">
+              <div className="bg-ink-2 rounded-xl p-5 mb-8 text-left border border-hairline">
                 <p
-                  className="text-xs font-semibold uppercase tracking-widest text-[#3F3F46]/40 mb-3"
+                  className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   What you told us
@@ -276,10 +276,10 @@ export default function PricingEstimator() {
                   if (!s) return null;
                   return (
                     <div key={stepId} className="flex gap-2 mb-2">
-                      <span className="text-xs text-[#3F3F46]/40 w-24 flex-shrink-0" style={{ fontFamily: "var(--font-heading)" }}>
+                      <span className="text-xs text-zinc-400 w-24 flex-shrink-0" style={{ fontFamily: "var(--font-heading)" }}>
                         {s.question.split(" ").slice(0, 3).join(" ")}...
                       </span>
-                      <span className="text-xs text-[#18181B]" style={{ fontFamily: "var(--font-body)" }}>
+                      <span className="text-xs text-white" style={{ fontFamily: "var(--font-body)" }}>
                         {vals.map((v) => s.options.find((o) => o.value === v)?.label).join(", ")}
                       </span>
                     </div>
@@ -289,14 +289,14 @@ export default function PricingEstimator() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   href="/#contact"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors focus:ring-copper"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   Get an Exact Quote <ArrowRight size={15} />
                 </Link>
                 <button
                   onClick={() => { setCurrent(0); setAnswers({}); setDone(false); }}
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-md text-sm font-semibold text-[#3F3F46]/70 border border-[#18181B]/15 hover:border-[#18181B]/40 transition-colors"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-md text-sm font-semibold text-zinc-300 border border-hairline hover:border-copper-dim transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   Start Over

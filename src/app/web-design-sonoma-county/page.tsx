@@ -76,16 +76,16 @@ export default function WebDesignSonomaCounty() {
       <JsonLd schema={[schema, faqSchema(faqs)]} />
       <JsonLd schema={breadcrumbSchema([{name:"Home",url:"https://copperbaytech.com"},{name:"Web Design",url:"https://copperbaytech.com/web-design-sonoma-county"},{name:"Web Design Sonoma County"}])} />
       <Nav />
-      <main>
+      <main className="theme-dark min-h-screen bg-ink-0 text-white">
         {/* Hero */}
-        <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-[#18181B] pt-16">
+        <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-ink-0 pt-16">
           <div className="absolute inset-0 opacity-10" aria-hidden="true">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
               <defs>
                 <pattern id="topo" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                  <path d="M0 40 Q20 20 40 40 Q60 60 80 40" fill="none" stroke="#F97316" strokeWidth="0.8" />
-                  <path d="M0 20 Q20 0 40 20 Q60 40 80 20" fill="none" stroke="#F97316" strokeWidth="0.5" />
-                  <path d="M0 60 Q20 40 40 60 Q60 80 80 60" fill="none" stroke="#F97316" strokeWidth="0.5" />
+                  <path d="M0 40 Q20 20 40 40 Q60 60 80 40" fill="none" stroke="#DDAA75" strokeWidth="0.8" />
+                  <path d="M0 20 Q20 0 40 20 Q60 40 80 20" fill="none" stroke="#DDAA75" strokeWidth="0.5" />
+                  <path d="M0 60 Q20 40 40 60 Q60 80 80 60" fill="none" stroke="#DDAA75" strokeWidth="0.5" />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#topo)" />
@@ -94,7 +94,7 @@ export default function WebDesignSonomaCounty() {
           <div className="relative z-10 max-w-5xl mx-auto px-6 text-center py-24">
             <span
               className="inline-block mb-6 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase"
-              style={{ backgroundColor: "rgba(200,169,110,0.15)", color: "#F97316", border: "1px solid rgba(200,169,110,0.3)", fontFamily: "var(--font-heading)" }}
+              style={{ backgroundColor: "rgba(221,170,117,0.15)", color: "#DDAA75", border: "1px solid rgba(221,170,117,0.3)", fontFamily: "var(--font-heading)" }}
             >
               Sonoma County · Web Design
             </span>
@@ -103,7 +103,7 @@ export default function WebDesignSonomaCounty() {
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Web design for<br />
-              <span style={{ color: "#F97316" }}>Sonoma County businesses.</span>
+              <span style={{ color: "#DDAA75" }}>Sonoma County businesses.</span>
             </h1>
             <p
               className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed"
@@ -114,15 +114,15 @@ export default function WebDesignSonomaCounty() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white transition-colors"
-                style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 Book a Free Consultation <ArrowRight size={16} />
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold transition-colors"
-                style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}
+                className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold border border-hairline text-white hover:border-copper-dim transition-colors"
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 See Pricing
               </Link>
@@ -131,31 +131,31 @@ export default function WebDesignSonomaCounty() {
               Serving Petaluma · Santa Rosa · Sebastopol · Rohnert Park · Windsor · Healdsburg
             </p>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAFAF9] to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-ink-0 to-transparent" />
         </section>
 
         <Problem />
 
         {/* What you get */}
-        <section className="py-24 bg-[#FAFAF9]">
+        <section className="py-24 bg-ink-1">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>What&apos;s included</p>
-              <h2 className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4" style={{ fontFamily: "var(--font-heading)" }}>What&apos;s included</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 What every site gets.
               </h2>
-              <p className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto" style={{ fontFamily: "var(--font-body)" }}>
+              <p className="text-lg text-zinc-400 max-w-xl mx-auto" style={{ fontFamily: "var(--font-body)" }}>
                 These aren&apos;t upsells — they&apos;re table stakes. Every Copper Bay Tech site ships with all of this.
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {deliverables.map((d) => (
-                <div key={d.label} className="bg-white rounded-xl p-6 border border-[#18181B]/8">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: "rgba(249,115,22,0.1)" }}>
-                    <d.icon size={20} color="#F97316" />
+                <div key={d.label} className="bg-ink-2 rounded-xl p-6 border border-hairline">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: "rgba(221,170,117,0.1)" }}>
+                    <d.icon size={20} color="#DDAA75" />
                   </div>
-                  <h3 className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{d.label}</h3>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{d.body}</p>
+                  <h3 className="text-base font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{d.label}</h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{d.body}</p>
                 </div>
               ))}
             </div>
@@ -163,16 +163,16 @@ export default function WebDesignSonomaCounty() {
         </section>
 
         {/* Case study pull */}
-        <section className="py-24 bg-[#18181B]">
+        <section className="py-24 bg-ink-0">
           <div className="max-w-4xl mx-auto px-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>Client Result</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4" style={{ fontFamily: "var(--font-heading)" }}>Client Result</p>
             <blockquote>
               <p className="text-2xl md:text-3xl font-bold text-white leading-snug mb-8" style={{ fontFamily: "var(--font-heading)" }}>
                 &ldquo;Before Copper Bay Tech, our website was embarrassingly slow and half the contact form submissions were going to spam. They rebuilt everything in two weeks — we&apos;ve already gotten three new inquiries through the site.&rdquo;
               </p>
               <footer className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-[#F97316]/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-[#F97316]" style={{ fontFamily: "var(--font-heading)" }}>MT</span>
+                <div className="w-10 h-10 rounded-full bg-copper/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm font-bold text-copper-bright" style={{ fontFamily: "var(--font-heading)" }}>MT</span>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>Maria T.</p>
@@ -199,19 +199,19 @@ export default function WebDesignSonomaCounty() {
         </section>
 
         {/* Process */}
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-ink-1">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4" style={{ fontFamily: "var(--font-heading)" }}>How it works</p>
-              <h2 className="text-4xl font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>From call to live site in under three weeks.</h2>
+              <p className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4" style={{ fontFamily: "var(--font-heading)" }}>How it works</p>
+              <h2 className="text-4xl font-bold text-white" style={{ fontFamily: "var(--font-heading)" }}>From call to live site in under three weeks.</h2>
             </div>
             <div className="grid sm:grid-cols-2 gap-8">
               {process.map((p) => (
                 <div key={p.step} className="flex gap-5">
-                  <span className="text-4xl font-bold text-[#18181B]/10 leading-none flex-shrink-0" style={{ fontFamily: "var(--font-heading)" }}>{p.step}</span>
+                  <span className="text-4xl font-bold text-white/10 leading-none flex-shrink-0" style={{ fontFamily: "var(--font-heading)" }}>{p.step}</span>
                   <div>
-                    <h3 className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{p.title}</h3>
-                    <p className="text-sm text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{p.body}</p>
+                    <h3 className="text-base font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{p.title}</h3>
+                    <p className="text-sm text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{p.body}</p>
                   </div>
                 </div>
               ))}
@@ -222,16 +222,16 @@ export default function WebDesignSonomaCounty() {
         <WhyUs />
 
         {/* FAQ */}
-        <section className="py-24 bg-[#FAFAF9]">
+        <section className="py-24 bg-ink-0">
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-[#18181B]" style={{ fontFamily: "var(--font-heading)" }}>Common questions</h2>
+              <h2 className="text-4xl font-bold text-white" style={{ fontFamily: "var(--font-heading)" }}>Common questions</h2>
             </div>
             <div className="space-y-4">
               {faqs.map((f, i) => (
-                <div key={i} className="bg-white rounded-xl border border-[#18181B]/8 p-6">
-                  <h3 className="text-base font-bold text-[#18181B] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{f.q}</h3>
-                  <p className="text-sm text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{f.a}</p>
+                <div key={i} className="bg-ink-1 rounded-xl border border-hairline p-6">
+                  <h3 className="text-base font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>{f.q}</h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>{f.a}</p>
                 </div>
               ))}
             </div>
@@ -239,26 +239,26 @@ export default function WebDesignSonomaCounty() {
         </section>
 
         {/* CTA */}
-        <section className="py-24 bg-[#18181B]">
+        <section className="py-24 bg-ink-1">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               Ready for a website that actually works?
             </h2>
-            <p className="text-lg text-white/60 mb-10" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="text-lg text-zinc-400 mb-10" style={{ fontFamily: "var(--font-body)" }}>
               Schedule a free 30-minute call. We&apos;ll look at your current site (if you have one), talk through what you need, and give you a quote — no obligation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-semibold text-white"
-                style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-base font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 Book a Free Consultation <ArrowRight size={16} />
               </Link>
               <a
                 href="tel:+17072396725"
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold"
-                style={{ border: "2px solid rgba(255,255,255,0.3)", color: "white", fontFamily: "var(--font-heading)" }}
+                className="inline-flex items-center justify-center px-8 py-3.5 rounded-md text-base font-semibold border border-hairline text-white hover:border-copper-dim transition-colors"
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 Call (707) 239-6725
               </a>

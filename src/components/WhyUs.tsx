@@ -58,11 +58,11 @@ function Cell({ cell }: { cell: CellValue }) {
   if (cell.type === "yes") {
     return (
       <div className="flex flex-col items-center gap-1.5 text-center">
-        <div className="w-6 h-6 rounded-full bg-[#F97316]/15 flex items-center justify-center">
-          <Check size={13} color="#F97316" strokeWidth={2.5} />
+        <div className="w-6 h-6 rounded-full bg-copper/15 flex items-center justify-center">
+          <Check size={13} color="#DDAA75" strokeWidth={2.5} />
         </div>
         <span
-          className="text-xs text-[#18181B] leading-snug max-w-[140px]"
+          className="text-xs text-white leading-snug max-w-[140px]"
           style={{ fontFamily: "var(--font-body)" }}
         >
           {cell.text}
@@ -73,11 +73,11 @@ function Cell({ cell }: { cell: CellValue }) {
   if (cell.type === "partial") {
     return (
       <div className="flex flex-col items-center gap-1.5 text-center">
-        <div className="w-6 h-6 rounded-full bg-[#3F3F46]/20 flex items-center justify-center">
+        <div className="w-6 h-6 rounded-full bg-white/[0.06] flex items-center justify-center">
           <Minus size={13} color="#9CA3AF" strokeWidth={2.5} />
         </div>
         <span
-          className="text-xs text-[#3F3F46]/50 leading-snug max-w-[140px]"
+          className="text-xs text-zinc-400 leading-snug max-w-[140px]"
           style={{ fontFamily: "var(--font-body)" }}
         >
           {cell.text}
@@ -91,7 +91,7 @@ function Cell({ cell }: { cell: CellValue }) {
         <X size={13} color="#EF4444" strokeWidth={2.5} />
       </div>
       <span
-        className="text-xs text-[#3F3F46]/50 leading-snug max-w-[140px]"
+        className="text-xs text-zinc-400 leading-snug max-w-[140px]"
         style={{ fontFamily: "var(--font-body)" }}
       >
         {cell.text}
@@ -103,7 +103,7 @@ function Cell({ cell }: { cell: CellValue }) {
 export default function WhyUs() {
   const reduce = useReducedMotion();
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-ink-0">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -114,20 +114,20 @@ export default function WhyUs() {
           className="text-center mb-16"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Why Copper Bay Tech
           </p>
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
+            className="text-4xl md:text-5xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Not all tech providers
             <br className="hidden md:block" /> are created equal
           </h2>
           <p
-            className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
+            className="text-lg text-zinc-400 max-w-xl mx-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Here&apos;s how we compare to the alternatives most small businesses end up
@@ -141,13 +141,13 @@ export default function WhyUs() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={reduce ? { duration: 0 } : { duration: 0.6, delay: 0.1 }}
-          className="hidden md:block rounded-2xl overflow-hidden border border-[#18181B]/10 shadow-sm"
+          className="hidden md:block rounded-2xl overflow-hidden border border-hairline"
         >
           {/* Column headers */}
-          <div className="grid grid-cols-4 bg-[#18181B]">
+          <div className="grid grid-cols-4 bg-ink-2">
             <div className="px-6 py-5" />
-            <div className="px-6 py-5 border-l border-white/10">
-              <div className="inline-flex items-center gap-2 bg-[#F97316] text-white rounded-md px-3 py-1 mb-2">
+            <div className="px-6 py-5 border-l border-hairline">
+              <div className="inline-flex items-center gap-2 bg-copper text-ink-0 font-bold rounded-md px-3 py-1 mb-2">
                 <Check size={13} strokeWidth={2.5} />
                 <span
                   className="text-xs font-bold uppercase tracking-wider"
@@ -157,35 +157,35 @@ export default function WhyUs() {
                 </span>
               </div>
               <p
-                className="text-xs text-white/40"
+                className="text-xs text-zinc-400"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 Founder-led, Sonoma County
               </p>
             </div>
-            <div className="px-6 py-5 border-l border-white/10">
+            <div className="px-6 py-5 border-l border-hairline">
               <p
-                className="text-sm font-semibold text-white/70 mb-1"
+                className="text-sm font-semibold text-zinc-300 mb-1"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Template Agencies / DIY
               </p>
               <p
-                className="text-xs text-white/30"
+                className="text-xs text-zinc-400"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 Generic web shops & builders
               </p>
             </div>
-            <div className="px-6 py-5 border-l border-white/10">
+            <div className="px-6 py-5 border-l border-hairline">
               <p
-                className="text-sm font-semibold text-white/70 mb-1"
+                className="text-sm font-semibold text-zinc-300 mb-1"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Big IT Firms
               </p>
               <p
-                className="text-xs text-white/30"
+                className="text-xs text-zinc-400"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 Enterprise MSPs & agencies
@@ -197,14 +197,14 @@ export default function WhyUs() {
           {rows.map((row, i) => (
             <div
               key={row.criterion}
-              className={`grid grid-cols-4 border-t border-[#18181B]/10 ${
-                i % 2 === 0 ? "bg-white" : "bg-[#FAFAF9]"
+              className={`grid grid-cols-4 border-t border-hairline ${
+                i % 2 === 0 ? "bg-ink-0" : "bg-ink-1"
               }`}
             >
               {/* Criterion */}
               <div className="px-6 py-5 flex items-center">
                 <span
-                  className="text-sm font-semibold text-[#18181B]"
+                  className="text-sm font-semibold text-white"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {row.criterion}
@@ -212,17 +212,17 @@ export default function WhyUs() {
               </div>
 
               {/* Copper Bay — highlighted */}
-              <div className="px-6 py-5 flex items-center justify-center border-l-2 border-[#F97316]/40 bg-[#F97316]/4">
+              <div className="px-6 py-5 flex items-center justify-center border-l-2 border-copper/40 bg-copper/[0.06]">
                 <Cell cell={row.copper} />
               </div>
 
               {/* Agency */}
-              <div className="px-6 py-5 flex items-center justify-center border-l border-[#18181B]/8">
+              <div className="px-6 py-5 flex items-center justify-center border-l border-hairline">
                 <Cell cell={row.agency} />
               </div>
 
               {/* Big IT */}
-              <div className="px-6 py-5 flex items-center justify-center border-l border-[#18181B]/8">
+              <div className="px-6 py-5 flex items-center justify-center border-l border-hairline">
                 <Cell cell={row.bigit} />
               </div>
             </div>
@@ -238,10 +238,10 @@ export default function WhyUs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={reduce ? { duration: 0 } : { duration: 0.4, delay: i * 0.07 }}
-              className="rounded-xl border border-[#18181B]/10 overflow-hidden bg-white shadow-sm"
+              className="rounded-xl border border-hairline overflow-hidden bg-ink-1"
             >
               {/* Criterion label */}
-              <div className="bg-[#18181B] px-5 py-3">
+              <div className="bg-ink-2 px-5 py-3">
                 <p
                   className="text-sm font-semibold text-white"
                   style={{ fontFamily: "var(--font-heading)" }}
@@ -251,20 +251,20 @@ export default function WhyUs() {
               </div>
 
               {/* Three columns */}
-              <div className="grid grid-cols-3 divide-x divide-[#18181B]/10">
+              <div className="grid grid-cols-3 divide-x divide-hairline">
                 {/* Copper Bay */}
-                <div className="px-3 py-4 bg-[#F97316]/5 flex flex-col items-center gap-2 text-center">
+                <div className="px-3 py-4 bg-copper/[0.06] flex flex-col items-center gap-2 text-center">
                   <p
-                    className="text-[10px] font-bold uppercase tracking-wider text-gold-on-light"
+                    className="text-[10px] font-bold uppercase tracking-wider text-copper-bright"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Copper Bay
                   </p>
-                  <div className="w-5 h-5 rounded-full bg-[#F97316]/15 flex items-center justify-center">
-                    <Check size={11} color="#F97316" strokeWidth={2.5} />
+                  <div className="w-5 h-5 rounded-full bg-copper/15 flex items-center justify-center">
+                    <Check size={11} color="#DDAA75" strokeWidth={2.5} />
                   </div>
                   <span
-                    className="text-[11px] text-[#3F3F46]/70 leading-snug"
+                    className="text-[11px] text-zinc-300 leading-snug"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     {row.copper.text}
@@ -274,7 +274,7 @@ export default function WhyUs() {
                 {/* Agency */}
                 <div className="px-3 py-4 flex flex-col items-center gap-2 text-center">
                   <p
-                    className="text-[10px] font-bold uppercase tracking-wider text-[#3F3F46]/40"
+                    className="text-[10px] font-bold uppercase tracking-wider text-zinc-400"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     DIY/Agency
@@ -282,8 +282,8 @@ export default function WhyUs() {
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center ${
                       row.agency.type === "partial"
-                        ? "bg-[#3F3F46]/15"
-                        : "bg-red-100"
+                        ? "bg-white/[0.06]"
+                        : "bg-red-900/20"
                     }`}
                   >
                     {row.agency.type === "partial" ? (
@@ -293,7 +293,7 @@ export default function WhyUs() {
                     )}
                   </div>
                   <span
-                    className="text-[11px] text-[#3F3F46]/50 leading-snug"
+                    className="text-[11px] text-zinc-400 leading-snug"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     {row.agency.text}
@@ -303,7 +303,7 @@ export default function WhyUs() {
                 {/* Big IT */}
                 <div className="px-3 py-4 flex flex-col items-center gap-2 text-center">
                   <p
-                    className="text-[10px] font-bold uppercase tracking-wider text-[#3F3F46]/40"
+                    className="text-[10px] font-bold uppercase tracking-wider text-zinc-400"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Big IT
@@ -311,8 +311,8 @@ export default function WhyUs() {
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center ${
                       row.bigit.type === "partial"
-                        ? "bg-[#3F3F46]/15"
-                        : "bg-red-100"
+                        ? "bg-white/[0.06]"
+                        : "bg-red-900/20"
                     }`}
                   >
                     {row.bigit.type === "partial" ? (
@@ -322,7 +322,7 @@ export default function WhyUs() {
                     )}
                   </div>
                   <span
-                    className="text-[11px] text-[#3F3F46]/50 leading-snug"
+                    className="text-[11px] text-zinc-400 leading-snug"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     {row.bigit.text}
@@ -343,7 +343,7 @@ export default function WhyUs() {
         >
           <Link
             href="/#contact"
-            className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Talk to Duke — no sales pitch

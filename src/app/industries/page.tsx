@@ -62,7 +62,7 @@ const industries = [
 
 export default function IndustriesPage() {
   return (
-    <>
+    <div className="theme-dark min-h-screen bg-ink-0 text-white">
       <Nav />
       <main>
         <script
@@ -71,13 +71,13 @@ export default function IndustriesPage() {
         />
 
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-[#18181B]">
+        <section className="pt-32 pb-20 bg-ink-0">
           <div className="max-w-4xl mx-auto px-6">
             <span
               className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
               style={{
-                backgroundColor: "rgba(249,115,22,0.15)",
-                color: "#F97316",
+                backgroundColor: "rgba(221,170,117,0.15)",
+                color: "#DDAA75",
                 fontFamily: "var(--font-heading)",
               }}
             >
@@ -90,7 +90,7 @@ export default function IndustriesPage() {
               Built for your industry.
             </h1>
             <p
-              className="text-white/60 text-lg max-w-2xl"
+              className="text-zinc-400 text-lg max-w-2xl"
               style={{ fontFamily: "var(--font-body)" }}
             >
               We work with Sonoma County businesses across industries — and we understand the specific tech challenges each one faces.
@@ -99,29 +99,29 @@ export default function IndustriesPage() {
         </section>
 
         {/* Industry cards */}
-        <section className="py-20 bg-[#FAFAF9]">
+        <section className="py-20 bg-ink-1">
           <div className="max-w-4xl mx-auto px-6">
             <div className="grid sm:grid-cols-2 gap-6">
               {industries.map((industry) => (
                 <div
                   key={industry.href}
-                  className="rounded-xl border border-[#18181B]/10 bg-[#FAFAF9] p-6 shadow-sm hover:shadow-md transition-shadow"
+                  className="rounded-xl border border-hairline bg-ink-2 p-6 hover:border-copper-dim transition-colors"
                 >
                   <h2
-                    className="font-bold text-[#18181B] text-lg mb-2"
+                    className="font-bold text-white text-lg mb-2"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {industry.name}
                   </h2>
                   <p
-                    className="text-sm text-[#3F3F46]/60 mb-4 leading-relaxed"
+                    className="text-sm text-zinc-400 mb-4 leading-relaxed"
                     style={{ fontFamily: "var(--font-body)" }}
                   >
                     {industry.desc}
                   </p>
                   <Link
                     href={industry.href}
-                    className="inline-flex items-center gap-1 text-sm font-semibold text-gold-on-light hover:text-[#ea6c0a] transition-colors"
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-copper-bright hover:text-white transition-colors"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     Learn more <ArrowRight size={13} />
@@ -133,7 +133,7 @@ export default function IndustriesPage() {
         </section>
 
         {/* Don't see your industry CTA strip */}
-        <section className="py-20 bg-[#18181B]">
+        <section className="py-20 bg-ink-0">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2
               className="text-3xl font-bold text-white mb-4"
@@ -142,14 +142,14 @@ export default function IndustriesPage() {
               Don&apos;t see your industry?
             </h2>
             <p
-              className="text-white/60 mb-8 max-w-xl mx-auto"
+              className="text-zinc-400 mb-8 max-w-xl mx-auto"
               style={{ fontFamily: "var(--font-body)" }}
             >
               We work with all kinds of Sonoma County businesses. If you don&apos;t see your industry, reach out — we&apos;ll tell you honestly if we can help.
             </p>
             <Link
               href="/#contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Get a Free Consultation <ArrowRight size={16} />
@@ -158,6 +158,6 @@ export default function IndustriesPage() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

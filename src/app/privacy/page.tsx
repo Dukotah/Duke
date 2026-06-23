@@ -11,44 +11,44 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <>
-      <Nav light />
+    <div className="theme-dark min-h-screen bg-ink-0 text-white">
+      <Nav />
       <main className="max-w-3xl mx-auto px-6 py-24 pt-32">
       <Link
         href="/"
-        className="text-sm text-gold-on-light hover:underline mb-8 inline-block"
+        className="text-sm text-copper-bright hover:underline mb-8 inline-block"
         style={{ fontFamily: "var(--font-heading)" }}
       >
         ← Back to home
       </Link>
 
       <h1
-        className="text-4xl font-bold text-[#18181B] mb-4"
+        className="text-4xl font-bold text-white mb-4"
         style={{ fontFamily: "var(--font-heading)" }}
       >
         Privacy Policy
       </h1>
-      <p className="text-sm text-[#3F3F46]/60 mb-12" style={{ fontFamily: "var(--font-body)" }}>
+      <p className="text-sm text-zinc-400 mb-12" style={{ fontFamily: "var(--font-body)" }}>
         Last updated: May 30, 2026
       </p>
 
       <div
-        className="prose prose-zinc max-w-none text-[#3F3F46]"
+        className="prose prose-invert max-w-none text-zinc-300"
         style={{ fontFamily: "var(--font-body)" }}
       >
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           1. Who We Are
         </h2>
         <p>
           Copper Bay Tech is an IT consulting and web development firm serving businesses in Sonoma
           County, California. You can reach us at{" "}
-          <a href="mailto:contact@copperbaytech.com" className="text-gold-on-light hover:underline">
+          <a href="mailto:contact@copperbaytech.com" className="text-copper-bright hover:underline">
             contact@copperbaytech.com
           </a>
           .
         </p>
 
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           2. Information We Collect
         </h2>
         <p>We collect information you provide directly to us, including:</p>
@@ -64,7 +64,7 @@ export default function PrivacyPolicy() {
           how visitors use our site. We do not use tracking cookies for advertising.
         </p>
 
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           3. How We Use Your Information
         </h2>
         <p>We use the information we collect to:</p>
@@ -78,7 +78,7 @@ export default function PrivacyPolicy() {
           purposes.
         </p>
 
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           4. How We Store Your Information
         </h2>
         <p>
@@ -87,19 +87,19 @@ export default function PrivacyPolicy() {
           as required by law.
         </p>
 
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           5. Your Rights
         </h2>
         <p>
           You may request to access, correct, or delete any personal information we hold about you
           at any time by contacting us at{" "}
-          <a href="mailto:contact@copperbaytech.com" className="text-gold-on-light hover:underline">
+          <a href="mailto:contact@copperbaytech.com" className="text-copper-bright hover:underline">
             contact@copperbaytech.com
           </a>
           . We will respond within a reasonable timeframe.
         </p>
 
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           6. Third-Party Services
         </h2>
         <p>
@@ -108,7 +108,7 @@ export default function PrivacyPolicy() {
           are not permitted to use your information for other purposes.
         </p>
 
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           7. Children&apos;s Privacy
         </h2>
         <p>
@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
           information from children.
         </p>
 
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           8. Changes to This Policy
         </h2>
         <p>
@@ -125,12 +125,12 @@ export default function PrivacyPolicy() {
           acceptance of the updated policy.
         </p>
 
-        <h2 className="text-xl font-semibold text-[#18181B] mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+        <h2 className="text-xl font-semibold text-white mt-10 mb-3" style={{ fontFamily: "var(--font-heading)" }}>
           9. Contact Us
         </h2>
         <p>
           If you have any questions about this Privacy Policy, please contact us at{" "}
-          <a href="mailto:contact@copperbaytech.com" className="text-gold-on-light hover:underline">
+          <a href="mailto:contact@copperbaytech.com" className="text-copper-bright hover:underline">
             contact@copperbaytech.com
           </a>
           .
@@ -138,6 +138,6 @@ export default function PrivacyPolicy() {
       </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

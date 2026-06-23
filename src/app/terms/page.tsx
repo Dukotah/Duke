@@ -74,28 +74,28 @@ Our total liability to you for any claims arising out of or related to these ter
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <Nav light />
+    <div className="theme-dark min-h-screen bg-ink-0 text-white">
+      <Nav />
 
       <main className="pt-32 pb-24 px-6">
         <div className="max-w-2xl mx-auto">
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Legal
           </p>
           <h1
-            className="text-4xl font-bold text-[#18181B] mb-2"
+            className="text-4xl font-bold text-white mb-2"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Terms of Service
           </h1>
-          <p className="text-[#3F3F46]/50 text-sm mb-12" style={{ fontFamily: "var(--font-body)" }}>
+          <p className="text-zinc-400 text-sm mb-12" style={{ fontFamily: "var(--font-body)" }}>
             Effective date: {EFFECTIVE_DATE}
           </p>
 
-          <p className="text-[#3F3F46]/70 leading-relaxed mb-10" style={{ fontFamily: "var(--font-body)" }}>
+          <p className="text-zinc-300 leading-relaxed mb-10" style={{ fontFamily: "var(--font-body)" }}>
             Please read these Terms of Service carefully before using the {COMPANY} website and tools.
           </p>
 
@@ -103,23 +103,23 @@ export default function TermsPage() {
             {sections.map((s) => (
               <div key={s.heading}>
                 <h2
-                  className="text-lg font-bold text-[#18181B] mb-3"
+                  className="text-lg font-bold text-white mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {s.heading}
                 </h2>
-                <div className="text-[#3F3F46]/70 text-sm leading-relaxed whitespace-pre-line" style={{ fontFamily: "var(--font-body)" }}>
+                <div className="text-zinc-300 text-sm leading-relaxed whitespace-pre-line" style={{ fontFamily: "var(--font-body)" }}>
                   {s.body}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-16 pt-8 border-t border-[#18181B]/10 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <Link href="/" className="text-sm text-gold-on-light hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
+          <div className="mt-16 pt-8 border-t border-hairline flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <Link href="/" className="text-sm text-copper-bright hover:underline" style={{ fontFamily: "var(--font-heading)" }}>
               ← Back to home
             </Link>
-            <Link href="/privacy" className="text-sm text-[#3F3F46]/50 hover:text-[#18181B] transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
+            <Link href="/privacy" className="text-sm text-zinc-400 hover:text-white transition-colors" style={{ fontFamily: "var(--font-heading)" }}>
               Privacy Policy →
             </Link>
           </div>

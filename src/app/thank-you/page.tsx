@@ -18,21 +18,21 @@ const nextSteps = [
 
 export default function ThankYou() {
   return (
-    <>
+    <div className="theme-dark bg-ink-0 text-white">
       <Nav />
       <main>
-        <section className="min-h-screen flex items-center justify-center bg-[#18181B] pt-16">
+        <section className="min-h-screen flex items-center justify-center bg-ink-0 pt-16">
           <div className="max-w-xl mx-auto px-6 text-center py-24">
             <div
               className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8"
-              style={{ backgroundColor: "rgba(249,115,22,0.15)" }}
+              style={{ backgroundColor: "rgba(221,170,117,0.15)" }}
             >
-              <CheckCircle2 size={40} color="#F97316" />
+              <CheckCircle2 size={40} color="#DDAA75" />
             </div>
 
             <span
               className="inline-block mb-4 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase"
-              style={{ backgroundColor: "rgba(200,169,110,0.15)", color: "#F97316", border: "1px solid rgba(200,169,110,0.3)", fontFamily: "var(--font-heading)" }}
+              style={{ backgroundColor: "rgba(200,169,110,0.15)", color: "#DDAA75", border: "1px solid rgba(200,169,110,0.3)", fontFamily: "var(--font-heading)" }}
             >
               Message Received
             </span>
@@ -53,9 +53,9 @@ export default function ThankYou() {
 
             <div className="space-y-4 mb-12 text-left">
               {nextSteps.map((step, i) => (
-                <div key={i} className="flex items-start gap-4 bg-white/5 rounded-xl p-4">
+                <div key={i} className="flex items-start gap-4 bg-white/[0.04] rounded-xl p-4 border border-hairline">
                   <span
-                    className="w-7 h-7 rounded-full bg-[#F97316]/20 text-[#F97316] text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5"
+                    className="w-7 h-7 rounded-full bg-copper/20 text-copper-bright text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {i + 1}
@@ -70,8 +70,8 @@ export default function ThankYou() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="tel:+17072396725"
-                className="inline-flex items-center justify-center px-7 py-3.5 rounded-md text-base font-semibold text-white transition-colors"
-                style={{ backgroundColor: "#F97316", fontFamily: "var(--font-heading)" }}
+                className="inline-flex items-center justify-center px-7 py-3.5 rounded-md text-base font-bold text-ink-0 transition-colors"
+                style={{ backgroundColor: "#DDAA75", fontFamily: "var(--font-heading)" }}
               >
                 Call / Text Now
               </a>
@@ -94,6 +94,6 @@ export default function ThankYou() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

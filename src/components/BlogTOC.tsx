@@ -127,8 +127,8 @@ export default function BlogTOC() {
               "text-left w-full text-sm leading-snug py-0.5 transition-colors",
               item.level === 2 ? "font-medium" : "font-normal",
               activeId === item.id
-                ? "text-gold-on-light"
-                : "text-[#3F3F46]/60 hover:text-[#18181B]",
+                ? "text-copper-bright"
+                : "text-zinc-400 hover:text-white",
             ].join(" ")}
             style={{ fontFamily: "var(--font-body)" }}
           >
@@ -148,7 +148,7 @@ export default function BlogTOC() {
       >
         {toc.readingTime && (
           <p
-            className="flex items-center gap-1.5 text-xs text-[#3F3F46]/50 mb-3"
+            className="flex items-center gap-1.5 text-xs text-zinc-400 mb-3"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             <Clock size={12} />
@@ -156,7 +156,7 @@ export default function BlogTOC() {
           </p>
         )}
         <p
-          className="text-xs font-semibold uppercase tracking-widest text-[#3F3F46]/40 mb-2"
+          className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-2"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           On this page
@@ -175,7 +175,7 @@ export default function BlogTOC() {
           aria-label={
             mobileOpen ? "Close table of contents" : "Open table of contents"
           }
-          className="flex items-center gap-1.5 px-3 py-2 rounded-full shadow-lg bg-white border border-[#18181B]/10 text-[#18181B] text-xs font-semibold"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-full shadow-lg bg-ink-2 border border-hairline text-white text-xs font-semibold"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           <List size={14} />
@@ -187,10 +187,10 @@ export default function BlogTOC() {
         </button>
 
         {mobileOpen && (
-          <div className="absolute bottom-10 right-0 w-64 bg-white border border-[#18181B]/10 rounded-xl shadow-xl p-4">
+          <div className="absolute bottom-10 right-0 w-64 bg-ink-1 border border-hairline rounded-xl shadow-xl p-4">
             {toc.readingTime && (
               <p
-                className="flex items-center gap-1.5 text-xs text-[#3F3F46]/50 mb-3"
+                className="flex items-center gap-1.5 text-xs text-zinc-400 mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <Clock size={12} />
@@ -198,7 +198,7 @@ export default function BlogTOC() {
               </p>
             )}
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#3F3F46]/40 mb-2"
+              className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-2"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               On this page

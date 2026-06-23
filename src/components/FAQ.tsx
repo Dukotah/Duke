@@ -41,7 +41,7 @@ export default function FAQ() {
   const reduce = useReducedMotion();
 
   return (
-    <section id="faq" className="py-24 bg-white">
+    <section id="faq" className="py-24 bg-ink-0">
       <JsonLd schema={faqSchema(faqs)} />
       <div className="max-w-3xl mx-auto px-6">
         <motion.div
@@ -52,19 +52,19 @@ export default function FAQ() {
           className="text-center mb-16"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Common questions
           </p>
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
+            className="text-4xl md:text-5xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Straight answers
           </h2>
           <p
-            className="text-lg text-[#3F3F46]/60"
+            className="text-lg text-zinc-400"
             style={{ fontFamily: "var(--font-body)" }}
           >
             What most people want to know before reaching out.
@@ -79,26 +79,26 @@ export default function FAQ() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={reduce ? { duration: 0 } : { duration: 0.4, delay: i * 0.05 }}
-              className="border border-[#18181B]/10 rounded-xl overflow-hidden"
+              className="border border-hairline rounded-xl overflow-hidden"
             >
               <button
                 id={`faq-trigger-${i}`}
                 onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between px-6 py-5 text-left bg-[#FAFAF9] hover:bg-[#F4F4F2] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                className="w-full flex items-center justify-between px-6 py-5 text-left bg-ink-1 hover:bg-ink-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
                 aria-expanded={open === i}
                 aria-controls={`faq-panel-${i}`}
               >
                 <span
-                  className="text-base font-semibold text-[#18181B] pr-4"
+                  className="text-base font-semibold text-white pr-4"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {faq.q}
                 </span>
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#18181B]/8 flex items-center justify-center">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-white/[0.04] flex items-center justify-center">
                   {open === i ? (
-                    <Minus size={12} color="#18181B" />
+                    <Minus size={12} color="#DDAA75" />
                   ) : (
-                    <Plus size={12} color="#18181B" />
+                    <Plus size={12} color="#DDAA75" />
                   )}
                 </span>
               </button>
@@ -114,7 +114,7 @@ export default function FAQ() {
                     <p
                       id={`faq-panel-${i}`}
                       aria-labelledby={`faq-trigger-${i}`}
-                      className="px-6 py-5 text-sm text-[#3F3F46]/70 leading-relaxed border-t border-[#18181B]/8 bg-white"
+                      className="px-6 py-5 text-sm text-zinc-300 leading-relaxed border-t border-hairline bg-ink-1"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
                       {faq.a}

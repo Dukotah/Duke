@@ -99,23 +99,23 @@ const serviceColors: Record<string, string> = {
   "Cybersecurity": "text-red-400 bg-red-500/10",
   "IT Support & Cloud": "text-purple-400 bg-purple-500/10",
   "IT Support": "text-purple-400 bg-purple-500/10",
-  "IT Support & Security": "text-orange-400 bg-orange-500/10",
+  "IT Support & Security": "text-copper-bright bg-copper/10",
 };
 
 export default function TestimonialsPage() {
   return (
-    <div className="min-h-screen bg-[#18181B] text-white">
+    <div className="theme-dark min-h-screen bg-ink-0 text-white">
       <Nav />
 
       {/* Hero */}
       <section className="pt-32 pb-16 px-6 text-center">
         <div className="max-w-2xl mx-auto">
-          <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
+          <span className="inline-block bg-copper/10 text-copper-bright text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-copper/20">
             Client Stories
           </span>
           <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
             What Sonoma County{" "}
-            <span className="text-orange-400">Businesses Say</span>
+            <span className="text-copper-bright">Businesses Say</span>
           </h1>
           <p className="text-zinc-400 text-lg max-w-xl mx-auto">
             Sample stories illustrating the kind of work we do for North Bay businesses — restaurants, dental offices, law firms, insurance agencies, and more.
@@ -135,12 +135,12 @@ export default function TestimonialsPage() {
             {testimonials.map((t, i) => (
               <div
                 key={i}
-                className="break-inside-avoid bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4"
+                className="break-inside-avoid bg-ink-1 border border-hairline rounded-2xl p-6 space-y-4"
               >
                 {/* Stars */}
                 <div className="flex items-center gap-1">
                   {[...Array(t.stars)].map((_, j) => (
-                    <Star key={j} size={12} className="text-orange-400 fill-orange-400" />
+                    <Star key={j} size={12} className="text-copper-bright fill-copper-bright" />
                   ))}
                 </div>
 
@@ -148,12 +148,12 @@ export default function TestimonialsPage() {
                 <p className="text-zinc-300 text-sm leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
 
                 {/* Author */}
-                <div className="pt-2 border-t border-zinc-800 flex items-start justify-between gap-3">
+                <div className="pt-2 border-t border-hairline flex items-start justify-between gap-3">
                   <div>
                     <p className="text-white font-semibold text-sm">{t.author}</p>
                     <p className="text-zinc-500 text-xs">{t.role}, {t.company}</p>
                   </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full flex-shrink-0 ${serviceColors[t.service] ?? "text-zinc-400 bg-zinc-800"}`}>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full flex-shrink-0 ${serviceColors[t.service] ?? "text-zinc-400 bg-ink-2"}`}>
                     {t.service}
                   </span>
                 </div>
@@ -162,8 +162,8 @@ export default function TestimonialsPage() {
           </div>
 
           {/* CTA */}
-          <div className="mt-16 rounded-2xl p-8 text-center border border-orange-500/30" style={{ background: "linear-gradient(135deg, #1C1917 0%, #18181B 100%)" }}>
-            <p className="text-orange-400 text-xs font-semibold uppercase tracking-wider mb-3">Ready to be next?</p>
+          <div className="mt-16 rounded-2xl p-8 text-center border border-copper-dim" style={{ background: "linear-gradient(135deg, #1C1915 0%, #141210 100%)" }}>
+            <p className="text-copper-bright text-xs font-semibold uppercase tracking-wider mb-3">Ready to be next?</p>
             <h2 className="text-white text-2xl font-black mb-3">Let&apos;s solve your tech problems</h2>
             <p className="text-zinc-400 text-sm mb-6 max-w-md mx-auto">
               Free 30-minute consultation. No sales pitch — just a real conversation about your business and what we can actually help with.
@@ -171,13 +171,13 @@ export default function TestimonialsPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/schedule"
-                className="inline-block bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
+                className="inline-block bg-copper hover:bg-copper-bright text-ink-0 font-bold px-8 py-3 rounded-full transition-colors text-sm"
               >
                 Book a Free Consultation
               </Link>
               <Link
                 href="/#contact"
-                className="inline-block bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm"
+                className="inline-block bg-ink-2 hover:bg-ink-3 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm border border-hairline"
               >
                 Send a Message
               </Link>

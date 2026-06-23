@@ -59,7 +59,7 @@ const industries = [
 export default function Industries() {
   const reduce = useReducedMotion();
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-ink-0">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -70,20 +70,20 @@ export default function Industries() {
           className="text-center mb-16"
         >
           <p
-            className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-4"
+            className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Industries we serve
           </p>
           <h2
-            className="text-4xl md:text-5xl font-bold text-[#18181B] mb-4"
+            className="text-4xl md:text-5xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Built for small businesses
             <br className="hidden md:block" /> like yours
           </h2>
           <p
-            className="text-lg text-[#3F3F46]/60 max-w-xl mx-auto"
+            className="text-lg text-zinc-400 max-w-xl mx-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
             We work across the industries we know best — from winery tasting rooms
@@ -102,19 +102,19 @@ export default function Industries() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={reduce ? { duration: 0 } : { duration: 0.5, delay: i * 0.07 }}
-                className="rounded-xl border border-[#18181B]/10 bg-[#FAFAF9] p-6 flex flex-col gap-4 hover:shadow-md hover:border-[#18181B]/20 transition-all duration-200"
+                className="rounded-xl border border-hairline bg-ink-1 p-6 flex flex-col gap-4 hover:border-copper-dim transition-all duration-200"
               >
                 {/* Icon tile */}
                 <div
                   className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "rgba(24,24,27,0.07)" }}
+                  style={{ backgroundColor: "rgba(255,255,255,0.04)" }}
                 >
-                  <Icon size={20} color="#18181B" />
+                  <Icon size={20} color="#DDAA75" />
                 </div>
 
                 {/* Label */}
                 <h3
-                  className="text-sm font-bold text-[#18181B] leading-snug"
+                  className="text-sm font-bold text-white leading-snug"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {industry.label}
@@ -122,7 +122,7 @@ export default function Industries() {
 
                 {/* Description */}
                 <p
-                  className="text-xs text-[#3F3F46]/55 leading-relaxed"
+                  className="text-xs text-zinc-400 leading-relaxed"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {industry.description}
@@ -141,7 +141,7 @@ export default function Industries() {
           className="mt-14 text-center"
         >
           <p
-            className="text-sm text-[#3F3F46]/50 mb-5"
+            className="text-sm text-zinc-400 mb-5"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Don&apos;t see your industry? Reach out — if you&apos;re a local business, we can
@@ -149,7 +149,7 @@ export default function Industries() {
           </p>
           <Link
             href="/#contact"
-            className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+            className="inline-flex items-center justify-center px-7 py-3 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Let&apos;s talk about your business

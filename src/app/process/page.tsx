@@ -81,14 +81,14 @@ const notFit = [
 
 export default function ProcessPage() {
   return (
-    <>
+    <div className="theme-dark min-h-screen bg-ink-0 text-white">
       <Nav />
       <main className="pt-16">
         {/* ── Hero ── */}
-        <section className="bg-[#18181B] py-24 px-6">
+        <section className="bg-ink-0 py-24 px-6">
           <div className="max-w-4xl mx-auto text-center">
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               How we work
@@ -102,7 +102,7 @@ export default function ProcessPage() {
               No surprises.
             </h1>
             <p
-              className="text-white/60 text-lg leading-relaxed max-w-2xl mx-auto mb-10"
+              className="text-zinc-400 text-lg leading-relaxed max-w-2xl mx-auto mb-10"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Most of our clients have been burned before — by a contractor who
@@ -114,7 +114,7 @@ export default function ProcessPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href={BOOKING_URL}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <CalendarDays size={16} />
@@ -122,7 +122,7 @@ export default function ProcessPage() {
               </a>
               <a
                 href={PHONE_HREF}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md text-sm font-semibold text-white/80 border border-white/20 hover:border-white/50 hover:text-white transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md text-sm font-semibold text-zinc-300 border border-hairline hover:border-copper-dim hover:text-white transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <Phone size={16} />
@@ -133,7 +133,7 @@ export default function ProcessPage() {
         </section>
 
         {/* ── Process Steps ── */}
-        <section className="py-24 bg-white px-6">
+        <section className="py-24 bg-ink-1 px-6">
           <div className="max-w-4xl mx-auto">
             <div className="space-y-0">
               {steps.map((step, idx) => (
@@ -145,21 +145,21 @@ export default function ProcessPage() {
                   {idx < steps.length - 1 && (
                     <div
                       aria-hidden="true"
-                      className="hidden md:block absolute left-[3.25rem] top-16 bottom-0 w-px bg-[#18181B]/10"
+                      className="hidden md:block absolute left-[3.25rem] top-16 bottom-0 w-px bg-hairline"
                     />
                   )}
 
                   {/* Step number bubble */}
                   <div className="flex md:flex-col items-start gap-3 md:gap-0">
                     <div
-                      className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 bg-[#18181B] text-[#F97316] font-bold text-lg"
+                      className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 bg-ink-2 border border-hairline text-copper-bright font-bold text-lg"
                       style={{ fontFamily: "var(--font-heading)" }}
                       aria-hidden="true"
                     >
                       {step.number}
                     </div>
                     <span
-                      className="md:mt-3 text-xs font-medium text-[#3F3F46]/40 uppercase tracking-widest leading-tight"
+                      className="md:mt-3 text-xs font-medium text-zinc-400 uppercase tracking-widest leading-tight"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {step.duration}
@@ -169,13 +169,13 @@ export default function ProcessPage() {
                   {/* Step content */}
                   <div className="pt-1">
                     <h2
-                      className="text-xl font-bold text-[#18181B] mb-3 leading-snug"
+                      className="text-xl font-bold text-white mb-3 leading-snug"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {step.title}
                     </h2>
                     <p
-                      className="text-[#3F3F46]/65 leading-relaxed"
+                      className="text-zinc-400 leading-relaxed"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
                       {step.body}
@@ -188,23 +188,23 @@ export default function ProcessPage() {
         </section>
 
         {/* ── Fit / Not-a-fit ── */}
-        <section className="py-24 bg-[#F9F9F9] px-6">
+        <section className="py-24 bg-ink-0 px-6">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-14">
               <p
-                className="text-xs font-semibold uppercase tracking-widest text-gold-on-light mb-3"
+                className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Honest counter-signaling
               </p>
               <h2
-                className="text-3xl sm:text-4xl font-bold text-[#18181B] leading-tight"
+                className="text-3xl sm:text-4xl font-bold text-white leading-tight"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Are we the right fit?
               </h2>
               <p
-                className="mt-4 text-[#3F3F46]/60 max-w-xl mx-auto leading-relaxed"
+                className="mt-4 text-zinc-400 max-w-xl mx-auto leading-relaxed"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 We work best with a specific kind of client. Being honest about
@@ -214,11 +214,11 @@ export default function ProcessPage() {
 
             <div className="grid md:grid-cols-2 gap-8">
               {/* Good fit */}
-              <div className="bg-white rounded-2xl p-8 border border-[#18181B]/8">
+              <div className="bg-ink-1 rounded-2xl p-8 border border-hairline">
                 <div className="flex items-center gap-3 mb-6">
-                  <CheckCircle2 size={22} className="text-[#F97316] flex-shrink-0" />
+                  <CheckCircle2 size={22} className="text-copper-bright flex-shrink-0" />
                   <h3
-                    className="text-lg font-bold text-[#18181B]"
+                    className="text-lg font-bold text-white"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     We&apos;re probably a great fit if&hellip;
@@ -228,11 +228,11 @@ export default function ProcessPage() {
                   {goodFit.map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span
-                        className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#F97316] flex-shrink-0"
+                        className="mt-1.5 w-1.5 h-1.5 rounded-full bg-copper flex-shrink-0"
                         aria-hidden="true"
                       />
                       <span
-                        className="text-sm text-[#3F3F46]/70 leading-relaxed"
+                        className="text-sm text-zinc-300 leading-relaxed"
                         style={{ fontFamily: "var(--font-body)" }}
                       >
                         {item}
@@ -243,11 +243,11 @@ export default function ProcessPage() {
               </div>
 
               {/* Not a fit */}
-              <div className="bg-white rounded-2xl p-8 border border-[#18181B]/8">
+              <div className="bg-ink-1 rounded-2xl p-8 border border-hairline">
                 <div className="flex items-center gap-3 mb-6">
-                  <XCircle size={22} className="text-[#3F3F46]/40 flex-shrink-0" />
+                  <XCircle size={22} className="text-zinc-400 flex-shrink-0" />
                   <h3
-                    className="text-lg font-bold text-[#18181B]"
+                    className="text-lg font-bold text-white"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     We&apos;re probably not the right fit if&hellip;
@@ -257,11 +257,11 @@ export default function ProcessPage() {
                   {notFit.map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span
-                        className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#3F3F46]/25 flex-shrink-0"
+                        className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-600 flex-shrink-0"
                         aria-hidden="true"
                       />
                       <span
-                        className="text-sm text-[#3F3F46]/55 leading-relaxed"
+                        className="text-sm text-zinc-400 leading-relaxed"
                         style={{ fontFamily: "var(--font-body)" }}
                       >
                         {item}
@@ -275,10 +275,10 @@ export default function ProcessPage() {
         </section>
 
         {/* ── CTA ── */}
-        <section className="py-24 bg-[#18181B] px-6">
+        <section className="py-24 bg-ink-1 px-6">
           <div className="max-w-3xl mx-auto text-center">
             <p
-              className="text-xs font-semibold uppercase tracking-widest text-[#F97316] mb-4"
+              className="text-xs font-semibold uppercase tracking-widest text-copper-bright mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Ready to get started?
@@ -290,7 +290,7 @@ export default function ProcessPage() {
               The first step is a 30-minute conversation — and it&apos;s free.
             </h2>
             <p
-              className="text-white/55 leading-relaxed mb-10 max-w-xl mx-auto"
+              className="text-zinc-400 leading-relaxed mb-10 max-w-xl mx-auto"
               style={{ fontFamily: "var(--font-body)" }}
             >
               No commitment, no hard sell. Tell us where you are and what you need,
@@ -300,7 +300,7 @@ export default function ProcessPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href={BOOKING_URL}
-                className="inline-flex items-center gap-2 px-7 py-4 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-7 py-4 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 <CalendarDays size={16} />
@@ -308,7 +308,7 @@ export default function ProcessPage() {
               </a>
               <Link
                 href="/#contact"
-                className="inline-flex items-center gap-2 px-7 py-4 rounded-md text-sm font-semibold text-white/80 border border-white/20 hover:border-white/50 hover:text-white transition-colors"
+                className="inline-flex items-center gap-2 px-7 py-4 rounded-md text-sm font-semibold text-zinc-300 border border-hairline hover:border-copper-dim hover:text-white transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Send a message instead
@@ -320,6 +320,6 @@ export default function ProcessPage() {
         <Contact />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

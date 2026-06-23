@@ -66,17 +66,17 @@ const caseStudies = [
 
 export default function CaseStudiesPage() {
   return (
-    <>
+    <div className="theme-dark min-h-screen bg-ink-0 text-white">
       <Nav />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-[#18181B]">
+        <section className="pt-32 pb-20 bg-ink-0">
           <div className="max-w-4xl mx-auto px-6">
             <span
               className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
               style={{
-                backgroundColor: "rgba(249,115,22,0.15)",
-                color: "#F97316",
+                backgroundColor: "rgba(221,170,117,0.15)",
+                color: "#DDAA75",
                 fontFamily: "var(--font-heading)",
               }}
             >
@@ -88,35 +88,35 @@ export default function CaseStudiesPage() {
             >
               Real results for real
               <br />
-              <span style={{ color: "#F97316" }}>Sonoma County businesses.</span>
+              <span style={{ color: "#DDAA75" }}>Sonoma County businesses.</span>
             </h1>
             <p
-              className="text-white/60 text-lg max-w-2xl mb-5"
+              className="text-zinc-400 text-lg max-w-2xl mb-5"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Here&apos;s what it looks like when local businesses get their tech sorted out.
             </p>
-            <p className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-white/55" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="inline-block rounded-full border border-hairline bg-white/[0.04] px-4 py-1.5 text-xs text-zinc-400" style={{ fontFamily: "var(--font-body)" }}>
               Representative examples illustrating typical engagements — not results for specific named clients.
             </p>
           </div>
         </section>
 
         {/* Case studies grid */}
-        <section className="py-20 bg-[#FAFAF9]">
+        <section className="py-20 bg-ink-1">
           <div className="max-w-5xl mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-8">
               {caseStudies.map((cs) => (
                 <div
                   key={cs.badge}
-                  className="rounded-xl border border-[#18181B]/10 bg-white p-6 shadow-sm flex flex-col gap-5"
+                  className="rounded-xl border border-hairline bg-ink-2 p-6 flex flex-col gap-5"
                 >
                   {/* Badge */}
                   <span
                     className="self-start px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
                     style={{
-                      backgroundColor: "rgba(249,115,22,0.12)",
-                      color: "#F97316",
+                      backgroundColor: "rgba(221,170,117,0.12)",
+                      color: "#DDAA75",
                       fontFamily: "var(--font-heading)",
                     }}
                   >
@@ -125,7 +125,7 @@ export default function CaseStudiesPage() {
 
                   {/* Client */}
                   <p
-                    className="text-sm font-semibold text-[#3F3F46]/50 uppercase tracking-widest"
+                    className="text-sm font-semibold text-zinc-400 uppercase tracking-widest"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {cs.client}
@@ -134,13 +134,13 @@ export default function CaseStudiesPage() {
                   {/* Challenge */}
                   <div>
                     <p
-                      className="text-xs font-semibold uppercase tracking-widest text-[#18181B]/40 mb-2"
+                      className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-2"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       The challenge
                     </p>
                     <p
-                      className="text-sm text-[#3F3F46]/70 leading-relaxed"
+                      className="text-sm text-zinc-300 leading-relaxed"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
                       {cs.challenge}
@@ -150,13 +150,13 @@ export default function CaseStudiesPage() {
                   {/* What we did */}
                   <div>
                     <p
-                      className="text-xs font-semibold uppercase tracking-widest text-[#18181B]/40 mb-2"
+                      className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-2"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       What we did
                     </p>
                     <p
-                      className="text-sm text-[#3F3F46]/70 leading-relaxed"
+                      className="text-sm text-zinc-300 leading-relaxed"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
                       {cs.work}
@@ -166,7 +166,7 @@ export default function CaseStudiesPage() {
                   {/* Outcome chips */}
                   <div>
                     <p
-                      className="text-xs font-semibold uppercase tracking-widest text-[#18181B]/40 mb-3"
+                      className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-3"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       Outcomes
@@ -175,16 +175,16 @@ export default function CaseStudiesPage() {
                       {cs.outcomes.map((o) => (
                         <div
                           key={o.label}
-                          className="rounded-lg bg-[#18181B] px-4 py-2 flex flex-col"
+                          className="rounded-lg bg-ink-0 border border-hairline px-4 py-2 flex flex-col"
                         >
                           <span
                             className="text-lg font-bold leading-tight"
-                            style={{ color: "#F97316", fontFamily: "var(--font-heading)" }}
+                            style={{ color: "#DDAA75", fontFamily: "var(--font-heading)" }}
                           >
                             {o.stat}
                           </span>
                           <span
-                            className="text-xs text-white/60 leading-snug max-w-[120px]"
+                            className="text-xs text-zinc-400 leading-snug max-w-[120px]"
                             style={{ fontFamily: "var(--font-body)" }}
                           >
                             {o.label}
@@ -200,7 +200,7 @@ export default function CaseStudiesPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-[#18181B]">
+        <section className="py-20 bg-ink-0">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2
               className="text-3xl font-bold text-white mb-4"
@@ -209,14 +209,14 @@ export default function CaseStudiesPage() {
               Ready to see results like these?
             </h2>
             <p
-              className="text-white/60 mb-8"
+              className="text-zinc-400 mb-8"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Free 30-minute consultation. We&apos;ll look at your current setup and tell you exactly what we&apos;d fix and what it would cost.
             </p>
             <Link
               href="/#contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Get a Free Consultation <ArrowRight size={16} />
@@ -225,6 +225,6 @@ export default function CaseStudiesPage() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

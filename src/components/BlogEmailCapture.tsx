@@ -27,10 +27,7 @@ export default function BlogEmailCapture() {
   }
 
   return (
-    <div
-      className="rounded-2xl p-8 my-10"
-      style={{ backgroundColor: "#18181B" }}
-    >
+    <div className="rounded-2xl p-8 my-10 bg-ink-1 border border-hairline">
       <h3
         className="text-lg font-bold text-white mb-2"
         style={{ fontFamily: "var(--font-heading)" }}
@@ -47,7 +44,7 @@ export default function BlogEmailCapture() {
       <div aria-live="polite" aria-atomic="true">
         {status === "success" && (
           <p
-            className="text-sm font-semibold text-[#F97316]"
+            className="text-sm font-semibold text-copper-bright"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             You&apos;re in. We&apos;ll be in touch.
@@ -75,7 +72,7 @@ export default function BlogEmailCapture() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="flex-1 rounded-md px-4 py-2.5 text-sm bg-white/10 text-white placeholder:text-white/30 border border-white/10 focus:outline-none focus:border-white/30"
+            className="flex-1 rounded-md px-4 py-2.5 text-sm bg-ink-2 text-white placeholder:text-zinc-500 border border-hairline focus:outline-none focus:border-copper focus:ring-copper"
             style={{ fontFamily: "var(--font-body)" }}
             disabled={status === "loading"}
             aria-required="true"
@@ -83,7 +80,7 @@ export default function BlogEmailCapture() {
           <button
             type="submit"
             disabled={status === "loading"}
-            className="px-5 py-2.5 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors disabled:opacity-60"
+            className="px-5 py-2.5 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors disabled:opacity-60"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             {status === "loading" ? "Subscribing…" : "Subscribe"}

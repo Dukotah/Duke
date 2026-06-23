@@ -45,12 +45,13 @@ export default function ITSupportPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
+      <div className="theme-dark min-h-screen bg-ink-0 text-white">
       <Nav />
 
       {/* Hero */}
-      <section className="bg-[#18181B] text-white pt-32 pb-20 px-6">
+      <section className="bg-ink-0 text-white pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
-          <span className="inline-block bg-orange-500/10 text-orange-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-orange-500/20">
+          <span className="inline-block bg-copper/10 text-copper-bright text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-copper/20">
             IT Support · North Bay California
           </span>
           <h1
@@ -71,7 +72,7 @@ export default function ITSupportPage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-copper hover:bg-copper-bright text-ink-0 font-bold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Free IT Assessment →
@@ -88,16 +89,16 @@ export default function ITSupportPage() {
       </section>
 
       {/* Problem Section */}
-      <section className="bg-[#FAFAF9] py-20 px-6">
+      <section className="bg-ink-1 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6"
+            className="text-3xl md:text-4xl font-bold text-white mb-6"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What Happens When You Don&apos;t Have a Real IT Partner
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-zinc-400 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Most small businesses wing their IT until something goes catastrophically wrong. By then,
@@ -122,15 +123,15 @@ export default function ITSupportPage() {
                 desc: "Without monitoring, you learn about IT problems the worst possible way: a customer can&apos;t checkout, your email stops sending, or an employee shows up Monday to find the server is down. Proactive monitoring catches 80% of issues before they cause visible outages — but only if someone is watching.",
               },
             ].map((item) => (
-              <div key={item.title} className="bg-white rounded-xl p-6 shadow-sm border border-zinc-100">
+              <div key={item.title} className="bg-ink-2 rounded-xl p-6 border border-hairline">
                 <div className="text-3xl mb-4">{item.icon}</div>
                 <h3
-                  className="text-xl font-bold text-zinc-900 mb-3"
+                  className="text-xl font-bold text-white mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.title}
                 </h3>
-                <p className="text-zinc-600 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {item.desc}
                 </p>
               </div>
@@ -140,16 +141,16 @@ export default function ITSupportPage() {
       </section>
 
       {/* What's Included */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-ink-0 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-4"
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What Copper Bay Tech IT Support Covers
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-zinc-400 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             A flat monthly engagement means you get everything below without watching the clock.
@@ -198,16 +199,16 @@ export default function ITSupportPage() {
                 desc: "When someone on your team has a problem, they call or message us directly. No ticket queue, no offshore call center, no robot. A real person who knows your business answers and resolves the issue.",
               },
             ].map((item) => (
-              <div key={item.title} className="flex gap-4 p-5 bg-[#FAFAF9] rounded-xl border border-zinc-100">
+              <div key={item.title} className="flex gap-4 p-5 bg-ink-1 rounded-xl border border-hairline">
                 <div className="text-2xl pt-0.5 shrink-0">{item.icon}</div>
                 <div>
                   <h3
-                    className="font-bold text-zinc-900 mb-1"
+                    className="font-bold text-white mb-1"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {item.title}
                   </h3>
-                  <p className="text-zinc-600 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                  <p className="text-zinc-400 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                     {item.desc}
                   </p>
                 </div>
@@ -218,7 +219,7 @@ export default function ITSupportPage() {
       </section>
 
       {/* Who This Is For */}
-      <section className="bg-[#18181B] text-white py-20 px-6">
+      <section className="bg-ink-1 text-white py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
             className="text-3xl md:text-4xl font-bold mb-6"
@@ -244,7 +245,7 @@ export default function ITSupportPage() {
               "You&apos;re in Petaluma, Santa Rosa, Sebastopol, Rohnert Park, Sonoma, Windsor, Healdsburg, Cotati, or Bodega Bay",
             ].map((item, i) => (
               <div key={i} className="flex gap-3 items-start">
-                <span className="text-orange-400 mt-0.5 shrink-0">✓</span>
+                <span className="text-copper-bright mt-0.5 shrink-0">✓</span>
                 <p className="text-white/80 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {item.replace(/&apos;/g, "'").replace(/&quot;/g, '"')}
                 </p>
@@ -255,16 +256,16 @@ export default function ITSupportPage() {
       </section>
 
       {/* Pricing */}
-      <section className="bg-[#FAFAF9] py-20 px-6">
+      <section className="bg-ink-0 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-4"
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Transparent Monthly Pricing
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-10 max-w-2xl leading-relaxed"
+            className="text-zinc-400 text-lg mb-10 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             IT support is quoted based on the number of users and devices, the complexity of your
@@ -291,30 +292,30 @@ export default function ITSupportPage() {
             ].map((tier) => (
               <div
                 key={tier.tier}
-                className={`rounded-xl p-6 border ${tier.featured ? "bg-orange-500/10 border-orange-500/30" : "bg-white border-zinc-200 shadow-sm"}`}
+                className={`rounded-xl p-6 border ${tier.featured ? "bg-copper/10 border-copper/30" : "bg-ink-1 border-hairline"}`}
               >
                 <h3
-                  className="font-bold text-zinc-900 mb-1"
+                  className="font-bold text-white mb-1"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {tier.tier}
                 </h3>
                 <div
-                  className="text-orange-500 text-2xl font-bold mb-3"
+                  className="text-copper-bright text-2xl font-bold mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {tier.range}
                 </div>
-                <p className="text-zinc-600 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-zinc-400 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {tier.desc}
                 </p>
               </div>
             ))}
           </div>
-          <p className="text-zinc-500 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+          <p className="text-zinc-400 text-sm" style={{ fontFamily: "var(--font-body)" }}>
             Project-based work (new network installs, office moves, server migrations) is quoted
             separately.{" "}
-            <Link href="/pricing" className="text-orange-500 hover:text-orange-600 font-semibold">
+            <Link href="/pricing" className="text-copper-bright hover:text-copper font-semibold">
               Use the pricing estimator →
             </Link>
           </p>
@@ -322,10 +323,10 @@ export default function ITSupportPage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-ink-1 py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-10"
+            className="text-3xl md:text-4xl font-bold text-white mb-10"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Frequently Asked Questions
@@ -357,14 +358,14 @@ export default function ITSupportPage() {
                 a: "Yes, and we do this regularly. A clean transition starts with a full environment audit — we document everything your current vendor has set up, identify any gaps or risks, and build a handoff plan. We coordinate directly with the outgoing vendor when possible. Most transitions are complete within 30 days with no service interruption.",
               },
             ].map((item) => (
-              <div key={item.q} className="border-b border-zinc-100 pb-8">
+              <div key={item.q} className="border-b border-hairline pb-8">
                 <h3
-                  className="text-lg font-bold text-zinc-900 mb-3"
+                  className="text-lg font-bold text-white mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.q}
                 </h3>
-                <p className="text-zinc-600 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {item.a}
                 </p>
               </div>
@@ -374,7 +375,7 @@ export default function ITSupportPage() {
       </section>
 
       {/* Assessment CTA */}
-      <section className="bg-[#18181B] text-white py-20 px-6">
+      <section className="bg-ink-0 text-white py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2
             className="text-3xl md:text-4xl font-bold mb-6"
@@ -394,7 +395,7 @@ export default function ITSupportPage() {
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-copper hover:bg-copper-bright text-ink-0 font-bold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Take the Free Assessment →
@@ -411,6 +412,7 @@ export default function ITSupportPage() {
       </section>
 
       <Footer />
+      </div>
     </>
   );
 }

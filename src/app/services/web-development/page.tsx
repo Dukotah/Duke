@@ -98,12 +98,13 @@ export default function WebDevelopmentPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
+      <div className="theme-dark min-h-screen bg-ink-0 text-white">
       <Nav />
 
       {/* Hero */}
-      <section className="bg-[#18181B] text-white pt-32 pb-20 px-6">
+      <section className="bg-ink-0 text-white pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
-          <span className="inline-block bg-[#F97316]/10 text-[#F97316] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-[#F97316]/20">
+          <span className="inline-block bg-copper/10 text-copper-bright text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-copper/20">
             Web Development · Sonoma County, CA
           </span>
           <h1
@@ -125,7 +126,7 @@ export default function WebDevelopmentPage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#ea6c0a] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-copper hover:bg-copper-bright text-ink-0 font-bold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Get a Free Estimate →
@@ -142,16 +143,16 @@ export default function WebDevelopmentPage() {
       </section>
 
       {/* Problem Section */}
-      <section className="bg-[#FAFAF9] py-20 px-6">
+      <section className="bg-ink-1 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-6"
+            className="text-3xl md:text-4xl font-bold text-white mb-6"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Most Small Business Websites Are Quietly Losing You Customers
           </h2>
           <p
-            className="text-[#3F3F46]/60 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-zinc-400 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             A bad website doesn&apos;t announce itself. It just quietly bounces visitors, tanks your
@@ -160,17 +161,17 @@ export default function WebDevelopmentPage() {
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {problemCards.map((item) => (
-              <div key={item.title} className="bg-white rounded-xl p-6 shadow-sm border border-[#18181B]/8">
-                <div className="w-10 h-10 rounded-lg bg-[#18181B]/8 flex items-center justify-center mb-4">
-                  <item.Icon size={20} color="#18181B" />
+              <div key={item.title} className="bg-ink-2 rounded-xl p-6 border border-hairline">
+                <div className="w-10 h-10 rounded-lg bg-white/[0.04] flex items-center justify-center mb-4">
+                  <item.Icon size={20} color="#DDAA75" />
                 </div>
                 <h3
-                  className="text-xl font-bold text-[#18181B] mb-3"
+                  className="text-xl font-bold text-white mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.title}
                 </h3>
-                <p className="text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {item.desc}
                 </p>
               </div>
@@ -180,16 +181,16 @@ export default function WebDevelopmentPage() {
       </section>
 
       {/* What You Get */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-ink-0 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-4"
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What a Copper Bay Tech Website Includes
           </h2>
           <p
-            className="text-[#3F3F46]/60 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-zinc-400 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Every website we build is a complete, professional package — not a bare minimum that
@@ -199,19 +200,19 @@ export default function WebDevelopmentPage() {
             {included.map((item) => (
               <div
                 key={item.title}
-                className="bg-[#FAFAF9] rounded-xl p-6 border border-[#18181B]/8"
+                className="bg-ink-1 rounded-xl p-6 border border-hairline"
               >
-                <div className="w-10 h-10 rounded-lg bg-[#18181B]/8 flex items-center justify-center mb-3">
-                  <item.Icon size={20} color="#18181B" />
+                <div className="w-10 h-10 rounded-lg bg-white/[0.04] flex items-center justify-center mb-3">
+                  <item.Icon size={20} color="#DDAA75" />
                 </div>
                 <h3
-                  className="font-bold text-[#18181B] mb-2"
+                  className="font-bold text-white mb-2"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.title}
                 </h3>
                 <p
-                  className="text-[#3F3F46]/60 text-sm leading-relaxed"
+                  className="text-zinc-400 text-sm leading-relaxed"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {item.desc}
@@ -223,7 +224,7 @@ export default function WebDevelopmentPage() {
       </section>
 
       {/* Process Section */}
-      <section className="bg-[#18181B] text-white py-20 px-6">
+      <section className="bg-ink-1 text-white py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
             className="text-3xl md:text-4xl font-bold mb-4"
@@ -263,7 +264,7 @@ export default function WebDevelopmentPage() {
             ].map((step) => (
               <div key={step.num} className="flex gap-5">
                 <div
-                  className="text-[#F97316] text-4xl font-bold leading-none pt-1"
+                  className="text-copper-bright text-4xl font-bold leading-none pt-1"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {step.num}
@@ -289,16 +290,16 @@ export default function WebDevelopmentPage() {
       </section>
 
       {/* Pricing Preview */}
-      <section className="bg-[#FAFAF9] py-20 px-6">
+      <section className="bg-ink-0 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-4"
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What Does a Website Cost?
           </h2>
           <p
-            className="text-[#3F3F46]/60 text-lg mb-10 max-w-2xl leading-relaxed"
+            className="text-zinc-400 text-lg mb-10 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             We believe in transparent, honest pricing. Here are the ranges for the most common
@@ -328,28 +329,28 @@ export default function WebDevelopmentPage() {
             ].map((tier) => (
               <div
                 key={tier.type}
-                className="bg-white rounded-xl p-6 border border-[#18181B]/10 shadow-sm"
+                className="bg-ink-1 rounded-xl p-6 border border-hairline"
               >
                 <h3
-                  className="font-bold text-[#18181B] mb-1"
+                  className="font-bold text-white mb-1"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {tier.type}
                 </h3>
                 <div
-                  className="text-[#F97316] text-2xl font-bold mb-3"
+                  className="text-copper-bright text-2xl font-bold mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {tier.range}
                 </div>
                 <p
-                  className="text-[#3F3F46]/60 text-sm mb-3 leading-relaxed"
+                  className="text-zinc-400 text-sm mb-3 leading-relaxed"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {tier.desc}
                 </p>
                 <p
-                  className="text-[#3F3F46]/40 text-xs italic"
+                  className="text-zinc-400 text-xs italic"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {tier.examples}
@@ -357,9 +358,9 @@ export default function WebDevelopmentPage() {
               </div>
             ))}
           </div>
-          <p className="text-[#3F3F46]/60 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+          <p className="text-zinc-400 text-sm" style={{ fontFamily: "var(--font-body)" }}>
             Want a personalized estimate?{" "}
-            <Link href="/pricing" className="text-gold-on-light hover:text-[#F97316] font-semibold">
+            <Link href="/pricing" className="text-copper-bright hover:text-copper font-semibold">
               Use our interactive pricing estimator →
             </Link>
           </p>
@@ -367,10 +368,10 @@ export default function WebDevelopmentPage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-ink-1 py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-[#18181B] mb-10"
+            className="text-3xl md:text-4xl font-bold text-white mb-10"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Frequently Asked Questions
@@ -402,14 +403,14 @@ export default function WebDevelopmentPage() {
                 a: "Squarespace and Wix are great for getting something online quickly with zero technical knowledge. But they come with real trade-offs: slower performance due to bloated platform code, limited ability to customize beyond their templates, recurring subscription costs that add up over time, and — critically — you don't own the underlying code. If the platform changes pricing or shuts down, you have to start over. A custom-built site is an asset you own outright, performs better in search, and can grow exactly as your business grows.",
               },
             ].map((item) => (
-              <div key={item.q} className="border-b border-[#18181B]/8 pb-8">
+              <div key={item.q} className="border-b border-hairline pb-8">
                 <h3
-                  className="text-lg font-bold text-[#18181B] mb-3"
+                  className="text-lg font-bold text-white mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.q}
                 </h3>
-                <p className="text-[#3F3F46]/60 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {item.a}
                 </p>
               </div>
@@ -419,7 +420,7 @@ export default function WebDevelopmentPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-[#18181B] text-white py-20 px-6">
+      <section className="bg-ink-0 text-white py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2
             className="text-3xl md:text-4xl font-bold mb-6"
@@ -438,7 +439,7 @@ export default function WebDevelopmentPage() {
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
               href={BOOKING_URL}
-              className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#ea6c0a] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-copper hover:bg-copper-bright text-ink-0 font-bold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Book a free consultation →
@@ -455,6 +456,7 @@ export default function WebDevelopmentPage() {
       </section>
 
       <Footer />
+      </div>
     </>
   );
 }

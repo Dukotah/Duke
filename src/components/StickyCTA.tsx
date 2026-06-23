@@ -21,24 +21,24 @@ export default function StickyCTA() {
   }
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-[#18181B]/10 bg-[#FAFAF9]/95 backdrop-blur-md shadow-[0_-4px_20px_-8px_rgba(24,24,27,0.25)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-ink-0/95 backdrop-blur-md shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.5)] md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="flex items-stretch gap-2 px-3 py-2.5">
         <a
           href={PHONE_HREF}
           onClick={() => track("cta_call_phone", { location: "sticky" })}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-[#18181B]/15 bg-white px-4 py-3 text-sm font-semibold text-[#18181B] outline-none transition-colors duration-200 hover:bg-[#18181B]/[0.04] focus-visible:ring-2 focus-visible:ring-[#F97316] active:scale-[0.98]"
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-hairline bg-ink-2 px-4 py-3 text-sm font-semibold text-white outline-none transition-colors duration-200 hover:border-copper-dim focus-visible:ring-2 focus-visible:ring-copper active:scale-[0.98]"
           style={{ fontFamily: "var(--font-heading)" }}
           aria-label={`Call Copper Bay Tech at ${PHONE}`}
         >
-          <Phone size={16} className="text-[#F97316]" />
+          <Phone size={16} className="text-copper-bright" />
           Call
         </a>
         <a
           href={BOOKING_URL}
           onClick={() => track("cta_book_call", { location: "sticky" })}
-          className="inline-flex flex-[1.4] items-center justify-center gap-2 rounded-lg bg-[#F97316] px-4 py-3 text-sm font-semibold text-white shadow-sm shadow-[#F97316]/25 outline-none transition-colors duration-200 hover:bg-[#ea6c0a] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAF9] active:scale-[0.98]"
+          className="inline-flex flex-[1.4] items-center justify-center gap-2 rounded-lg bg-copper px-4 py-3 text-sm font-bold text-ink-0 shadow-sm shadow-copper/25 outline-none transition-colors duration-200 hover:bg-copper-bright focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0 active:scale-[0.98]"
           style={{ fontFamily: "var(--font-heading)" }}
         >
           <CalendarDays size={16} />

@@ -102,14 +102,14 @@ export default function ChatWidget() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={reduce ? undefined : { opacity: 0, scale: 0.9, y: 20 }}
             transition={reduce ? { duration: 0 } : { duration: 0.2 }}
-            className="w-80 sm:w-96 rounded-2xl shadow-2xl overflow-hidden border border-[#18181B]/10"
-            style={{ backgroundColor: "#fff" }}
+            className="w-80 sm:w-96 rounded-2xl shadow-2xl overflow-hidden border border-hairline"
+            style={{ backgroundColor: "var(--bg-1)" }}
           >
             {/* Header */}
-            <div id="chat-header" className="bg-[#18181B] px-5 py-4 flex items-center justify-between">
+            <div id="chat-header" className="bg-ink-2 border-b border-hairline px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#F97316] flex items-center justify-center">
-                  <span className="text-white text-sm font-bold" style={{ fontFamily: "var(--font-heading)" }}>D</span>
+                <div className="w-9 h-9 rounded-full bg-copper flex items-center justify-center">
+                  <span className="text-ink-0 text-sm font-bold" style={{ fontFamily: "var(--font-heading)" }}>D</span>
                 </div>
                 <div>
                   <p className="text-white text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
@@ -129,7 +129,7 @@ export default function ChatWidget() {
             </div>
 
             {/* Messages */}
-            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-[#FAFAF9]">
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-ink-1">
               {messages.map((msg, i) => (
                 <div
                   key={i}
@@ -138,8 +138,8 @@ export default function ChatWidget() {
                   <div
                     className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                       msg.from === "user"
-                        ? "bg-[#18181B] text-white rounded-br-sm"
-                        : "bg-white border border-[#18181B]/10 text-[#3F3F46] rounded-bl-sm shadow-sm"
+                        ? "bg-copper text-ink-0 rounded-br-sm"
+                        : "bg-ink-2 border border-hairline text-zinc-300 rounded-bl-sm"
                     }`}
                     style={{ fontFamily: "var(--font-body)" }}
                   >
@@ -152,12 +152,12 @@ export default function ChatWidget() {
 
             {/* Quick replies */}
             {messages.length === 1 && (
-              <div className="px-4 pb-2 pt-1 flex flex-wrap gap-2 bg-[#FAFAF9]">
+              <div className="px-4 pb-2 pt-1 flex flex-wrap gap-2 bg-ink-1">
                 {QUICK_REPLIES.map((r) => (
                   <button
                     key={r}
                     onClick={() => sendMessage(r)}
-                    className="px-3 py-1.5 text-xs rounded-full border border-[#18181B]/20 text-[#3F3F46]/80 hover:border-[#18181B]/60 hover:text-[#18181B] transition-colors bg-white"
+                    className="px-3 py-1.5 text-xs rounded-full border border-hairline text-zinc-300 hover:border-copper-dim hover:text-white transition-colors bg-ink-2"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {r}
@@ -168,12 +168,12 @@ export default function ChatWidget() {
 
             {/* Contact collect */}
             {step === "collect" && (
-              <div className="p-4 border-t border-[#18181B]/8 bg-white space-y-2">
+              <div className="p-4 border-t border-hairline bg-ink-1 space-y-2">
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-hairline bg-ink-2 text-white placeholder-zinc-500 focus:outline-none focus:border-copper focus-visible:ring-2 focus-visible:ring-copper"
                   style={{ fontFamily: "var(--font-body)" }}
                 />
                 <div className="flex gap-2">
@@ -182,14 +182,14 @@ export default function ChatWidget() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     type="email"
-                    className="flex-1 px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
+                    className="flex-1 px-3 py-2 text-sm rounded-lg border border-hairline bg-ink-2 text-white placeholder-zinc-500 focus:outline-none focus:border-copper focus-visible:ring-2 focus-visible:ring-copper"
                     style={{ fontFamily: "var(--font-body)" }}
                     onKeyDown={(e) => e.key === "Enter" && submitContact()}
                   />
                   <button
                     onClick={submitContact}
                     aria-label="Submit contact details"
-                    className="px-3 py-2 bg-[#F97316] text-white rounded-lg hover:bg-[#ea6c0a] transition-colors"
+                    className="px-3 py-2 bg-copper text-ink-0 rounded-lg hover:bg-copper-bright transition-colors"
                   >
                     <Send size={15} />
                   </button>
@@ -199,12 +199,12 @@ export default function ChatWidget() {
 
             {/* Chat input */}
             {step === "chat" && (
-              <div className="p-4 border-t border-[#18181B]/8 bg-white flex gap-2">
+              <div className="p-4 border-t border-hairline bg-ink-1 flex gap-2">
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 px-3 py-2 text-sm rounded-lg border border-[#18181B]/15 bg-[#FAFAF9] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]"
+                  className="flex-1 px-3 py-2 text-sm rounded-lg border border-hairline bg-ink-2 text-white placeholder-zinc-500 focus:outline-none focus:border-copper focus-visible:ring-2 focus-visible:ring-copper"
                   style={{ fontFamily: "var(--font-body)" }}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
                 />
@@ -212,7 +212,7 @@ export default function ChatWidget() {
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim()}
                   aria-label="Send message"
-                  className="px-3 py-2 bg-[#18181B] text-white rounded-lg hover:bg-[#111113] transition-colors disabled:opacity-40"
+                  className="px-3 py-2 bg-copper text-ink-0 rounded-lg hover:bg-copper-bright transition-colors disabled:opacity-40"
                 >
                   <Send size={15} />
                 </button>
@@ -221,10 +221,10 @@ export default function ChatWidget() {
 
             {/* Done state */}
             {step === "done" && (
-              <div className="p-4 border-t border-[#18181B]/8 bg-white text-center">
+              <div className="p-4 border-t border-hairline bg-ink-1 text-center">
                 <a
                   href="tel:+17072396725"
-                  className="inline-flex items-center gap-2 text-sm text-[#3F3F46]/60 hover:text-[#18181B] transition-colors"
+                  className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   <Phone size={14} /> (707) 239-6725
@@ -238,7 +238,7 @@ export default function ChatWidget() {
       {/* Toggle button */}
       <motion.button
         onClick={() => setOpen(!open)}
-        className="relative w-14 h-14 rounded-full bg-[#F97316] text-white shadow-lg hover:bg-[#ea6c0a] transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 focus-visible:ring-offset-[#18181B]"
+        className="relative w-14 h-14 rounded-full bg-copper text-ink-0 shadow-lg hover:bg-copper-bright transition-colors flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
         whileHover={reduce ? undefined : { scale: 1.05 }}
         whileTap={reduce ? undefined : { scale: 0.95 }}
         aria-label={open ? "Close chat" : "Open chat"}

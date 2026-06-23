@@ -26,21 +26,21 @@ const rows: Row[] = [
 function CellMark({ value }: { value: Cell }) {
   if (value === true) {
     return (
-      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#F97316]/15">
-        <Check size={15} color="#F97316" strokeWidth={3} />
+      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-copper/15">
+        <Check size={15} color="#DDAA75" strokeWidth={3} />
       </span>
     );
   }
   if (value === "partial") {
     return (
-      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#18181B]/[0.06]">
-        <Minus size={15} className="text-[#3F3F46]/50" strokeWidth={3} />
+      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.06]">
+        <Minus size={15} className="text-zinc-400" strokeWidth={3} />
       </span>
     );
   }
   return (
-    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#18181B]/[0.04]">
-      <X size={15} className="text-[#3F3F46]/30" strokeWidth={3} />
+    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.04]">
+      <X size={15} className="text-zinc-500" strokeWidth={3} />
     </span>
   );
 }
@@ -48,7 +48,7 @@ function CellMark({ value }: { value: Cell }) {
 export default function Comparison() {
   const reduce = useReducedMotion();
   return (
-    <section className="bg-white py-24">
+    <section className="bg-ink-0 py-24">
       <div className="mx-auto max-w-5xl px-6">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 20 }}
@@ -58,19 +58,19 @@ export default function Comparison() {
           className="mb-14 text-center"
         >
           <p
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-gold-on-light"
+            className="mb-4 text-xs font-semibold uppercase tracking-widest text-copper-bright"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             How we compare
           </p>
           <h2
-            className="text-4xl font-bold leading-tight text-[#18181B] md:text-5xl"
+            className="text-4xl font-bold leading-tight text-white md:text-5xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             The local-shop advantage.
           </h2>
           <p
-            className="mx-auto mt-4 max-w-xl text-[#3F3F46]/60"
+            className="mx-auto mt-4 max-w-xl text-zinc-400"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Big providers are slow and impersonal. Bargain freelancers cut corners
@@ -83,19 +83,19 @@ export default function Comparison() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={reduce ? { duration: 0 } : { duration: 0.6, delay: 0.1 }}
-          className="overflow-hidden rounded-2xl border border-[#18181B]/10"
+          className="overflow-hidden rounded-2xl border border-hairline"
         >
           {/* Header row */}
-          <div className="grid grid-cols-[1.6fr_repeat(3,1fr)] bg-[#FAFAF9]">
+          <div className="grid grid-cols-[1.6fr_repeat(3,1fr)] bg-ink-1">
             <div className="px-4 py-5 sm:px-6" />
             {columns.map((col, i) => (
               <div
                 key={col}
-                className={`px-2 py-5 text-center sm:px-4 ${i === 0 ? "bg-[#18181B]" : ""}`}
+                className={`px-2 py-5 text-center sm:px-4 ${i === 0 ? "bg-ink-2" : ""}`}
               >
                 <span
                   className={`text-[11px] font-semibold leading-tight sm:text-sm ${
-                    i === 0 ? "text-white" : "text-[#3F3F46]/70"
+                    i === 0 ? "text-white" : "text-zinc-300"
                   }`}
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
@@ -109,17 +109,17 @@ export default function Comparison() {
           {rows.map((row, i) => (
             <div
               key={row.feature}
-              className={`grid grid-cols-[1.6fr_repeat(3,1fr)] items-center border-t border-[#18181B]/[0.07] ${
-                i % 2 === 1 ? "bg-[#FAFAF9]/40" : "bg-white"
+              className={`grid grid-cols-[1.6fr_repeat(3,1fr)] items-center border-t border-hairline ${
+                i % 2 === 1 ? "bg-ink-1" : "bg-ink-0"
               }`}
             >
               <div
-                className="px-4 py-4 text-[13px] leading-snug text-[#3F3F46] sm:px-6 sm:text-sm"
+                className="px-4 py-4 text-[13px] leading-snug text-zinc-300 sm:px-6 sm:text-sm"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {row.feature}
               </div>
-              <div className="flex justify-center bg-[#18181B]/[0.02] px-2 py-4 sm:px-4">
+              <div className="flex justify-center bg-copper/[0.06] px-2 py-4 sm:px-4">
                 <CellMark value={row.cbt} />
               </div>
               <div className="flex justify-center px-2 py-4 sm:px-4">
@@ -133,10 +133,10 @@ export default function Comparison() {
         </motion.div>
 
         <p
-          className="mt-5 text-center text-xs text-[#3F3F46]/40"
+          className="mt-5 text-center text-xs text-zinc-400"
           style={{ fontFamily: "var(--font-body)" }}
         >
-          <span className="font-semibold text-gold-on-light">✓</span> full &nbsp;·&nbsp;
+          <span className="font-semibold text-copper-bright">✓</span> full &nbsp;·&nbsp;
           <span className="font-semibold">—</span> partial / varies &nbsp;·&nbsp;
           <span className="font-semibold">✕</span> not typically
         </p>

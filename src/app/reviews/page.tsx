@@ -92,8 +92,8 @@ function StarRow({ rating = 5 }: { rating?: number }) {
         <Star
           key={i}
           size={16}
-          fill={i < rating ? "#F97316" : "none"}
-          stroke={i < rating ? "none" : "#F97316"}
+          fill={i < rating ? "#DDAA75" : "none"}
+          stroke={i < rating ? "none" : "#DDAA75"}
         />
       ))}
     </div>
@@ -112,17 +112,17 @@ export default function ReviewsPage() {
     : [];
 
   return (
-    <>
+    <div className="theme-dark min-h-screen bg-ink-0 text-white">
       {/* Emits Review + AggregateRating only when REAL_REVIEWS is populated. */}
       {schema && <JsonLd schema={schema} />}
       <Nav />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-[#18181B]">
+        <section className="pt-32 pb-20 bg-ink-0">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <span
               className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest"
-              style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#F97316", fontFamily: "var(--font-heading)" }}
+              style={{ backgroundColor: "rgba(221,170,117,0.15)", color: "#DDAA75", fontFamily: "var(--font-heading)" }}
             >
               Client Reviews
             </span>
@@ -131,16 +131,16 @@ export default function ReviewsPage() {
               style={{ fontFamily: "var(--font-heading)" }}
             >
               What working with us{" "}
-              <span style={{ color: "#F97316" }}>looks like.</span>
+              <span style={{ color: "#DDAA75" }}>looks like.</span>
             </h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto mb-6" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="text-zinc-400 text-lg max-w-2xl mx-auto mb-6" style={{ fontFamily: "var(--font-body)" }}>
               Copper Bay Tech helps Sonoma County business owners with IT support, cybersecurity, and web development.{live ? " Here's what they say." : " Reviews from happy clients are coming — check back soon."}
             </p>
             {live && agg && (
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-white/80" style={{ fontFamily: "var(--font-body)" }}>
+              <div className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white/[0.04] px-4 py-1.5 text-sm text-zinc-300" style={{ fontFamily: "var(--font-body)" }}>
                 <StarRow rating={Math.round(agg.ratingValue)} />
                 <span className="font-semibold text-white">{agg.ratingValue.toFixed(1)}</span>
-                <span className="text-white/55">· {agg.reviewCount} review{agg.reviewCount === 1 ? "" : "s"}</span>
+                <span className="text-zinc-400">· {agg.reviewCount} review{agg.reviewCount === 1 ? "" : "s"}</span>
               </div>
             )}
           </div>
@@ -148,30 +148,30 @@ export default function ReviewsPage() {
 
         {/* Reviews grid — only shown when real reviews exist */}
         {live && displayReviews.length > 0 && (
-          <section className="py-20 bg-[#FAFAF9]">
+          <section className="py-20 bg-ink-1">
             <div className="max-w-6xl mx-auto px-6">
               <div className="grid md:grid-cols-2 gap-6">
                 {displayReviews.map((review) => (
                   <div
                     key={review.name}
-                    className="rounded-2xl bg-white border border-[#18181B]/10 p-7 shadow-sm flex flex-col gap-4"
+                    className="rounded-2xl bg-ink-2 border border-hairline p-7 flex flex-col gap-4"
                   >
                     <StarRow rating={review.rating} />
                     <p
-                      className="text-[#3F3F46]/80 leading-relaxed text-sm flex-1"
+                      className="text-zinc-300 leading-relaxed text-sm flex-1"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
                       &ldquo;{review.quote}&rdquo;
                     </p>
                     <div>
                       <p
-                        className="font-bold text-[#18181B] text-sm"
+                        className="font-bold text-white text-sm"
                         style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {review.name}
                       </p>
                       <p
-                        className="text-xs text-gold-on-light"
+                        className="text-xs text-copper-bright"
                         style={{ fontFamily: "var(--font-body)" }}
                       >
                         {review.business} &mdash; {review.city}
@@ -186,17 +186,17 @@ export default function ReviewsPage() {
 
         {/* Holding state — shown until real reviews are collected */}
         {!live && (
-          <section className="py-20 bg-[#FAFAF9]">
+          <section className="py-20 bg-ink-1">
             <div className="max-w-2xl mx-auto px-6 text-center">
               <p
-                className="text-[#3F3F46]/60 text-base leading-relaxed mb-6"
+                className="text-zinc-400 text-base leading-relaxed mb-6"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 We&apos;re collecting reviews from current clients. In the meantime, feel free to reach out directly — Duke is happy to connect you with past clients for a real conversation about what working together is like.
               </p>
               <Link
                 href="/schedule"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Book a free consultation <ArrowRight size={15} />
@@ -206,7 +206,7 @@ export default function ReviewsPage() {
         )}
 
         {/* CTA */}
-        <section className="py-20 bg-[#18181B]">
+        <section className="py-20 bg-ink-0">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <h2
               className="text-3xl font-bold text-white mb-4"
@@ -214,13 +214,13 @@ export default function ReviewsPage() {
             >
               {live ? "Ready to become our next success story?" : "Ready to get started?"}
             </h2>
-            <p className="text-white/60 mb-8" style={{ fontFamily: "var(--font-body)" }}>
+            <p className="text-zinc-400 mb-8" style={{ fontFamily: "var(--font-body)" }}>
               Book a free consultation and see what Copper Bay Tech can do for your business.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/schedule"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-[#18181B] bg-[#F97316] hover:bg-[#ea6c0a] transition-colors"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-bold text-ink-0 bg-copper hover:bg-copper-bright transition-colors"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Book a free consultation <ArrowRight size={15} />
@@ -230,7 +230,7 @@ export default function ReviewsPage() {
                   href={GOOGLE_REVIEW_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white border border-white/25 hover:border-white/50 transition-colors"
+                  className="inline-flex items-center gap-2 px-7 py-3 rounded-md text-sm font-semibold text-white border border-hairline hover:border-copper-dim transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   <Star size={15} fill="currentColor" stroke="none" /> Leave us a Google review
@@ -241,6 +241,6 @@ export default function ReviewsPage() {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

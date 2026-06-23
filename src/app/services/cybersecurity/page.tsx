@@ -53,10 +53,11 @@ export default function CybersecurityPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
+      <div className="theme-dark min-h-screen bg-ink-0 text-white">
       <Nav />
 
       {/* Hero */}
-      <section className="bg-[#18181B] text-white pt-32 pb-20 px-6">
+      <section className="bg-ink-0 text-white pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           <span
             className="inline-block bg-red-500/10 text-red-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-red-500/20"
@@ -69,7 +70,7 @@ export default function CybersecurityPage() {
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Small businesses are the #1 target.{" "}
-            <span className="text-orange-400">Are you protected?</span>
+            <span className="text-copper-bright">Are you protected?</span>
           </h1>
           <p
             className="text-lg md:text-xl text-white/70 max-w-2xl mb-10 leading-relaxed"
@@ -83,7 +84,7 @@ export default function CybersecurityPage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-copper hover:bg-copper-bright text-ink-0 font-bold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Get My Free Risk Score →
@@ -100,16 +101,16 @@ export default function CybersecurityPage() {
       </section>
 
       {/* Threat Reality */}
-      <section className="bg-[#FAFAF9] py-20 px-6">
+      <section className="bg-ink-1 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6"
+            className="text-3xl md:text-4xl font-bold text-white mb-6"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             The threats targeting Sonoma County businesses right now
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-zinc-400 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Cybercriminals don&apos;t discriminate by size. They run automated scans looking for any
@@ -136,16 +137,16 @@ export default function CybersecurityPage() {
             ].map((threat) => (
               <div
                 key={threat.title}
-                className="bg-white rounded-xl p-6 shadow-sm border border-zinc-100"
+                className="bg-ink-2 rounded-xl p-6 border border-hairline"
               >
                 <div className="text-3xl mb-4">{threat.icon}</div>
                 <h3
-                  className="text-xl font-bold text-zinc-900 mb-3"
+                  className="text-xl font-bold text-white mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {threat.title}
                 </h3>
-                <p className="text-zinc-600 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {threat.desc}
                 </p>
               </div>
@@ -155,16 +156,16 @@ export default function CybersecurityPage() {
       </section>
 
       {/* Services */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-ink-0 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-4"
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Cybersecurity services for Sonoma County businesses
           </h2>
           <p
-            className="text-zinc-600 text-lg mb-12 max-w-2xl leading-relaxed"
+            className="text-zinc-400 text-lg mb-12 max-w-2xl leading-relaxed"
             style={{ fontFamily: "var(--font-body)" }}
           >
             No enterprise contracts. No 200-page compliance reports you won&apos;t read. Practical
@@ -205,17 +206,17 @@ export default function CybersecurityPage() {
             ].map((service) => (
               <div
                 key={service.title}
-                className="bg-[#FAFAF9] rounded-xl p-6 border border-zinc-100"
+                className="bg-ink-1 rounded-xl p-6 border border-hairline"
               >
                 <div className="text-3xl mb-3">{service.icon}</div>
                 <h3
-                  className="font-bold text-zinc-900 mb-2"
+                  className="font-bold text-white mb-2"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {service.title}
                 </h3>
                 <p
-                  className="text-zinc-600 text-sm leading-relaxed"
+                  className="text-zinc-400 text-sm leading-relaxed"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {service.desc}
@@ -227,7 +228,7 @@ export default function CybersecurityPage() {
       </section>
 
       {/* Compliance Section */}
-      <section className="bg-[#18181B] text-white py-20 px-6">
+      <section className="bg-ink-1 text-white py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2
             className="text-3xl md:text-4xl font-bold mb-4"
@@ -263,16 +264,16 @@ export default function CybersecurityPage() {
             ].map((item) => (
               <div
                 key={item.standard}
-                className="bg-white/5 rounded-xl p-6 border border-white/10"
+                className="bg-white/[0.04] rounded-xl p-6 border border-hairline"
               >
                 <div
-                  className="text-orange-400 text-2xl font-bold mb-2"
+                  className="text-copper-bright text-2xl font-bold mb-2"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.standard}
                 </div>
                 <p
-                  className="text-white/50 text-xs mb-3"
+                  className="text-zinc-400 text-xs mb-3"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {item.applies}
@@ -287,10 +288,10 @@ export default function CybersecurityPage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-ink-0 py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <h2
-            className="text-3xl md:text-4xl font-bold text-zinc-900 mb-10"
+            className="text-3xl md:text-4xl font-bold text-white mb-10"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Frequently Asked Questions
@@ -318,14 +319,14 @@ export default function CybersecurityPage() {
                 a: "Yes. Monthly security monitoring retainers include endpoint protection management, patch oversight, backup verification, and a monthly security summary. Pricing starts at $300/month for businesses under 10 users and scales from there. Details on our pricing page.",
               },
             ].map((item) => (
-              <div key={item.q} className="border-b border-zinc-100 pb-8">
+              <div key={item.q} className="border-b border-hairline pb-8">
                 <h3
-                  className="text-lg font-bold text-zinc-900 mb-3"
+                  className="text-lg font-bold text-white mb-3"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.q}
                 </h3>
-                <p className="text-zinc-600 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                <p className="text-zinc-400 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
                   {item.a}
                 </p>
               </div>
@@ -335,7 +336,7 @@ export default function CybersecurityPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#18181B] text-white py-20 px-6">
+      <section className="bg-ink-1 text-white py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2
             className="text-3xl md:text-4xl font-bold mb-4"
@@ -354,7 +355,7 @@ export default function CybersecurityPage() {
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-copper hover:bg-copper-bright text-ink-0 font-bold px-6 py-3 rounded-lg transition-colors"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Take the Free Assessment →
@@ -371,6 +372,7 @@ export default function CybersecurityPage() {
       </section>
 
       <Footer />
+      </div>
     </>
   );
 }
