@@ -31,10 +31,11 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={light ? "Switch to dark mode" : "Switch to light mode"}
-      title={light ? "Dark mode" : "Light mode"}
-      className="fixed bottom-20 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-hairline bg-ink-2/90 text-copper-bright shadow-lg backdrop-blur transition-colors hover:border-copper-dim hover:text-copper md:bottom-4"
+      title={light ? "Switch to dark mode" : "Switch to light mode"}
+      className="fixed bottom-24 left-4 z-50 inline-flex items-center gap-2 rounded-full border border-copper/60 bg-copper/15 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-copper-bright shadow-lg shadow-black/20 backdrop-blur transition-colors hover:border-copper hover:bg-copper/25 md:bottom-4"
     >
-      {light ? <Moon size={16} /> : <Sun size={16} />}
+      {light ? <Moon size={15} /> : <Sun size={15} />}
+      <span>{light ? "Dark" : "Light"}</span>
     </button>
   );
 }
