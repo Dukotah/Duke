@@ -101,7 +101,7 @@ export default function RootLayout({
             <script
               dangerouslySetInnerHTML={{
                 __html:
-                  "(function(){try{if(localStorage.getItem('cbt-theme')==='dim')document.documentElement.setAttribute('data-theme','dim');}catch(e){}})();",
+                  "(function(){try{if(localStorage.getItem('cbt-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();",
               }}
             />
                   </head>

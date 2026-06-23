@@ -45,14 +45,38 @@
   --hairline: rgba(244, 241, 236, 0.08); /* borders instead of shadows */
 }
 
-/* Dark/bright toggle. Default (no attribute) = the brighter ramp above; the
-   ThemeToggle button sets data-theme="dim" to restore the deeper original canvas.
-   Only the bg ramp changes, so warm-white text + copper stay legible in both. */
-html[data-theme="dim"] {
-  --bg-0: #141210;
-  --bg-1: #1C1915;
-  --bg-2: #24201B;
-  --bg-3: #2E2922;
+/* ── Light mode (daytime) ───────────────────────────────────────────────────
+   Default (no attribute) stays dark; the ThemeToggle sets data-theme="light".
+   The whole UI leans on a small set of variables — our --bg-*/--copper tokens
+   AND the Tailwind color vars the dark UI assumes (white + zinc grays). Flipping
+   them here re-themes text-white, text-white/NN, text-zinc-*, bg-white/[a],
+   bg-ink-*, hairlines, and copper from one place — no per-file changes. */
+html[data-theme="light"] {
+  color-scheme: light;
+
+  /* warm light surfaces (canvas → cards → raised → hover) */
+  --bg-0: #FBF9F6;
+  --bg-1: #FFFFFF;
+  --bg-2: #F4F1EA;
+  --bg-3: #E8E1D6;
+
+  /* warm near-black text + dark hairline */
+  --text-warm: #1C1814;
+  --text-2: rgba(28, 24, 20, 0.70);
+  --text-3: rgba(28, 24, 20, 0.45);
+  --hairline: rgba(28, 24, 20, 0.12);
+
+  /* richer copper so it keeps contrast as text/accents on light */
+  --copper: #B5703C;
+  --copper-bright: #A85F2A;
+  --copper-dim: rgba(168, 95, 42, 0.32);
+
+  /* remap the Tailwind built-ins the dark UI hardcodes → dark-on-light */
+  --color-white: #1C1814;     /* text-white, text-white/NN, bg-white/[a] flip */
+  --color-zinc-300: #3F3F46;
+  --color-zinc-400: #52525B;
+  --color-zinc-500: #6B6B72;
+  --color-zinc-600: #3F3F46;
 }
 
 @theme inline {
