@@ -47,6 +47,7 @@ export default function BlogTOC() {
   const [activeId, setActiveId] = useState<string>("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const asideRef = useRef<HTMLElement | null>(null);
 
   // Only show on article pages (not the blog index).
   const isArticlePage = pathname !== "/blog" && pathname.startsWith("/blog");
@@ -106,6 +107,38 @@ export default function BlogTOC() {
     };
   }, [isArticlePage, pathname]);
 
+  // Keep the fixed desktop sidebar from sliding over the footer: as the footer
+  // scrolls into view, push the sidebar up so its bottom parks just above it.
+  useEffect(() => {
+    const aside = asideRef.current;
+    if (!aside) return;
+    const footer = document.querySelector("footer");
+    const TOP_PX = 112; // matches top-28 (7rem)
+    const GAP = 24;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      let shift = 0;
+      if (footer) {
+        const footerTop = footer.getBoundingClientRect().top;
+        const overflow = TOP_PX + aside.offsetHeight + GAP - footerTop;
+        if (overflow > 0) shift = -overflow;
+      }
+      aside.style.transform = shift ? `translateY(${shift}px)` : "";
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [isArticlePage, toc.items.length]);
+
   if (!isArticlePage || toc.items.length < 3) return null;
 
   const scrollTo = (id: string) => {
@@ -143,8 +176,9 @@ export default function BlogTOC() {
     <>
       {/* Desktop sticky sidebar (xl+ only, floats beside the max-w-2xl column) */}
       <aside
+        ref={asideRef}
         aria-label="Table of contents"
-        className="hidden xl:block fixed top-28 right-[max(1rem,calc((100vw-42rem)/2-16rem))] w-56 z-30"
+        className="hidden xl:block fixed top-28 right-[max(1rem,calc((100vw-42rem)/2-16rem))] w-56 z-30 will-change-transform"
       >
         {toc.readingTime && (
           <p
