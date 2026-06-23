@@ -3,6 +3,7 @@ import { DM_Sans, Lora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import StickyCTA from "@/components/StickyCTA";
 import AttributionTracker from "@/components/AttributionTracker";
+import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -95,6 +96,15 @@ export default function RootLayout({
 }>) {
     return (
           <html lang="en" className={`${dmSans.variable} ${lora.variable} h-full antialiased`}>
+                  <head>
+            {/* No-flash theme init: apply the saved dark/bright choice before paint. */}
+            <script
+              dangerouslySetInnerHTML={{
+                __html:
+                  "(function(){try{if(localStorage.getItem('cbt-theme')==='dim')document.documentElement.setAttribute('data-theme','dim');}catch(e){}})();",
+              }}
+            />
+                  </head>
                   <body className="min-h-full flex flex-col">
           {/* WCAG 2.4.1 — skip link: first focusable element, hidden until focused */}
           <a
@@ -113,6 +123,8 @@ export default function RootLayout({
           <div className="h-16 md:hidden" aria-hidden="true" />
           {/* One-tap call/book bar on mobile — site-wide, hidden on /crm + utility routes. */}
           <StickyCTA />
+          {/* Floating dark/bright toggle (flips the --bg-* ink ramp). */}
+          <ThemeToggle />
           {/* Records first-touch lead source (UTM/referrer/landing) per session. */}
           <AttributionTracker />
           {/* Privacy-friendly, cookieless analytics. Pageviews flow

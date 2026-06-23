@@ -22,10 +22,12 @@
   /* canvas / depth — opacity STACKING, never black shadows.
      Warm espresso-black (R>=G>=B) rather than a cold blue-black, so the copper
      reads as premium metallic instead of Halloween-orange-on-pure-black. */
-  --bg-0: #141210;   /* deepest canvas (warm near-black) */
-  --bg-1: #1C1915;   /* base surface */
-  --bg-2: #24201B;   /* raised surface (cards) */
-  --bg-3: #2E2922;   /* hover / active surface */
+  /* Brightened "bright" default (originals were #141210/#1C1915/#24201B/#2E2922).
+     The dark/bright toggle restores the deeper originals via html[data-theme="dim"]. */
+  --bg-0: #1E1A16;   /* deepest canvas (warm charcoal) */
+  --bg-1: #29231C;   /* base surface */
+  --bg-2: #342D24;   /* raised surface (cards) */
+  --bg-3: #3F372C;   /* hover / active surface */
 
   /* accent — RATIONED. CTAs, active states, borders, focus, count-up only.
      Refined bronze-copper: a touch less saturated + warmer than pumpkin orange,
@@ -41,6 +43,16 @@
   --text-2: rgba(244, 241, 236, 0.70);   /* secondary / meta */
   --text-3: rgba(244, 241, 236, 0.45);   /* labels / disabled */
   --hairline: rgba(244, 241, 236, 0.08); /* borders instead of shadows */
+}
+
+/* Dark/bright toggle. Default (no attribute) = the brighter ramp above; the
+   ThemeToggle button sets data-theme="dim" to restore the deeper original canvas.
+   Only the bg ramp changes, so warm-white text + copper stay legible in both. */
+html[data-theme="dim"] {
+  --bg-0: #141210;
+  --bg-1: #1C1915;
+  --bg-2: #24201B;
+  --bg-3: #2E2922;
 }
 
 @theme inline {
