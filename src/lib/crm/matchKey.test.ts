@@ -1,31 +1,36 @@
 import { describe, expect, it } from "vitest";
 import { norm, matchKey } from "./matchKey";
 
-describe("matchKey — canonical business-name normalizer", () => {
-  // NOTE: the spec sketch suggested norm("Acme Realty LLC") === "acmerealty", but
-  // the canonical algorithm (kept verbatim for cross-repo parity) ALSO strips the
-  // industry filler word "realty" alongside the legal suffix "llc", so the real,
-  // intended output is "acme". Asserting the true behavior here.
-  it("strips legal suffixes AND industry filler words ('realty', 'llc')", () => {
+describe("matchKey — TIGHT join key (strips only legal-entity forms)", () => {
+  it("keeps distinguishing words; strips only the legal suffix", () => {
+    expect(matchKey("Acme Realty LLC")).toBe("acmerealty");
+    expect(matchKey("Acme Group")).toBe("acmegroup");
+    expect(matchKey("Joe's Cafe")).toBe("joescafe");
+    expect(matchKey("A & B Co.")).toBe("ab");
+  });
+
+  it("does not collide where the loose norm does", () => {
+    // norm collapses both to "acme"; matchKey keeps them distinct.
+    expect(matchKey("Acme Realty")).not.toBe(matchKey("Acme Group"));
+  });
+
+  it("is tolerant of null/undefined/empty input", () => {
+    expect(matchKey(undefined as unknown as string)).toBe("");
+    expect(matchKey("")).toBe("");
+  });
+});
+
+describe("norm — LOOSE suppression key (strips distinguishing words)", () => {
+  it("strips industry filler words AND legal suffixes ('realty', 'llc')", () => {
     expect(norm("Acme Realty LLC")).toBe("acme");
   });
 
-  it("keeps a name that has no filler words intact (suffix-free businesses)", () => {
-    // "cafe" is not a filler word, so the whole stem survives.
-    expect(norm("Joe's Cafe")).toBe("joescafe");
-  });
-
   it("collapses several filler words and punctuation together", () => {
-    // the + properties both stripped → "harbor"
+    // the + properties both stripped -> "harbor"
     expect(norm("The Harbor Properties, Inc.")).toBe("harbor");
   });
 
-  it("matchKey is the same function as norm", () => {
-    expect(matchKey).toBe(norm);
-    expect(matchKey("Joe's Cafe")).toBe(norm("Joe's Cafe"));
-  });
-
-  it("is tolerant of null/undefined input", () => {
+  it("is tolerant of null/undefined/empty input", () => {
     expect(norm(undefined as unknown as string)).toBe("");
     expect(norm("")).toBe("");
   });
