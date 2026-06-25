@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCustomLeads, getAllClaims, getAllAssignments, getTerritory, getLeadPreviewObjects, previewKey, getLeadActions, getDoNotCallPhones, normalizePhone, logLeadFetch, type LeadActions } from "@/lib/db";
+import { getCustomLeads, getAllClaims, getAllAssignments, getTerritory, getLeadPreviewObjects, previewKey, idPreviewKey, getLeadActions, getDoNotCallPhones, normalizePhone, logLeadFetch, type LeadActions } from "@/lib/db";
 import { rateLimit } from "@/lib/rateLimit";
 
 // Lead source CSV. Defaults to the national deduped export, but can be pointed at
@@ -457,8 +457,30 @@ export async function GET(req: NextRequest) {
     // Do-Not-Call list — one SMEMBERS, matched on normalized phone. Leads on the
     // list are FLAGGED (doNotCall: true), never removed from the result.
     const dncSet = new Set(await getDoNotCallPhones());
+
+    // Observability for the demo↔lead join (this page only; bounded, non-fatal):
+    //  • nameOnlyMatches — demos matched by previewKey name alone (no stable id
+    //    hit). These are the fuzzy-match risk; surfaced so a drift is visible.
+    //  • collisions — two DIFFERENT leads on this page that normalize to the SAME
+    //    previewKey. That's the "wrong business gets another's demo" hazard.
+    let nameOnlyMatches = 0;
+    const keyToNames = new Map<string, Set<string>>();
+    for (const l of pageLeads) {
+      const k = previewKey(l.name);
+      if (!k) continue;
+      const set = keyToNames.get(k) ?? new Set<string>();
+      set.add(l.name);
+      keyToNames.set(k, set);
+    }
+
     const leads = pageLeads.map((l) => {
-      const pkg = previews[previewKey(l.name)];
+      // Prefer the stable id (the CSV global pool carries an `id` column); fall
+      // back to the back-compat name key only when there's no id hit. Behavior is
+      // identical to before whenever the id path misses.
+      const byId = l.id ? previews[idPreviewKey(l.id)] : undefined;
+      const byName = previews[previewKey(l.name)];
+      const pkg = byId ?? byName;
+      if (pkg && !byId && byName) nameOnlyMatches++;
       const asg = assignmentMap[l.id];
       const normPhone = normalizePhone(l.phone);
       return {
@@ -476,6 +498,23 @@ export async function GET(req: NextRequest) {
         actions: actionsMap[l.id] ?? null,
       };
     });
+
+    // LOUD, non-fatal join diagnostics (once per request, bounded summaries).
+    if (nameOnlyMatches > 0) {
+      console.warn(
+        `[previews] ${nameOnlyMatches} demo(s) matched by name only (no stable id) — see the data/outreach-links.json seam contract; prefer the id-keyed join.`
+      );
+    }
+    const collisions = [...keyToNames.entries()].filter(([, names]) => names.size > 1);
+    if (collisions.length > 0) {
+      const sample = collisions
+        .slice(0, 5)
+        .map(([k, names]) => `"${k}" ⇐ ${[...names].slice(0, 4).join(" | ")}`)
+        .join("; ");
+      console.warn(
+        `[previews] previewKey COLLISION: ${collisions.length} key(s) shared by 2+ distinct leads on this page — risk of the wrong business getting another's demo. ${sample}${collisions.length > 5 ? " …" : ""}`
+      );
+    }
 
     const counties = [...new Set(all.map((l) => l.county).filter(Boolean))].sort();
     const niches = [...new Set(all.map((l) => l.category).filter(Boolean))].sort();

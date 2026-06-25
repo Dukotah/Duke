@@ -576,6 +576,14 @@ export interface LeadPreview {
   claimByDate?: string;
   thumbnailUrl?: string;
   slug?: string;
+  // Stable business id (Overture id) carried through from the /websites manifest,
+  // when present. Enables an id-first join in the lead queue that doesn't depend on
+  // fuzzy name matching. Absent on legacy/name-only previews.
+  id?: string;
+  // The canonical normalized name the /websites builder matched on (its
+  // match-key.mjs output). Informational/observability only — the live join still
+  // uses previewKey() for back-compat. Absent on older manifests.
+  matchKey?: string;
 }
 
 const LEAD_PREVIEWS_KEY = "lead_previews";
@@ -584,8 +592,22 @@ const LEAD_PREVIEWS_KEY = "lead_previews";
 // endpoint, from the /websites manifest name) and the reader (the lead queue,
 // from the CSV name) run a name through this, so the two sides line up without
 // a shared id.
+//
+// DO NOT CHANGE THIS ALGORITHM. Demo links already in Redis are keyed by its
+// output; altering it would orphan every stored preview. The id-first join (see
+// idPreviewKey + the leads route) is layered ON TOP of this for new entries; this
+// remains the back-compat fallback key forever. A canonical normalizer for a
+// future cutover lives in src/lib/crm/matchKey.ts (not wired in here on purpose).
 export function previewKey(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+// Hash field used to ALSO index a preview under its stable business id, alongside
+// the previewKey entry. The leads route prefers this when a lead has an id, and
+// falls back to previewKey when it misses — so behavior is unchanged whenever no
+// id is present on either side.
+export function idPreviewKey(id: string): string {
+  return `id:${id}`;
 }
 
 function normalizeDemoStatus(raw: string | undefined): DemoStatus {
@@ -608,6 +630,7 @@ export async function setLeadPreview(
   const key = previewKey(name);
   if (!key || !previewUrl) return;
   const redis = getRedis();
+  const id = (extra.id ?? "").trim();
   const value: LeadPreview = {
     previewUrl,
     linkedAt: new Date().toISOString(),
@@ -619,8 +642,20 @@ export async function setLeadPreview(
     ...(extra.claimByDate ? { claimByDate: extra.claimByDate } : {}),
     ...(extra.thumbnailUrl ? { thumbnailUrl: extra.thumbnailUrl } : {}),
     ...(extra.slug ? { slug: extra.slug } : {}),
+    // Stable id + the builder's canonical match key, when supplied. Carried inside
+    // the value JSON so both the name-keyed and id-keyed entries hold them.
+    ...(id ? { id } : {}),
+    ...(extra.matchKey ? { matchKey: extra.matchKey } : {}),
   };
-  await redis.hset(LEAD_PREVIEWS_KEY, { [key]: JSON.stringify(value) });
+  const json = JSON.stringify(value);
+  // ALWAYS write the back-compat previewKey entry (the existing join key).
+  await redis.hset(LEAD_PREVIEWS_KEY, { [key]: json });
+  // ADDITIONALLY index under the stable id when present, so the lead queue can do
+  // an id-first lookup that never collides on name. Same hash, distinct `id:<id>`
+  // field — the previewKey entry above is untouched.
+  if (id) {
+    await redis.hset(LEAD_PREVIEWS_KEY, { [idPreviewKey(id)]: json });
+  }
 }
 
 // Returns a map of normalized-name → previewUrl for enriching the lead queue.
