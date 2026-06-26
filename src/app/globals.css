@@ -256,3 +256,40 @@ body {
   .crm-surface-hover { animation: none; transition: none; }
   html { scroll-behavior: auto; }
 }
+
+/* ============================================================================
+   Mobile copper landing page (src/components/MobileLanding.tsx)
+   Namespaced cbtm-* keyframes — scoped to the .cbtm-root wrapper so they never
+   collide with the rest of the site's animations. The component is rendered
+   md:hidden (mobile only); on desktop the wrapper is display:none so these
+   never paint. JS-driven motion (intro counter, word rotation, scroll reveal,
+   WebGL) is gated separately in the component; the media query below kills the
+   remaining pure-CSS loops for prefers-reduced-motion users.
+   ============================================================================ */
+@keyframes cbtm-wordIn {
+  0%   { opacity: 0; transform: translateY(0.5em) scale(.96); filter: blur(9px); }
+  60%  { filter: blur(0); }
+  100% { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes cbtm-sheen {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+@keyframes cbtm-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes cbtm-scrollHint {
+  0%   { transform: translateY(0); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: translateY(14px); opacity: 0; }
+}
+@keyframes cbtm-sheenSweep {
+  0%        { transform: translateX(-160%) skewX(-22deg); }
+  55%, 100% { transform: translateX(420%) skewX(-22deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cbtm-root *,
+  .cbtm-root *::before,
+  .cbtm-root *::after { animation: none !important; }
+}

@@ -16,6 +16,13 @@ const HIDDEN_PREFIXES = ["/crm", "/report", "/assessment", "/thank-you"];
 // FAB (z-50), which is nudged up on mobile so the two don't collide.
 export default function StickyCTA() {
   const pathname = usePathname();
+  // On the home page, mobile (< md) renders the dedicated "molten copper"
+  // landing page, which carries its own header + contact CTAs. Suppress this
+  // bar there so the two don't clash. Desktop never shows this bar (md:hidden),
+  // so this only affects the mobile home view.
+  if (pathname === "/") {
+    return null;
+  }
   if (HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
     return null;
   }

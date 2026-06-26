@@ -10,6 +10,7 @@ import ToolsTeaser from "@/components/ToolsTeaser";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
+import MobileLanding from "@/components/MobileLanding";
 import JsonLd, { localBusinessSchema, organizationSchema, websiteSchema, aggregateRatingSchema } from "@/components/JsonLd";
 import { aggregateRating } from "@/lib/reviews";
 
@@ -37,7 +38,20 @@ export default function Home() {
       <JsonLd schema={organizationSchema()} />
       <JsonLd schema={websiteSchema()} />
       {agg && <JsonLd schema={aggregateRatingSchema({ ratingValue: agg.ratingValue, reviewCount: agg.reviewCount })} />}
-      <div className="theme-dark">
+
+      {/*
+        Mobile (< md) gets the dedicated "molten copper" landing page; desktop
+        keeps the existing component-based homepage. Both render server-side and
+        the inactive copy is display:none for the viewport, so there is no
+        device-detection flash and SSR/SEO stays intact. The mobile component
+        gates its own WebGL/timers to mobile (see MobileLanding) so this desktop
+        copy never pays for them.
+      */}
+      <div className="md:hidden" style={{ background: "#0b0908" }}>
+        <MobileLanding />
+      </div>
+
+      <div className="theme-dark hidden md:block">
         <Nav />
         <main>
           <Hero />
@@ -50,8 +64,8 @@ export default function Home() {
           <Contact />
         </main>
         <Footer />
+        <ChatWidget />
       </div>
-      <ChatWidget />
     </>
   );
 }

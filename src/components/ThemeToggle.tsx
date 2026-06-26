@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Sun, Moon } from "lucide-react";
 import { applyTheme } from "@/lib/theme";
 
@@ -10,6 +11,12 @@ import { applyTheme } from "@/lib/theme";
 // root layout.
 export default function ThemeToggle() {
   const [light, setLight] = useState(false);
+  const pathname = usePathname();
+  // The mobile home page renders the standalone copper landing (hardcoded dark
+  // palette, no theme vars), so a floating light/dark toggle there does nothing
+  // and clutters the design. Hide it on mobile "/" only; desktop "/" (the
+  // themeable homepage) and every other route keep it.
+  const hideOnMobile = pathname === "/";
 
   useEffect(() => {
     setLight(document.documentElement.getAttribute("data-theme") === "light");
@@ -32,7 +39,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={light ? "Switch to dark mode" : "Switch to light mode"}
       title={light ? "Switch to dark mode" : "Switch to light mode"}
-      className="fixed bottom-24 left-4 z-50 inline-flex items-center gap-2 rounded-full border border-copper/60 bg-copper/15 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-copper-bright shadow-lg shadow-black/20 backdrop-blur transition-colors hover:border-copper hover:bg-copper/25 md:bottom-4"
+      className={`fixed bottom-24 left-4 z-50 inline-flex items-center gap-2 rounded-full border border-copper/60 bg-copper/15 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-copper-bright shadow-lg shadow-black/20 backdrop-blur transition-colors hover:border-copper hover:bg-copper/25 md:bottom-4 ${hideOnMobile ? "max-md:hidden" : ""}`}
     >
       {light ? <Moon size={15} /> : <Sun size={15} />}
       <span>{light ? "Dark" : "Light"}</span>
