@@ -291,5 +291,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cbtm-root *,
   .cbtm-root *::before,
-  .cbtm-root *::after { animation: none !important; }
+  .cbtm-root *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

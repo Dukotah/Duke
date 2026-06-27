@@ -5,25 +5,39 @@ import { Archivo, Space_Mono } from "next/font/google";
 import { BOOKING_URL, EMAIL, PHONE, PHONE_HREF } from "@/config/site";
 
 /**
- * Mobile-first marketing landing page for Copper Bay Tech — a faithful port of
- * the "molten copper" design handoff (animated WebGL hero, intro counter,
- * rotating value word, scroll-reveal sections, count-up stats, contact CTA).
+ * Mobile-first marketing landing page for Copper Bay Tech — a port of the
+ * "molten copper" design handoff (v2): animated WebGL hero with a pointer-trail
+ * glow + scroll-driven heat, an intro counter, a rotating value word, variable-
+ * font weight morphing on the headings, scroll-reveal sections, count-up stats,
+ * and a contact CTA. Subtle haptics fire on the primary CTAs (Android only —
+ * iOS Safari ignores navigator.vibrate, harmlessly).
  *
  * Rendered md:hidden from src/app/page.tsx so phones get this experience while
- * desktop keeps the existing component-based homepage. Because the desktop copy
- * is display:none on phones (and vice-versa), there is no device-detection
- * flash. The expensive effects (WebGL render loop, intro/word timers, scroll
- * listeners) are gated to mobile + prefers-reduced-motion so desktop never pays
- * for them, and reduced-motion users get a static copper hero with all content
- * revealed up front.
+ * desktop keeps the existing component-based homepage at the same URL. The
+ * inactive copy is display:none for the viewport, so there is no device-
+ * detection flash and SSR/SEO stays intact.
  *
- * The visual spec lives in the design tokens below and mirrors the handoff
- * pixel-for-pixel; pure-CSS keyframes are namespaced cbtm-* in globals.css.
+ * Power/motion hygiene:
+ *  - Every expensive effect (WebGL loop, intro/word timers, scroll listeners)
+ *    is gated to mobile, so the desktop copy never pays for them.
+ *  - lowPower (prefers-reduced-motion OR Data-Saver) skips WebGL and word
+ *    rotation and shows a static copper gradient.
+ *  - prefers-reduced-motion additionally reveals all content up front and
+ *    disables parallax (the CSS guard in globals.css zeroes transitions too).
+ *  - The WebGL render loop pauses via IntersectionObserver once the hero
+ *    scrolls out of view, so it doesn't drain the battery while reading.
+ *
+ * NOTE: the v2 prototype also included a device-orientation (gyro) tilt. It was
+ * deliberately dropped here: on iOS it forces Apple's "Allow Motion & Orientation
+ * Access?" permission prompt on the visitor's first tap, which reads as broken and
+ * is usually denied. The scroll parallax + pointer trail already give the hero
+ * depth without it.
  */
 
+// Variable font (full 100..900 weight axis) so the headings can animate
+// font-variation-settings; omitting `weight` loads Archivo's variable file.
 const archivo = Archivo({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800", "900"],
   variable: "--font-archivo",
   display: "swap",
 });
@@ -48,8 +62,10 @@ type Props = {
   motionIntensity?: number;
   /** Skip the loading overlay. */
   showIntro?: boolean;
-  /** 0–2, pointer-glow strength in the shader. */
+  /** 0–2, pointer-trail glow strength in the shader. */
   copperGlow?: number;
+  /** 0–1.6, how much the hero heats up as the page scrolls. */
+  scrollHeat?: number;
 };
 
 // Shared style fragments ----------------------------------------------------
@@ -83,10 +99,13 @@ const reveal = (ty = 42, dur = 0.9): CSSProperties => ({
   transition: `opacity ${dur}s cubic-bezier(.16,1,.3,1), transform ${dur}s cubic-bezier(.16,1,.3,1)`,
 });
 
+// Headline lines slide up while their variable weight thickens 360 -> 900.
 const maskedLine: CSSProperties = {
   display: "block",
   transform: "translateY(115%)",
-  transition: "transform .85s cubic-bezier(.16,1,.3,1)",
+  fontVariationSettings: "'wght' 360",
+  transition:
+    "transform .85s cubic-bezier(.16,1,.3,1), font-variation-settings 1s cubic-bezier(.16,1,.3,1)",
 };
 
 const SERVICES = [
@@ -146,9 +165,10 @@ export default function MobileLanding({
   motionIntensity = 8,
   showIntro = true,
   copperGlow = 1,
+  scrollHeat = 1,
 }: Props) {
   // Lazy init reads the real media state on the client's first render; on the
-  // server both default to false (markup never depends on them, so no
+  // server everything defaults to false (markup never depends on these, so no
   // hydration mismatch). This avoids the false->true flip that would otherwise
   // skip the intro on mobile.
   const [isMobile] = useState(
@@ -161,11 +181,24 @@ export default function MobileLanding({
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
+  // Low power: reduced-motion OR the browser's Data-Saver hint. When true we
+  // ship the static copper gradient and stop rotating the hero word. (The
+  // deprecated Battery Status API is intentionally not used — it's unsupported
+  // on Safari/Firefox, i.e. on the iPhone this page primarily targets.)
+  const [lowPower] = useState(() => {
+    if (typeof navigator === "undefined") return false;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } })
+      .connection;
+    return reduced || !!conn?.saveData;
+  });
 
-  // Only mobile, motion-OK visitors see the loading overlay; everyone else
-  // (desktop copy, reduced-motion, intro disabled) starts already-loaded.
-  // Derived at init so the effect never has to setState synchronously.
-  const shouldIntro = isMobile && !reduced && showIntro;
+  // Only mobile, motion-OK, first-visit-this-session visitors see the loading
+  // overlay; everyone else starts already-loaded. Derived at init so the effect
+  // never has to setState synchronously.
+  const introSeen =
+    typeof window !== "undefined" &&
+    window.sessionStorage?.getItem("cbtm-intro-seen") === "1";
+  const shouldIntro = isMobile && !reduced && showIntro && !introSeen;
 
   const [progress, setProgress] = useState(shouldIntro ? 0 : 100);
   const [loaded, setLoaded] = useState(!shouldIntro);
@@ -175,11 +208,19 @@ export default function MobileLanding({
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  const heroSectionRef = useRef<HTMLElement>(null);
   const heroInnerRef = useRef<HTMLDivElement>(null);
+  const heroH1Ref = useRef<HTMLHeadingElement>(null);
+  const scrollPRef = useRef(0); // page scroll progress 0..1, read by the shader
 
   // Intro counter 0 -> 100, then dismiss the overlay ----------------------
   useEffect(() => {
     if (!shouldIntro) return;
+    try {
+      window.sessionStorage?.setItem("cbtm-intro-seen", "1");
+    } catch {
+      /* private mode — fine */
+    }
     let raf = 0;
     let done: ReturnType<typeof setTimeout> | undefined;
     const start = performance.now();
@@ -199,14 +240,11 @@ export default function MobileLanding({
 
   // Rotating hero word -----------------------------------------------------
   useEffect(() => {
-    if (!loaded || reduced || !isMobile) return;
+    if (!loaded || lowPower || !isMobile) return;
     const iv = Math.max(1200, 2600 - motionIntensity * 150);
-    const id = setInterval(
-      () => setWord((w) => (w + 1) % WORDS.length),
-      iv,
-    );
+    const id = setInterval(() => setWord((w) => (w + 1) % WORDS.length), iv);
     return () => clearInterval(id);
-  }, [loaded, reduced, isMobile, motionIntensity]);
+  }, [loaded, lowPower, isMobile, motionIntensity]);
 
   // Menu body scroll lock --------------------------------------------------
   useEffect(() => {
@@ -218,7 +256,20 @@ export default function MobileLanding({
     };
   }, [menuOpen]);
 
-  // Scroll reveal + progress bar + hero parallax ---------------------------
+  // Subtle haptics on the primary CTAs (Android only; no-op on iOS) --------
+  useEffect(() => {
+    if (!isMobile) return;
+    const root = rootRef.current;
+    if (!root || typeof navigator === "undefined" || !navigator.vibrate) return;
+    const onDown = (e: PointerEvent) => {
+      const t = (e.target as HTMLElement | null)?.closest?.("[data-haptic]");
+      if (t) navigator.vibrate(11);
+    };
+    root.addEventListener("pointerdown", onDown, { passive: true });
+    return () => root.removeEventListener("pointerdown", onDown);
+  }, [isMobile]);
+
+  // Scroll reveal + progress bar + hero parallax + H1 weight morph ---------
   useEffect(() => {
     if (!isMobile) return;
     const root = rootRef.current;
@@ -247,6 +298,7 @@ export default function MobileLanding({
         el.style.transform = "none";
         el.querySelectorAll<HTMLElement>("[data-line]").forEach((ln) => {
           ln.style.transform = "translateY(0)";
+          ln.style.fontVariationSettings = "'wght' 900";
         });
         el.querySelectorAll<HTMLElement>("[data-countup]").forEach((num) => {
           num.textContent = (num.dataset.countup || "") + (num.dataset.suffix || "");
@@ -269,6 +321,7 @@ export default function MobileLanding({
             el.querySelectorAll<HTMLElement>("[data-line]").forEach((ln, i) => {
               ln.style.transitionDelay = `${100 + i * 95}ms`;
               ln.style.transform = "translateY(0)";
+              ln.style.fontVariationSettings = "'wght' 900";
             });
             el.querySelectorAll<HTMLElement>("[data-countup]").forEach((num) =>
               countUp(num),
@@ -279,14 +332,18 @@ export default function MobileLanding({
 
     const onScroll = () => {
       doReveal();
-      const max =
-        document.documentElement.scrollHeight - window.innerHeight;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
       const p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+      scrollPRef.current = p;
       if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
+      const y = window.scrollY;
       if (heroInnerRef.current) {
-        const y = window.scrollY;
-        heroInnerRef.current.style.transform = `translateY(${y * 0.16}px)`;
+        heroInnerRef.current.style.transform = `translate3d(0,${y * 0.16}px,0)`;
         heroInnerRef.current.style.opacity = String(Math.max(0, 1 - y / 560));
+      }
+      if (heroH1Ref.current) {
+        const w = Math.round(900 - Math.min(1, y / 500) * 420);
+        heroH1Ref.current.style.fontVariationSettings = `'wght' ${w}`;
       }
     };
 
@@ -300,7 +357,7 @@ export default function MobileLanding({
     };
   }, [isMobile, reduced, loaded]);
 
-  // WebGL molten-copper hero ----------------------------------------------
+  // WebGL molten-copper hero (pointer trail + scroll heat) ----------------
   useEffect(() => {
     if (!isMobile) return;
     const c = canvasRef.current;
@@ -309,7 +366,7 @@ export default function MobileLanding({
     const fallback =
       "radial-gradient(120% 90% at 60% 30%, #6a3416, #1a0f09 70%)";
 
-    if (reduced) {
+    if (lowPower) {
       c.style.background = fallback;
       return;
     }
@@ -327,11 +384,12 @@ export default function MobileLanding({
       c.style.background = fallback;
       return;
     }
+    const ctx = gl;
 
     const vs = "attribute vec2 p; void main(){ gl_Position = vec4(p,0.0,1.0); }";
     const fs = [
       "precision highp float;",
-      "uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse; uniform float u_inf; uniform float u_glow;",
+      "uniform vec2 u_res; uniform float u_time; uniform float u_glow; uniform float u_scroll; uniform vec2 u_trail[6]; uniform float u_trailA[6];",
       "float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }",
       "float noise(vec2 p){ vec2 i=floor(p),f=fract(p); float a=hash(i),b=hash(i+vec2(1.,0.)),c=hash(i+vec2(0.,1.)),d=hash(i+vec2(1.,1.)); vec2 u=f*f*f*(f*(f*6.-15.)+10.); return mix(mix(a,b,u.x),mix(c,d,u.x),u.y); }",
       "float fbm(vec2 p){ float v=0.,a=.5; mat2 rm=mat2(0.80,-0.60,0.60,0.80); for(int i=0;i<7;i++){ v+=a*noise(p); p=rm*p*2.0+vec2(37.,17.); a*=.5; } return v; }",
@@ -345,9 +403,11 @@ export default function MobileLanding({
       " ridge = pow(clamp(ridge,0.0,1.0), 2.4);",
       " float ridge2 = 1.0 - abs(2.0*fbm(p2*3.4 + flow*1.5 + t*0.2) - 1.0);",
       " ridge = max(ridge, pow(clamp(ridge2,0.0,1.0),3.5)*0.7);",
-      " vec2 m = u_mouse; m.x *= u_res.x/u_res.y; float d = distance(p,m);",
-      " float glow = smoothstep(0.6,0.0,d)*u_inf*u_glow;",
+      " float glow = 0.0;",
+      " for(int i=0;i<6;i++){ vec2 tp = u_trail[i]; tp.x *= u_res.x/u_res.y; float dd = distance(p,tp); glow = max(glow, smoothstep(0.5,0.0,dd)*u_trailA[i]); }",
+      " glow *= u_glow;",
       " float heat = n*0.76 + ridge*0.62 + glow*0.82;",
+      " heat += u_scroll*0.42 + ridge*u_scroll*0.5;",
       " vec3 dark=vec3(0.045,0.024,0.015), deep=vec3(0.34,0.13,0.05), mid=vec3(0.62,0.30,0.13), hot=vec3(0.86,0.50,0.24), spark=vec3(0.98,0.78,0.46);",
       " vec3 col = mix(dark,deep, smoothstep(0.0,0.26,heat));",
       " col = mix(col,mid, smoothstep(0.24,0.54,heat));",
@@ -360,40 +420,41 @@ export default function MobileLanding({
     ].join("\n");
 
     const mk = (type: number, src: string) => {
-      const sh = gl!.createShader(type)!;
-      gl!.shaderSource(sh, src);
-      gl!.compileShader(sh);
-      if (!gl!.getShaderParameter(sh, gl!.COMPILE_STATUS)) {
-        console.error("SHADER COMPILE ERR:", gl!.getShaderInfoLog(sh));
+      const sh = ctx.createShader(type)!;
+      ctx.shaderSource(sh, src);
+      ctx.compileShader(sh);
+      if (!ctx.getShaderParameter(sh, ctx.COMPILE_STATUS)) {
+        console.error("SHADER COMPILE ERR:", ctx.getShaderInfoLog(sh));
       }
       return sh;
     };
 
-    const prog = gl.createProgram()!;
-    gl.attachShader(prog, mk(gl.VERTEX_SHADER, vs));
-    gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, fs));
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error("PROGRAM LINK ERR:", gl.getProgramInfoLog(prog));
+    const prog = ctx.createProgram()!;
+    ctx.attachShader(prog, mk(ctx.VERTEX_SHADER, vs));
+    ctx.attachShader(prog, mk(ctx.FRAGMENT_SHADER, fs));
+    ctx.linkProgram(prog);
+    if (!ctx.getProgramParameter(prog, ctx.LINK_STATUS)) {
+      console.error("PROGRAM LINK ERR:", ctx.getProgramInfoLog(prog));
     }
-    gl.useProgram(prog);
+    ctx.useProgram(prog);
 
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
+    const buf = ctx.createBuffer();
+    ctx.bindBuffer(ctx.ARRAY_BUFFER, buf);
+    ctx.bufferData(
+      ctx.ARRAY_BUFFER,
       new Float32Array([-1, -1, 3, -1, -1, 3]),
-      gl.STATIC_DRAW,
+      ctx.STATIC_DRAW,
     );
-    const loc = gl.getAttribLocation(prog, "p");
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const loc = ctx.getAttribLocation(prog, "p");
+    ctx.enableVertexAttribArray(loc);
+    ctx.vertexAttribPointer(loc, 2, ctx.FLOAT, false, 0, 0);
 
-    const uRes = gl.getUniformLocation(prog, "u_res");
-    const uTime = gl.getUniformLocation(prog, "u_time");
-    const uMouse = gl.getUniformLocation(prog, "u_mouse");
-    const uInf = gl.getUniformLocation(prog, "u_inf");
-    const uGlow = gl.getUniformLocation(prog, "u_glow");
+    const uRes = ctx.getUniformLocation(prog, "u_res");
+    const uTime = ctx.getUniformLocation(prog, "u_time");
+    const uGlow = ctx.getUniformLocation(prog, "u_glow");
+    const uScroll = ctx.getUniformLocation(prog, "u_scroll");
+    const uTrail = ctx.getUniformLocation(prog, "u_trail");
+    const uTrailA = ctx.getUniformLocation(prog, "u_trailA");
 
     const dpr = Math.min(window.devicePixelRatio || 1, 1.6);
     const resize = () => {
@@ -401,51 +462,91 @@ export default function MobileLanding({
       const h = c.clientHeight;
       c.width = w * dpr;
       c.height = h * dpr;
-      gl!.viewport(0, 0, c.width, c.height);
+      ctx.viewport(0, 0, c.width, c.height);
     };
     resize();
     window.addEventListener("resize", resize);
 
-    let mx = 0.5;
-    let my = 0.55;
-    let inf = 0;
+    // Pointer/touch trail — a short decaying comet of glow points.
+    const TN = 6;
+    const trail = new Float32Array(TN * 2);
+    const trailA = new Float32Array(TN);
+    for (let i = 0; i < TN; i++) {
+      trail[i * 2] = 0.5;
+      trail[i * 2 + 1] = 0.55;
+    }
     const move = (x: number, y: number) => {
       const rc = c.getBoundingClientRect();
-      mx = (x - rc.left) / rc.width;
-      my = 1 - (y - rc.top) / rc.height;
-      inf = 1;
+      const px = (x - rc.left) / rc.width;
+      const py = 1 - (y - rc.top) / rc.height;
+      for (let i = TN - 1; i > 0; i--) {
+        trail[i * 2] = trail[(i - 1) * 2];
+        trail[i * 2 + 1] = trail[(i - 1) * 2 + 1];
+        trailA[i] = trailA[i - 1];
+      }
+      trail[0] = px;
+      trail[1] = py;
+      trailA[0] = 1;
     };
     const onPointer = (e: PointerEvent) => move(e.clientX, e.clientY);
     const onTouch = (e: TouchEvent) => {
       if (e.touches[0]) move(e.touches[0].clientX, e.touches[0].clientY);
     };
-    c.addEventListener("pointermove", onPointer, { passive: true });
-    c.addEventListener("touchmove", onTouch, { passive: true });
+    window.addEventListener("pointermove", onPointer, { passive: true });
+    window.addEventListener("touchmove", onTouch, { passive: true });
 
     const t0 = performance.now();
     const speed = 0.5 + motionIntensity * 0.07;
     const glowAmt = copperGlow;
+    const heatAmt = scrollHeat;
+
     let raf = 0;
+    let running = false;
     const loop = () => {
       const tt = ((performance.now() - t0) / 1000) * speed;
-      inf *= 0.95;
-      gl!.uniform2f(uRes, c.width, c.height);
-      gl!.uniform1f(uTime, tt);
-      gl!.uniform2f(uMouse, mx, my);
-      gl!.uniform1f(uInf, inf);
-      gl!.uniform1f(uGlow, glowAmt);
-      gl!.drawArrays(gl!.TRIANGLES, 0, 3);
+      for (let i = 0; i < TN; i++) trailA[i] *= 0.93;
+      ctx.uniform2f(uRes, c.width, c.height);
+      ctx.uniform1f(uTime, tt);
+      ctx.uniform1f(uGlow, glowAmt);
+      ctx.uniform1f(uScroll, (scrollPRef.current || 0) * heatAmt);
+      ctx.uniform2fv(uTrail, trail);
+      ctx.uniform1fv(uTrailA, trailA);
+      ctx.drawArrays(ctx.TRIANGLES, 0, 3);
       raf = requestAnimationFrame(loop);
     };
-    loop();
+    const start = () => {
+      if (running) return;
+      running = true;
+      loop();
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    // Pause the render loop while the hero is off-screen to save battery.
+    let io: IntersectionObserver | undefined;
+    if (heroSectionRef.current && "IntersectionObserver" in window) {
+      io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) start();
+          else stop();
+        },
+        { threshold: 0 },
+      );
+      io.observe(heroSectionRef.current);
+    } else {
+      start();
+    }
 
     return () => {
-      cancelAnimationFrame(raf);
+      stop();
+      io?.disconnect();
       window.removeEventListener("resize", resize);
-      c.removeEventListener("pointermove", onPointer);
-      c.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("touchmove", onTouch);
     };
-  }, [isMobile, reduced, motionIntensity, copperGlow]);
+  }, [isMobile, lowPower, motionIntensity, copperGlow, scrollHeat]);
 
   const toggleMenu = () => setMenuOpen((o) => !o);
 
@@ -650,6 +751,7 @@ export default function MobileLanding({
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <a
             href="/audit"
+            data-haptic
             style={mono({
               fontSize: 11,
               letterSpacing: "0.08em",
@@ -762,6 +864,7 @@ export default function MobileLanding({
 
       {/* HERO */}
       <section
+        ref={heroSectionRef}
         style={{
           position: "relative",
           minHeight: "100svh",
@@ -815,7 +918,10 @@ export default function MobileLanding({
               />
               Sonoma County · Web · IT · Security
             </div>
-            <h1 style={{ margin: 0, fontWeight: 900, letterSpacing: "-0.035em", lineHeight: 0.92 }}>
+            <h1
+              ref={heroH1Ref}
+              style={{ margin: 0, fontWeight: 900, letterSpacing: "-0.035em", lineHeight: 0.92 }}
+            >
               <span style={{ display: "block", fontSize: "clamp(54px,16vw,92px)" }}>
                 More
                 <br />
@@ -865,6 +971,7 @@ export default function MobileLanding({
             <div style={{ display: "flex", gap: 11, margin: "28px 0 24px", flexWrap: "wrap" }}>
               <a
                 href="/audit"
+                data-haptic
                 style={{
                   position: "relative",
                   overflow: "hidden",
@@ -922,7 +1029,7 @@ export default function MobileLanding({
                 gap: 10,
                 paddingBottom: 34,
                 fontSize: 11,
-                color: "#8c7766",
+                color: "#9a8675",
                 letterSpacing: "0.04em",
               })}
             >
@@ -1326,6 +1433,7 @@ export default function MobileLanding({
           <div style={{ display: "flex", flexDirection: "column", gap: 11, marginBottom: 30 }}>
             <a
               href={BOOKING_URL}
+              data-haptic
               style={{
                 position: "relative",
                 overflow: "hidden",
@@ -1419,7 +1527,7 @@ export default function MobileLanding({
             margin: "0 0 24px",
             fontSize: 14,
             lineHeight: 1.5,
-            color: "#7a6657",
+            color: "#9a8775",
             maxWidth: "32ch",
           }}
         >
@@ -1451,7 +1559,7 @@ export default function MobileLanding({
             Resources
           </a>
         </div>
-        <div style={mono({ fontSize: 11, color: "#5c4d41", letterSpacing: "0.04em" })}>
+        <div style={mono({ fontSize: 11, color: "#8a7868", letterSpacing: "0.04em" })}>
           © 2026 Copper Bay Tech · Sonoma County, CA
         </div>
       </footer>
