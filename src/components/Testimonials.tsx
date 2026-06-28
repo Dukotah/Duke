@@ -76,7 +76,7 @@ const REAL_TESTIMONIALS: Testimonial[] = [
  * client-approved quote. The section renders only when this is true AND
  * REAL_TESTIMONIALS has at least one entry.
  */
-const SHOW_REAL_REVIEWS = false;
+const SHOW_REAL_REVIEWS = true;
 
 /**
  * Internal stagger for each card: the outcome metric reveals first, then the
