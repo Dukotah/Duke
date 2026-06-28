@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans, Lora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import StickyCTA from "@/components/StickyCTA";
@@ -17,6 +17,17 @@ const lora = Lora({
     subsets: ["latin"],
     weight: ["400", "500"],
 });
+
+// viewport-fit=cover is the keystone that makes every existing
+// env(safe-area-inset-*) (StickyCTA, Nav, drawer) actually resolve to a
+// non-zero value on notched phones — without it those insets are silently 0.
+// Inert on desktop/non-notched devices (insets are 0 there), so this changes
+// nothing on desktop. Pinch-zoom is left enabled for accessibility.
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://copperbaytech.com"),

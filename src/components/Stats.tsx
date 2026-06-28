@@ -170,7 +170,7 @@ export default function Stats() {
             What to expect
           </p>
           <h2
-            className="text-3xl md:text-4xl font-bold text-warm"
+            className="text-3xl md:text-4xl font-bold text-warm text-balance"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             What working with us actually looks like

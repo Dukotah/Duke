@@ -20,7 +20,7 @@ export default function Hero() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden bg-ink-0">
+    <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-ink-0 md:min-h-screen">
       {/* Flagship background — drifting copper mesh + cursor spotlight (desktop).
           position:absolute / aria-hidden → CLS 0, never blocks the headline LCP.
           Mobile: orbs only (blur halved), spotlight off. RM: perfectly still. */}
@@ -61,7 +61,7 @@ export default function Hero() {
           style={{ fontFamily: "var(--font-heading)" }}
         >
           <span className="block">More customers.</span>
-          <span className="mt-1 block">
+          <span className="mt-1 block text-balance">
             {LINE_TWO.map((word, i) => (
               <motion.span
                 key={word}
@@ -131,7 +131,7 @@ export default function Hero() {
             as="link"
             href="/audit"
             onClick={() => track("cta_start_audit", { location: "hero" })}
-            className="group inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-8 py-4 text-base font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0"
+            className="group inline-flex items-center justify-center gap-2 rounded-lg bg-copper px-8 py-4 text-base font-semibold text-ink-0 transition-colors duration-200 hover:bg-copper-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-bright focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0 motion-safe:max-md:active:scale-[0.97]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Start a free audit
@@ -145,7 +145,7 @@ export default function Hero() {
           <Link
             href="/work"
             onClick={() => track("cta_see_work", { location: "hero" })}
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-4 text-base font-semibold text-warm underline-offset-4 transition-colors duration-200 hover:text-copper-bright hover:underline focus-visible:outline-none focus-visible:underline"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-4 text-base font-semibold text-warm underline-offset-4 transition-colors duration-200 hover:text-copper-bright hover:underline focus-visible:outline-none focus-visible:underline motion-safe:max-md:active:scale-[0.97]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             See our work

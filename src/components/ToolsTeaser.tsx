@@ -137,7 +137,7 @@ export default function ToolsTeaser() {
           >
             Free tools · No signup
           </span>
-          <h2 className="mb-4 text-3xl font-bold text-warm sm:text-4xl" style={H}>
+          <h2 className="mb-4 text-3xl font-bold text-warm sm:text-4xl text-balance" style={H}>
             See exactly where you stand
           </h2>
           <p className="text-lg text-warm-2" style={BODY}>

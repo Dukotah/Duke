@@ -9,6 +9,15 @@ import { track } from "@/lib/analytics";
 // reports, the assessment flow, and the post-submit thank-you page).
 const HIDDEN_PREFIXES = ["/crm", "/report", "/assessment", "/thank-you"];
 
+// A whisper of haptic feedback on the two highest-intent taps. Android fires an
+// 8ms tick; iOS Safari has never implemented the Vibration API, so this is a
+// silent no-op there (and on desktop) — purely progressive enhancement.
+function tapHaptic() {
+  if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+    navigator.vibrate(8);
+  }
+}
+
 // Persistent bottom action bar for mobile. Local-service traffic is mostly
 // mobile and the highest-intent action is a tap-to-call, so we keep both Call
 // and Book reachable without scrolling back to the hero. Hidden on md+ where
@@ -34,7 +43,7 @@ export default function StickyCTA() {
       <div className="flex items-stretch gap-2 px-3 py-2.5">
         <a
           href={PHONE_HREF}
-          onClick={() => track("cta_call_phone", { location: "sticky" })}
+          onClick={() => { tapHaptic(); track("cta_call_phone", { location: "sticky" }); }}
           className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-hairline bg-ink-2 px-4 py-3 text-sm font-semibold text-white outline-none transition-colors duration-200 hover:border-copper-dim focus-visible:ring-2 focus-visible:ring-copper active:scale-[0.98]"
           style={{ fontFamily: "var(--font-heading)" }}
           aria-label={`Call Copper Bay Tech at ${PHONE}`}
@@ -44,7 +53,7 @@ export default function StickyCTA() {
         </a>
         <a
           href={BOOKING_URL}
-          onClick={() => track("cta_book_call", { location: "sticky" })}
+          onClick={() => { tapHaptic(); track("cta_book_call", { location: "sticky" }); }}
           className="inline-flex flex-[1.4] items-center justify-center gap-2 rounded-lg bg-copper px-4 py-3 text-sm font-bold text-ink-0 shadow-sm shadow-copper/25 outline-none transition-colors duration-200 hover:bg-copper-bright focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-ink-0 active:scale-[0.98]"
           style={{ fontFamily: "var(--font-heading)" }}
         >
