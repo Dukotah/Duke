@@ -31,6 +31,11 @@ interface PreviewEntry {
   claimByDate?: string;
   thumbnailUrl?: string;
   slug?: string;
+  // Cross-repo join keys from the seam manifest. `id`/`businessId` = stable
+  // Overture id (preferred); `matchKey` = tight fuzzy-name fallback.
+  id?: string;
+  businessId?: string;
+  matchKey?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -62,6 +67,8 @@ export async function POST(req: NextRequest) {
         claimByDate: e.claimByDate,
         thumbnailUrl: e.thumbnailUrl,
         slug: e.slug,
+        id: e.id ?? e.businessId,
+        matchKey: e.matchKey,
       });
       linked++;
     }

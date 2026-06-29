@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCustomLeads, getAllLeadStates, getLeadPreviewObjects, previewKey } from "@/lib/db";
+import {
+  getCustomLeads,
+  getAllLeadStates,
+  getLeadPreviewObjects,
+  indexLeadPreviews,
+  resolveLeadPreview,
+} from "@/lib/db";
 import { handleApiError } from "@/lib/api";
 
 function getUserId(req: NextRequest): string | null {
@@ -23,9 +29,16 @@ export async function GET(req: NextRequest) {
       getLeadPreviewObjects(),
     ]);
 
+    // Prefer the stable business id, then matchKey(name), then the legacy fuzzy
+    // previewKey(name). Indexes are built once for the whole page.
+    const previewIndexes = indexLeadPreviews(previews);
+
     const demos = customs
       .map((c) => {
-        const pkg = previews[previewKey(c.name)];
+        const pkg = resolveLeadPreview(previews, previewIndexes, {
+          businessId: c.businessId,
+          name: c.name,
+        });
         const hasDemo = !!pkg?.previewUrl;
         // The intake flow stores inbound captures with a notes prefix of "Inbound".
         const isInbound = (c.notes ?? "").trim().toLowerCase().startsWith("inbound");

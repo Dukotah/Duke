@@ -525,6 +525,9 @@ export interface CustomLead {
   notes: string;
   addedBy: string;
   createdAt: string;
+  // Stable Overture business id (the canonical cross-repo join key). Set when the
+  // lead was imported from the website-factory seam; absent for hand-added leads.
+  businessId?: string;
 }
 
 export async function createCustomLead(
@@ -576,6 +579,10 @@ export interface LeadPreview {
   claimByDate?: string;
   thumbnailUrl?: string;
   slug?: string;
+  // Cross-repo join keys carried from the website-factory seam. `id` is the stable
+  // Overture business id (preferred); `matchKey` is the tight fuzzy-name fallback.
+  id?: string;
+  matchKey?: string;
 }
 
 const LEAD_PREVIEWS_KEY = "lead_previews";
@@ -583,9 +590,22 @@ const LEAD_PREVIEWS_KEY = "lead_previews";
 // Normalize a business name to a stable join key. Both the writer (the push
 // endpoint, from the /websites manifest name) and the reader (the lead queue,
 // from the CSV name) run a name through this, so the two sides line up without
-// a shared id.
+// a shared id. This is the LEGACY fuzzy fallback — prefer `businessId` / matchKey.
 export function previewKey(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+// matchKey — TS twin of scraper-app/contract/normalize.js `matchKey`/`norm`. The
+// tight cross-repo name key: lowercase -> non-alnum to space -> drop legal-suffix
+// words -> strip whitespace. Keep byte-identical to the contract normalizer so the
+// CRM, the website factory, and the scraper engine compute the same key. This is
+// the SECOND-choice join (after the stable business id, before previewKey).
+const MATCH_KEY_SUFFIX_RE =
+  /\b(llc|inc|incorporated|co|company|group|team|realty|realtors|real estate|properties|brokerage|the)\b/g;
+export function matchKey(name: string): string {
+  let n = (name || "").toLowerCase().replace(/[^a-z0-9 ]+/g, " ");
+  n = n.replace(MATCH_KEY_SUFFIX_RE, " ");
+  return n.replace(/\s+/g, "");
 }
 
 function normalizeDemoStatus(raw: string | undefined): DemoStatus {
@@ -619,8 +639,47 @@ export async function setLeadPreview(
     ...(extra.claimByDate ? { claimByDate: extra.claimByDate } : {}),
     ...(extra.thumbnailUrl ? { thumbnailUrl: extra.thumbnailUrl } : {}),
     ...(extra.slug ? { slug: extra.slug } : {}),
+    // Carry the stable business id when present, and ALWAYS a matchKey (derived
+    // from the name when the caller didn't supply one) so the demos join can
+    // prefer the id and fall back to the tight name key before the fuzzy one.
+    ...(extra.id ? { id: extra.id } : {}),
+    matchKey: extra.matchKey || matchKey(name),
   };
   await redis.hset(LEAD_PREVIEWS_KEY, { [key]: JSON.stringify(value) });
+}
+
+// Build id/matchKey lookup indexes from a previews map (one pass), so the demos
+// feed can resolve a lead's demo by the stable id first. Previews written before
+// this change simply won't appear in these indexes and fall through to the name
+// path — fully backward compatible.
+export function indexLeadPreviews(previews: Record<string, LeadPreview>): {
+  byId: Record<string, LeadPreview>;
+  byMatchKey: Record<string, LeadPreview>;
+} {
+  const byId: Record<string, LeadPreview> = {};
+  const byMatchKey: Record<string, LeadPreview> = {};
+  for (const p of Object.values(previews)) {
+    if (p?.id) byId[p.id] = p;
+    if (p?.matchKey) byMatchKey[p.matchKey] = p;
+  }
+  return { byId, byMatchKey };
+}
+
+// Resolve the demo preview attached to a lead. Preference order:
+//   1) stable Overture business id   (exact, never fuzzy)
+//   2) matchKey(name)                (tight legal-suffix-stripped name key)
+//   3) previewKey(name)              (legacy fuzzy fallback — unchanged behavior)
+// Pass the previews map plus its indexes (from indexLeadPreviews) so a whole page
+// of the queue resolves without rebuilding indexes per lead.
+export function resolveLeadPreview(
+  previews: Record<string, LeadPreview>,
+  indexes: { byId: Record<string, LeadPreview>; byMatchKey: Record<string, LeadPreview> },
+  lead: { businessId?: string; name: string }
+): LeadPreview | undefined {
+  if (lead.businessId && indexes.byId[lead.businessId]) return indexes.byId[lead.businessId];
+  const mk = matchKey(lead.name);
+  if (mk && indexes.byMatchKey[mk]) return indexes.byMatchKey[mk];
+  return previews[previewKey(lead.name)];
 }
 
 // Returns a map of normalized-name → previewUrl for enriching the lead queue.

@@ -62,6 +62,12 @@ const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 if (!url || !token) { console.error("Missing UPSTASH_REDIS_REST_URL/TOKEN (set them in Duke/.env.local)."); process.exit(1); }
 
 const previewKey = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+// matchKey — twin of scraper-app/contract/normalize.js + Duke src/lib/db.ts. The
+// tight name fallback the CRM prefers over previewKey when no stable id exists.
+const MATCH_KEY_SUFFIX_RE =
+  /\b(llc|inc|incorporated|co|company|group|team|realty|realtors|real estate|properties|brokerage|the)\b/g;
+const matchKey = (name) =>
+  (name || "").toLowerCase().replace(/[^a-z0-9 ]+/g, " ").replace(MATCH_KEY_SUFFIX_RE, " ").replace(/\s+/g, "");
 const normStatus = (s) => (s === "needs-review" || s === "needs_review" ? "needs_review" : s === "archived" ? "archived" : "ready");
 
 async function main() {
@@ -111,6 +117,9 @@ async function main() {
     const email = e.email || lead.email || "";
     const website = e.website || lead.website || "";
     const city = lead.city || (e.area || "").split(",")[0].trim();
+    // Stable Overture id: prefer the manifest entry's id, else the research _lead.id.
+    const businessId = (e.id || lead.id || "").trim();
+    const mkey = (e.matchKey || matchKey(e.name)).trim();
     const thumb = e.thumbnailUrl ? (e.thumbnailUrl.startsWith("http") ? e.thumbnailUrl : `${GALLERY_BASE}${e.thumbnailUrl}`) : "";
 
     const leadExists = existing.has(key);
@@ -125,6 +134,8 @@ async function main() {
         website, city, county: "", niche: e.category || lead.category || "custom",
         notes: `Demo built ${new Date().toISOString().slice(0, 10)}: ${e.link}`,
         addedBy: owner.id, createdAt: new Date().toISOString(),
+        // Stable cross-repo join key — the demos feed prefers this over the name.
+        ...(businessId ? { businessId } : {}),
       };
       await r.hset(`custom_lead:${cl.id}`, cl);
       await r.sadd(`custom_leads:${owner.id}`, cl.id);
@@ -137,6 +148,7 @@ async function main() {
       if (!cur.email && email) patch.email = email;
       if (!cur.phone && phone) patch.phone = phone;
       if (!cur.website && website) patch.website = website;
+      if (!cur.businessId && businessId) patch.businessId = businessId; // backfill the stable id
       if (Object.keys(patch).length) { await r.hset(`custom_lead:${cur.id}`, patch); Object.assign(cur, patch); }
     }
     linkedLeads++;
@@ -148,6 +160,9 @@ async function main() {
       ...(city ? { area: e.area || city } : {}),
       ...(thumb ? { thumbnailUrl: thumb } : {}),
       ...(slug ? { slug } : {}),
+      // Cross-repo join keys: prefer id, fall back to matchKey(name) on read.
+      ...(businessId ? { id: businessId } : {}),
+      ...(mkey ? { matchKey: mkey } : {}),
     };
     await r.hset("lead_previews", { [key]: JSON.stringify(value) });
     previews++;
