@@ -13,13 +13,15 @@ const PRICE_KEY: Record<string, keyof typeof PRICING> = {
   "IT Support": "it",
   "Cybersecurity": "cybersecurity",
   "AI Integration": "ai",
+  "Custom Software": "custom",
 };
 
 // Map a service label to its serviceCities key (for the cross-service block).
-const SERVICE_TO_CITYKEY: Record<string, "web" | "it" | "cyber"> = {
+const SERVICE_TO_CITYKEY: Record<string, "web" | "it" | "cyber" | "custom"> = {
   "Web Design": "web",
   "IT Support": "it",
   "Cybersecurity": "cyber",
+  "Custom Software": "custom",
 };
 
 /**
@@ -84,7 +86,7 @@ export default function ServiceCityPage({
   const cityEntry = SERVICE_CITIES[city];
   const currentKey = SERVICE_TO_CITYKEY[service];
   const otherServices = cityEntry
-    ? (["web", "it", "cyber"] as const)
+    ? (["web", "it", "cyber", "custom"] as const)
         .filter((k) => k !== currentKey && cityEntry[k])
         .map((k) => ({ href: `/${SERVICE_META[k].prefix}-${cityEntry.slug}`, label: SERVICE_META[k].label }))
     : [];

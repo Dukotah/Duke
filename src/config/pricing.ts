@@ -46,6 +46,14 @@ export const PRICING = {
     low: 1500,
     high: 4000,
   },
+  custom: {
+    range: "$5,000 – $50,000",
+    unit: "",
+    note: "Fixed scope, quoted per project",
+    startingAt: "$5,000",
+    low: 5000,
+    high: 50000,
+  },
 } as const;
 
 // Convenience: full self-contained range label (range + unit), e.g. "$550 – $2,200/mo".

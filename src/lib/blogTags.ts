@@ -8,6 +8,8 @@ export const TAG_COLORS: Record<string, string> = {
   Cybersecurity: "#DC2626",
   "Local SEO": "#7C3AED",
   "AI & Automation": "#EA580C",
+  "Custom Software": "#6366F1",
+  "Business Strategy": "#9333EA",
 };
 
 export const tagColor = (tag: string): string => TAG_COLORS[tag] ?? "#F97316";

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, ArrowUpRight } from "lucide-react";
-import { SOCIAL, SOCIAL_URLS } from "@/config/site";
+import { SOCIAL } from "@/config/site";
+import { localBusinessSchema } from "@/components/JsonLd";
 
 // lucide-react dropped brand glyphs (trademark), so the social marks are inline
 // SVGs. Each takes a size and inherits color via `currentColor`.
@@ -46,25 +47,11 @@ export default function Footer() {
     { label: "X (Twitter)", href: SOCIAL.x, Icon: XIcon },
   ].filter((s) => s.href);
 
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "Copper Bay Tech",
-    description: "IT consulting, web development, and cybersecurity for small businesses — based in Sonoma County, CA, serving clients nationwide.",
-    url: "https://copperbaytech.com",
-    telephone: "+17072396725",
-    email: "contact@copperbaytech.com",
-    priceRange: "$$",
-    address: {
-      "@type": "PostalAddress",
-      addressRegion: "CA",
-      addressCountry: "US",
-    },
-    areaServed: ["United States","Petaluma","Santa Rosa","Sebastopol","Rohnert Park","Sonoma","Bodega Bay","Cotati","Windsor","Healdsburg"],
-    serviceType: ["Web Development","IT Consulting","Cybersecurity","Network Setup","Process Automation"],
-    // Only emitted when at least one social profile URL is configured.
-    ...(SOCIAL_URLS.length > 0 ? { sameAs: SOCIAL_URLS } : {}),
-  };
+  // Sitewide LocalBusiness node — use the canonical builder so NAP, geo, hours
+  // and the stable @id stay identical to every other emission (no drift, and the
+  // shared @id lets search/AI merge all pages into ONE entity). sameAs is folded
+  // in by the builder from config/site.ts when profile URLs are set.
+  const schema = localBusinessSchema();
 
   const navLinks = [
     { label: "Get Started", href: "/get-started" },
@@ -84,6 +71,7 @@ export default function Footer() {
   // hub — no need to stuff every permutation into a sitewide footer.
   const serviceLinks = [
     { label: "Web Design", href: "/web-development" },
+    { label: "Custom Software", href: "/software-development" },
     { label: "IT Support", href: "/it-support" },
     { label: "Cybersecurity", href: "/cybersecurity-small-business" },
     { label: "AI Integration", href: "/ai-integration-small-business" },

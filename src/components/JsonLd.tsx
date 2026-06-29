@@ -5,12 +5,24 @@
  * Use the small builder helpers below for the common schema types so the
  * shape stays consistent with the LocalBusiness data in Footer.tsx.
  */
-import { SOCIAL_URLS } from "@/config/site";
+import {
+  SOCIAL_URLS,
+  BUSINESS_NAME,
+  PHONE_E164,
+  EMAIL,
+  SITE_URL,
+  ADDRESS_LOCALITY,
+  ADDRESS_REGION,
+  POSTAL_CODE,
+  ADDRESS_COUNTRY,
+  GEO,
+  OPENING_HOURS,
+} from "@/config/site";
 
-const PHONE = "+17072396725";
-const EMAIL = "contact@copperbaytech.com";
-const SITE = "https://copperbaytech.com";
-const BUSINESS_NAME = "Copper Bay Tech";
+// Local aliases keep the builders below terse; identity now flows from the
+// single source of truth in config/site.ts (no more drift between files).
+const PHONE = PHONE_E164;
+const SITE = SITE_URL;
 
 type Json = Record<string, unknown>;
 
@@ -38,25 +50,29 @@ export function localBusinessSchema(): Json {
     telephone: PHONE,
     email: EMAIL,
     priceRange: "$$",
-    // Service-area business — no public storefront, so no addressLocality.
+    // Service-area business — city/region/postal published for local relevance,
+    // but no street address (SAB guidance; mail suite is not a storefront). The
+    // locality must match the Google Business Profile city.
     address: {
       "@type": "PostalAddress",
-      addressRegion: "CA",
-      addressCountry: "US",
+      addressLocality: ADDRESS_LOCALITY,
+      addressRegion: ADDRESS_REGION,
+      postalCode: POSTAL_CODE,
+      addressCountry: ADDRESS_COUNTRY,
     },
-    // Geographic anchor (Sonoma County midpoint) — AI/search use this to resolve
-    // a service-area business with no street address.
+    // Geographic anchor (Sonoma County) — AI/search use this to resolve a
+    // service-area business with no street address.
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 38.4405,
-      longitude: -122.7144,
+      latitude: GEO.latitude,
+      longitude: GEO.longitude,
     },
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "09:00",
-        closes: "18:00",
+        dayOfWeek: [...OPENING_HOURS.days],
+        opens: OPENING_HOURS.opens,
+        closes: OPENING_HOURS.closes,
       },
     ],
     // Nationwide (remote) plus the North Bay cities we also cover on-site — the
@@ -80,6 +96,11 @@ export function localBusinessSchema(): Json {
       "Network Setup",
       "Process Automation",
     ],
+    // The set of profiles that are the SAME entity (LinkedIn, GBP, Crunchbase,
+    // Clutch, …). Emitted only when real URLs are configured in config/site.ts —
+    // a sameAs to a dead/wrong profile corrupts the entity graph. This is the
+    // strongest on-page lever for converting anonymous citations into named ones.
+    ...(SOCIAL_URLS.length ? { sameAs: SOCIAL_URLS } : {}),
   };
 }
 
@@ -218,12 +239,14 @@ export function organizationSchema(): Json {
     },
     telephone: PHONE,
     email: EMAIL,
-    // Service-area business — no public storefront address. Based in CA, working
-    // remotely with clients nationwide, so areaServed is the whole country.
+    // Based in Santa Rosa, CA (service-area — city/region/postal, no street),
+    // working remotely with clients nationwide, so areaServed is the country.
     address: {
       "@type": "PostalAddress",
-      addressRegion: "CA",
-      addressCountry: "US",
+      addressLocality: ADDRESS_LOCALITY,
+      addressRegion: ADDRESS_REGION,
+      postalCode: POSTAL_CODE,
+      addressCountry: ADDRESS_COUNTRY,
     },
     areaServed: {
       "@type": "Country",

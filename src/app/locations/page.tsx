@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
 };
 
-const serviceKeys = ["web", "it", "cyber"] as const;
+const serviceKeys = ["web", "it", "cyber", "custom"] as const;
 
 export default function LocationsPage() {
   const cities = Object.entries(SERVICE_CITIES);

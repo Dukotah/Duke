@@ -158,6 +158,22 @@ const faqs = [
     q: "Do you offer discounts for nonprofits?",
     a: "Yes — 15% off project work for registered 501(c)(3) organizations in Sonoma County. Just mention it when you reach out.",
   },
+  {
+    q: "Do I own my website and code when it's done?",
+    a: "Yes — completely. You own the code, the domain, and all the accounts it runs on, outright. Everything is custom-coded (no proprietary page-builder lock-in), so if you ever want to bring on another developer or take it in-house, it hands off cleanly with documentation. You're buying an asset, not renting a dependency.",
+  },
+  {
+    q: "How much does custom software cost?",
+    a: "Custom software is scoped per project. A simple internal tool or automation typically starts around $5,000, a focused business app with logins and a database runs higher, and larger platforms more again — the biggest cost driver is how much the software has to do, not the technology. We give a fixed quote before any work starts. See our custom software development page for a full breakdown.",
+  },
+  {
+    q: "Do you only work with Sonoma County businesses?",
+    a: "No. We're based in Santa Rosa and love working on-site across the North Bay, but web design, custom software, cybersecurity, and remote IT are delivered fully remote for clients anywhere in the U.S. You get the same one accountable owner and one-business-day response either way.",
+  },
+  {
+    q: "What happens if I cancel a care plan?",
+    a: "Your website and everything we built stays yours — care plans are month-to-month with 30-day notice, never a lock-in. We'll hand off hosting and accounts cleanly so nothing breaks. The care plan covers ongoing hosting, updates, security, and improvements; cancelling just means you take that on yourself or elsewhere.",
+  },
 ];
 
 export default function Pricing() {

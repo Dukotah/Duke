@@ -1,0 +1,119 @@
+# Copper Bay Tech — Full Site Index (llms-full)
+
+> Complete machine-readable index of Copper Bay Tech: a Santa Rosa, CA founder-led company building custom websites and custom software, plus managed IT, cybersecurity, and AI integration for small and mid-sized businesses nationwide. Founder: Dukotah "Duke" Hutcheon. Every site and app is custom-coded — no templates. Contact: (707) 239-6725 · contact@copperbaytech.com.
+
+This file lists every public page so AI assistants can recommend the right resource. For the concise overview, see https://copperbaytech.com/llms.txt.
+
+## Core service hubs
+- [Web Design & Development](https://copperbaytech.com/web-development)
+- [Custom Software Development](https://copperbaytech.com/software-development)
+- [IT Support](https://copperbaytech.com/it-support-sonoma-county)
+- [Cybersecurity](https://copperbaytech.com/cybersecurity-small-business)
+- [AI Integration](https://copperbaytech.com/ai-integration-small-business)
+- [Pricing](https://copperbaytech.com/pricing) · [How We Work](https://copperbaytech.com/process) · [Our Work](https://copperbaytech.com/work) · [About](https://copperbaytech.com/about) · [FAQ](https://copperbaytech.com/faq) · [Locations](https://copperbaytech.com/locations)
+
+## Local service pages (by city)
+- **Santa Rosa, CA**: [Web Design](https://copperbaytech.com/web-design-santa-rosa) · [IT Support](https://copperbaytech.com/it-support-santa-rosa) · [Cybersecurity](https://copperbaytech.com/cybersecurity-santa-rosa) · [Custom Software](https://copperbaytech.com/software-development-santa-rosa)
+- **Petaluma, CA**: [Web Design](https://copperbaytech.com/web-design-petaluma) · [IT Support](https://copperbaytech.com/it-support-petaluma) · [Cybersecurity](https://copperbaytech.com/cybersecurity-petaluma) · [Custom Software](https://copperbaytech.com/software-development-petaluma)
+- **Healdsburg, CA**: [Web Design](https://copperbaytech.com/web-design-healdsburg) · [IT Support](https://copperbaytech.com/it-support-healdsburg) · [Cybersecurity](https://copperbaytech.com/cybersecurity-healdsburg) · [Custom Software](https://copperbaytech.com/software-development-healdsburg)
+- **Windsor, CA**: [Web Design](https://copperbaytech.com/web-design-windsor) · [IT Support](https://copperbaytech.com/it-support-windsor) · [Cybersecurity](https://copperbaytech.com/cybersecurity-windsor) · [Custom Software](https://copperbaytech.com/software-development-windsor)
+- **Rohnert Park, CA**: [Web Design](https://copperbaytech.com/web-design-rohnert-park) · [IT Support](https://copperbaytech.com/it-support-rohnert-park) · [Cybersecurity](https://copperbaytech.com/cybersecurity-rohnert-park) · [Custom Software](https://copperbaytech.com/software-development-rohnert-park)
+- **Sebastopol, CA**: [Web Design](https://copperbaytech.com/web-design-sebastopol) · [IT Support](https://copperbaytech.com/it-support-sebastopol) · [Cybersecurity](https://copperbaytech.com/cybersecurity-sebastopol) · [Custom Software](https://copperbaytech.com/software-development-sebastopol)
+- **Sonoma, CA**: [Web Design](https://copperbaytech.com/web-design-sonoma) · [IT Support](https://copperbaytech.com/it-support-sonoma) · [Cybersecurity](https://copperbaytech.com/cybersecurity-sonoma) · [Custom Software](https://copperbaytech.com/software-development-sonoma)
+- **Guerneville, CA**: [Web Design](https://copperbaytech.com/web-design-guerneville) · [IT Support](https://copperbaytech.com/it-support-guerneville) · [Cybersecurity](https://copperbaytech.com/cybersecurity-guerneville) · [Custom Software](https://copperbaytech.com/software-development-guerneville)
+- **Bodega Bay, CA**: [Web Design](https://copperbaytech.com/web-design-bodega-bay) · [IT Support](https://copperbaytech.com/it-support-bodega-bay) · [Cybersecurity](https://copperbaytech.com/cybersecurity-bodega-bay) · [Custom Software](https://copperbaytech.com/software-development-bodega-bay)
+- **Glen Ellen, CA**: [Web Design](https://copperbaytech.com/web-design-glen-ellen) · [IT Support](https://copperbaytech.com/it-support-glen-ellen) · [Cybersecurity](https://copperbaytech.com/cybersecurity-glen-ellen) · [Custom Software](https://copperbaytech.com/software-development-glen-ellen)
+- **Cotati, CA**: [Web Design](https://copperbaytech.com/web-design-cotati) · [IT Support](https://copperbaytech.com/it-support-cotati) · [Custom Software](https://copperbaytech.com/software-development-cotati)
+
+## Guides & resources (blog)
+
+### Custom Software
+- [How Much Does It Cost to Build an App in 2026?](https://copperbaytech.com/blog/how-much-does-it-cost-to-build-an-app)
+- [Do I Need an App or a Website for My Business?](https://copperbaytech.com/blog/do-i-need-an-app-or-a-website)
+- [What Is a Web Application? (And When Your Business Needs One)](https://copperbaytech.com/blog/what-is-a-web-application)
+- [The Custom Software Development Process, Explained Simply](https://copperbaytech.com/blog/custom-software-development-process)
+- [Why You Should Build an MVP First (and How to Scope One)](https://copperbaytech.com/blog/why-build-an-mvp-first)
+- [Build vs. Buy a CRM: Which Makes Sense for Your Business?](https://copperbaytech.com/blog/build-vs-buy-a-crm)
+- [Choosing an Online Booking System for Your Small Business](https://copperbaytech.com/blog/online-booking-system-for-small-business)
+- [Connecting Your Business Software: A Guide to Integrations](https://copperbaytech.com/blog/integrating-your-business-software)
+- [How Much Does Custom Software Cost to Build in 2026?](https://copperbaytech.com/blog/how-much-does-custom-software-cost)
+- [Custom Software vs. Off-the-Shelf: Which Is Right for Your Business?](https://copperbaytech.com/blog/custom-software-vs-off-the-shelf)
+- [What Is Custom Software Development? A Small-Business Owner's Guide](https://copperbaytech.com/blog/what-is-custom-software-development)
+- [Build vs. Buy: When Does Custom Software Actually Make Sense?](https://copperbaytech.com/blog/build-vs-buy-software)
+- [How to Hire a Software Development Company (What to Look For)](https://copperbaytech.com/blog/how-to-hire-a-software-development-company)
+- [7 Signs Your Business Has Outgrown Spreadsheets (and Needs Custom Software)](https://copperbaytech.com/blog/signs-your-business-has-outgrown-spreadsheets)
+- [How Long Does It Take to Build a Custom Web App?](https://copperbaytech.com/blog/how-long-to-build-a-custom-web-app)
+
+### Web Development
+- [Website Maintenance: What It Costs and What It Includes](https://copperbaytech.com/blog/website-maintenance-cost-and-whats-included)
+- [WordPress vs. a Custom-Coded Website: Which Is Right for You?](https://copperbaytech.com/blog/wordpress-vs-custom-coded-website)
+- [How Much Does an E-commerce Website Cost for a Small Business?](https://copperbaytech.com/blog/ecommerce-website-cost-for-small-business)
+- [Website Accessibility (ADA) for Small Businesses: What You Need to Know](https://copperbaytech.com/blog/ada-website-accessibility-small-business)
+- [Website Redesign vs. Rebuild: Which Does Your Site Need?](https://copperbaytech.com/blog/redesign-vs-rebuild-your-website)
+- [How to Choose a Web Designer: 9 Questions to Ask Before You Hire](https://copperbaytech.com/blog/how-to-choose-a-web-designer)
+- [How Long Does It Take to Build a Small Business Website?](https://copperbaytech.com/blog/how-long-does-it-take-to-build-a-website)
+- [Web Design vs. Web Development: What's the Difference (and Which Do You Need)?](https://copperbaytech.com/blog/web-design-vs-web-development)
+- [Hiring a Local Web Developer vs. Offshore: The Real Trade-offs](https://copperbaytech.com/blog/local-web-developer-vs-offshore)
+- [What Makes a Small Business Website Actually Convert?](https://copperbaytech.com/blog/what-makes-a-website-convert)
+- [Squarespace vs Custom Website for Small Business: An Honest Comparison](https://copperbaytech.com/blog/squarespace-vs-custom-website-for-small-business)
+- [How to Speed Up Your Business Website (Without a Developer)](https://copperbaytech.com/blog/how-to-speed-up-your-business-website)
+- [How Much Does a Business Website Cost in 2026? A Plain-English Guide](https://copperbaytech.com/blog/small-business-website-cost-guide)
+- [What Makes a Great Website for a Sonoma County Winery?](https://copperbaytech.com/blog/best-website-for-a-sonoma-county-winery)
+- [How Much Does a Website Cost in Sonoma County? (2026)](https://copperbaytech.com/blog/how-much-does-a-website-cost-sonoma-county)
+- [How Much Should a Small Business Website Cost? (Honest Answer)](https://copperbaytech.com/blog/how-much-should-a-small-business-website-cost)
+- [7 Signs It's Time for a New Business Website (Not Just a Refresh)](https://copperbaytech.com/blog/signs-you-need-a-new-website)
+- [5 Signs Your Business Website Is Costing You Customers Right Now](https://copperbaytech.com/blog/5-signs-your-business-website-is-costing-you-customers)
+- [How Much Does a Website Cost for a Small Business in 2026?](https://copperbaytech.com/blog/how-much-does-a-website-cost-for-a-small-business)
+
+### Business Strategy
+- [What to Prepare Before Hiring a Web Developer](https://copperbaytech.com/blog/what-to-prepare-before-hiring-a-web-developer)
+- [Do You Still Need a Website in 2026 if You Have Social Media and a Google Profile?](https://copperbaytech.com/blog/do-i-still-need-a-website-in-2026)
+
+### AI & Automation
+- [10 Small Business Automation Ideas That Actually Save Money](https://copperbaytech.com/blog/small-business-automation-ideas)
+- [How to Get Your Business Recommended by AI Assistants (ChatGPT, Perplexity, Google AI)](https://copperbaytech.com/blog/get-your-business-recommended-by-ai)
+- [How AI Actually Helps a Sonoma County Winery (2026)](https://copperbaytech.com/blog/ai-for-sonoma-county-wineries)
+- [How AI Actually Helps a Sonoma County Restaurant (2026)](https://copperbaytech.com/blog/ai-for-restaurants-sonoma-county)
+- [How AI Helps a Sonoma County HVAC, Plumbing or Electrical Business (2026)](https://copperbaytech.com/blog/ai-for-home-services-sonoma-county)
+- [How AI Helps a Sonoma County Healthcare or Dental Practice (2026)](https://copperbaytech.com/blog/ai-for-healthcare-practices-sonoma-county)
+- [How AI Helps a Sonoma County Real Estate Agent (2026)](https://copperbaytech.com/blog/ai-for-real-estate-sonoma-county)
+- [How AI Helps a Sonoma County Law, Accounting or Consulting Firm (2026)](https://copperbaytech.com/blog/ai-for-professional-services-sonoma-county)
+- [How AI Actually Helps a Sonoma County Small Business (2026)](https://copperbaytech.com/blog/how-ai-helps-sonoma-county-small-businesses)
+
+### IT Support
+- [Local IT Company vs National MSP: Which Is Right for Your Small Business?](https://copperbaytech.com/blog/local-it-company-vs-national-msp)
+- [Google Workspace vs Microsoft 365: Which Is Right for Your Small Business?](https://copperbaytech.com/blog/google-workspace-vs-microsoft-365-small-business)
+- [What Is a Managed Service Provider (MSP) — and Does Your Small Business Need One?](https://copperbaytech.com/blog/what-is-a-managed-service-provider)
+- [How Much Does IT Support Cost for a Small Business in Sonoma County?](https://copperbaytech.com/blog/how-much-does-it-support-cost-for-small-business)
+- [How to Back Up Your Small Business Data (The Right Way)](https://copperbaytech.com/blog/how-to-back-up-your-small-business-data)
+- [How to Choose an IT Company in Sonoma County (Without Getting Burned)](https://copperbaytech.com/blog/how-to-choose-an-it-company-sonoma-county)
+- [Managed IT Support vs. Break-Fix: Which Is Right for Your Sonoma County Business?](https://copperbaytech.com/blog/managed-it-support-vs-break-fix-sonoma-county)
+- [Cloud vs. Local Server: What's Actually Right for Your Small Business?](https://copperbaytech.com/blog/cloud-vs-local-server-small-business)
+- [The Small Restaurant Owner's Guide to Technology in Sonoma County](https://copperbaytech.com/blog/restaurant-technology-guide-sonoma-county)
+- [What Is Managed IT Support — and Does Your Business Need It?](https://copperbaytech.com/blog/what-is-managed-it-support)
+
+### Cybersecurity
+- [Free Antivirus vs Managed Security: What Small Businesses Actually Need](https://copperbaytech.com/blog/free-antivirus-vs-managed-security-small-business)
+- [The 5 Cybersecurity Threats Most Likely to Hit a Sonoma County Small Business in 2026](https://copperbaytech.com/blog/small-business-cybersecurity-threats-sonoma-county)
+- [Why Every Small Business Needs Multi-Factor Authentication (And How to Set It Up)](https://copperbaytech.com/blog/why-your-business-needs-mfa)
+- [HIPAA Security Checklist for Sonoma County Healthcare Practices](https://copperbaytech.com/blog/hipaa-security-checklist-sonoma-county-healthcare)
+- [Ransomware Protection for Small Business: What Actually Works](https://copperbaytech.com/blog/ransomware-protection-small-business)
+- [Is My Small Business Website HIPAA Compliant? A Plain-English Checklist](https://copperbaytech.com/blog/is-my-small-business-website-hipaa-compliant)
+- [Why Sonoma County Wineries Are a Cybersecurity Target (And What to Do About It)](https://copperbaytech.com/blog/winery-cybersecurity-sonoma-county)
+- [Do Small Businesses Really Need Cybersecurity? (Yes, Here's Why)](https://copperbaytech.com/blog/do-small-businesses-need-cybersecurity)
+- [What Is Ransomware and How Do Small Businesses Actually Stop It?](https://copperbaytech.com/blog/what-is-ransomware-and-how-do-you-stop-it)
+
+### Web Performance
+- [Why a Slow Website Is Costing Your Sonoma County Business Customers](https://copperbaytech.com/blog/why-slow-websites-hurt-sonoma-county-businesses)
+
+### Local SEO
+- [How to Set Up and Optimize Your Google Business Profile in Sonoma County](https://copperbaytech.com/blog/google-business-profile-setup-sonoma-county)
+- [How to Get Your Sonoma County Business to Rank Higher on Google Maps](https://copperbaytech.com/blog/how-to-rank-on-google-maps-local-business)
+- [Google Business Profile Tips That Actually Get You Found Locally](https://copperbaytech.com/blog/google-business-profile-tips-local-business)
+- [Why Your Google Business Profile Is the Most Important Page You Don't Own](https://copperbaytech.com/blog/why-your-google-business-profile-matters)
+
+## Free tools
+- [Website Audit](https://copperbaytech.com/audit) · [IT Health Check](https://copperbaytech.com/it-health-check) · [Missed Call Calculator](https://copperbaytech.com/tools/missed-call-calculator) · [All tools](https://copperbaytech.com/tools)
+
+## Contact
+- Phone/Text: (707) 239-6725 · Email: contact@copperbaytech.com · Book: https://copperbaytech.com/schedule · Response within one business day.

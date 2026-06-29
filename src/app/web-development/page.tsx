@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { ArrowRight, Check, Phone } from "lucide-react";
+import RelatedGuides from "@/components/RelatedGuides";
 import { PRICING, rangeLabel } from "@/config/pricing";
 import { BOOKING_URL, PHONE, PHONE_HREF } from "@/config/site";
 import {
@@ -407,6 +408,20 @@ export default function WebDevelopmentPage() {
             </RevealOnScroll>
           </div>
         </section>
+
+        <RelatedGuides
+          title="Web design & build guides"
+          items={[
+            { href: "/blog/how-much-does-a-website-cost-for-a-small-business", label: "How much does a website cost?" },
+            { href: "/blog/how-to-choose-a-web-designer", label: "How to choose a web designer" },
+            { href: "/blog/web-design-vs-web-development", label: "Web design vs. web development" },
+            { href: "/blog/wordpress-vs-custom-coded-website", label: "WordPress vs. a custom-coded site" },
+            { href: "/blog/do-i-still-need-a-website-in-2026", label: "Do you still need a website in 2026?" },
+            { href: "/blog/how-long-does-it-take-to-build-a-website", label: "How long does a website take to build?" },
+            { href: "/blog/what-makes-a-website-convert", label: "What makes a website convert?" },
+            { href: "/software-development", label: "Need custom software instead? →" },
+          ]}
+        />
       </main>
       <Footer />
     </>

@@ -1,0 +1,26 @@
+{
+  "name": "Copper Bay Tech",
+  "short_name": "Copper Bay Tech",
+  "description": "Custom-coded websites, custom software, managed IT support, and cybersecurity for small businesses — Santa Rosa, CA, serving clients nationwide.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0d",
+  "theme_color": "#c07a3e",
+  "lang": "en-US",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/og-image.png",
+      "type": "image/png",
+      "sizes": "1200x630",
+      "purpose": "any"
+    }
+  ]
+}
