@@ -27,6 +27,15 @@
  *   node scripts/sync-demos-to-crm.mjs --websites <dir>
  *   node scripts/sync-demos-to-crm.mjs --include-needs-review  # ALSO sync needs-review
  *   node scripts/sync-demos-to-crm.mjs --only-ready          # (legacy no-op; ready-only is the default)
+ *   node scripts/sync-demos-to-crm.mjs --prune               # ALSO remove dead orphan previews (dry-run)
+ *   node scripts/sync-demos-to-crm.mjs --prune --commit      # ...and actually delete them
+ *
+ * PRUNE (--prune): cleans up the inverse problem. The sync only ever ADDS/UPDATES
+ * previews; when a demo is deleted from the factory its CRM card lingers as a
+ * sendable 'ready' link that 404s. --prune removes a preview ONLY when it is BOTH
+ * (a) absent from the current outreach-links.json AND (b) fails to resolve (non-200
+ * live). A demo missing from the manifest but still serving 200 is KEPT — prune can
+ * never delete a live demo. Lead records + send history are never touched.
  */
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
@@ -53,6 +62,7 @@ const COMMIT = has("--commit");
 // --only-ready is kept as an accepted (now redundant) flag for back-compat.
 const INCLUDE_NEEDS_REVIEW = has("--include-needs-review");
 const ONLY_READY = !INCLUDE_NEEDS_REVIEW; // default true
+const PRUNE = has("--prune"); // remove dead orphan previews (off by default)
 const OWNER_EMAIL = (val("--owner") || process.env.CRM_IMPORT_OWNER_EMAIL || "dukotah@gmail.com").toLowerCase();
 const WEBSITES = val("--websites", process.env.WEBSITES_FACTORY_DIR || "C:/Users/dukot/projects/Websites");
 const GALLERY_BASE = (process.env.GALLERY_BASE_URL || "https://demos.copperbaytech.com").replace(/\/+$/, "");
@@ -86,6 +96,11 @@ async function main() {
   const manifestPath = join(WEBSITES, "data", "outreach-links.json");
   if (!existsSync(manifestPath)) { console.error(`No manifest at ${manifestPath}. Generate sites first.`); process.exit(1); }
   let batch = JSON.parse(readFileSync(manifestPath, "utf8"));
+  // Every slug the factory currently knows about (ANY status) — the authoritative
+  // "this demo still exists" set that --prune checks against.
+  const factorySlugs = new Set(
+    batch.map((e) => (e.slug || (e.link || "").replace(/\/+$/, "").split("/").pop())).filter(Boolean)
+  );
   // QUALITY GATE: by default keep ONLY status:"ready". normStatus collapses both
   // "needs-review" and "needs_review" spellings, so neither slips through.
   let heldBack = 0;
@@ -168,8 +183,56 @@ async function main() {
     previews++;
   }
 
+  if (PRUNE) await pruneDeadPreviews(r, factorySlugs, COMMIT);
+
   if (!COMMIT) { console.log("\nDry-run. Re-run with --commit to sync."); return; }
   console.log(`\n✓ Synced ${batch.length} demo(s) to ${owner.email}'s New tab — created ${created} lead(s), linked ${previews} preview(s).`);
+}
+
+// --- prune ------------------------------------------------------------------
+// Remove previews that are BOTH absent from the factory AND dead (non-200).
+// Conservative by design: a demo missing from the manifest but still serving 200
+// is reported and KEPT, never deleted. Only touches the lead_previews hash; lead
+// records and outreach history are left intact.
+async function pruneDeadPreviews(r, factorySlugs, commit) {
+  const slugOf = (u = "") => {
+    const m = String(u).match(/\/s\/([^/?#]+)/);
+    return m ? m[1] : (String(u).replace(/\/+$/, "").split("/").pop() || "");
+  };
+  const httpCode = async (u) => {
+    if (!u) return 0;
+    try {
+      let res = await fetch(u, { method: "HEAD", redirect: "follow" });
+      if (res.status === 405 || res.status === 501) res = await fetch(u, { method: "GET", redirect: "follow" });
+      return res.status;
+    } catch { return 0; }
+  };
+
+  const previews = (await r.hgetall("lead_previews")) || {};
+  const candidates = [];
+  for (const [key, raw] of Object.entries(previews)) {
+    let v; try { v = typeof raw === "string" ? JSON.parse(raw) : raw; } catch { v = {}; }
+    const slug = v.slug || slugOf(v.previewUrl || v.link || "");
+    if (!slug || factorySlugs.has(slug)) continue; // still in factory → keep
+    candidates.push({ key, slug, name: v.name || key, url: v.previewUrl || v.link || "" });
+  }
+
+  const dead = [];
+  for (let i = 0; i < candidates.length; i += 8) {
+    const b = candidates.slice(i, i + 8);
+    await Promise.all(b.map(async (c) => { c.code = await httpCode(c.url); }));
+    dead.push(...b.filter((c) => c.code !== 200));
+  }
+  const keptLive = candidates.filter((c) => c.code === 200);
+
+  console.log(`\nPrune: ${candidates.length} preview(s) not in factory — ${dead.length} dead (will remove), ${keptLive.length} still live (kept).`);
+  for (const k of keptLive) console.log(`  KEEP  200  ${k.name}  (${k.slug}) — not in manifest but resolves; left intact`);
+  for (const d of dead) console.log(`  ${commit ? "REMOVE" : "would remove"}  ${d.code || "ERR"}  ${d.name}  (${d.slug})`);
+
+  if (commit && dead.length) {
+    for (const d of dead) await r.hdel("lead_previews", d.key);
+    console.log(`✓ Pruned ${dead.length} dead preview(s) from the CRM.`);
+  }
 }
 
 main().catch((e) => { console.error(e?.message || e); process.exit(1); });
