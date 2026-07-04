@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Copper Bay Tech — Websites, IT &amp; Cybersecurity</title>
+<meta name="robots" content="noindex">
+<base target="_top">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:#0b0908; color:#f3ebe1; font-family:'Archivo',system-ui,sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; }
+  ::selection{ background:#c2703a; color:#0b0908; }
+  @keyframes marquee{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  @keyframes sheenSweep{ 0%{transform:translateX(-160%) skewX(-22deg);} 55%,100%{transform:translateX(440%) skewX(-22deg);} }
+  @keyframes scrollHint{ 0%{transform:translateY(0); opacity:0;} 30%{opacity:1;} 100%{transform:translateY(13px); opacity:0;} }
+  @keyframes grainShift{ 0%{transform:translate(0,0);} 20%{transform:translate(-5%,3%);} 40%{transform:translate(4%,-5%);} 60%{transform:translate(-3%,5%);} 80%{transform:translate(5%,-3%);} 100%{transform:translate(0,0);} }
+  @keyframes hudBlink{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
+  @keyframes dragPulse{ 0%,100%{opacity:.9;} 50%{opacity:.4;} }
+  @keyframes eqBar{ 0%,100%{transform:scaleY(.28);} 50%{transform:scaleY(1);} }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; } }
+</style>
+</head>
+<body>
+<div id="cbt-wrap" style="position:relative; width:100%; background:#0b0908;">
+
+  <!-- WEBGL FALLBACK (shown only if context fails) -->
+  <div data-fallback aria-hidden="true" style="position:fixed; inset:0; z-index:0; opacity:0; transition:opacity 1s ease; background:radial-gradient(90% 60% at 68% 34%, rgba(194,112,58,.28) 0%, rgba(122,61,31,.12) 40%, rgba(11,9,8,0) 72%), radial-gradient(70% 50% at 30% 80%, rgba(244,192,137,.08) 0%, rgba(11,9,8,0) 70%);"></div>
+
+  <!-- SINGLE GLOBAL CANVAS, FIXED BEHIND THE DOM -->
+  <canvas id="cbt-gl" aria-hidden="true" style="position:fixed; inset:0; z-index:0; width:100%; height:100%; display:block;"></canvas>
+
+  <!-- VIGNETTE -->
+  <div aria-hidden="true" style="position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 90% at 50% 42%, rgba(11,9,8,0) 42%, rgba(11,9,8,.52) 100%);"></div>
+
+  <!-- GRAIN -->
+  <div aria-hidden="true" style="position:fixed; inset:-60%; z-index:40; pointer-events:none; opacity:.05; mix-blend-mode:overlay; background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;); animation:grainShift 1.1s steps(3) infinite;"></div>
+
+  <!-- SCANLINES -->
+  <div aria-hidden="true" style="position:fixed; inset:0; z-index:41; pointer-events:none; opacity:.045; background:repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,.6) 3px);"></div>
+
+  <!-- HUD -->
+  <sc-if value="{{ hudOn }}" hint-placeholder-val="{{ true }}">
+    <div aria-hidden="true" style="position:fixed; inset:0; z-index:54; pointer-events:none; font-family:'Space Mono',monospace;">
+      <span style="position:absolute; top:12px; left:12px; width:18px; height:18px; border-top:1px solid rgba(214,150,90,.45); border-left:1px solid rgba(214,150,90,.45);"></span>
+      <span style="position:absolute; top:12px; right:12px; width:18px; height:18px; border-top:1px solid rgba(214,150,90,.45); border-right:1px solid rgba(214,150,90,.45);"></span>
+      <span style="position:absolute; bottom:12px; left:12px; width:18px; height:18px; border-bottom:1px solid rgba(214,150,90,.45); border-left:1px solid rgba(214,150,90,.45);"></span>
+      <span style="position:absolute; bottom:12px; right:12px; width:18px; height:18px; border-bottom:1px solid rgba(214,150,90,.45); border-right:1px solid rgba(214,150,90,.45);"></span>
+      <div style="position:absolute; top:70px; right:26px; text-align:right; font-size:9px; letter-spacing:.16em; line-height:1.8; color:#a8836a;"><span style="color:#5fd08a; animation:hudBlink 2.4s ease-in-out infinite;">●</span> <span data-fps>-- FPS</span><br><span data-telem style="color:#6f5a4b;">DPR -- · POST --</span><br><span data-telem2 style="color:#5c4d41;"></span></div>
+      <div style="position:absolute; bottom:24px; left:26px; font-size:9px; letter-spacing:.16em; color:#6f5a4b;">◢ MONOLITH ENGINE ULTRA·III · Cu-29 · 38.44°N 122.71°W</div>
+    </div>
+  </sc-if>
+
+  <!-- SCROLL PROGRESS -->
+  <div style="position:fixed; top:0; left:0; right:0; z-index:72; height:2px; background:rgba(214,150,90,.10);"><div data-progress style="height:100%; transform:scaleX(0); transform-origin:left center; background:linear-gradient(90deg,#9c5328,#f4c089);"></div></div>
+
+  <!-- HEADER -->
+  <header data-header style="position:fixed; top:0; left:0; right:0; z-index:60; display:flex; align-items:center; justify-content:space-between; padding:16px clamp(18px,4vw,42px); opacity:0; transform:translateY(-10px); transition:opacity .8s ease .1s, transform .8s ease .1s;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:20px; height:20px; border-radius:6px; background:linear-gradient(135deg,#f4c089,#9c5328);"></div>
+      <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.24em; color:#f3ebe1;">COPPER BAY TECH</span>
+    </div>
+    <a data-haptic="1" data-magnetic href="https://www.copperbaytech.com/audit" style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#0b0908; background:linear-gradient(135deg,#f4c089,#c2703a); padding:10px 16px; border-radius:999px; text-decoration:none; font-weight:700; white-space:nowrap; transition:transform .3s cubic-bezier(.2,1,.3,1);">Start free audit</a>
+  </header>
+
+  <!-- CURSOR RETICLE (desktop) -->
+  <div data-reticle aria-hidden="true" style="position:fixed; top:0; left:0; width:26px; height:26px; margin:-13px 0 0 -13px; border:1px solid rgba(244,192,137,.55); border-radius:50%; z-index:80; pointer-events:none; opacity:0; transition:opacity .3s ease, width .18s ease, height .18s ease, margin .18s ease; mix-blend-mode:screen;"></div>
+
+  <!-- GYRO PARALLAX TOGGLE (touch devices) -->
+  <button data-motionbtn aria-label="Toggle gyroscope parallax" style="position:fixed; bottom:64px; right:16px; z-index:70; display:none; align-items:center; gap:8px; padding:9px 13px; border:1px solid rgba(214,150,90,.3); border-radius:999px; background:rgba(13,10,8,.7); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); color:#cdbaa8; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.14em; cursor:pointer; white-space:nowrap;">
+    <span data-gyrodot style="width:8px; height:8px; border-radius:50%; background:#6f5a4b; transition:background .3s ease;"></span>
+    <span data-motionlabel>MOTION · OFF</span>
+  </button>
+
+  <!-- SOUND TOGGLE -->
+  <button data-sound aria-label="Toggle ambient sound" style="position:fixed; bottom:18px; right:16px; z-index:70; display:flex; align-items:center; gap:8px; padding:9px 13px; border:1px solid rgba(214,150,90,.3); border-radius:999px; background:rgba(13,10,8,.7); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); color:#cdbaa8; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.14em; cursor:pointer; white-space:nowrap;">
+    <span style="display:flex; align-items:flex-end; gap:2px; height:13px;">
+      <span data-eqbar style="width:2.5px; height:100%; background:#c2703a; transform:scaleY(.3); transform-origin:bottom; animation:eqBar .6s ease-in-out infinite; animation-play-state:paused;"></span>
+      <span data-eqbar style="width:2.5px; height:100%; background:#e0a878; transform:scaleY(.6); transform-origin:bottom; animation:eqBar .6s ease-in-out infinite .2s; animation-play-state:paused;"></span>
+      <span data-eqbar style="width:2.5px; height:100%; background:#f4c089; transform:scaleY(.4); transform-origin:bottom; animation:eqBar .6s ease-in-out infinite .4s; animation-play-state:paused;"></span>
+    </span>
+    <span data-soundlabel>AUDIO · OFF</span>
+  </button>
+
+  <!-- BOOT SEQUENCE -->
+  <sc-if value="{{ bootOn }}" hint-placeholder-val="{{ true }}">
+    <div data-boot style="position:fixed; inset:0; z-index:200; background:#0b0807; display:flex; flex-direction:column; justify-content:center; padding:0 30px; font-family:'Space Mono',monospace; cursor:pointer;">
+      <div style="max-width:520px; width:100%; margin:0 auto;">
+        <div style="font-size:11px; letter-spacing:.4em; color:#c2703a; text-transform:uppercase; margin-bottom:6px;">Copper Bay Tech</div>
+        <div style="font-size:clamp(30px,9vw,46px); font-weight:900; letter-spacing:-.03em; color:#f3ebe1; line-height:1; margin-bottom:24px; font-family:'Archivo',sans-serif;">MONOLITH <span style="color:#c2703a;">ULTRA·III</span></div>
+        <div data-bootlog style="font-size:12px; line-height:1.6; min-height:162px;"></div>
+        <div style="margin-top:18px; height:2px; background:rgba(214,150,90,.16); border-radius:2px; overflow:hidden;"><div data-bootbar style="height:100%; width:0%; background:linear-gradient(90deg,#9c5328,#f4c089); transition:width .2s ease;"></div></div>
+        <div style="margin-top:14px; font-size:9.5px; letter-spacing:.2em; color:#5c4d41;">TAP TO SKIP</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ACT 1 · HERO -->
+  <section data-herosec data-screen-label="Hero" style="position:relative; z-index:2; min-height:100svh; display:flex; flex-direction:column; justify-content:flex-end;">
+    <div data-heroinner style="max-width:1200px; width:100%; margin:0 auto; padding:0 clamp(22px,5vw,48px) 84px; will-change:transform,opacity;">
+      <div style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.32em; color:#eab88c; text-transform:uppercase; margin-bottom:20px; display:flex; align-items:center; gap:9px;"><span style="width:22px; height:1px; background:#c2703a; display:inline-block;"></span>Sonoma County · Web · IT · Security</div>
+      <h1 style="margin:0; font-weight:900; letter-spacing:-0.045em; line-height:0.92; font-size:clamp(46px,11.5vw,126px);">
+        <span style="display:block; overflow:hidden; padding-bottom:0.04em;"><span data-hero-line style="display:block; transform:translateY(114%); transition:transform .95s cubic-bezier(.16,1,.3,1);">More</span></span>
+        <span style="display:block; overflow:hidden; padding-bottom:0.04em;"><span data-hero-line style="display:block; transform:translateY(114%); transition:transform .95s cubic-bezier(.16,1,.3,1) .09s;">customers,</span></span>
+        <span style="display:block; overflow:hidden; padding-bottom:0.06em;"><span data-hero-line style="display:block; transform:translateY(114%); transition:transform .95s cubic-bezier(.16,1,.3,1) .18s; background-image:linear-gradient(115deg,#ffe0bd 10%,#f4c089 40%,#c2703a 85%); -webkit-background-clip:text; background-clip:text; color:transparent;">for life.</span></span>
+      </h1>
+      <p style="margin:22px 0 0; max-width:36ch; font-size:clamp(15px,1.6vw,18px); line-height:1.5; color:#cdbaa8;">We hand-build the site that gets you found and gets the phone ringing — then host it, secure it, and keep improving it. One partner, one invoice.</p>
+      <div style="display:flex; gap:11px; margin:30px 0 20px; flex-wrap:wrap;">
+        <a data-haptic="1" data-magnetic href="https://www.copperbaytech.com/audit" style="position:relative; overflow:hidden; min-width:180px; text-align:center; white-space:nowrap; background:linear-gradient(135deg,#f4c089,#c2703a 55%,#9c5328); color:#0b0908; font-weight:800; font-size:15px; padding:16px 26px; border-radius:14px; text-decoration:none; box-shadow:0 10px 34px rgba(194,112,58,.45); transition:transform .3s cubic-bezier(.2,1,.3,1);"><span style="position:absolute; top:0; left:0; width:34%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,248,238,.55),transparent); animation:sheenSweep 5s ease-in-out infinite; pointer-events:none;"></span>Start a free audit</a>
+        <a data-magnetic href="https://www.copperbaytech.com/work" style="min-width:140px; text-align:center; white-space:nowrap; border:1px solid rgba(214,150,90,.4); color:#f3ebe1; font-weight:700; font-size:15px; padding:16px 26px; border-radius:14px; text-decoration:none; background:rgba(11,9,8,.5); transition:transform .3s cubic-bezier(.2,1,.3,1);">See our work</a>
+      </div>
+      <div data-hint data-glonly style="opacity:0; transition:opacity 1.2s ease; display:flex; align-items:center; gap:10px; font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.2em; color:#a8836a; text-transform:uppercase;">
+        <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#f4c089; box-shadow:0 0 12px 2px rgba(244,192,137,.7);"></span>
+        Scroll — the camera is yours
+      </div>
+    </div>
+    <div style="position:absolute; bottom:14px; left:50%; transform:translateX(-50%); z-index:2; width:18px; height:28px; border:1px solid rgba(214,150,90,.4); border-radius:12px; display:flex; justify-content:center; padding-top:6px;"><span style="width:3px; height:7px; border-radius:2px; background:#e0a878; animation:scrollHint 1.8s ease-in-out infinite;"></span></div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div style="position:relative; z-index:2; background:#0b0908; border-top:1px solid rgba(214,150,90,.14); border-bottom:1px solid rgba(214,150,90,.14); overflow:hidden; white-space:nowrap; padding:14px 0;">
+    <div style="display:inline-flex; animation:marquee 38s linear infinite; will-change:transform;">
+      <span style="font-family:'Space Mono',monospace; font-size:13px; letter-spacing:.12em; color:#a8836a; text-transform:uppercase;">Founder-led&nbsp;&nbsp;·&nbsp;&nbsp;Flat published pricing&nbsp;&nbsp;·&nbsp;&nbsp;No lock-in — you own it&nbsp;&nbsp;·&nbsp;&nbsp;Reply in one business day&nbsp;&nbsp;·&nbsp;&nbsp;Sonoma County local&nbsp;&nbsp;·&nbsp;&nbsp;</span>
+      <span style="font-family:'Space Mono',monospace; font-size:13px; letter-spacing:.12em; color:#a8836a; text-transform:uppercase;">Founder-led&nbsp;&nbsp;·&nbsp;&nbsp;Flat published pricing&nbsp;&nbsp;·&nbsp;&nbsp;No lock-in — you own it&nbsp;&nbsp;·&nbsp;&nbsp;Reply in one business day&nbsp;&nbsp;·&nbsp;&nbsp;Sonoma County local&nbsp;&nbsp;·&nbsp;&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- ACT 2 · FEATURES — camera scrubs through the artifact -->
+  <section data-featsec data-screen-label="Features" style="position:relative; z-index:2; height:470svh;">
+    <div style="position:sticky; top:0; height:100svh; overflow:hidden; pointer-events:none;">
+      <div style="position:relative; max-width:1240px; height:100%; margin:0 auto;">
+
+        <div data-camlabel style="position:absolute; top:clamp(68px,10svh,110px); left:clamp(22px,5vw,48px); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; color:#a8836a;">◢ CAMERA <span data-cam style="color:#f4c089;">01</span> / 04 · SCRUB <span data-scrub style="color:#f4c089;">000</span>%</div>
+
+        <div data-ghost aria-hidden="true" style="position:absolute; top:clamp(64px,12svh,140px); right:clamp(14px,5vw,80px); font-weight:900; font-size:clamp(130px,26vw,300px); line-height:1; letter-spacing:-0.05em; color:transparent; -webkit-text-stroke:1.5px rgba(244,192,137,.25); opacity:0;">01</div>
+
+        <div data-feat="0" style="position:absolute; left:clamp(22px,5vw,48px); bottom:clamp(96px,17svh,190px); width:min(460px,calc(100vw - 44px)); opacity:0; will-change:opacity,transform;">
+          <div data-scramble style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; color:#c2703a; text-transform:uppercase; margin-bottom:14px;">01 / Websites</div>
+          <h3 style="margin:0 0 12px; font-weight:900; letter-spacing:-0.035em; line-height:0.95; font-size:clamp(36px,8vw,64px);">Found first.</h3>
+          <p style="margin:0 0 18px; font-size:16px; line-height:1.55; color:#a8957f; max-width:36ch;">Hand-coded, no templates. Built to rank, load fast, and turn visitors into phone calls.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#e0a878;">
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">HAND-CODED</span>
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">SEO CORE</span>
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">&lt;1.2S LOADS</span>
+          </div>
+        </div>
+
+        <div data-feat="1" style="position:absolute; left:clamp(22px,5vw,48px); bottom:clamp(96px,17svh,190px); width:min(460px,calc(100vw - 44px)); opacity:0; will-change:opacity,transform;">
+          <div data-scramble style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; color:#c2703a; text-transform:uppercase; margin-bottom:14px;">02 / Managed IT</div>
+          <h3 style="margin:0 0 12px; font-weight:900; letter-spacing:-0.035em; line-height:0.95; font-size:clamp(36px,8vw,64px);">Your team, unblocked.</h3>
+          <p style="margin:0 0 18px; font-size:16px; line-height:1.55; color:#a8957f; max-width:36ch;">Workstations, cloud, and a real person who picks up when you call.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#e0a878;">
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">HELPDESK</span>
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">CLOUD</span>
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">REAL HUMANS</span>
+          </div>
+        </div>
+
+        <div data-feat="2" style="position:absolute; left:clamp(22px,5vw,48px); bottom:clamp(96px,17svh,190px); width:min(460px,calc(100vw - 44px)); opacity:0; will-change:opacity,transform;">
+          <div data-scramble style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; color:#c2703a; text-transform:uppercase; margin-bottom:14px;">03 / Cybersecurity</div>
+          <h3 style="margin:0 0 12px; font-weight:900; letter-spacing:-0.035em; line-height:0.95; font-size:clamp(36px,8vw,64px);">While you sleep.</h3>
+          <p style="margin:0 0 18px; font-size:16px; line-height:1.55; color:#a8957f; max-width:36ch;">Monitoring, backups, and incident plans that let you sleep at night.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#e0a878;">
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">24/7 WATCH</span>
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">BACKUPS</span>
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">HARDENING</span>
+          </div>
+        </div>
+
+        <div data-feat="3" style="position:absolute; left:clamp(22px,5vw,48px); bottom:clamp(96px,17svh,190px); width:min(460px,calc(100vw - 44px)); opacity:0; will-change:opacity,transform;">
+          <div data-scramble style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; color:#c2703a; text-transform:uppercase; margin-bottom:14px;">04 / AI &amp; Automation</div>
+          <h3 style="margin:0 0 12px; font-weight:900; letter-spacing:-0.035em; line-height:0.95; font-size:clamp(36px,8vw,64px);">Busywork, gone.</h3>
+          <p style="margin:0 0 18px; font-size:16px; line-height:1.55; color:#a8957f; max-width:36ch;">Answer calls, reply to leads, and clear the busywork — automatically.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#e0a878;">
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">AI RECEPTION</span>
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">LEAD REPLY</span>
+            <span style="border:1px solid rgba(214,150,90,.35); border-radius:999px; padding:6px 11px; white-space:nowrap;">WORKFLOWS</span>
+          </div>
+        </div>
+
+        <div style="position:absolute; right:clamp(16px,4vw,44px); top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:16px; pointer-events:auto;">
+          <button data-stop="0" aria-label="Go to Websites" style="display:flex; align-items:center; gap:8px; background:none; border:none; padding:6px; cursor:pointer;"><span data-dot="0" style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#6f5a4b; transition:color .3s ease;">01</span><span data-tick="0" style="width:16px; height:1.5px; background:#6f5a4b; display:inline-block; transition:background .3s ease, width .3s ease;"></span></button>
+          <button data-stop="1" aria-label="Go to Managed IT" style="display:flex; align-items:center; gap:8px; background:none; border:none; padding:6px; cursor:pointer;"><span data-dot="1" style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#6f5a4b; transition:color .3s ease;">02</span><span data-tick="1" style="width:16px; height:1.5px; background:#6f5a4b; display:inline-block; transition:background .3s ease, width .3s ease;"></span></button>
+          <button data-stop="2" aria-label="Go to Cybersecurity" style="display:flex; align-items:center; gap:8px; background:none; border:none; padding:6px; cursor:pointer;"><span data-dot="2" style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#6f5a4b; transition:color .3s ease;">03</span><span data-tick="2" style="width:16px; height:1.5px; background:#6f5a4b; display:inline-block; transition:background .3s ease, width .3s ease;"></span></button>
+          <button data-stop="3" aria-label="Go to AI and Automation" style="display:flex; align-items:center; gap:8px; background:none; border:none; padding:6px; cursor:pointer;"><span data-dot="3" style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#6f5a4b; transition:color .3s ease;">04</span><span data-tick="3" style="width:16px; height:1.5px; background:#6f5a4b; display:inline-block; transition:background .3s ease, width .3s ease;"></span></button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ACT 3 · INSPECT — controls released to the user -->
+  <section data-inspsec data-screen-label="Inspect" style="position:relative; z-index:2; min-height:170svh; touch-action:pan-y; cursor:grab;">
+    <div style="position:sticky; top:0; height:100svh; display:flex; flex-direction:column; justify-content:flex-end;">
+      <div style="max-width:1200px; width:100%; margin:0 auto; padding:0 clamp(22px,5vw,48px) 72px;">
+        <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; color:#c2703a; text-transform:uppercase; margin-bottom:16px;">/ In your hands</div>
+        <h2 style="margin:0 0 14px; font-weight:900; letter-spacing:-0.04em; line-height:0.94; font-size:clamp(42px,9.5vw,96px);">Grab it.<br>It's yours.</h2>
+        <p style="margin:0 0 22px; max-width:38ch; font-size:16px; line-height:1.55; color:#a8957f;">Everything we build, you own — code, content, domain. No lock-in, no hostage hosting. Take it for a spin.</p>
+        <div data-draghint data-glonly style="display:inline-flex; align-items:center; gap:10px; font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.2em; color:#f4c089; text-transform:uppercase; border:1px solid rgba(244,192,137,.4); border-radius:999px; padding:10px 16px; margin-bottom:26px; white-space:nowrap; animation:dragPulse 2.6s ease-in-out infinite;">⟲ Drag to rotate · Tap to ignite</div>
+        <div style="display:flex; gap:11px; flex-wrap:wrap;">
+          <a data-haptic="1" data-magnetic href="https://www.copperbaytech.com/audit" style="position:relative; overflow:hidden; min-width:180px; text-align:center; white-space:nowrap; background:linear-gradient(135deg,#f4c089,#c2703a 55%,#9c5328); color:#0b0908; font-weight:800; font-size:15px; padding:16px 26px; border-radius:14px; text-decoration:none; box-shadow:0 10px 34px rgba(194,112,58,.45); transition:transform .3s cubic-bezier(.2,1,.3,1);"><span style="position:absolute; top:0; left:0; width:34%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,248,238,.55),transparent); animation:sheenSweep 5.5s ease-in-out infinite; pointer-events:none;"></span>Start a free audit</a>
+          <a data-magnetic href="https://www.copperbaytech.com/pricing" style="min-width:140px; text-align:center; white-space:nowrap; border:1px solid rgba(214,150,90,.4); color:#f3ebe1; font-weight:700; font-size:15px; padding:16px 26px; border-radius:14px; text-decoration:none; background:rgba(11,9,8,.5); transition:transform .3s cubic-bezier(.2,1,.3,1);">See flat pricing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLID CONTENT -->
+  <div style="position:relative; z-index:2; background:#0b0908;">
+
+    <!-- PROOF / STATS -->
+    <section data-screen-label="Proof" style="padding:96px clamp(22px,5vw,48px) 44px; max-width:1180px; margin:0 auto;">
+      <div data-reveal style="opacity:0; transform:translateY(42px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; color:#c2703a; text-transform:uppercase; margin-bottom:26px;">/ What to expect</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(165px, 1fr)); gap:1px; background:rgba(214,150,90,.16); border:1px solid rgba(214,150,90,.16); border-radius:22px; overflow:hidden;">
+        <div data-reveal data-delay="0" style="opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); background:#0e0b09; padding:26px 20px;">
+          <div style="font-size:clamp(34px,3.4vw,44px); font-weight:900; letter-spacing:-0.04em; background-image:linear-gradient(120deg,#f4c089,#c2703a); -webkit-background-clip:text; background-clip:text; color:transparent;">&lt; 1 day</div>
+          <div style="margin-top:8px; font-size:13px; color:#a8957f; line-height:1.4;">Average response time</div>
+        </div>
+        <div data-reveal data-delay="70" style="opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); background:#0e0b09; padding:26px 20px;">
+          <div style="font-size:clamp(34px,3.4vw,44px); font-weight:900; letter-spacing:-0.04em; background-image:linear-gradient(120deg,#f4c089,#c2703a); -webkit-background-clip:text; background-clip:text; color:transparent;">2–3 wks</div>
+          <div style="margin-top:8px; font-size:13px; color:#a8957f; line-height:1.4;">Typical website launch</div>
+        </div>
+        <div data-reveal data-delay="140" style="opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); background:#0e0b09; padding:26px 20px;">
+          <div style="font-size:clamp(34px,3.4vw,44px); font-weight:900; letter-spacing:-0.04em; background-image:linear-gradient(120deg,#f4c089,#c2703a); -webkit-background-clip:text; background-clip:text; color:transparent;">100%</div>
+          <div style="margin-top:8px; font-size:13px; color:#a8957f; line-height:1.4;">Custom-coded, no templates</div>
+        </div>
+        <div data-reveal data-delay="210" style="opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); background:#0e0b09; padding:26px 20px;">
+          <div style="font-size:clamp(34px,3.4vw,44px); font-weight:900; letter-spacing:-0.04em; background-image:linear-gradient(120deg,#f4c089,#c2703a); -webkit-background-clip:text; background-clip:text; color:transparent;">42</div>
+          <div style="margin-top:8px; font-size:13px; color:#a8957f; line-height:1.4;">Sonoma County businesses</div>
+        </div>
+        <div data-reveal data-delay="280" style="opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); background:#0e0b09; padding:26px 20px; grid-column:1 / -1;">
+          <div style="font-size:clamp(34px,3.4vw,44px); font-weight:900; letter-spacing:-0.04em; background-image:linear-gradient(120deg,#f4c089,#c2703a); -webkit-background-clip:text; background-clip:text; color:transparent;">Nationwide</div>
+          <div style="margin-top:8px; font-size:13px; color:#a8957f; line-height:1.4;">Remote-friendly, rooted in the North Bay — on-site when it matters.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section data-screen-label="Process" style="padding:60px clamp(22px,5vw,48px) 90px; max-width:900px; margin:0 auto;">
+      <div data-reveal style="opacity:0; transform:translateY(42px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);">
+        <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; color:#c2703a; text-transform:uppercase; margin-bottom:18px;">/ How it works</div>
+        <h2 style="margin:0 0 44px; font-size:clamp(38px,7vw,72px); font-weight:900; letter-spacing:-0.035em; line-height:0.96;">Handled, for life.</h2>
+      </div>
+      <div style="display:flex; flex-direction:column; position:relative;">
+        <div data-reveal data-delay="0" style="opacity:0; transform:translateY(34px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); display:flex; gap:18px; padding-bottom:34px; border-left:1px solid rgba(214,150,90,.2); margin-left:8px; padding-left:26px; position:relative;">
+          <span style="position:absolute; left:-7px; top:2px; width:13px; height:13px; border-radius:50%; background:linear-gradient(135deg,#f4c089,#9c5328); box-shadow:0 0 0 4px #0b0908;"></span>
+          <div>
+            <div style="font-family:'Space Mono',monospace; font-size:12px; color:#7a6353; margin-bottom:8px;">01</div>
+            <h3 style="margin:0 0 8px; font-size:21px; font-weight:800; letter-spacing:-0.01em;">We design &amp; launch</h3>
+            <p style="margin:0; font-size:15px; line-height:1.55; color:#a8957f; max-width:56ch;">Copy, design, forms, hosting — shipped fast. You approve the look; we run the build end to end.</p>
+          </div>
+        </div>
+        <div data-reveal data-delay="90" style="opacity:0; transform:translateY(34px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); display:flex; gap:18px; padding-bottom:34px; border-left:1px solid rgba(214,150,90,.2); margin-left:8px; padding-left:26px; position:relative;">
+          <span style="position:absolute; left:-7px; top:2px; width:13px; height:13px; border-radius:50%; background:linear-gradient(135deg,#f4c089,#9c5328); box-shadow:0 0 0 4px #0b0908;"></span>
+          <div>
+            <div style="font-family:'Space Mono',monospace; font-size:12px; color:#7a6353; margin-bottom:8px;">02</div>
+            <h3 style="margin:0 0 8px; font-size:21px; font-weight:800; letter-spacing:-0.01em;">We host, secure &amp; update</h3>
+            <p style="margin:0; font-size:15px; line-height:1.55; color:#a8957f; max-width:56ch;">Managed hosting we own. Updates, backups, patches, uptime — one flat plan, never an hourly surprise.</p>
+          </div>
+        </div>
+        <div data-reveal data-delay="180" style="opacity:0; transform:translateY(34px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); display:flex; gap:18px; border-left:1px solid transparent; margin-left:8px; padding-left:26px; position:relative;">
+          <span style="position:absolute; left:-7px; top:2px; width:13px; height:13px; border-radius:50%; background:linear-gradient(135deg,#f4c089,#9c5328); box-shadow:0 0 0 4px #0b0908;"></span>
+          <div>
+            <div style="font-family:'Space Mono',monospace; font-size:12px; color:#7a6353; margin-bottom:8px;">03</div>
+            <h3 style="margin:0 0 8px; font-size:21px; font-weight:800; letter-spacing:-0.01em;">We keep improving</h3>
+            <p style="margin:0; font-size:15px; line-height:1.55; color:#a8957f; max-width:56ch;">A site is never finished. We tune speed, add pages, and fold in IT, security and AI as you grow.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section data-screen-label="Contact" style="padding:0 14px 22px; max-width:960px; margin:0 auto;">
+      <div data-reveal style="opacity:0; transform:translateY(42px); transition:opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); position:relative; border-radius:28px; overflow:hidden; background:radial-gradient(120% 100% at 50% 0%, #7a3d1f 0%, #2a160c 50%, #120c09 100%); border:1px solid rgba(214,150,90,.24); padding:clamp(40px,6vw,64px) clamp(26px,5vw,56px) 40px;">
+        <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; color:#f0b073; text-transform:uppercase; margin-bottom:20px;">/ Get in touch</div>
+        <h2 style="margin:0 0 16px; font-size:clamp(34px,6.4vw,62px); font-weight:900; letter-spacing:-0.035em; line-height:0.98; max-width:18ch;">Let's get your website handled — for life.</h2>
+        <p style="margin:0 0 30px; font-size:16px; line-height:1.5; color:#d8c3ad; max-width:44ch;">Tell us about your business. You'll get an honest assessment and a clear path forward. No fluff, no pressure.</p>
+        <div style="display:flex; gap:11px; margin-bottom:30px; flex-wrap:wrap;">
+          <a data-haptic="1" data-magnetic href="https://www.copperbaytech.com/schedule" style="position:relative; overflow:hidden; flex:1; min-width:220px; text-align:center; white-space:nowrap; background:linear-gradient(135deg,#ffe0bd,#f4c089 45%,#c2703a); color:#1a0d06; font-weight:800; font-size:16px; padding:17px; border-radius:14px; text-decoration:none; box-shadow:0 10px 34px rgba(0,0,0,.35); transition:transform .3s cubic-bezier(.2,1,.3,1);"><span style="position:absolute; top:0; left:0; width:36%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,252,246,.6),transparent); animation:sheenSweep 5.5s ease-in-out infinite; pointer-events:none;"></span>Book a free consultation</a>
+          <a data-magnetic href="tel:+17072396725" style="flex:1; min-width:200px; text-align:center; white-space:nowrap; border:1px solid rgba(255,224,189,.4); color:#f3ebe1; font-weight:700; font-size:16px; padding:17px; border-radius:14px; text-decoration:none; transition:transform .3s cubic-bezier(.2,1,.3,1);">Call (707) 239-6725</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px; font-family:'Space Mono',monospace; font-size:12px; color:#c5a888; padding-top:24px; border-top:1px solid rgba(255,224,189,.16);">
+          <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;"><span style="color:#9c8068;">EMAIL</span><span style="color:#f0d8bd;"><a href="mailto:contact@copperbaytech.com" style="color:#f0d8bd; text-decoration:none;">contact@copperbaytech.com</a></span></div>
+          <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;"><span style="color:#9c8068;">RESPONSE</span><span style="color:#f0d8bd;">Within one business day</span></div>
+          <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;"><span style="color:#9c8068;">BASED</span><span style="color:#f0d8bd;">Sonoma County, CA</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer data-screen-label="Footer" style="padding:46px clamp(22px,5vw,48px) 40px; border-top:1px solid rgba(214,150,90,.12); max-width:1180px; margin:0 auto;">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:16px;">
+        <div style="width:22px; height:22px; border-radius:6px; background:linear-gradient(135deg,#f4c089,#9c5328);"></div>
+        <span style="font-weight:800; font-size:16px; letter-spacing:-0.01em;">Copper Bay Tech</span>
+      </div>
+      <p style="margin:0 0 24px; font-size:14px; line-height:1.5; color:#7a6657; max-width:38ch;">Custom-built technology for small businesses. Websites, IT support, and cybersecurity — done right.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:14px 22px; font-family:'Space Mono',monospace; font-size:12px; margin-bottom:28px;">
+        <a href="https://www.copperbaytech.com/pricing" style="color:#a8957f; text-decoration:none;">Pricing</a>
+        <a href="https://www.copperbaytech.com/work" style="color:#a8957f; text-decoration:none;">Work</a>
+        <a href="https://www.copperbaytech.com/about" style="color:#a8957f; text-decoration:none;">About</a>
+        <a href="https://www.copperbaytech.com/tools" style="color:#a8957f; text-decoration:none;">Tools</a>
+        <a href="https://www.copperbaytech.com/blog" style="color:#a8957f; text-decoration:none;">Resources</a>
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:11px; color:#5c4d41; letter-spacing:.04em;">© 2026 Copper Bay Tech · Sonoma County, CA</div>
+    </footer>
+
+  </div>
+</div>
+<script>
+
+class Component {
+  state = {};
+
+  renderVals() {
+    return {
+      wrapRef: (el) => { this._wrap = el; },
+      glRef: (el) => { this._gl = el; },
+      hudOn: this.props.hudChrome ?? true,
+      bootOn: this.props.bootSequence ?? true
+    };
+  }
+
+  componentDidMount() {
+    this._dead = false;
+    this._y = window.scrollY || 0;
+    this._t = 0; this._fr = 0; this._spin = 0; this._lastGi = -1;
+    this._nova = 0; this._aberS = 0; this._dprScale = 1;
+    this._pSpeed = 0; this._pSpeedS = 0;
+    this._gx = 0; this._gy = 0; this._gxS = 0; this._gyS = 0; this._gb = null; this._gg = null;
+    this._drag = { on: false, moved: false, vx: 0, tyaw: 0, tpitch: 0, x0: 0, y0: 0, t0: 0 };
+    this._reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._fine = matchMedia('(pointer: fine)').matches;
+    this._coarseP = matchMedia('(pointer: coarse)').matches;
+    this._mx = 0; this._my = 0;
+    this._q = (s) => this._wrap ? this._wrap.querySelector(s) : null;
+    this._qa = (s) => this._wrap ? Array.from(this._wrap.querySelectorAll(s)) : [];
+
+    // battery + network awareness (progressive; absent APIs just skip)
+    const con = navigator.connection || {};
+    this._eco = !!con.saveData;
+    if (navigator.getBattery) {
+      navigator.getBattery().then((b) => {
+        this._batt = b;
+        const upd = () => {
+          this._battLevel = b.level; this._battCharging = b.charging;
+          this._eco = (!!con.saveData) || (b.level < 0.18 && !b.charging);
+        };
+        upd();
+        b.addEventListener('levelchange', upd);
+        b.addEventListener('chargingchange', upd);
+      }).catch(() => {});
+    }
+
+    this._onScroll = () => { this._y = window.scrollY; };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    this._onResize = () => { this._measure(); this._sizeGL(); };
+    window.addEventListener('resize', this._onResize);
+    this._onVis = () => { this._hidden = document.hidden; };
+    document.addEventListener('visibilitychange', this._onVis);
+
+    this._onKey = (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      const y = this._y, vh = innerHeight;
+      if (y < this._featTop - vh || y > this._inspTop + this._inspH) return;
+      const fwd = e.key === 'ArrowRight' || e.key === 'ArrowDown';
+      const p = (y - this._featTop) / this._featLen;
+      const stops = [0.125, 0.375, 0.625, 0.875];
+      let target;
+      if (fwd) {
+        const n = stops.find((s) => s > p + 0.04);
+        target = n !== undefined ? this._featTop + n * this._featLen : this._inspTop;
+      } else {
+        const prev = stops.slice().reverse().find((s) => s < p - 0.04);
+        target = prev !== undefined ? this._featTop + prev * this._featLen : Math.max(0, this._featTop - vh);
+      }
+      e.preventDefault();
+      window.scrollTo({ top: target, behavior: this._reduced ? 'auto' : 'smooth' });
+    };
+    window.addEventListener('keydown', this._onKey);
+
+    this._onMove = (e) => {
+      this._mx = (e.clientX / Math.max(1, innerWidth)) * 2 - 1;
+      this._my = (e.clientY / Math.max(1, innerHeight)) * 2 - 1;
+      const now = performance.now();
+      const dtm = Math.max(8, now - (this._pT || now)); this._pT = now;
+      const dxn = this._mx - (this._pmx === undefined ? this._mx : this._pmx);
+      const dyn = this._my - (this._pmy === undefined ? this._my : this._pmy);
+      this._pmx = this._mx; this._pmy = this._my;
+      this._pSpeed = Math.min(3, Math.hypot(dxn, dyn) / (dtm / 1000) * 0.55);
+      if (!this._fine) return;
+      const r = this._q('[data-reticle]');
+      if (r) {
+        r.style.opacity = '1';
+        r.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
+        const hot = e.target && e.target.closest && e.target.closest('a, button');
+        r.style.width = hot ? '46px' : '26px';
+        r.style.height = hot ? '46px' : '26px';
+        r.style.margin = hot ? '-23px 0 0 -23px' : '-13px 0 0 -13px';
+      }
+      const mags = this._qa('[data-magnetic]');
+      for (let i = 0; i < mags.length; i++) {
+        const m = mags[i];
+        const b = m.getBoundingClientRect();
+        if (!b.width) continue;
+        const dx = e.clientX - (b.left + b.width / 2);
+        const dy = e.clientY - (b.top + b.height / 2);
+        const dist = Math.hypot(dx, dy) || 1;
+        const rad = Math.max(b.width * 0.75, 110);
+        if (dist < rad) {
+          const f = (1 - dist / rad) * 9;
+          m.style.transform = 'translate(' + (dx / dist * f).toFixed(1) + 'px,' + (dy / dist * f).toFixed(1) + 'px)';
+          m._magOn = true;
+        } else if (m._magOn) {
+          m.style.transform = '';
+          m._magOn = false;
+        }
+      }
+    };
+    window.addEventListener('pointermove', this._onMove, { passive: true });
+
+    this._onClick = (e) => {
+      const h = e.target.closest && e.target.closest('[data-haptic]');
+      if (h && navigator.vibrate) navigator.vibrate(8);
+      const snd = e.target.closest && e.target.closest('[data-sound]');
+      if (snd) { this._toggleAudio(); return; }
+      const mb = e.target.closest && e.target.closest('[data-motionbtn]');
+      if (mb) { this._toggleGyro(); return; }
+      const d = e.target.closest && e.target.closest('[data-stop]');
+      if (d && this._feat) {
+        const i = +d.getAttribute('data-stop');
+        window.scrollTo({ top: this._featTop + (0.125 + i * 0.25) * this._featLen, behavior: this._reduced ? 'auto' : 'smooth' });
+      }
+    };
+
+    setTimeout(() => {
+      if (this._dead || !this._wrap) return;
+      this._wrap.addEventListener('click', this._onClick);
+      this._bindInspect();
+      this._bindReveals();
+      this._measure();
+      this._ro = new ResizeObserver(() => this._measure());
+      this._ro.observe(document.body);
+    }, 0);
+
+    this._boot();
+    this._initThree();
+
+    this._raf = requestAnimationFrame((ts) => this._loop(ts));
+    this._fpsTimer = setInterval(() => {
+      const fps = this._fr / 0.6;
+      this._fr = 0;
+      const el = this._q('[data-fps]');
+      if (el) el.textContent = Math.min(120, Math.round(fps)) + ' FPS';
+      const mb = this._q('[data-motionbtn]');
+      if (mb) {
+        const show = this._coarseP && !!window.DeviceOrientationEvent && !this._gyroNA;
+        const disp = show ? 'flex' : 'none';
+        if (mb.style.display !== disp) mb.style.display = disp;
+        const lab = this._q('[data-motionlabel]');
+        const txt = this._gyroOn ? 'MOTION · ON' : 'MOTION · OFF';
+        if (lab && lab.textContent !== txt) lab.textContent = txt;
+        const dot = this._q('[data-gyrodot]');
+        if (dot) {
+          const cc = this._gyroOn ? '#5fd08a' : '#6f5a4b';
+          if (dot.style.background !== cc) dot.style.background = cc;
+        }
+      }
+      const S = this._S;
+      if (S && S.ready) {
+        // continuous dynamic-resolution governor targeting 60fps
+        const warmedUp = S.readyAt && (performance.now() - S.readyAt) > 3000;
+        if (warmedUp && !this._hidden && !document.hidden) {
+          let ns = this._dprScale;
+          if (fps < 46) ns = Math.max(0.6, ns - 0.12);
+          else if (fps > 57) ns = Math.min(1, ns + 0.05);
+          if (Math.abs(ns - this._dprScale) > 0.01) {
+            this._dprScale = ns;
+            this._lowTier = ns <= 0.66;
+            this._sizeGL();
+          }
+        }
+        const tel = this._q('[data-telem]');
+        if (tel) {
+          const dpr = S.renderer.getPixelRatio().toFixed(2);
+          const usePost = S.composer && !this._lowTier && !this._eco && (this.props.bloom ?? 0.85) > 0.02;
+          const post = usePost ? ((this.props.aberration ?? 0.7) > 0.02 && S.caPass ? 'BLOOM+CA' : 'UNREAL') : (this._eco ? 'ECO' : 'OFF');
+          const simTag = S.simOn ? 'SIM 16K' : 'SIM LGCY';
+          const txt = 'DPR ' + dpr + ' · POST ' + post + ' · ' + simTag + (this._gyroOn ? ' · GYRO' : '') + (this._audioOn ? ' · AUDIO' : '');
+          if (tel.textContent !== txt) tel.textContent = txt;
+        }
+        const tel2 = this._q('[data-telem2]');
+        if (tel2) {
+          const bits = [];
+          if (this._battLevel != null) bits.push('PWR ' + Math.round(this._battLevel * 100) + '%' + (this._battCharging ? '+' : ''));
+          if (con && con.effectiveType) bits.push(String(con.effectiveType).toUpperCase());
+          bits.push(this._gpuAPI || 'GL --');
+          const t2 = bits.join(' · ');
+          if (tel2.textContent !== t2) tel2.textContent = t2;
+        }
+      }
+    }, 600);
+  }
+
+  componentWillUnmount() {
+    this._dead = true;
+    cancelAnimationFrame(this._raf);
+    clearInterval(this._fpsTimer);
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onResize);
+    window.removeEventListener('pointermove', this._onMove);
+    window.removeEventListener('keydown', this._onKey);
+    document.removeEventListener('visibilitychange', this._onVis);
+    if (this._onGyro) window.removeEventListener('deviceorientation', this._onGyro);
+    if (this._onShake) window.removeEventListener('devicemotion', this._onShake);
+    if (this._onDragMove) window.removeEventListener('pointermove', this._onDragMove);
+    if (this._onDragUp) { window.removeEventListener('pointerup', this._onDragUp); window.removeEventListener('pointercancel', this._onDragUp); }
+    if (this._ro) this._ro.disconnect();
+    if (this._io) this._io.disconnect();
+    if (this._wrap) this._wrap.removeEventListener('click', this._onClick);
+    if (this._ac) { try { this._ac.close(); } catch (_) {} }
+    if (this._S) {
+      if (this._S.sim) { try { this._S.sim.rtA.dispose(); this._S.sim.rtB.dispose(); } catch (_) {} }
+      if (this._S.renderer) this._S.renderer.dispose();
+    }
+  }
+
+  componentDidUpdate() {
+    const v = this.props.artifact ?? 'obelisk';
+    if (this._S && this._S.ready && v !== this._variant) { this._variant = v; this._buildArtifact(); }
+  }
+
+  _measure() {
+    if (!this._wrap) return;
+    this._feat = this._q('[data-featsec]');
+    this._insp = this._q('[data-inspsec]');
+    const top = (el) => { let t = 0; while (el) { t += el.offsetTop; el = el.offsetParent; } return t; };
+    this._featTop = this._feat ? top(this._feat) : 0;
+    this._featLen = this._feat ? Math.max(1, this._feat.offsetHeight - innerHeight) : 1;
+    this._inspTop = this._insp ? top(this._insp) : 0;
+    this._inspH = this._insp ? this._insp.offsetHeight : innerHeight;
+    this._docLen = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  }
+
+  _boot() {
+    const enabled = (this.props.bootSequence ?? true) && !this._reduced;
+    const finish = () => {
+      if (this._bootHidden || this._dead) return;
+      this._bootHidden = true;
+      const b = this._q('[data-boot]');
+      if (b) {
+        b.style.transition = 'opacity .45s ease';
+        b.style.opacity = '0';
+        b.style.pointerEvents = 'none';
+        setTimeout(() => { if (b) b.style.display = 'none'; }, 500);
+      }
+      this._reveal();
+    };
+    if (!enabled) { setTimeout(finish, 80); return; }
+    const lines = [
+      '> ENV · PMREM RADIANCE ....... OK',
+      '> NEBULA · FBM DRIFT FIELD ... OK',
+      '> PLASMA · DOMAIN-WARP GLSL .. LIT',
+      '> GPGPU · CURL FIELD ×16384 .. SIMULATING',
+      '> POST · BLOOM+CHROMA+RAYS ... OK',
+      '> DRS · 60FPS GOVERNOR ....... ARMED',
+      '> SENSORS · GYRO / SHAKE ..... STANDBY'
+    ];
+    let i = 0;
+    const log = () => {
+      if (this._bootHidden || this._dead) return;
+      const el = this._q('[data-bootlog]');
+      const bar = this._q('[data-bootbar]');
+      if (el && i < lines.length) {
+        const d = document.createElement('div');
+        d.textContent = lines[i];
+        d.style.color = i % 2 ? '#8a6a50' : '#b98a5f';
+        el.appendChild(d);
+      }
+      if (bar) bar.style.width = Math.min(100, ((i + 1) / lines.length) * 100) + '%';
+      i++;
+      if (i < lines.length) setTimeout(log, 170); else setTimeout(finish, 420);
+    };
+    setTimeout(log, 140);
+    setTimeout(() => { const b = this._q('[data-boot]'); if (b) b.addEventListener('click', finish); }, 0);
+    setTimeout(finish, 3300);
+  }
+
+  _reveal() {
+    if (this._revealed) return;
+    this._revealed = true;
+    this._revealT = performance.now();
+  }
+
+  _bindReveals() {
+    this._shown = new Set();
+  }
+
+  _bindInspect() {
+    const sec = this._q('[data-inspsec]');
+    if (!sec) return;
+    const D = this._drag;
+    let px = 0, py = 0, lastT = 0;
+    sec.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('a, button')) return;
+      D.on = true; D.moved = false; D.vx = 0;
+      D.x0 = e.clientX; D.y0 = e.clientY; D.t0 = performance.now();
+      px = e.clientX; py = e.clientY; lastT = performance.now();
+      sec.style.cursor = 'grabbing';
+    });
+    this._onDragMove = (e) => {
+      if (!D.on) return;
+      const dx = e.clientX - px, dy = e.clientY - py;
+      if (!D.moved && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) {
+        D.moved = true;
+        try { sec.setPointerCapture(e.pointerId); } catch (_) {}
+        const hint = this._q('[data-draghint]');
+        if (hint) { hint.style.animation = 'none'; hint.style.opacity = '0.45'; }
+      }
+      if (!D.moved) return;
+      const now = performance.now();
+      const dt = Math.max(8, now - lastT); lastT = now;
+      D.tyaw += dx * 0.0075;
+      D.tpitch = Math.max(-0.6, Math.min(0.6, D.tpitch + dy * 0.004));
+      D.vx = (dx * 0.0075) / (dt / 16.7);
+      px = e.clientX; py = e.clientY;
+    };
+    this._onDragUp = (e) => {
+      if (!D.on) return;
+      D.on = false;
+      sec.style.cursor = 'grab';
+      if (e.type !== 'pointerup') return;
+      const ex = e.clientX == null ? D.x0 : e.clientX;
+      const ey = e.clientY == null ? D.y0 : e.clientY;
+      const dist = Math.hypot(ex - D.x0, ey - D.y0);
+      if (!D.moved && dist < 10 && performance.now() - D.t0 < 420) this._ignite();
+    };
+    window.addEventListener('pointermove', this._onDragMove, { passive: true });
+    window.addEventListener('pointerup', this._onDragUp);
+    window.addEventListener('pointercancel', this._onDragUp);
+  }
+
+  _ignite() {
+    this._nova = 1;
+    if (navigator.vibrate) navigator.vibrate([14, 30, 46]);
+    if (this._ac && this._audioOn && this._master) {
+      try {
+        const t = this._ac.currentTime;
+        const o = this._ac.createOscillator();
+        const g = this._ac.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(660, t);
+        o.frequency.exponentialRampToValueAtTime(70, t + 0.5);
+        g.gain.setValueAtTime(0.12, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+        o.connect(g); g.connect(this._master);
+        o.start(t); o.stop(t + 0.6);
+      } catch (_) {}
+    }
+  }
+
+  async _toggleGyro() {
+    if (this._gyroOn) {
+      window.removeEventListener('deviceorientation', this._onGyro);
+      if (this._onShake) window.removeEventListener('devicemotion', this._onShake);
+      this._gyroOn = false; this._gx = 0; this._gy = 0; this._gb = null;
+      return;
+    }
+    this._onGyro = this._onGyro || ((e) => {
+      if (e.beta == null || e.gamma == null) return;
+      if (this._gb === null) { this._gb = e.beta; this._gg = e.gamma; }
+      this._gy = Math.max(-1, Math.min(1, (e.beta - this._gb) / 28));
+      this._gx = Math.max(-1, Math.min(1, (e.gamma - this._gg) / 28));
+    });
+    this._onShake = this._onShake || ((e) => {
+      const a = e.acceleration;
+      if (!a || a.x == null) return;
+      const m = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
+      if (m > 16 && performance.now() - (this._lastShake || 0) > 900) {
+        this._lastShake = performance.now();
+        this._ignite();
+      }
+    });
+    try {
+      // request both sensor permissions inside the same user gesture (iOS)
+      const reqs = [];
+      const needO = window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function';
+      const needM = window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function';
+      if (needO) reqs.push(DeviceOrientationEvent.requestPermission());
+      if (needM) reqs.push(DeviceMotionEvent.requestPermission().catch(() => 'denied'));
+      const res = await Promise.all(reqs);
+      if (needO && res[0] !== 'granted') { this._gyroNA = true; return; }
+      this._gb = null;
+      window.addEventListener('deviceorientation', this._onGyro);
+      const motionOK = !needM || res[needO ? 1 : 0] === 'granted';
+      if (motionOK && window.DeviceMotionEvent) window.addEventListener('devicemotion', this._onShake);
+      this._gyroOn = true;
+      if (navigator.vibrate) navigator.vibrate(8);
+    } catch (_) { this._gyroNA = true; }
+  }
+
+  _scramble(el) {
+    if (!el) return;
+    const orig = el.getAttribute('data-text') || el.textContent;
+    el.setAttribute('data-text', orig);
+    if (el._sc) clearInterval(el._sc);
+    const chars = '▓#%&@$01<>/*';
+    let step = 0;
+    const total = 9;
+    el._sc = setInterval(() => {
+      step++;
+      const reveal = Math.floor(orig.length * step / total);
+      let s = orig.slice(0, reveal);
+      for (let i = reveal; i < orig.length; i++) s += orig[i] === ' ' ? ' ' : chars[(Math.random() * chars.length) | 0];
+      el.textContent = s;
+      if (step >= total) { clearInterval(el._sc); el._sc = null; el.textContent = orig; }
+    }, 34);
+  }
+
+  _ensureAudio() {
+    if (this._ac) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    const ac = this._ac = new AC();
+    const g = this._master = ac.createGain();
+    g.gain.value = 0;
+    g.connect(ac.destination);
+    const f = this._filter = ac.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 240; f.Q.value = 5;
+    f.connect(g);
+    const mk = (type, freq, det, vol) => {
+      const o = ac.createOscillator();
+      o.type = type; o.frequency.value = freq; o.detune.value = det || 0;
+      const og = ac.createGain(); og.gain.value = vol;
+      o.connect(og); og.connect(f); o.start();
+    };
+    mk('sawtooth', 54, 0, 0.5);
+    mk('sine', 108, 7, 0.35);
+    mk('triangle', 27, -5, 0.5);
+    const len = ac.sampleRate * 2;
+    const buf = ac.createBuffer(1, len, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.35;
+    const src = ac.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    const bp = ac.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 1.2;
+    const ng = ac.createGain(); ng.gain.value = 0.06;
+    src.connect(bp); bp.connect(ng); ng.connect(g);
+    src.start();
+  }
+
+  _toggleAudio() {
+    this._ensureAudio();
+    if (!this._ac) return;
+    if (this._ac.state === 'suspended') this._ac.resume();
+    this._audioOn = !this._audioOn;
+    const t = this._ac.currentTime;
+    this._master.gain.cancelScheduledValues(t);
+    this._master.gain.linearRampToValueAtTime(this._audioOn ? 0.05 : 0, t + 0.7);
+  }
+
+  _blobTex(T, inner, outer) {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 256;
+    const x = cv.getContext('2d');
+    const g = x.createRadialGradient(128, 128, 8, 128, 128, 124);
+    g.addColorStop(0, inner);
+    g.addColorStop(1, outer);
+    x.fillStyle = g;
+    x.fillRect(0, 0, 256, 256);
+    return new T.CanvasTexture(cv);
+  }
+
+  async _initThree() {
+    let tries = 0;
+    while (!this._gl && tries < 40 && !this._dead) { await new Promise((r) => setTimeout(r, 120)); tries++; }
+    const c = this._gl;
+    if (!c || this._dead) return;
+    let T = null, post = null;
+    try {
+      T = await import('https://esm.sh/three@0.160.0');
+      const base = 'https://esm.sh/three@0.160.0/examples/jsm/postprocessing/';
+      const mods = await Promise.all([
+        import(base + 'EffectComposer.js'),
+        import(base + 'RenderPass.js'),
+        import(base + 'UnrealBloomPass.js'),
+        import(base + 'OutputPass.js'),
+        import(base + 'ShaderPass.js')
+      ]);
+      post = { EffectComposer: mods[0].EffectComposer, RenderPass: mods[1].RenderPass, UnrealBloomPass: mods[2].UnrealBloomPass, OutputPass: mods[3].OutputPass, ShaderPass: mods[4].ShaderPass };
+    } catch (e) {
+      console.warn('[monolith] esm.sh post stack unavailable, falling back', e);
+      post = null;
+      if (!T) {
+        try { T = await import('https://unpkg.com/three@0.160.0/build/three.module.min.js'); }
+        catch (e2) { console.warn('[monolith] three failed to load', e2); this._glFail(); return; }
+      }
+    }
+    if (this._dead) return;
+    let renderer;
+    try {
+      renderer = new T.WebGLRenderer({ canvas: c, alpha: true, antialias: true, powerPreference: 'high-performance' });
+    } catch (e) { this._glFail(); return; }
+    const S = this._S = { T, renderer };
+    renderer.setClearColor(0x000000, 0);
+    renderer.toneMapping = T.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+
+    this._gpuAPI = navigator.gpu ? 'WEBGPU-READY' : (renderer.capabilities.isWebGL2 ? 'WEBGL2' : 'WEBGL1');
+
+    c.addEventListener('webglcontextlost', (e) => { e.preventDefault(); this._ctxLost = true; }, false);
+    c.addEventListener('webglcontextrestored', () => { this._ctxLost = false; this._sizeGL(); }, false);
+
+    S.scene = new T.Scene();
+    S.scene.fog = new T.FogExp2(0x0b0908, 0.042);
+    S.cam = new T.PerspectiveCamera(36, 1, 0.1, 60);
+    S.cam.position.set(0, 0.15, 5.6);
+
+    const NZ = [
+      'float hash(vec3 p){ p = fract(p*0.3183099 + vec3(0.71,0.113,0.419)); p *= 17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }',
+      'float noise(vec3 p){ vec3 i=floor(p); vec3 f=fract(p); f=f*f*(3.0-2.0*f);',
+      '  return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),',
+      '             mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z); }',
+      'float fbm(vec3 p){ float v=0.0; float a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p=p*2.03+vec3(1.7); a*=0.5; } return v; }',
+      'float fbm3(vec3 p){ float v=0.0; float a=0.55; for(int i=0;i<3;i++){ v+=a*noise(p); p=p*2.1+vec3(1.3); a*=0.5; } return v; }'
+    ].join('\n') + '\n';
+
+    try {
+      const pm = new T.PMREMGenerator(renderer);
+      const env = new T.Scene();
+      const panel = (w, h, cr, cg, cb, x, y, z, ry, rx) => {
+        const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ side: T.DoubleSide }));
+        m.material.color.setRGB(cr, cg, cb);
+        m.position.set(x, y, z);
+        if (ry) m.rotation.y = ry;
+        if (rx) m.rotation.x = rx;
+        env.add(m);
+      };
+      panel(7, 4, 5.2, 2.7, 1.35, 5, 1, 0, -Math.PI / 2, 0);
+      panel(6, 3, 0.5, 0.8, 1.35, -5, 0.6, 1, Math.PI / 2, 0);
+      panel(9, 2.4, 2.6, 2.45, 2.3, 0, 4.6, -0.5, 0, Math.PI / 2);
+      panel(7, 1.1, 5.5, 1.8, 0.7, 0, 0.4, -5.4, 0, 0);
+      panel(6, 2, 0.9, 0.4, 0.18, 0, -3.4, -2, 0, -Math.PI / 2);
+      S.envTex = pm.fromScene(env, 0.035).texture;
+      S.scene.environment = S.envTex;
+      env.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
+      pm.dispose();
+    } catch (e) { console.warn('[monolith] env failed', e); }
+
+    S.key = new T.PointLight(0xffb377, 30, 0, 2); S.key.position.set(3.5, 2.6, 3.2); S.scene.add(S.key);
+    S.rim = new T.PointLight(0x86b8d8, 20, 0, 2); S.rim.position.set(-4.2, 1.4, -2.6); S.scene.add(S.rim);
+
+    S.mDome = new T.ShaderMaterial({
+      side: T.BackSide,
+      depthWrite: false,
+      fog: false,
+      uniforms: { uTime: { value: 0 }, uEnergy: { value: 0 }, uNebula: { value: 1 } },
+      vertexShader: 'varying vec3 vDir; void main(){ vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: 'uniform float uTime; uniform float uEnergy; uniform float uNebula; varying vec3 vDir;\n' + NZ +
+        'void main(){\n' +
+        '  vec3 d = normalize(vDir);\n' +
+        '  vec3 p = d * 2.4;\n' +
+        '  float t = uTime * 0.022;\n' +
+        '  float q = fbm3(p + t);\n' +
+        '  float n = fbm3(p + q*1.7 + vec3(t*1.5, -t, t*0.5));\n' +
+        '  float band = smoothstep(0.75, 0.0, abs(d.y + 0.12));\n' +
+        '  vec3 warm = vec3(0.66, 0.30, 0.12);\n' +
+        '  vec3 cool = vec3(0.10, 0.14, 0.22);\n' +
+        '  vec3 col = mix(cool, warm, smoothstep(0.32, 0.78, n));\n' +
+        '  float lum = n * band * (0.15 + uEnergy*0.13) * uNebula;\n' +
+        '  float star = step(0.9975, hash(floor(d*260.0))) * smoothstep(0.1, 0.55, abs(d.y)) * 0.5;\n' +
+        '  gl_FragColor = vec4(col * lum + vec3(1.0,0.9,0.8)*star*uNebula, 1.0);\n' +
+        '}'
+    });
+    S.dome = new T.Mesh(new T.SphereGeometry(28, 32, 20), S.mDome);
+    S.dome.frustumCulled = false;
+    S.dome.renderOrder = -10;
+    S.scene.add(S.dome);
+
+    S.mCore = new T.MeshPhysicalMaterial({ color: 0x9c5328, metalness: 1, roughness: 0.18, flatShading: true, iridescence: 0.9, iridescenceIOR: 1.65, envMapIntensity: 1.25 });
+    S.mShell = new T.MeshPhysicalMaterial({ color: 0xf7dcc0, metalness: 0, roughness: 0.05, transmission: 1, thickness: 0.85, ior: 1.48, attenuationColor: new T.Color(0xc2703a), attenuationDistance: 2.4, iridescence: 1, iridescenceIOR: 1.3, iridescenceThicknessRange: [140, 620], clearcoat: 1, clearcoatRoughness: 0.12, flatShading: true, envMapIntensity: 1.3 });
+    S.mRing = new T.MeshStandardMaterial({ color: 0xe0a878, metalness: 1, roughness: 0.28, envMapIntensity: 1.4 });
+    S.mSat = new T.MeshStandardMaterial({ color: 0xf4c089, metalness: 1, roughness: 0.3, envMapIntensity: 1.2, transparent: true, opacity: 0 });
+    S.mLine = new T.MeshBasicMaterial({ color: 0xf4c089, transparent: true, opacity: 0 });
+    S.mScan = new T.MeshBasicMaterial({ color: 0xff8c4a, transparent: true, opacity: 0, blending: T.AdditiveBlending, depthWrite: false });
+
+    S.mPlasma = new T.ShaderMaterial({
+      transparent: true,
+      blending: T.AdditiveBlending,
+      depthWrite: false,
+      uniforms: { uTime: { value: 0 }, uHeat: { value: 0 }, uPulse: { value: 0 } },
+      vertexShader: 'uniform float uTime; uniform float uHeat; uniform float uPulse; varying vec3 vP; varying vec3 vN; varying vec3 vV;\n' + NZ +
+        'void main(){\n' +
+        '  float d = noise(position*2.6 + uTime*0.45) - 0.5;\n' +
+        '  vec3 p = position + normal * d * (0.11 + 0.11*uHeat + 0.3*uPulse);\n' +
+        '  vP = position;\n' +
+        '  vN = normalMatrix * normal;\n' +
+        '  vec4 mv = modelViewMatrix * vec4(p, 1.0);\n' +
+        '  vV = -mv.xyz;\n' +
+        '  gl_Position = projectionMatrix * mv;\n' +
+        '}',
+      fragmentShader: 'uniform float uTime; uniform float uHeat; uniform float uPulse; varying vec3 vP; varying vec3 vN; varying vec3 vV;\n' + NZ +
+        'void main(){\n' +
+        '  vec3 p = vP * 2.2;\n' +
+        '  float t = uTime * 0.32;\n' +
+        '  vec3 q = vec3(fbm(p + t), fbm(p + vec3(5.2,1.3,2.8) - t*0.7), fbm(p + vec3(1.7,9.2,4.1)));\n' +
+        '  float n = fbm(p + 1.9*q + vec3(0.0, t*0.6, 0.0));\n' +
+        '  float heat = clamp(uHeat + uPulse*1.4, 0.0, 2.5);\n' +
+        '  vec3 c1 = vec3(0.45, 0.05, 0.0);\n' +
+        '  vec3 c2 = vec3(1.0, 0.42, 0.12);\n' +
+        '  vec3 c3 = vec3(1.0, 0.83, 0.55);\n' +
+        '  vec3 c4 = vec3(1.0, 0.98, 0.9);\n' +
+        '  vec3 col = mix(c1, c2, smoothstep(0.15, 0.5, n));\n' +
+        '  col = mix(col, c3, smoothstep(0.5, 0.78, n));\n' +
+        '  col = mix(col, c4, smoothstep(0.78, 0.95, n) * (0.4 + 0.6*heat));\n' +
+        '  float fres = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.0);\n' +
+        '  col += vec3(1.0, 0.6, 0.3) * fres * (0.55 + heat*0.8);\n' +
+        '  float glow = 0.55 + 0.75*n + 0.85*heat;\n' +
+        '  gl_FragColor = vec4(col * glow * 1.5, 1.0);\n' +
+        '}'
+    });
+
+    S.mAtmo = new T.ShaderMaterial({
+      transparent: true,
+      blending: T.AdditiveBlending,
+      depthWrite: false,
+      uniforms: { uTime: { value: 0 }, uGlow: { value: 0.5 } },
+      vertexShader: 'varying vec3 vN; varying vec3 vV; void main(){ vN = normalMatrix * normal; vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = -mv.xyz; gl_Position = projectionMatrix * mv; }',
+      fragmentShader: 'uniform float uTime; uniform float uGlow; varying vec3 vN; varying vec3 vV;\n' +
+        'void main(){\n' +
+        '  float f = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.6);\n' +
+        '  vec3 film = 0.5 + 0.5*cos(6.2831*(f*1.8 + uTime*0.05) + vec3(0.0, 2.1, 4.2));\n' +
+        '  vec3 tint = mix(vec3(1.0, 0.63, 0.35), film, 0.55);\n' +
+        '  gl_FragColor = vec4(tint * f * uGlow, f * uGlow);\n' +
+        '}'
+    });
+    S.atmo = new T.Mesh(new T.SphereGeometry(1, 48, 32), S.mAtmo);
+
+    S.group = new T.Group(); S.scene.add(S.group);
+    S.artGroup = new T.Group(); S.group.add(S.artGroup);
+    S.group.add(S.atmo);
+
+    S.satGroup = new T.Group(); S.satGroup.rotation.x = 0.42; S.group.add(S.satGroup);
+    const ringMesh = new T.Mesh(new T.TorusGeometry(1.95, 0.0045, 8, 140), S.mLine);
+    ringMesh.rotation.x = Math.PI / 2;
+    S.satGroup.add(ringMesh);
+    S.sats = [];
+    for (let i = 0; i < 3; i++) {
+      const s = new T.Mesh(new T.OctahedronGeometry(0.075, 0), S.mSat);
+      const a = i * Math.PI * 2 / 3;
+      s.position.set(Math.cos(a) * 1.95, 0, Math.sin(a) * 1.95);
+      S.satGroup.add(s);
+      S.sats.push(s);
+    }
+
+    S.scan = new T.Mesh(new T.TorusGeometry(0.8, 0.013, 8, 100), S.mScan);
+    S.scan.rotation.x = Math.PI / 2;
+    S.group.add(S.scan);
+
+    S.coreLight = new T.PointLight(0xff8a3d, 6, 0, 2);
+    S.group.add(S.coreLight);
+
+    // ==== GPGPU CURL-NOISE PARTICLE FIELD (ping-pong position sim) =========
+    let simOK = false;
+    try {
+      if (renderer.capabilities.maxVertexTextures > 0) {
+        const SZ = 128;
+        const NP = SZ * SZ;
+        const home = new Float32Array(NP * 4);
+        for (let i = 0; i < NP; i++) {
+          const inner = Math.random() < 0.22;
+          const r = inner ? 1.35 + Math.random() * 0.75 : 2.2 + Math.random() * 3.2;
+          const th = Math.random() * Math.PI * 2;
+          home[i * 4] = Math.cos(th) * r;
+          home[i * 4 + 1] = inner ? (Math.random() - 0.5) * 1.6 : (Math.random() - 0.5) * 4.8;
+          home[i * 4 + 2] = Math.sin(th) * r;
+          home[i * 4 + 3] = Math.random();
+        }
+        const homeTex = new T.DataTexture(home, SZ, SZ, T.RGBAFormat, T.FloatType);
+        homeTex.needsUpdate = true;
+        const mkRT = () => new T.WebGLRenderTarget(SZ, SZ, {
+          type: T.HalfFloatType, format: T.RGBAFormat,
+          minFilter: T.NearestFilter, magFilter: T.NearestFilter,
+          depthBuffer: false, stencilBuffer: false
+        });
+        const rtA = mkRT(), rtB = mkRT();
+        const simMat = new T.ShaderMaterial({
+          uniforms: {
+            uPos: { value: homeTex }, uHome: { value: homeTex },
+            uTime: { value: 0 }, uDt: { value: 0 }, uNova: { value: 0 }, uEnergy: { value: 0 },
+            uPointer: { value: new T.Vector3(0, 0, 99) }, uPointerF: { value: 0 }
+          },
+          vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+          fragmentShader: 'uniform sampler2D uPos; uniform sampler2D uHome; uniform float uTime; uniform float uDt; uniform float uNova; uniform float uEnergy; uniform vec3 uPointer; uniform float uPointerF; varying vec2 vUv;\n' + NZ +
+            'vec3 curl(vec3 p){\n' +
+            '  float e = 0.34;\n' +
+            '  vec3 dx = vec3(e,0.0,0.0); vec3 dy = vec3(0.0,e,0.0); vec3 dz = vec3(0.0,0.0,e);\n' +
+            '  float x = noise(p+dy) - noise(p-dy) - (noise(p+dz) - noise(p-dz));\n' +
+            '  float y = noise(p+dz) - noise(p-dz) - (noise(p+dx) - noise(p-dx));\n' +
+            '  float z = noise(p+dx) - noise(p-dx) - (noise(p+dy) - noise(p-dy));\n' +
+            '  return normalize(vec3(x,y,z) + 1e-5);\n' +
+            '}\n' +
+            'void main(){\n' +
+            '  vec4 pd = texture2D(uPos, vUv);\n' +
+            '  vec3 pos = pd.xyz;\n' +
+            '  float life = pd.w;\n' +
+            '  vec3 home = texture2D(uHome, vUv).xyz;\n' +
+            '  vec3 v = curl(pos*0.55 + uTime*0.06) * (0.24 + uEnergy*0.4);\n' +
+            '  vec3 tang = normalize(vec3(-pos.z, 0.0, pos.x) + 1e-4);\n' +
+            '  v += tang * (0.14 + uEnergy*0.2);\n' +
+            '  v += (home - pos) * 0.30;\n' +
+            '  vec3 dp = pos - uPointer;\n' +
+            '  float pdst = length(dp);\n' +
+            '  v += (dp / max(pdst, 1e-3)) * uPointerF * smoothstep(1.7, 0.0, pdst) * 2.4;\n' +
+            '  float rr = length(pos);\n' +
+            '  v += (pos / max(rr, 1e-3)) * uNova * 3.4 * smoothstep(3.6, 0.4, rr);\n' +
+            '  pos += v * uDt;\n' +
+            '  life = fract(life + uDt * 0.08);\n' +
+            '  gl_FragColor = vec4(pos, life);\n' +
+            '}'
+        });
+        const simScene = new T.Scene();
+        const simCam = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        simScene.add(new T.Mesh(new T.PlaneGeometry(2, 2), simMat));
+        // seed pass: write home positions into rtA, verify float RT works
+        simMat.uniforms.uDt.value = 0;
+        renderer.setRenderTarget(rtA);
+        renderer.render(simScene, simCam);
+        const gl = renderer.getContext();
+        const st = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        renderer.setRenderTarget(null);
+        if (st !== gl.FRAMEBUFFER_COMPLETE) throw new Error('float RT incomplete');
+        S.sim = { rtA, rtB, mat: simMat, scene: simScene, cam: simCam, read: rtA, write: rtB, homeTex };
+        // render points driven by the sim texture
+        const zeros = new Float32Array(NP * 3);
+        const uvs = new Float32Array(NP * 2);
+        const seeds = new Float32Array(NP);
+        for (let i = 0; i < NP; i++) {
+          uvs[i * 2] = ((i % SZ) + 0.5) / SZ;
+          uvs[i * 2 + 1] = (Math.floor(i / SZ) + 0.5) / SZ;
+          seeds[i] = Math.random();
+        }
+        const pg = new T.BufferGeometry();
+        pg.setAttribute('position', new T.BufferAttribute(zeros, 3));
+        pg.setAttribute('aUv', new T.BufferAttribute(uvs, 2));
+        pg.setAttribute('aSeed', new T.BufferAttribute(seeds, 1));
+        S.pmat = new T.ShaderMaterial({
+          transparent: true,
+          blending: T.AdditiveBlending,
+          depthWrite: false,
+          uniforms: { uPos: { value: rtA.texture }, uTime: { value: 0 }, uOpacity: { value: 0.45 }, uSize: { value: 0.085 }, uDpr: { value: 1.5 } },
+          vertexShader: 'attribute vec2 aUv; attribute float aSeed; uniform sampler2D uPos; uniform float uTime; uniform float uSize; uniform float uDpr; varying float vTw;\n' +
+            'void main(){\n' +
+            '  vec4 pd = texture2D(uPos, aUv);\n' +
+            '  vTw = 0.5 + 0.5*sin(uTime*(1.0 + aSeed*1.7) + aSeed*40.0);\n' +
+            '  vec4 mv = modelViewMatrix * vec4(pd.xyz, 1.0);\n' +
+            '  gl_PointSize = uSize * (0.45 + 0.9*aSeed) * (260.0 / max(0.1, -mv.z)) * (0.55 + 0.45*vTw) * uDpr;\n' +
+            '  gl_Position = projectionMatrix * mv;\n' +
+            '}',
+          fragmentShader: 'uniform float uOpacity; varying float vTw;\n' +
+            'void main(){\n' +
+            '  vec2 c = gl_PointCoord - 0.5;\n' +
+            '  float d = length(c);\n' +
+            '  float a = smoothstep(0.5, 0.04, d);\n' +
+            '  vec3 col = mix(vec3(1.0, 0.5, 0.2), vec3(1.0, 0.87, 0.6), vTw);\n' +
+            '  gl_FragColor = vec4(col, a * uOpacity * (0.35 + 0.65*vTw));\n' +
+            '}'
+        });
+        S.pts = new T.Points(pg, S.pmat);
+        S.pts.frustumCulled = false;
+        S.scene.add(S.pts);
+        simOK = true;
+      }
+    } catch (e) {
+      console.warn('[monolith] gpgpu unavailable, legacy embers', e);
+      if (S.sim) { try { S.sim.rtA.dispose(); S.sim.rtB.dispose(); } catch (_) {} S.sim = null; }
+    }
+    S.simOn = simOK;
+
+    if (!simOK) {
+      // legacy drift embers (v2 path)
+      const N = 520;
+      const pos = new Float32Array(N * 3);
+      const seed = new Float32Array(N);
+      for (let i = 0; i < N; i++) {
+        const r = 2.3 + Math.random() * 3.4;
+        const th = Math.random() * Math.PI * 2;
+        pos[i * 3] = Math.cos(th) * r;
+        pos[i * 3 + 1] = (Math.random() - 0.5) * 4.6;
+        pos[i * 3 + 2] = Math.sin(th) * r;
+        seed[i] = Math.random();
+      }
+      const pg = new T.BufferGeometry();
+      pg.setAttribute('position', new T.BufferAttribute(pos, 3));
+      pg.setAttribute('aSeed', new T.BufferAttribute(seed, 1));
+      S.pmat = new T.ShaderMaterial({
+        transparent: true,
+        blending: T.AdditiveBlending,
+        depthWrite: false,
+        uniforms: { uTime: { value: 0 }, uOpacity: { value: 0.45 }, uSize: { value: 0.12 }, uDpr: { value: 1.5 } },
+        vertexShader: 'attribute float aSeed; uniform float uTime; uniform float uSize; uniform float uDpr; varying float vTw;\n' +
+          'void main(){\n' +
+          '  vec3 p = position;\n' +
+          '  p.y += sin(uTime*0.35 + aSeed*6.28) * 0.28;\n' +
+          '  p.x += sin(uTime*0.22 + aSeed*12.0) * 0.2;\n' +
+          '  p.z += cos(uTime*0.27 + aSeed*9.0) * 0.2;\n' +
+          '  vTw = 0.55 + 0.45*sin(uTime*(1.1 + aSeed*1.6) + aSeed*40.0);\n' +
+          '  vec4 mv = modelViewMatrix * vec4(p, 1.0);\n' +
+          '  gl_PointSize = uSize * (0.65 + 0.7*aSeed) * (260.0 / max(0.1, -mv.z)) * (0.6 + 0.4*vTw) * uDpr;\n' +
+          '  gl_Position = projectionMatrix * mv;\n' +
+          '}',
+        fragmentShader: 'uniform float uOpacity; varying float vTw;\n' +
+          'void main(){\n' +
+          '  vec2 c = gl_PointCoord - 0.5;\n' +
+          '  float d = length(c);\n' +
+          '  float a = smoothstep(0.5, 0.04, d);\n' +
+          '  vec3 col = mix(vec3(1.0, 0.52, 0.22), vec3(1.0, 0.86, 0.58), vTw);\n' +
+          '  gl_FragColor = vec4(col, a * uOpacity * vTw);\n' +
+          '}'
+      });
+      S.pts = new T.Points(pg, S.pmat);
+      S.pts.frustumCulled = false;
+      S.scene.add(S.pts);
+    }
+
+    S.shadow = new T.Mesh(new T.PlaneGeometry(4.6, 4.6), new T.MeshBasicMaterial({ map: this._blobTex(T, 'rgba(0,0,0,0.65)', 'rgba(0,0,0,0)'), transparent: true, depthWrite: false, opacity: 0.6 }));
+    S.shadow.rotation.x = -Math.PI / 2;
+    S.shadow.position.y = -2.05;
+    S.scene.add(S.shadow);
+
+    S.mPool = new T.ShaderMaterial({
+      transparent: true,
+      blending: T.AdditiveBlending,
+      depthWrite: false,
+      fog: false,
+      uniforms: { uTime: { value: 0 }, uBeat: { value: 0.4 } },
+      vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: 'uniform float uTime; uniform float uBeat; varying vec2 vUv;\n' + NZ +
+        'void main(){\n' +
+        '  vec2 c = vUv - 0.5;\n' +
+        '  float r = length(c) * 2.0;\n' +
+        '  float rip = sin(r*22.0 - uTime*2.1) * 0.5 + 0.5;\n' +
+        '  rip *= smoothstep(1.0, 0.12, r);\n' +
+        '  float n = noise(vec3(c*7.0, uTime*0.35));\n' +
+        '  float glow = smoothstep(0.95, 0.0, r);\n' +
+        '  float v = glow * (0.3 + 0.32*uBeat) + rip * n * 0.3 * glow;\n' +
+        '  vec3 col = mix(vec3(1.0, 0.45, 0.16), vec3(1.0, 0.76, 0.42), rip*n);\n' +
+        '  gl_FragColor = vec4(col * v, v);\n' +
+        '}'
+    });
+    S.pool = new T.Mesh(new T.PlaneGeometry(6, 6), S.mPool);
+    S.pool.rotation.x = -Math.PI / 2;
+    S.pool.position.y = -2.04;
+    S.scene.add(S.pool);
+
+    if (post) {
+      try {
+        S.composer = new post.EffectComposer(renderer);
+        S.composer.addPass(new post.RenderPass(S.scene, S.cam));
+        S.bloomPass = new post.UnrealBloomPass(new T.Vector2(innerWidth, innerHeight), 0.85, 0.7, 0.6);
+        S.composer.addPass(S.bloomPass);
+        // chromatic aberration + micro-grain + radial god rays (nova)
+        S.caPass = new post.ShaderPass({
+          uniforms: { tDiffuse: { value: null }, uAber: { value: 0.02 }, uTime: { value: 0 }, uRay: { value: 0 }, uCenter: { value: new T.Vector2(0.5, 0.5) } },
+          vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+          fragmentShader: 'uniform sampler2D tDiffuse; uniform float uAber; uniform float uTime; uniform float uRay; uniform vec2 uCenter; varying vec2 vUv;\n' +
+            'float hash21(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }\n' +
+            'void main(){\n' +
+            '  vec2 d = vUv - 0.5;\n' +
+            '  vec2 off = d * dot(d, d) * uAber;\n' +
+            '  float cr = texture2D(tDiffuse, vUv - off).r;\n' +
+            '  float cg = texture2D(tDiffuse, vUv).g;\n' +
+            '  float cb = texture2D(tDiffuse, vUv + off).b;\n' +
+            '  vec3 col = vec3(cr, cg, cb);\n' +
+            '  if (uRay > 0.004) {\n' +
+            '    vec2 rd = (vUv - uCenter) * 0.024;\n' +
+            '    vec2 uv2 = vUv;\n' +
+            '    vec3 acc = vec3(0.0);\n' +
+            '    for (int i = 0; i < 8; i++) { uv2 -= rd; acc += texture2D(tDiffuse, uv2).rgb; }\n' +
+            '    col += (acc / 8.0) * uRay * vec3(1.0, 0.72, 0.45);\n' +
+            '  }\n' +
+            '  col += (hash21(vUv * vec2(1920.0, 1080.0) + fract(uTime) * 61.0) - 0.5) * 0.022;\n' +
+            '  gl_FragColor = vec4(col, 1.0);\n' +
+            '}'
+        });
+        S.composer.addPass(S.caPass);
+        S.composer.addPass(new post.OutputPass());
+      } catch (e) { console.warn('[monolith] composer failed, direct render', e); S.composer = null; }
+    }
+
+    S.tp = new T.Vector3(); S.tt = new T.Vector3();
+    S.curPos = new T.Vector3(0, 0.15, 5.6);
+    S.curTgt = new T.Vector3(0, 0.05, 0);
+    S.prevCam = new T.Vector3(0, 0.15, 5.6);
+    S.ptrV = new T.Vector3(); S.ptrDir = new T.Vector3(); S.projV = new T.Vector3();
+    S.curFov = 36;
+
+    this._variant = this.props.artifact ?? 'obelisk';
+    this._buildArtifact();
+
+    S.ready = true;
+    S.readyAt = performance.now();
+    this._sizeGL();
+    const fb = this._q('[data-fallback]');
+    if (fb) fb.style.opacity = '0';
+  }
+
+  _buildArtifact() {
+    const S = this._S;
+    if (!S || !S.T) return;
+    const T = S.T, g = S.artGroup;
+    for (let i = g.children.length - 1; i >= 0; i--) {
+      const ch = g.children[i];
+      g.remove(ch);
+      ch.traverse((o) => { if (o.geometry) o.geometry.dispose(); });
+    }
+    const v = this._variant || 'obelisk';
+    S.mShell.flatShading = (v !== 'orb');
+    S.mShell.needsUpdate = true;
+    if (v === 'ingot') {
+      const geo = new T.CylinderGeometry(0.5, 0.82, 0.95, 4, 1);
+      const h1 = new T.Mesh(geo, S.mCore); h1.scale.set(0.78, 1, 0.95); h1.rotation.y = Math.PI / 4; h1.position.x = -0.55; g.add(h1);
+      const h2 = new T.Mesh(geo.clone(), S.mCore); h2.scale.set(0.78, 1, 0.95); h2.rotation.y = Math.PI / 4; h2.position.x = 0.55; g.add(h2);
+      const shell = new T.Mesh(geo.clone(), S.mShell); shell.scale.set(1.95, 1.18, 1.12); shell.rotation.y = Math.PI / 4; g.add(shell);
+      S.plasma = new T.Mesh(new T.IcosahedronGeometry(0.55, 4), S.mPlasma); S.plasma.scale.set(0.55, 0.85, 0.85); g.add(S.plasma);
+      S.scan.scale.setScalar(1.6); S.halfH = 0.75;
+      S.atmo.scale.set(1.8, 1.15, 1.25);
+    } else if (v === 'orb') {
+      const core = new T.Mesh(new T.IcosahedronGeometry(0.6, 1), S.mCore); core.rotation.y = 0.4; g.add(core);
+      S.plasma = new T.Mesh(new T.IcosahedronGeometry(0.78, 4), S.mPlasma); g.add(S.plasma);
+      const shell = new T.Mesh(new T.SphereGeometry(1.16, 48, 32), S.mShell); g.add(shell);
+      S.scan.scale.setScalar(1.55); S.halfH = 1.16;
+      S.atmo.scale.set(1.42, 1.42, 1.42);
+    } else {
+      const mkParts = (mat, k, gap) => {
+        const grp = new T.Group();
+        const up = new T.Mesh(new T.CylinderGeometry(0.35, 0.47, 0.72, 6, 1), mat); up.position.y = 0.49 + gap;
+        const dn = new T.Mesh(new T.CylinderGeometry(0.48, 0.6, 0.72, 6, 1), mat); dn.position.y = -0.49 - gap;
+        const top = new T.Mesh(new T.ConeGeometry(0.35, 0.8, 6), mat); top.position.y = 1.25 + gap;
+        const bot = new T.Mesh(new T.ConeGeometry(0.6, 0.7, 6), mat); bot.rotation.x = Math.PI; bot.position.y = -1.2 - gap;
+        grp.add(up); grp.add(dn); grp.add(top); grp.add(bot);
+        grp.scale.setScalar(k);
+        return grp;
+      };
+      g.add(mkParts(S.mCore, 1, 0.02));
+      g.add(mkParts(S.mShell, 1.16, 0.02));
+      S.plasma = new T.Mesh(new T.IcosahedronGeometry(0.52, 4), S.mPlasma); S.plasma.scale.set(1, 0.62, 1); g.add(S.plasma);
+      S.scan.scale.setScalar(1); S.halfH = 1.55;
+      S.atmo.scale.set(1.05, 1.9, 1.05);
+    }
+    if (S.bandG) { S.group.remove(S.bandG); S.bandG.traverse((o) => { if (o.geometry) o.geometry.dispose(); }); }
+    const bandR = v === 'obelisk' ? 1.02 : (v === 'ingot' ? 1.5 : 1.45);
+    S.bandG = new T.Group();
+    const band = new T.Mesh(new T.TorusGeometry(bandR, 0.014, 10, 120), S.mRing);
+    band.rotation.x = Math.PI / 2;
+    S.bandG.add(band);
+    S.bandG.rotation.z = 0.16;
+    S.group.add(S.bandG);
+  }
+
+  _sizeGL() {
+    const S = this._S;
+    if (!S || !S.ready) return;
+    const w = innerWidth, h = innerHeight;
+    const coarse = matchMedia('(pointer: coarse)').matches;
+    const cap = this._eco ? 1.25 : (coarse ? 1.7 : 2);
+    const dpr = Math.max(0.8, Math.min(devicePixelRatio || 1, cap) * this._dprScale);
+    S.renderer.setPixelRatio(dpr);
+    S.renderer.setSize(w, h, false);
+    if (S.composer) { S.composer.setPixelRatio(dpr); S.composer.setSize(w, h); }
+    if (S.pmat && S.pmat.uniforms.uDpr) S.pmat.uniforms.uDpr.value = dpr;
+    S.cam.aspect = w / h;
+    S.cam.updateProjectionMatrix();
+    S.wide = w / h > 1.05;
+  }
+
+  _glFail() {
+    const fb = this._q('[data-fallback]');
+    if (fb) fb.style.opacity = '1';
+    if (this._gl) this._gl.style.display = 'none';
+    this._qa('[data-glonly]').forEach((h) => { h.style.display = 'none'; });
+  }
+
+  _evalCam(p, heroP, inspB) {
+    const A = [
+      [0.000, 0, 0.15, 5.6, 0, 0.05, 0, 36, 0.15],
+      [0.125, 1.15, 0.75, 3.0, 0, 0.55, 0, 35, 0.95],
+      [0.375, -2.2, 0.15, 2.9, -0.1, 0.05, 0, 36, 2.45],
+      [0.625, 0.2, -0.95, 2.7, 0, -0.35, 0, 34, 3.95],
+      [0.875, 0.75, 1.7, 3.1, 0, 0.32, 0, 35, 5.35]
+    ];
+    const I = [0, 0.1, 5.05, 0, 0, 0, 37, 6.6];
+    const out = this._camOut || (this._camOut = {});
+    const sm = (x) => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
+    let a = A[0], b = A[0], u = 0;
+    if (p >= A[A.length - 1][0]) { a = b = A[A.length - 1]; }
+    else if (p > 0) {
+      for (let i = 0; i < A.length - 1; i++) {
+        if (p >= A[i][0] && p <= A[i + 1][0]) { a = A[i]; b = A[i + 1]; u = (p - A[i][0]) / (A[i + 1][0] - A[i][0]); break; }
+      }
+    }
+    const s = sm(Math.min(1, Math.max(0, (u - 0.16) / 0.68)));
+    out.px = a[1] + (b[1] - a[1]) * s;
+    out.py = a[2] + (b[2] - a[2]) * s;
+    out.pz = a[3] + (b[3] - a[3]) * s;
+    out.tx = a[4] + (b[4] - a[4]) * s;
+    out.ty = a[5] + (b[5] - a[5]) * s;
+    out.tz = a[6] + (b[6] - a[6]) * s;
+    out.fov = a[7] + (b[7] - a[7]) * s;
+    out.rot = a[8] + (b[8] - a[8]) * s;
+    if (p <= 0 && heroP > 0) { out.pz -= heroP * 0.55; out.py += heroP * 0.12; out.rot += heroP * 0.4; }
+    if (inspB > 0) {
+      const k = sm(inspB);
+      out.px += (I[0] - out.px) * k; out.py += (I[1] - out.py) * k; out.pz += (I[2] - out.pz) * k;
+      out.tx += (I[3] - out.tx) * k; out.ty += (I[4] - out.ty) * k; out.tz += (I[5] - out.tz) * k;
+      out.fov += (I[6] - out.fov) * k; out.rot += (I[7] - out.rot) * k;
+    }
+    return out;
+  }
+
+  _loop(ts) {
+    if (this._dead) return;
+    this._raf = requestAnimationFrame((t2) => this._loop(t2));
+    const last = this._lastTs || ts;
+    const dt = Math.min(0.05, (ts - last) / 1000);
+    this._lastTs = ts;
+    this._t += dt;
+    this._fr++;
+    const y = this._y, vh = Math.max(1, innerHeight);
+    const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+
+    const pb = this._q('[data-progress]');
+    if (pb) pb.style.transform = 'scaleX(' + clamp(y / this._docLen, 0, 1).toFixed(4) + ')';
+
+    if (this._bootHidden) {
+      const b = this._q('[data-boot]');
+      if (b && b.style.display !== 'none') b.style.display = 'none';
+    }
+    if (this._revealed) {
+      const now = performance.now();
+      const h = this._q('[data-header]');
+      if (h && h.style.opacity !== '1') { h.style.opacity = '1'; h.style.transform = 'none'; }
+      const lines = this._qa('[data-hero-line]');
+      for (let i = 0; i < lines.length; i++) {
+        if (now - this._revealT > 90 * i && lines[i].style.transform !== 'none') lines[i].style.transform = 'none';
+      }
+      const hint = this._q('[data-hint]');
+      if (hint && now - this._revealT > 700 && hint.style.opacity !== '1' && hint.style.display !== 'none') hint.style.opacity = '1';
+    }
+    this._frameN = (this._frameN || 0) + 1;
+    if (this._shown && this._frameN % 10 === 0) {
+      const revs = this._qa('[data-reveal]');
+      for (let i = 0; i < revs.length; i++) {
+        const el = revs[i];
+        if (el._revQueued) continue;
+        const r = el.getBoundingClientRect();
+        if (r.top < vh * 0.85) {
+          el._revQueued = true;
+          const d = +(el.getAttribute('data-delay') || 0);
+          setTimeout(() => { if (this._shown) { el._shownAt = performance.now(); this._shown.add(el); } }, d);
+        }
+      }
+    }
+    if (this._shown) {
+      this._shown.forEach((el) => { if (el.style.opacity !== '1') { el.style.opacity = '1'; el.style.transform = 'none'; } });
+    }
+
+    if (this._frameN % 30 === 0) {
+      const heal = (el, prop, want) => {
+        if (!el) return;
+        try {
+          if (getComputedStyle(el)[prop] === want) return;
+          const anims = el.getAnimations ? el.getAnimations() : [];
+          let stuck = false;
+          for (let i = 0; i < anims.length; i++) {
+            if (anims[i].startTime === null) { anims[i].cancel(); stuck = true; }
+          }
+          if (stuck) el.style.transition = 'none';
+        } catch (_) {}
+      };
+      const nowH = performance.now();
+      if (this._revealed && nowH - this._revealT > 1600) {
+        heal(this._q('[data-header]'), 'opacity', '1');
+        const hls = this._qa('[data-hero-line]');
+        for (let i = 0; i < hls.length; i++) heal(hls[i], 'transform', 'none');
+        heal(this._q('[data-hint]'), 'opacity', '1');
+      }
+      if (this._shown) {
+        this._shown.forEach((el) => { if (el._shownAt && nowH - el._shownAt > 1400) heal(el, 'opacity', '1'); });
+      }
+    }
+    const sl = this._q('[data-soundlabel]');
+    if (sl) { const txt = this._audioOn ? 'AUDIO · ON' : 'AUDIO · OFF'; if (sl.textContent !== txt) sl.textContent = txt; }
+    const eqs = this._qa('[data-eqbar]');
+    for (let i = 0; i < eqs.length; i++) { const st = this._audioOn ? 'running' : 'paused'; if (eqs[i].style.animationPlayState !== st) eqs[i].style.animationPlayState = st; }
+
+    const heroP = clamp(y / vh, 0, 1);
+    const hi = this._q('[data-heroinner]');
+    if (hi) {
+      hi.style.opacity = Math.max(0, 1 - heroP * 1.15).toFixed(3);
+      hi.style.transform = 'translateY(' + (heroP * 46).toFixed(1) + 'px)';
+    }
+
+    const p = this._featLen > 1 ? (y - this._featTop) / this._featLen : 0;
+    const stops = [0.125, 0.375, 0.625, 0.875];
+    const ws = stops.map((s) => Math.max(0, 1 - Math.abs(p - s) * 4.6));
+
+    const cards = this._qa('[data-feat]');
+    for (let i = 0; i < cards.length; i++) {
+      const w = ws[i];
+      cards[i].style.opacity = w.toFixed(3);
+      cards[i].style.transform = 'translateY(' + ((1 - w) * 26).toFixed(1) + 'px)';
+    }
+    let gi = 0, gw = 0;
+    for (let i = 0; i < 4; i++) { if (ws[i] > gw) { gw = ws[i]; gi = i; } }
+    if (gi !== this._lastGi && gw > 0.5) {
+      this._lastGi = gi;
+      if (!this._reduced && cards[gi]) this._scramble(cards[gi].querySelector('[data-scramble]'));
+    }
+    const ghost = this._q('[data-ghost]');
+    if (ghost) {
+      const label = '0' + (gi + 1);
+      if (ghost.textContent !== label) ghost.textContent = label;
+      ghost.style.opacity = (gw * 0.55).toFixed(3);
+    }
+    const camEl = this._q('[data-cam]');
+    if (camEl) { const l = '0' + (gi + 1); if (camEl.textContent !== l) camEl.textContent = l; }
+    const scrubEl = this._q('[data-scrub]');
+    if (scrubEl) {
+      const pct = String(Math.round(clamp(p, 0, 1) * 100)).padStart(3, '0');
+      if (scrubEl.textContent !== pct) scrubEl.textContent = pct;
+    }
+    const dots = this._qa('[data-dot]');
+    const ticks = this._qa('[data-tick]');
+    for (let i = 0; i < dots.length; i++) {
+      const on = i === gi && p > 0 && p < 1.05;
+      dots[i].style.color = on ? '#f4c089' : '#6f5a4b';
+      if (ticks[i]) { ticks[i].style.background = on ? '#f4c089' : '#6f5a4b'; ticks[i].style.width = on ? '26px' : '16px'; }
+    }
+
+    const scrubEnd = this._featTop + this._featLen;
+    const inspB = clamp((y - scrubEnd) / (vh * 0.85), 0, 1);
+    const inspActive = y > this._inspTop - vh * 0.6 && y < this._inspTop + this._inspH - vh * 0.2;
+
+    const fadeStart = this._inspTop + this._inspH - vh * 0.55;
+    const cop = 1 - clamp((y - fadeStart) / (vh * 0.5), 0, 1);
+    if (this._gl) this._gl.style.opacity = cop.toFixed(3);
+
+    const D = this._drag;
+    if (!D.on) {
+      D.tyaw += D.vx;
+      D.vx *= 0.94;
+      D.tpitch *= 0.97;
+      if (!inspActive) { D.tyaw *= 0.93; D.vx = 0; }
+    }
+
+    this._nova = Math.max(0, this._nova - dt * 1.1);
+    const nova = this._nova;
+    this._pSpeedS += (this._pSpeed - this._pSpeedS) * Math.min(1, dt * 6);
+    this._pSpeed = Math.max(0, this._pSpeed - dt * 4);
+
+    if (this._audioOn && this._filter) {
+      this._filter.frequency.value = 200 + clamp(p, 0, 1) * 650 + ws[2] * 450 + inspB * 200 + nova * 900;
+    }
+
+    const S = this._S;
+    if (S && S.ready && !this._hidden && !this._ctxLost && cop > 0.02) {
+      const mot = (this.props.motion ?? 1) * (this._reduced ? 0 : 1);
+      const aro = (this.props.autoRotate ?? 1) * (this._reduced ? 0 : 1);
+      const cv = this._evalCam(clamp(p, 0, 1), heroP, inspB);
+
+      const arr = this._reduced ? 1 : (this._revealed ? Math.min(1, (performance.now() - this._revealT) / 1700) : 0);
+      const ia = 1 - (arr * arr * (3 - 2 * arr));
+      cv.pz += ia * 2.8; cv.py += ia * 0.35; cv.rot -= ia * 1.4;
+
+      const k = this._reduced ? 1 : 1 - Math.exp(-dt * 5.2);
+      S.tp.set(cv.px, cv.py, cv.pz);
+      S.curPos.lerp(S.tp, k);
+      const stopMax = Math.max(ws[0], ws[1], ws[2], ws[3]);
+      const ox = S.wide ? -0.55 : 0;
+      const oy = (S.wide ? 0 : -0.34) * (1 - 0.6 * stopMax);
+      S.tt.set(cv.tx + ox, cv.ty + oy, cv.tz);
+      S.curTgt.lerp(S.tt, k);
+      S.curFov += (cv.fov - S.curFov) * k;
+
+      const camSpeed = S.prevCam.distanceTo(S.curPos) / Math.max(0.001, dt);
+      S.prevCam.copy(S.curPos);
+
+      this._gxS += (this._gx - this._gxS) * Math.min(1, dt * 4);
+      this._gyS += (this._gy - this._gyS) * Math.min(1, dt * 4);
+
+      S.cam.position.copy(S.curPos);
+      S.cam.position.x += (this._mx * 0.12 + this._gxS * 0.42) * mot;
+      S.cam.position.y -= (this._my * 0.09 + this._gyS * 0.3) * mot;
+      if (nova > 0.01) {
+        S.cam.position.x += (Math.random() - 0.5) * 0.05 * nova;
+        S.cam.position.y += (Math.random() - 0.5) * 0.05 * nova;
+      }
+      S.cam.fov = S.curFov;
+      S.cam.updateProjectionMatrix();
+      S.cam.lookAt(S.curTgt);
+
+      this._spin += dt * 0.055 * aro * (inspActive ? 3 : 1);
+      const targetRotY = cv.rot + this._spin + D.tyaw;
+      S.group.rotation.y += (targetRotY - S.group.rotation.y) * (this._reduced ? 1 : Math.min(1, dt * 6));
+      S.group.rotation.x += (D.tpitch - S.group.rotation.x) * Math.min(1, dt * 6);
+      const bob = Math.sin(this._t * 0.9);
+      S.group.position.y = bob * 0.085 * mot;
+      S.group.rotation.z = Math.sin(this._t * 0.6) * 0.028 * mot + this._gxS * 0.06 * mot;
+
+      const irid = this.props.iridescence ?? 1;
+      S.mShell.iridescence = Math.min(1.5, irid * (0.75 + ws[3] * 0.5));
+      S.mCore.iridescence = Math.min(1.5, irid * 0.9);
+      const satW = Math.max(ws[1], inspB * 0.85 * cop);
+      S.mLine.opacity = satW * 0.7;
+      S.mSat.opacity = satW;
+      S.satGroup.rotation.y += dt * (0.25 + ws[1] * 0.5 + inspB * 0.2);
+      S.satGroup.scale.setScalar(0.72 + satW * 0.3);
+      for (let i = 0; i < S.sats.length; i++) { S.sats[i].rotation.x += dt * 1.3; S.sats[i].rotation.z += dt * 0.9; }
+      S.mScan.opacity = ws[2] * 0.85 + nova * 0.5;
+      S.scan.position.y = Math.sin(this._t * 1.25) * (S.halfH * 0.62);
+      const pulse = 0.55 + Math.sin(this._t * 2.3) * 0.22 + ws[2] * 0.9;
+      S.coreLight.intensity = 6 * pulse * (1 + nova * 2.5);
+      if (S.plasma) {
+        S.mPlasma.uniforms.uTime.value = this._t;
+        S.mPlasma.uniforms.uHeat.value = ws[2] * 1.1 + inspB * 0.25 + 0.12 * Math.sin(this._t * 2.3);
+        S.mPlasma.uniforms.uPulse.value = nova;
+        S.plasma.rotation.y = -this._t * 0.3;
+      }
+      if (S.mAtmo) {
+        S.mAtmo.uniforms.uTime.value = this._t;
+        S.mAtmo.uniforms.uGlow.value = Math.min(2.2, irid * (0.4 + ws[3] * 0.55 + inspB * 0.3 + satW * 0.12) + nova * 0.9);
+      }
+      if (S.mDome) {
+        S.mDome.uniforms.uTime.value = this._t;
+        S.mDome.uniforms.uEnergy.value = stopMax * 0.8 + inspB * 0.4 + nova * 0.6;
+        S.mDome.uniforms.uNebula.value = this.props.nebula ?? 1;
+        S.dome.rotation.y += dt * 0.004;
+      }
+
+      // ---- GPGPU sim step --------------------------------------------------
+      const pk = this.props.particles ?? 1;
+      if (S.sim) {
+        const sim = S.sim;
+        sim.mat.uniforms.uPos.value = sim.read.texture;
+        sim.mat.uniforms.uTime.value = this._t;
+        sim.mat.uniforms.uDt.value = this._reduced ? dt * 0.25 : dt;
+        sim.mat.uniforms.uNova.value = nova;
+        sim.mat.uniforms.uEnergy.value = stopMax * 0.7 + inspB * 0.5;
+        S.ptrV.set(this._mx, -this._my, 0.5).unproject(S.cam);
+        S.ptrDir.copy(S.ptrV).sub(S.cam.position).normalize();
+        S.ptrV.copy(S.cam.position).addScaledVector(S.ptrDir, S.cam.position.length());
+        sim.mat.uniforms.uPointer.value.copy(S.ptrV);
+        sim.mat.uniforms.uPointerF.value = Math.min(2.2, (D.on && D.moved ? 1.1 : 0) + this._pSpeedS);
+        S.renderer.setRenderTarget(sim.write);
+        S.renderer.render(sim.scene, sim.cam);
+        S.renderer.setRenderTarget(null);
+        const tmp = sim.read; sim.read = sim.write; sim.write = tmp;
+        S.pmat.uniforms.uPos.value = sim.read.texture;
+      } else {
+        S.pts.rotation.y += dt * (0.02 + ws[3] * 0.14);
+      }
+      S.pmat.uniforms.uTime.value = this._t;
+      S.pmat.uniforms.uOpacity.value = (0.4 + ws[3] * 0.3 + inspB * 0.15 + nova * 0.35) * pk;
+      S.pmat.uniforms.uSize.value = (S.simOn ? 0.085 : 0.12) * (0.7 + 0.3 * pk) + ws[3] * 0.03;
+
+      if (S.bandG) { S.bandG.rotation.y += dt * 0.18; S.bandG.rotation.z = 0.16 + Math.sin(this._t * 0.5) * 0.05; }
+      S.shadow.material.opacity = 0.55 - bob * 0.08;
+      S.shadow.scale.setScalar(1 - bob * 0.035);
+      if (S.mPool) {
+        S.mPool.uniforms.uTime.value = this._t;
+        S.mPool.uniforms.uBeat.value = 0.3 + pulse * 0.25 + nova * 1.1;
+      }
+
+      const bloom = this.props.bloom ?? 0.85;
+      const usePost = !!(S.composer && !this._lowTier && !this._eco && bloom > 0.02);
+      if (usePost) {
+        S.bloomPass.strength = bloom + nova * 0.6;
+        if (S.caPass) {
+          const aberBase = this.props.aberration ?? 0.7;
+          const vel = Math.abs(D.vx) * 26 + camSpeed * 0.35 + nova * 1.6;
+          this._aberS += (Math.min(2.5, vel) - this._aberS) * Math.min(1, dt * 5);
+          S.caPass.uniforms.uAber.value = aberBase * (0.025 + this._aberS * 0.05);
+          S.caPass.uniforms.uTime.value = this._t;
+          if (nova > 0.004) {
+            S.projV.set(0, S.group.position.y, 0).project(S.cam);
+            S.caPass.uniforms.uCenter.value.set(S.projV.x * 0.5 + 0.5, S.projV.y * 0.5 + 0.5);
+          }
+          S.caPass.uniforms.uRay.value = Math.pow(nova, 1.4) * 0.85;
+        }
+        S.composer.render();
+      } else {
+        S.renderer.render(S.scene, S.cam);
+      }
+    }
+  }
+}
+
+
+;(function(){
+  function boot(){
+    try {
+      var inst = new Component();
+      inst.props = { artifact:'obelisk', iridescence:1, bloom:0.5, nebula:1, aberration:0.7, particles:0.5, autoRotate:1, motion:1, hudChrome:true, bootSequence:true };
+      inst._wrap = document.getElementById('cbt-wrap');
+      inst._gl = document.getElementById('cbt-gl');
+      window.__cbtMonolith = inst;
+      inst.componentDidMount();
+    } catch (e) { console.error('[monolith boot]', e); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+</body>
+</html>
