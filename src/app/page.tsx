@@ -5,6 +5,7 @@ import SocialProof from "@/components/SocialProof";
 import Services from "@/components/Services";
 import Stats from "@/components/Stats";
 import HowItWorks from "@/components/HowItWorks";
+import WorkStrip from "@/components/WorkStrip";
 import Testimonials from "@/components/Testimonials";
 import ToolsTeaser from "@/components/ToolsTeaser";
 import Contact from "@/components/Contact";
@@ -59,6 +60,7 @@ export default function Home() {
           <Services />
           <Stats />
           <HowItWorks />
+          <WorkStrip />
           <Testimonials />
           <ToolsTeaser />
           <Contact />

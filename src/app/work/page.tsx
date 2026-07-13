@@ -148,7 +148,7 @@ export default function Work() {
               className="mb-6 inline-block rounded-full border border-copper-dim bg-ink-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-copper-bright"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Client Work
+              Our Work
             </RevealOnScroll>
             <h1
               className="mb-6 text-balance text-5xl font-bold leading-tight text-warm md:text-6xl"
@@ -166,7 +166,9 @@ export default function Work() {
               className="mx-auto max-w-2xl text-pretty text-lg text-warm-2"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Every project starts with a real problem. Here&apos;s what we build and what changes.
+              Every site here is live — click through and judge the work
+              yourself. We build the site first, before you spend a dollar;
+              these demonstration builds are exactly that promise, kept.
             </RevealOnScroll>
           </div>
         </section>

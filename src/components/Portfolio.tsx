@@ -67,19 +67,89 @@ const PROJECTS: Project[] = [
     sample: false,
     description: "Built with the same custom stack we build for clients — Next.js, Tailwind, edge-deployed, Lighthouse 95+.",
   },
+  // ── Demonstration builds ────────────────────────────────────────────────
+  // Every entry below is a REAL, LIVE site we designed and built end-to-end,
+  // with a genuine screenshot of the deployed site. They are demonstration
+  // builds (built to show the work, not commissioned client engagements) —
+  // the section intro says so plainly, and no client relationship is claimed
+  // for any of them. When a demo converts to a paying client, keep the tile
+  // and drop the demonstration framing for that entry.
   {
-    // Real, live build (demonstration site for a Windsor café — screenshot is
-    // a genuine capture of the deployed site, not a mockup). Honest labeling:
-    // the description says what it is; no client relationship is claimed.
     title: "Grey Squirrel Manor — Windsor café & provisions",
-    category: "Web Development",
+    category: "Café & Retail",
     icon: Globe,
     image: "/portfolio/grey-squirrel-manor.jpg",
     url: "https://demos.copperbaytech.com/greysquirrelmanor",
     gradient: "linear-gradient(135deg, #1C2415 0%, #3A4A2A 100%)",
     sample: false,
     description:
-      "Full design & build for a Windsor café and provisions shop — custom vintage brand treatment, menu, makers, and story pages. Live demonstration build.",
+      "Custom vintage brand treatment, menu, makers, and story pages for a Windsor café. Live demonstration build — click through.",
+  },
+  {
+    title: "32 Winds — Mascarin Family Wines",
+    category: "Winery & Tasting Room",
+    icon: Globe,
+    image: "/portfolio/mascarin-family-wines.jpg",
+    url: "https://demos.copperbaytech.com/b/mascarin-family-wines/",
+    gradient: "linear-gradient(135deg, #1F1412 0%, #3B221C 100%)",
+    sample: false,
+    description:
+      "Editorial typography, tasting reservations, and wine-club flow for a Dry Creek Valley winery. Demonstration build.",
+  },
+  {
+    title: "AVISP — rural wine-country ISP",
+    category: "Regional ISP",
+    icon: Globe,
+    image: "/portfolio/avisp.jpg",
+    url: "https://avisp.vercel.app",
+    gradient: "linear-gradient(135deg, #10201A 0%, #1E3A2F 100%)",
+    sample: false,
+    description:
+      "Full marketing site with coverage checker, plan builder, and content hub for a Northern Sonoma County fixed-wireless ISP. Demonstration build.",
+  },
+  {
+    title: "Cascada Landscape — hardscape & masonry",
+    category: "Contractor & Trades",
+    icon: Globe,
+    image: "/portfolio/cascada-landscape.jpg",
+    url: "https://demos.copperbaytech.com/b/cascada/",
+    gradient: "linear-gradient(135deg, #1C1917 0%, #44403C 100%)",
+    sample: false,
+    description:
+      "Photo-led contractor site with CSLB license front and center and the work doing the selling. Demonstration build.",
+  },
+  {
+    title: "California State Insulation — general contractor",
+    category: "Contractor & Trades",
+    icon: Globe,
+    image: "/portfolio/california-state-insulation.jpg",
+    url: "https://demos.copperbaytech.com/b/california-state-insulation/",
+    gradient: "linear-gradient(135deg, #17130E 0%, #3A2B18 100%)",
+    sample: false,
+    description:
+      "License-verified, credentials-first site for a Santa Rosa contractor — built to answer a homeowner's trust questions fast. Demonstration build.",
+  },
+  {
+    title: "Glenn Ranch — Petaluma wedding venue",
+    category: "Venue & Hospitality",
+    icon: Globe,
+    image: "/portfolio/glenn-ranch.jpg",
+    url: "https://demos.copperbaytech.com/b/glenn-ranch/",
+    gradient: "linear-gradient(135deg, #241C10 0%, #4A3A1E 100%)",
+    sample: false,
+    description:
+      "Golden-hour photography, spaces, and inquiry flow for a four-generation Sonoma County ranch venue. Demonstration build.",
+  },
+  {
+    title: "Roman Artisan Mill — stone-milled flour",
+    category: "Food & E-commerce",
+    icon: Globe,
+    image: "/portfolio/roman-artisan-mill.jpg",
+    url: "https://roman-artisan-mill.vercel.app",
+    gradient: "linear-gradient(135deg, #221C12 0%, #453722 100%)",
+    sample: false,
+    description:
+      "Warm artisan brand with an online flour shop for a Healdsburg mill. Concept build with e-commerce.",
   },
   // Sample entries below are hidden until real client screenshots are added.
   // Drop in an `image` path and set `sample: false` to publish a tile.
@@ -163,9 +233,11 @@ export default function Portfolio() {
             className="mx-auto mt-4 max-w-xl text-zinc-400"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Starting with this site — built on the same custom stack we deliver
-            for every client. Client project screenshots are added as work is
-            approved for publication.
+            Every site below is live — click any tile and poke around. Most are
+            demonstration builds: sites we designed and built end-to-end for
+            real Sonoma County businesses to show exactly what we&apos;d do.
+            That&apos;s how we work — you see your site before you spend a
+            dollar.
           </p>
         </motion.div>
 
@@ -192,6 +264,8 @@ export default function Portfolio() {
                       <img
                         src={p.image}
                         alt={`${p.title} — ${p.category}`}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover"
                       />
                     ) : (
