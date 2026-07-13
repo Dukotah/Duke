@@ -34,11 +34,11 @@ export const metadata: Metadata = {
     // Per-route titles already include the "| Copper Bay Tech" suffix, so we
     // intentionally avoid a global `title.template` here to prevent a doubled
     // brand suffix. New routes follow the same full-title convention.
-    title: "Copper Bay Tech | Websites, IT & Cybersecurity for Small Business",
+    title: "Sonoma County Web Design, IT & Cybersecurity | Copper Bay Tech",
     description:
-          "Custom websites, managed IT support, and cybersecurity for small businesses across the U.S. Enterprise-grade thinking without the enterprise price tag — based in Sonoma County, CA.",
+          "Custom-coded websites for Sonoma County small businesses — designed and built in Santa Rosa, then hosted, secured, and improved for life. Managed IT and cybersecurity folded in.",
     keywords:
-          "small business web development, custom website design, managed IT support, small business cybersecurity, AI integration for small business, remote IT support",
+          "Sonoma County web design, Santa Rosa web designer, small business website design, managed IT support Sonoma County, small business cybersecurity, winery website design",
     applicationName: "Copper Bay Tech",
     authors: [{ name: "Copper Bay Tech" }],
     creator: "Copper Bay Tech",
@@ -56,9 +56,9 @@ export const metadata: Metadata = {
     // page is a duplicate of the home page. Each route sets its own canonical;
     // the home page sets its canonical in app/page.tsx.
     openGraph: {
-          title: "Copper Bay Tech | Websites, IT & Cybersecurity for Small Business",
+          title: "Sonoma County Web Design, IT & Cybersecurity | Copper Bay Tech",
           description:
-                  "Custom-built technology for small businesses — websites, IT support, and cybersecurity. Based in Sonoma County, CA, serving clients nationwide.",
+                  "Custom-coded websites for Sonoma County small businesses — built in Santa Rosa, handled for life. Managed IT and cybersecurity folded in.",
           url: "https://copperbaytech.com",
           siteName: "Copper Bay Tech",
           locale: "en_US",
@@ -74,9 +74,9 @@ export const metadata: Metadata = {
     },
     twitter: {
           card: "summary_large_image",
-          title: "Copper Bay Tech | Websites, IT & Cybersecurity for Small Business",
+          title: "Sonoma County Web Design, IT & Cybersecurity | Copper Bay Tech",
           description:
-                  "Custom-built technology for small businesses — websites, IT support, and cybersecurity. Based in Sonoma County, CA, serving clients nationwide.",
+                  "Custom-coded websites for Sonoma County small businesses — built in Santa Rosa, handled for life. Managed IT and cybersecurity folded in.",
           images: ["/og-image.png"],
     },
     robots: {

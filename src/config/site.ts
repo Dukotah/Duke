@@ -69,7 +69,8 @@ export const SOCIAL = {
   x: "",
   github: "",
   // ↓ Directory / entity-graph profiles — create these, then paste the URL.
-  googleBusiness: "", // public GBP URL (g.page/... or maps.google.com/?cid=...)
+  // Derived from GOOGLE_REVIEW_URL above (same place ID, minus /review).
+  googleBusiness: "https://g.page/r/CXQuv4G7yohZEBM",
   crunchbase: "",
   clutch: "",
   goodfirms: "",
