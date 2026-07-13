@@ -67,6 +67,20 @@ const PROJECTS: Project[] = [
     sample: false,
     description: "Built with the same custom stack we build for clients — Next.js, Tailwind, edge-deployed, Lighthouse 95+.",
   },
+  {
+    // Real, live build (demonstration site for a Windsor café — screenshot is
+    // a genuine capture of the deployed site, not a mockup). Honest labeling:
+    // the description says what it is; no client relationship is claimed.
+    title: "Grey Squirrel Manor — Windsor café & provisions",
+    category: "Web Development",
+    icon: Globe,
+    image: "/portfolio/grey-squirrel-manor.jpg",
+    url: "https://demos.copperbaytech.com/greysquirrelmanor",
+    gradient: "linear-gradient(135deg, #1C2415 0%, #3A4A2A 100%)",
+    sample: false,
+    description:
+      "Full design & build for a Windsor café and provisions shop — custom vintage brand treatment, menu, makers, and story pages. Live demonstration build.",
+  },
   // Sample entries below are hidden until real client screenshots are added.
   // Drop in an `image` path and set `sample: false` to publish a tile.
   {

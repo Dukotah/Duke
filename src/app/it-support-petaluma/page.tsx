@@ -134,7 +134,7 @@ export default function ITSupportPetaluma() {
               &ldquo;I had no idea how exposed we were until they ran a security audit. They found two open ports and outdated firmware on our router that we&apos;d had for years. Fixed it same day, no drama.&rdquo;
             </p>
             <p className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>James R.</p>
-            <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>Principal, Santa Rosa Insurance Group</p>
+            <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>Principal, a Santa Rosa insurance agency</p>
             <p className="mt-5 text-[11px] italic text-white/30" style={{ fontFamily: "var(--font-body)" }}>
               Representative example — illustrates the kind of work and results we aim for, not a verified quote from a specific named client.
             </p>

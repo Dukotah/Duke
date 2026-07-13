@@ -5,11 +5,11 @@ import { ArrowLeft, Cloud, Check } from "lucide-react";
 import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
-  title: "Case Study: Sebastopol Family Dental | Copper Bay Tech",
+  title: "Case Study: Cloud Migration for a Sebastopol Dental Office | Copper Bay Tech",
   description: "How we migrated a 12-person dental office from a local server to Google Workspace over a single weekend — zero downtime, staff up and running Monday morning.",
   alternates: { canonical: "https://copperbaytech.com/case-studies/sebastopol-family-dental" },
   openGraph: {
-    title: "Case Study: Sebastopol Family Dental | Copper Bay Tech",
+    title: "Case Study: Cloud Migration for a Sebastopol Dental Office | Copper Bay Tech",
     description: "How we migrated a 12-person dental office from a local server to Google Workspace over a single weekend — zero downtime, staff up and running Monday morning.",
     url: "https://copperbaytech.com/case-studies/sebastopol-family-dental",
     siteName: "Copper Bay Tech",
@@ -20,7 +20,7 @@ export const metadata = {
 export default function SebastopolFamilyDental() {
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
-      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Sebastopol Family Dental" }])} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Sebastopol dental cloud migration" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">
@@ -44,7 +44,7 @@ export default function SebastopolFamilyDental() {
               </div>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black leading-tight mb-4">
-              Full office cloud migration for Sebastopol Family Dental — zero downtime, 12 staff up and running in a day
+              Full office cloud migration for a Sebastopol dental office — zero downtime, 12 staff up and running in a day
             </h1>
             <p className="text-zinc-400 text-lg leading-relaxed">
               Sandra&apos;s dental office had outgrown their aging local server. The fear was disruption to patients and staff who had used the same system for years. We moved everything over a weekend — nobody noticed on Monday.
@@ -68,7 +68,7 @@ export default function SebastopolFamilyDental() {
             <section>
               <h2 className="text-white text-2xl font-bold mb-4">The Situation</h2>
               <p className="mb-4">
-                Sebastopol Family Dental had been running their office on a local Windows Server since 2018. It handled file storage, shared calendaring, and internal communication for 12 staff — front desk, hygienists, the dentist, and billing.
+                A Sebastopol dental office had been running their office on a local Windows Server since 2018. It handled file storage, shared calendaring, and internal communication for 12 staff — front desk, hygienists, the dentist, and billing.
               </p>
               <p className="mb-4">
                 The server had started acting up. Slow boot times, occasional file-access errors, one incident where the server went offline mid-morning and the entire front desk was frozen for two hours. They had a backup drive plugged into it, but nobody had verified a restore in over a year.
@@ -152,8 +152,8 @@ export default function SebastopolFamilyDental() {
                 &ldquo;We moved our whole office to the cloud and it was seamless. Duke handled everything — setup, staff training, the works. Our team was up and running in a day.&rdquo;
               </p>
               <footer>
-                <p className="text-white font-semibold">Sandra K.</p>
-                <p className="text-zinc-500 text-sm">Office Manager, Sebastopol Family Dental</p>
+                <p className="text-white font-semibold">Illustrative example</p>
+                <p className="text-zinc-500 text-sm">Office Manager, a Sebastopol dental office</p>
               </footer>
             </blockquote>
 

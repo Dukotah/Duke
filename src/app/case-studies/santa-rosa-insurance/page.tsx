@@ -5,11 +5,11 @@ import { ArrowLeft, ShieldCheck, Check } from "lucide-react";
 import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
-  title: "Case Study: Santa Rosa Insurance Group | Copper Bay Tech",
+  title: "Case Study: Security Audit for a Santa Rosa Insurance Agency | Copper Bay Tech",
   description: "How a security audit found two critical vulnerabilities at a Santa Rosa insurance firm — and got them fixed the same day.",
   alternates: { canonical: "https://copperbaytech.com/case-studies/santa-rosa-insurance" },
   openGraph: {
-    title: "Case Study: Santa Rosa Insurance Group | Copper Bay Tech",
+    title: "Case Study: Security Audit for a Santa Rosa Insurance Agency | Copper Bay Tech",
     description: "How a security audit found two critical vulnerabilities at a Santa Rosa insurance firm — and got them fixed the same day.",
     url: "https://copperbaytech.com/case-studies/santa-rosa-insurance",
     siteName: "Copper Bay Tech",
@@ -20,7 +20,7 @@ export const metadata = {
 export default function SantaRosaInsurance() {
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
-      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Santa Rosa Insurance Group" }])} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Santa Rosa insurance security audit" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">
@@ -44,7 +44,7 @@ export default function SantaRosaInsurance() {
               </div>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black leading-tight mb-4">
-              Security audit finds two critical vulnerabilities at Santa Rosa Insurance Group — fixed same day
+              Security audit finds two critical vulnerabilities at a Santa Rosa insurance agency — fixed same day
             </h1>
             <p className="text-zinc-400 text-lg leading-relaxed">
               James had no real sense of his firm&apos;s security posture. The router was years old, nobody knew the firmware version, and staff were reusing passwords. We found the problems and closed them before anything went wrong.
@@ -178,8 +178,8 @@ export default function SantaRosaInsurance() {
                 &ldquo;I had no idea how exposed we were until they ran a security audit. They found two open ports and outdated firmware on our router that we&apos;d had for years. Fixed it same day, no drama.&rdquo;
               </p>
               <footer>
-                <p className="text-white font-semibold">James R.</p>
-                <p className="text-zinc-500 text-sm">Principal, Santa Rosa Insurance Group</p>
+                <p className="text-white font-semibold">Illustrative example</p>
+                <p className="text-zinc-500 text-sm">Principal, a Santa Rosa insurance agency</p>
               </footer>
             </blockquote>
 

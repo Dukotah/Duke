@@ -72,6 +72,9 @@ const nextConfig: NextConfig = {
       { source: "/services/it-support", destination: "/it-support-sonoma-county", permanent: true },
       { source: "/web-development", destination: "/web-design-sonoma-county", permanent: true },
       { source: "/services/web-development", destination: "/web-design-sonoma-county", permanent: true },
+      // /testimonials held illustrative (non-real) 5-star "client" quotes with
+      // invented business names — removed 2026-07-13; /reviews is the honest page.
+      { source: "/testimonials", destination: "/reviews", permanent: true },
     ];
   },
 };

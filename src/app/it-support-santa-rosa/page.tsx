@@ -134,7 +134,7 @@ export default function ITSupportSantaRosa() {
               &ldquo;We moved our whole office to the cloud and it was seamless. Duke handled everything — setup, staff training, the works. Our team was up and running in a day.&rdquo;
             </p>
             <p className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>Sandra K.</p>
-            <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>Office Manager, Sebastopol Family Dental</p>
+            <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>Office Manager, a Sebastopol dental office</p>
             <p className="mt-5 text-[11px] italic text-white/30" style={{ fontFamily: "var(--font-body)" }}>
               Representative example — illustrates the kind of work and results we aim for, not a verified quote from a specific named client.
             </p>

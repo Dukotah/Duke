@@ -176,7 +176,7 @@ export default function WebDesignSonomaCounty() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>Maria T.</p>
-                  <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>Owner, Petaluma Home Staging Co.</p>
+                  <p className="text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>Owner, a Petaluma home-staging company</p>
                 </div>
               </footer>
               <p className="mt-6 text-[11px] italic text-white/30" style={{ fontFamily: "var(--font-body)" }}>

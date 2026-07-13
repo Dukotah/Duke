@@ -5,11 +5,11 @@ import { ArrowLeft, Globe, Check } from "lucide-react";
 import JsonLd, { breadcrumbSchema } from "@/components/JsonLd";
 
 export const metadata = {
-  title: "Case Study: Petaluma Home Staging Co. | Copper Bay Tech",
+  title: "Case Study: Website Rebuild for a Petaluma Home-Staging Company | Copper Bay Tech",
   description: "How we rebuilt a slow, broken website for a Petaluma home staging business — cutting load time from 8 seconds to 1.4 seconds and generating 8 new inquiries in 6 weeks.",
   alternates: { canonical: "https://copperbaytech.com/case-studies/petaluma-home-staging" },
   openGraph: {
-    title: "Case Study: Petaluma Home Staging Co. | Copper Bay Tech",
+    title: "Case Study: Website Rebuild for a Petaluma Home-Staging Company | Copper Bay Tech",
     description: "How we rebuilt a slow, broken website for a Petaluma home staging business — cutting load time from 8 seconds to 1.4 seconds and generating 8 new inquiries in 6 weeks.",
     url: "https://copperbaytech.com/case-studies/petaluma-home-staging",
     siteName: "Copper Bay Tech",
@@ -20,7 +20,7 @@ export const metadata = {
 export default function PetalumaHomeStaging() {
   return (
     <div className="min-h-screen bg-[#18181B] text-white">
-      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Petaluma Home Staging Co." }])} />
+      <JsonLd schema={breadcrumbSchema([{ name: "Home", url: "https://copperbaytech.com" }, { name: "Case Studies", url: "https://copperbaytech.com/case-studies" }, { name: "Petaluma home-staging rebuild" }])} />
       <Nav />
 
       <article className="pt-32 pb-24 px-6">
@@ -46,7 +46,7 @@ export default function PetalumaHomeStaging() {
               </div>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black leading-tight mb-4">
-              From invisible to booked out — a full website rebuild for Petaluma Home Staging Co.
+              From invisible to booked out — a full website rebuild for a Petaluma home-staging company
             </h1>
             <p className="text-zinc-400 text-lg leading-relaxed">
               Maria ran a thriving home staging business with one serious problem: her website was killing her leads. We rebuilt it in 11 days. Here&apos;s exactly what happened.
@@ -140,8 +140,8 @@ export default function PetalumaHomeStaging() {
                 &ldquo;Before Copper Bay Tech, our website was embarrassingly slow and half the contact form submissions were going to spam. They rebuilt everything in two weeks — we&apos;ve already gotten three new inquiries through the site. Best investment I made this year.&rdquo;
               </p>
               <footer>
-                <p className="text-white font-semibold">Maria T.</p>
-                <p className="text-zinc-500 text-sm">Owner, Petaluma Home Staging Co.</p>
+                <p className="text-white font-semibold">Illustrative example</p>
+                <p className="text-zinc-500 text-sm">Owner, a Petaluma home-staging company</p>
               </footer>
             </blockquote>
 

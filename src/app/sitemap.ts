@@ -145,7 +145,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${BASE}/testimonials`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/reviews`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/compare`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/schedule`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
@@ -161,6 +160,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/industries/restaurants`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/industries/law-firms`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/industries/real-estate`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/industries/marinas`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/industries/contractors`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     // Services hub
     { url: `${BASE}/services`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     // Free tools

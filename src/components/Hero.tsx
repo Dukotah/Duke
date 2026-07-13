@@ -163,12 +163,12 @@ export default function Hero() {
           style={{ fontFamily: "var(--font-heading)" }}
         >
           <span className="font-semibold text-copper-bright">
-            Trusted by 42 Sonoma County businesses
+            Founder-built in Santa Rosa, CA
           </span>
           <span className="mx-2 text-warm-3" aria-hidden>
             ·
           </span>
-          <span>websites, handled for life</span>
+          <span>custom-coded websites, handled for life</span>
         </RevealOnScroll>
       </div>
     </section>

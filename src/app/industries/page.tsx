@@ -58,6 +58,16 @@ const industries = [
     href: "/industries/wineries",
     desc: "Reservation systems, wine club tech, and websites for wine country.",
   },
+  {
+    name: "Marinas & Marine Trades",
+    href: "/industries/marinas",
+    desc: "Slip booking, seasonal updates, and websites built for life on the water.",
+  },
+  {
+    name: "Contractors & Trades",
+    href: "/industries/contractors",
+    desc: "License-forward sites with project galleries and quote forms that win jobs.",
+  },
 ];
 
 export default function IndustriesPage() {
