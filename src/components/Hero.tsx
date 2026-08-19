@@ -46,7 +46,7 @@ export default function Hero() {
             <span className="absolute inline-flex h-full w-full rounded-full bg-copper-bright opacity-60 motion-safe:animate-ping" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-copper-bright" />
           </span>
-          A website that brings you customers
+          Local tech help for Sonoma County businesses
         </RevealOnScroll>
 
         {/*
@@ -60,7 +60,7 @@ export default function Hero() {
           className="max-w-4xl text-balance text-[2.6rem] font-bold leading-[1.05] tracking-tight text-warm sm:text-6xl md:text-7xl"
           style={{ fontFamily: "var(--font-heading)" }}
         >
-          <span className="block">More customers.</span>
+          <span className="block">Websites, IT &amp; security.</span>
           <span className="mt-1 block text-balance">
             {LINE_TWO.map((word, i) => (
               <motion.span
@@ -113,9 +113,10 @@ export default function Hero() {
           className="mt-8 max-w-2xl text-pretty text-lg leading-relaxed text-warm-2 md:text-xl"
           style={{ fontFamily: "var(--font-body)" }}
         >
-          We build you a site that gets found and gets the phone ringing — then
-          run the hosting, updates, security and improvements for good. You run
-          your business; we bring you the customers.
+          A website that gets you found, plus the IT, security and everyday tech
+          support a small business actually needs. Set up right and looked after
+          for good. Local, in person, no jargon. You run your business, we handle
+          the tech.
         </RevealOnScroll>
 
         {/* CTAs. The primary is reachable and clickable the instant it paints —

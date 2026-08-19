@@ -11,7 +11,6 @@ import ToolsTeaser from "@/components/ToolsTeaser";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
-import MobileLanding from "@/components/MobileLanding";
 import JsonLd, { localBusinessSchema, organizationSchema, websiteSchema, aggregateRatingSchema } from "@/components/JsonLd";
 import { aggregateRating } from "@/lib/reviews";
 
@@ -41,18 +40,14 @@ export default function Home() {
       {agg && <JsonLd schema={aggregateRatingSchema({ ratingValue: agg.ratingValue, reviewCount: agg.reviewCount })} />}
 
       {/*
-        Mobile (< md) gets the dedicated "molten copper" landing page; desktop
-        keeps the existing component-based homepage. Both render server-side and
-        the inactive copy is display:none for the viewport, so there is no
-        device-detection flash and SSR/SEO stays intact. The mobile component
-        gates its own WebGL/timers to mobile (see MobileLanding) so this desktop
-        copy never pays for them.
+        One responsive homepage for every viewport. The bespoke "molten copper"
+        WebGL mobile landing (MobileLanding) was retired 2026-08 — it read as a
+        high-end design agency and worked against the approachable local-tech
+        positioning. The component stack below is mobile-responsive on its own
+        (see Hero's text-[2.6rem] sm:* breakpoints), so phones get the same
+        calm, fast page as desktop.
       */}
-      <div className="md:hidden" style={{ background: "#0b0908" }}>
-        <MobileLanding />
-      </div>
-
-      <div className="theme-dark hidden md:block">
+      <div className="theme-dark block">
         <Nav />
         <main>
           <Hero />
