@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { listUsers, getCustomLeads, getAllLeadStates, addActivity, getSuppressedEmails } from "@/lib/db";
+import { listUsers, getCustomLeads, getAllLeadStates, addActivity, getSuppressedEmails, backfillCustomLeadIndex } from "@/lib/db";
 import { getNextStep, personalizeSequence, MAX_SEQUENCE_STEP } from "@/lib/crm/sequences";
 import { OUTREACH_FROM, MAILING_ADDRESS } from "@/config/site";
 import { unsubscribeUrl } from "@/lib/unsubscribe";
@@ -81,6 +81,14 @@ export async function GET(req: NextRequest) {
       getCustomLeads(user.id),
       getAllLeadStates(user.id),
     ]);
+
+    // One-time: index pre-existing leads for O(1) inbound dedup (intake.ts).
+    // Runs off the visitor path; the full list is already loaded here.
+    const backfillKey = `custom_lead_index_backfilled:${user.id}`;
+    if (!(await redis.get(backfillKey))) {
+      await backfillCustomLeadIndex(user.id, customLeads);
+      await redis.set(backfillKey, "1");
+    }
 
     for (const lead of customLeads) {
       if (!lead.email) { totalSkipped++; continue; }

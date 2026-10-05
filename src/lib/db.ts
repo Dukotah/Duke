@@ -527,6 +527,26 @@ export interface CustomLead {
   createdAt: string;
 }
 
+// ─── Inbound-lead dedup index ─────────────────────────────────────────────────
+// O(1) lookup keys so inbound capture (audit/contact/tool → intake.ts) can dedupe
+// WITHOUT loading the owner's entire custom-lead pile. Keyed per owner by
+// lowercased email and by www-stripped host; written on create + backfilled by
+// the cron. Mirrors intake.ts hostLabel/sameHost semantics.
+function customLeadEmailKey(ownerId: string, email: string): string {
+  return `custom_lead_by_email:${ownerId}:${email.trim().toLowerCase()}`;
+}
+function customLeadHostKey(ownerId: string, host: string): string {
+  return `custom_lead_by_host:${ownerId}:${host}`;
+}
+/** Bare, www-stripped, lowercased hostname — mirrors intake.hostLabel. */
+function customLeadHost(u: string): string {
+  try {
+    return new URL(u.startsWith("http") ? u : `https://${u}`).hostname.replace(/^www\./, "").toLowerCase();
+  } catch {
+    return u.trim().toLowerCase();
+  }
+}
+
 export async function createCustomLead(
   userId: string,
   data: Omit<CustomLead, "id" | "addedBy" | "createdAt">
@@ -539,9 +559,54 @@ export async function createCustomLead(
     addedBy: userId,
     createdAt: new Date().toISOString(),
   };
-  await redis.hset(`custom_lead:${lead.id}`, lead as unknown as Record<string, unknown>);
-  await redis.sadd(`custom_leads:${userId}`, lead.id);
+  // One round-trip: store the hash, add to the owner's set, and populate the
+  // dedup index so future inbound captures find this lead in O(1).
+  const pipeline = redis.pipeline();
+  pipeline.hset(`custom_lead:${lead.id}`, lead as unknown as Record<string, unknown>);
+  pipeline.sadd(`custom_leads:${userId}`, lead.id);
+  if (lead.email?.trim()) pipeline.set(customLeadEmailKey(userId, lead.email), lead.id);
+  if (lead.website?.trim()) pipeline.set(customLeadHostKey(userId, customLeadHost(lead.website)), lead.id);
+  await pipeline.exec();
   return lead;
+}
+
+/**
+ * Dedup lookup for inbound capture: an existing custom-lead id for this owner
+ * matching the email or site host, else null. One mget round-trip, independent
+ * of pile size. Only finds leads that carry an index entry (created after the
+ * index shipped, or backfilled by backfillCustomLeadIndex).
+ */
+export async function findCustomLeadId(
+  ownerId: string,
+  opts: { email?: string | null; website?: string | null },
+): Promise<string | null> {
+  const redis = getRedis();
+  const email = opts.email?.trim().toLowerCase();
+  const host = opts.website?.trim() ? customLeadHost(opts.website) : "";
+  const keys: string[] = [];
+  if (email) keys.push(customLeadEmailKey(ownerId, email));
+  if (host) keys.push(customLeadHostKey(ownerId, host));
+  if (!keys.length) return null;
+  const vals = (await redis.mget(...keys)) as (string | null)[];
+  return vals.find((v): v is string => typeof v === "string" && v.length > 0) ?? null;
+}
+
+/**
+ * Populate the dedup index from already-loaded leads (first-one-wins, matching
+ * getCustomLeads' newest-first order being reversed here so the OLDEST lead
+ * claims each key). Runs off the visitor path (cron) to close the gap for leads
+ * created before the index shipped. Idempotent.
+ */
+export async function backfillCustomLeadIndex(ownerId: string, leads: CustomLead[]): Promise<void> {
+  if (!leads.length) return;
+  const redis = getRedis();
+  const pipeline = redis.pipeline();
+  // Oldest first so the earliest lead wins a shared email/host key.
+  for (const lead of [...leads].reverse()) {
+    if (lead.email?.trim()) pipeline.set(customLeadEmailKey(ownerId, lead.email), lead.id);
+    if (lead.website?.trim()) pipeline.set(customLeadHostKey(ownerId, customLeadHost(lead.website)), lead.id);
+  }
+  await pipeline.exec();
 }
 
 export async function getCustomLeads(userId: string): Promise<CustomLead[]> {

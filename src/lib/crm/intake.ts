@@ -9,7 +9,7 @@
 // NOTE: this deliberately targets db.ts (what the dashboard reads), NOT the
 // parallel crm/store.ts power-dialer store, which the UI doesn't surface.
 
-import { createCustomLead, getCustomLeads, getUserByEmail, listUsers } from "@/lib/db";
+import { createCustomLead, findCustomLeadId, getUserByEmail, listUsers } from "@/lib/db";
 
 /** Bare hostname for a friendly business label / website field. */
 export function hostLabel(u: string): string {
@@ -70,11 +70,8 @@ export async function captureAuditLead(input: AuditIntake): Promise<IntakeResult
   const ownerId = await inboundOwnerId();
   if (!ownerId) return null; // no CRM user yet — nothing to attach the lead to
 
-  const email = input.email?.trim().toLowerCase();
-  const existing = (await getCustomLeads(ownerId)).find(
-    (l) => (!!email && l.email?.trim().toLowerCase() === email) || sameHost(l.website, url),
-  );
-  if (existing) return { leadId: existing.id, created: false, ownerId };
+  const existingId = await findCustomLeadId(ownerId, { email: input.email, website: url });
+  if (existingId) return { leadId: existingId, created: false, ownerId };
 
   const lead = await createCustomLead(ownerId, {
     name: hostLabel(url),
@@ -131,10 +128,8 @@ export async function captureToolLead(input: ToolIntake): Promise<IntakeResult |
   if (!ownerId) return null; // no CRM user yet — nothing to attach the lead to
 
   const url = input.website?.trim();
-  const existing = (await getCustomLeads(ownerId)).find(
-    (l) => l.email?.trim().toLowerCase() === email || (!!url && sameHost(l.website, url)),
-  );
-  if (existing) return { leadId: existing.id, created: false, ownerId };
+  const existingId = await findCustomLeadId(ownerId, { email, website: url });
+  if (existingId) return { leadId: existingId, created: false, ownerId };
 
   const lead = await createCustomLead(ownerId, {
     name: (url ? hostLabel(url) : "") || input.name?.trim() || email,
@@ -192,10 +187,8 @@ export async function captureContactLead(input: ContactIntake): Promise<IntakeRe
   const ownerId = await inboundOwnerId();
   if (!ownerId) return null; // no CRM user yet — nothing to attach the lead to
 
-  const existing = (await getCustomLeads(ownerId)).find(
-    (l) => l.email?.trim().toLowerCase() === email,
-  );
-  if (existing) return { leadId: existing.id, created: false, ownerId };
+  const existingId = await findCustomLeadId(ownerId, { email });
+  if (existingId) return { leadId: existingId, created: false, ownerId };
 
   const lead = await createCustomLead(ownerId, {
     name: input.business?.trim() || input.name?.trim() || email,
