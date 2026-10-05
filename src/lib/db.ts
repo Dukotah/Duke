@@ -546,15 +546,18 @@ export async function createCustomLead(
 
 export async function getCustomLeads(userId: string): Promise<CustomLead[]> {
   const redis = getRedis();
-  const ids = await redis.smembers(`custom_leads:${userId}`);
+  const ids = (await redis.smembers(`custom_leads:${userId}`)) as string[];
   if (!ids.length) return [];
-  const leads = await Promise.all(
-    (ids as string[]).map(async (id) => {
-      const l = await redis.hgetall(`custom_lead:${id}`);
-      return l as unknown as CustomLead;
-    })
-  );
-  return leads.filter(Boolean).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  // Batch every hash read into ONE Upstash round-trip. The previous version
+  // fired a separate hgetall per lead, so inbound capture (audit/contact →
+  // getCustomLeads for dedup) scaled O(N) in HTTP calls and blew past request
+  // timeouts once the lead pile grew. A pipeline keeps it to a single call.
+  const pipeline = redis.pipeline();
+  for (const id of ids) pipeline.hgetall(`custom_lead:${id}`);
+  const leads = (await pipeline.exec()) as unknown as (CustomLead | null)[];
+  return leads
+    .filter((l): l is CustomLead => Boolean(l))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 // ─── Lead Preview Sites (from the /websites factory) ──────────────────────────

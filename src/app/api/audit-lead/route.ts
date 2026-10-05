@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { captureAuditLead } from "@/lib/crm/intake";
+import { withTimeout } from "@/lib/withTimeout";
 
 function scoreColor(score: number) {
   if (score >= 90) return "#22c55e";
@@ -33,7 +34,13 @@ export async function POST(req: NextRequest) {
     try {
       const auditUrl: string = (auditData?.url || url || "").trim();
       if (auditUrl) {
-        await captureAuditLead({ email, url: auditUrl, score: auditData?.score ?? 0 });
+        // Time-boxed so a slow CRM read can't stall the visitor's report
+        // (parity with the contact route). The bridge is already non-fatal.
+        await withTimeout(
+          captureAuditLead({ email, url: auditUrl, score: auditData?.score ?? 0 }),
+          3000,
+          "captureAuditLead",
+        );
       }
     } catch (e) {
       console.error("Audit→CRM bridge failed (non-fatal):", e);
