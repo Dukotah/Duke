@@ -67,10 +67,14 @@ export async function captureAuditLead(input: AuditIntake): Promise<IntakeResult
   const url = input.url?.trim();
   if (!url) return null;
 
+  const __t0 = Date.now();
   const ownerId = await inboundOwnerId();
+  const __t1 = Date.now();
   if (!ownerId) return null; // no CRM user yet — nothing to attach the lead to
 
   const existingId = await findCustomLeadId(ownerId, { email: input.email, website: url });
+  const __t2 = Date.now();
+  console.log(`[intake-timing] inboundOwnerId=${__t1 - __t0}ms findCustomLeadId=${__t2 - __t1}ms`);
   if (existingId) return { leadId: existingId, created: false, ownerId };
 
   const lead = await createCustomLead(ownerId, {
@@ -83,6 +87,7 @@ export async function captureAuditLead(input: AuditIntake): Promise<IntakeResult
     niche: "Website audit",
     notes: buildAuditNote(input.score),
   });
+  console.log(`[intake-timing] createCustomLead=${Date.now() - __t2}ms total=${Date.now() - __t0}ms`);
   return { leadId: lead.id, created: true, ownerId };
 }
 
