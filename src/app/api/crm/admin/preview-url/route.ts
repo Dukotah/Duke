@@ -31,6 +31,10 @@ interface PreviewEntry {
   claimByDate?: string;
   thumbnailUrl?: string;
   slug?: string;
+  // Stable business id (Overture id) + the builder's canonical match key, when the
+  // /websites manifest carries them. Both optional — absent posts behave as before.
+  id?: string;
+  matchKey?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -62,6 +66,8 @@ export async function POST(req: NextRequest) {
         claimByDate: e.claimByDate,
         thumbnailUrl: e.thumbnailUrl,
         slug: e.slug,
+        id: e.id,
+        matchKey: e.matchKey,
       });
       linked++;
     }

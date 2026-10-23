@@ -141,15 +141,25 @@ async function main() {
     }
     linkedLeads++;
 
-    // (2) attach the demo preview
+    // (2) attach the demo preview. Carry the stable id + the builder's canonical
+    // match key through when the manifest has them (absent = behaves as before).
+    const id = (e.id ?? "").toString().trim();
     const value = {
       previewUrl: e.link, linkedAt: new Date().toISOString(), status: normStatus(e.status ?? "ready"),
       ...(e.category ? { category: e.category } : {}),
       ...(city ? { area: e.area || city } : {}),
       ...(thumb ? { thumbnailUrl: thumb } : {}),
       ...(slug ? { slug } : {}),
+      ...(id ? { id } : {}),
+      ...(e.matchKey ? { matchKey: e.matchKey } : {}),
     };
-    await r.hset("lead_previews", { [key]: JSON.stringify(value) });
+    const json = JSON.stringify(value);
+    // ALWAYS write the back-compat name key.
+    await r.hset("lead_previews", { [key]: json });
+    // ADDITIONALLY index under the stable id (id:<id>) so the CRM can join id-first
+    // without fuzzy name matching. Same hash, distinct field; the name key above is
+    // left untouched for back-compat with already-stored links.
+    if (id) await r.hset("lead_previews", { [`id:${id}`]: json });
     previews++;
   }
 
