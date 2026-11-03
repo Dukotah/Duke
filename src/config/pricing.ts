@@ -57,7 +57,7 @@ export const PRICING = {
   email: {
     range: "$195 – $695",
     unit: "/mo",
-    note: "Per month by send volume, plus $450 setup",
+    note: "Per month by send volume, + $450 one-time setup",
     startingAt: "$195",
     low: 195,
     high: 695,
@@ -278,7 +278,7 @@ export const addOns: readonly AddOn[] = [
     priceNote: "from",
     priceValue: 195,
     cadence: "monthly",
-    description: "Your newsletter written, sent, and reported on every month.",
+    description: "Done-for-you newsletter: we write it, send it, and report results.",
   },
   {
     id: "brand",

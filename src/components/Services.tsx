@@ -24,7 +24,7 @@ const alsoHandled = [
   {
     icon: Mail,
     label: "Email newsletters",
-    note: "We write and send them. Your list does the selling.",
+    note: "We write & send them; your list does the selling.",
   },
 ];
 

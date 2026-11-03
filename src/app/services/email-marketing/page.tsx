@@ -7,13 +7,13 @@ import { PRICING } from "@/config/pricing";
 export const metadata: Metadata = {
   title: "Email Marketing & Newsletter Management Sonoma County | Copper Bay Tech",
   description:
-    "Done-for-you email newsletters for Sonoma County small businesses. We write, design, send, and report. Flat monthly fee, no contracts. Serving Petaluma, Santa Rosa & the North Bay.",
+    "Done-for-you email newsletters for Sonoma County small businesses. We write, design, send, and report — flat monthly fee, no contracts. Serving Petaluma, Santa Rosa & the North Bay.",
   keywords:
     "email marketing Sonoma County, newsletter management Petaluma, small business email marketing Santa Rosa, done for you newsletter North Bay, email marketing agency Sonoma County",
   openGraph: {
     title: "Email Marketing & Newsletters for Sonoma County Small Businesses | Copper Bay Tech",
     description:
-      "Your customer list is the cheapest marketing you own, and most businesses never use it. We write and send your newsletter every month for a flat fee.",
+      "Your customer list is the cheapest marketing you own — most businesses never use it. We write and send your newsletter every month, flat fee.",
     url: "https://copperbaytech.com/services/email-marketing",
   },
   alternates: {
@@ -60,7 +60,7 @@ const plans = [
     cadence: "/mo",
     tagline: "One great newsletter a month, handled end to end.",
     features: [
-      "1 campaign per month, written, designed, and sent for you",
+      "1 campaign per month — we write, design & send",
       "List management: imports, unsubscribes, cleanup",
       "Signup form on your website",
       "Plain-English monthly report (opens, clicks, revenue)",
@@ -112,12 +112,12 @@ const included = [
   {
     icon: "📬",
     title: "Deliverability done right",
-    desc: "SPF, DKIM, and DMARC configured on your domain so your emails land in the inbox instead of spam. We set this up during onboarding. It is the same hardening we do in our security work.",
+    desc: "SPF, DKIM, and DMARC configured on your domain so your emails land in the inbox instead of spam. We set this up as part of onboarding — it's the same hardening we do in our security work.",
   },
   {
     icon: "🧹",
     title: "List management",
-    desc: "We import your existing contacts, clean out dead addresses, handle unsubscribes, and grow the list with signup forms on your website. You own the list and the account, always.",
+    desc: "We import your existing contacts, clean out dead addresses, handle unsubscribes, and grow the list with signup forms on your website. You own the list and the account — always.",
   },
   {
     icon: "🤖",
@@ -134,7 +134,7 @@ const included = [
 const faqs = [
   {
     q: "We've collected customer emails for years but never sent anything. Is that normal?",
-    a: "Extremely. Most small businesses have a list sitting in a point of sale system, an old spreadsheet, or an inbox, and it is worth more than any ad budget. Those people already know and trust you. A simple monthly email is usually the best marketing a local business can do, because the audience is free and already warm.",
+    a: "Extremely. Most small businesses have a list sitting in a point-of-sale system, an old spreadsheet, or an inbox — and it's worth more than any ad budget. Those people already know and trust you. A simple monthly email is usually the highest-return marketing a local business can do, because the audience is free and already warm.",
   },
   {
     q: "Who owns the email list and the account?",
@@ -142,7 +142,7 @@ const faqs = [
   },
   {
     q: "What do you need from me each month?",
-    a: "About ten minutes. A quick call, a text, or a few notes about what is new. A promotion, a project you are proud of, a seasonal reminder. We turn that into the email, send you a preview to approve, and handle the rest.",
+    a: "About ten minutes. A quick call, a text, or a few bullet points about what's new — a promotion, a project you're proud of, a seasonal reminder. We turn that into the email, send you a preview to approve, and handle the rest.",
   },
   {
     q: "Is this legal? I've heard about spam laws.",
@@ -189,10 +189,10 @@ export default function EmailMarketingPage() {
               style={{ fontFamily: "var(--font-body)" }}
             >
               Every month you don&apos;t email your customers, somebody else does. A
-              simple, well written newsletter keeps your business the first name
-              they think of, and it costs less than what one new customer is
-              worth. We write it, design it, send it, and show you what it
-              earned. You approve a preview and get back to work.
+              simple, well-written newsletter keeps your business the first name
+              they think of — and it costs less than one new customer is worth.
+              We write it, design it, send it, and show you what it earned. You
+              approve a preview and get back to work.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
@@ -240,7 +240,7 @@ export default function EmailMarketingPage() {
                 {
                   icon: "🧠",
                   title: "Stay first in mind",
-                  desc: "Most customers don't leave because they're unhappy. They drift away because they forgot about you. A monthly email keeps your name in their inbox, so when they need what you do, you're the call they make instead of whoever Google shows them first.",
+                  desc: "Most customers don't leave because they're unhappy. They drift away because they forgot about you. A monthly email keeps your name in their inbox so when they need what you do, you're the call they make — not whoever Google serves up.",
                 },
                 {
                   icon: "📅",
@@ -285,7 +285,7 @@ export default function EmailMarketingPage() {
               style={{ fontFamily: "var(--font-body)" }}
             >
               &quot;I know I should send a newsletter&quot; is where most businesses
-              stall. Writing it, designing it, and wrestling the software is a
+              stall — writing it, designing it, and wrestling the software is a
               job nobody has time for. That job is ours now.
             </p>
             <div className="grid md:grid-cols-2 gap-6">
@@ -326,10 +326,9 @@ export default function EmailMarketingPage() {
               className="text-zinc-400 text-lg mb-12 max-w-2xl leading-relaxed"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              One-time setup is $450. That covers the platform account, domain
-              authentication, your branded template, list import, and signup
-              forms. We waive it when we build your website or you&apos;re on
-              any care plan.
+              One-time setup is $450 — platform account, domain authentication,
+              branded template, list import, and signup forms. Setup is waived
+              when we build your website or you&apos;re on any care plan.
             </p>
             <div className="grid md:grid-cols-3 gap-6">
               {plans.map((plan) => (
@@ -431,9 +430,9 @@ export default function EmailMarketingPage() {
               className="text-white/70 text-lg mb-10 leading-relaxed"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Tell us about your business and your list, even if it&apos;s a shoebox
+              Tell us about your business and your list — even if it&apos;s a shoebox
               of business cards. We&apos;ll tell you honestly what a newsletter can do
-              for you, and what it can&apos;t, in a free 30 minute call.
+              for you, and what it can&apos;t, in a free 30-minute call.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link
