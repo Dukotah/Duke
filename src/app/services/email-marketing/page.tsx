@@ -100,32 +100,26 @@ const plans = [
 
 const included = [
   {
-    icon: "✍️",
     title: "We write it",
     desc: "You talk, we type. A quick monthly check-in (or just a voicemail) is all we need to turn what's happening in your business into an email your customers actually want to read.",
   },
   {
-    icon: "🎨",
     title: "Branded design",
     desc: "A clean email template built to match your website and logo, readable on every phone and inbox. Set up once during onboarding, reused every send so your emails are instantly recognizable.",
   },
   {
-    icon: "📬",
     title: "Deliverability done right",
     desc: "SPF, DKIM, and DMARC configured on your domain so your emails land in the inbox instead of spam. We set this up during onboarding. It is the same hardening we do in our security work.",
   },
   {
-    icon: "🧹",
     title: "List management",
     desc: "We import your existing contacts, clean out dead addresses, handle unsubscribes, and grow the list with signup forms on your website. You own the list and the account, always.",
   },
   {
-    icon: "🤖",
     title: "Automations",
     desc: "Welcome emails for new subscribers, review requests after a job wraps, win-back notes to customers you haven't seen in a while. Written once, then working for you around the clock.",
   },
   {
-    icon: "📊",
     title: "Reporting that makes sense",
     desc: "No dashboard homework. Once a month you get a short plain-English summary: who opened, what they clicked, what it drove, and what we're trying next.",
   },
@@ -150,7 +144,7 @@ const faqs = [
   },
   {
     q: "What's the one-time setup fee for?",
-    a: "The $450 setup covers everything that happens before the first send: the email platform account, domain authentication (SPF, DKIM, DMARC) so you land in inboxes, your branded template, importing and cleaning your list, signup forms on your site, and a welcome email. We waive it when we build your website or you're on a care plan.",
+    a: "The $250 setup covers everything that happens before the first send: the email platform account, domain authentication (SPF, DKIM, DMARC) so you land in inboxes, your branded template, importing and cleaning your list, signup forms on your site, and a welcome email. We waive it when we build your website or you're on a care plan.",
   },
   {
     q: "What platform do you use?",
@@ -233,17 +227,14 @@ export default function EmailMarketingPage() {
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
-                  icon: "💰",
                   title: "The audience is free",
                   desc: "You already paid to earn these customers. Emailing them costs pennies, and repeat customers spend more and refer more than new ones. Email consistently returns more per dollar than any paid channel a small business can buy.",
                 },
                 {
-                  icon: "🧠",
                   title: "Stay first in mind",
                   desc: "Most customers don't leave because they're unhappy. They drift away because they forgot about you. A monthly email keeps your name in their inbox, so when they need what you do, you're the call they make instead of whoever Google shows them first.",
                 },
                 {
-                  icon: "📅",
                   title: "Fill the slow seasons",
                   desc: "A well-timed email moves real revenue on demand: a spring tune-up reminder, a holiday booking push, a slow-week promotion. Your list is the one marketing channel you can pull like a lever, exactly when you need it.",
                 },
@@ -252,7 +243,6 @@ export default function EmailMarketingPage() {
                   key={item.title}
                   className="bg-ink-2 rounded-xl p-6 border border-hairline"
                 >
-                  <div className="text-3xl mb-4">{item.icon}</div>
                   <h3
                     className="text-xl font-bold text-white mb-3"
                     style={{ fontFamily: "var(--font-heading)" }}
@@ -294,7 +284,6 @@ export default function EmailMarketingPage() {
                   key={service.title}
                   className="bg-ink-1 rounded-xl p-6 border border-hairline"
                 >
-                  <div className="text-3xl mb-3">{service.icon}</div>
                   <h3
                     className="font-bold text-white mb-2"
                     style={{ fontFamily: "var(--font-heading)" }}
@@ -326,7 +315,7 @@ export default function EmailMarketingPage() {
               className="text-zinc-400 text-lg mb-12 max-w-2xl leading-relaxed"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              One-time setup is $450. That covers the platform account, domain
+              One-time setup is $250. That covers the platform account, domain
               authentication, your branded template, list import, and signup
               forms. We waive it when we build your website or you&apos;re on
               any care plan.

@@ -57,7 +57,7 @@ export const PRICING = {
   email: {
     range: "$195 – $695",
     unit: "/mo",
-    note: "Per month by send volume, plus $450 setup",
+    note: "Per month by send volume, plus $250 setup",
     startingAt: "$195",
     low: 195,
     high: 695,
