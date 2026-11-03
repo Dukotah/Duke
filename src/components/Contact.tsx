@@ -204,6 +204,7 @@ export default function Contact() {
                   <option value="it-support">IT Support & Networking</option>
                   <option value="automation">Process Automation</option>
                   <option value="cybersecurity">Cybersecurity Audit</option>
+                  <option value="email-marketing">Email Marketing &amp; Newsletters</option>
                   <option value="custom-dev">Custom Web Application</option>
                   <option value="other">Not sure — I need advice</option>
                 </select>

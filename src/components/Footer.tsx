@@ -75,6 +75,7 @@ export default function Footer() {
     { label: "IT Support", href: "/it-support" },
     { label: "Cybersecurity", href: "/cybersecurity-small-business" },
     { label: "AI Integration", href: "/ai-integration-small-business" },
+    { label: "Email Marketing", href: "/services/email-marketing" },
     { label: "Browse all service areas", href: "/locations" },
   ];
 
