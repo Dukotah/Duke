@@ -1,6 +1,6 @@
 "use client";
 
-import { Server, ShieldCheck, Sparkles, Mail, ArrowRight } from "lucide-react";
+import { Server, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 import { RevealOnScroll, MagneticCTA } from "@/components/motion";
 
 // Quiet "also handled" — IT / security / AI are folded in as care-plan benefits,
@@ -20,11 +20,6 @@ const alsoHandled = [
     icon: Sparkles,
     label: "AI tools & automation",
     note: "Answer calls, reply to leads, clear busywork.",
-  },
-  {
-    icon: Mail,
-    label: "Email newsletters",
-    note: "We write & send them; your list does the selling.",
   },
 ];
 
