@@ -164,6 +164,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/industries/contractors`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     // Services hub
     { url: `${BASE}/services`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/services/email-marketing`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     // Free tools
     { url: `${BASE}/tools/health-check`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/tools/compliance`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },

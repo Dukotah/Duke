@@ -101,6 +101,42 @@ Thanks,
 Copper Bay Tech`,
   },
   {
+    key: "newsletter_intro",
+    label: "📬 Newsletter intro",
+    subject: "Do your customers ever hear from {business}?",
+    body: `Hi {name},
+
+Quick question. When was the last time your past customers got an email from {business}?
+
+For most local businesses the honest answer is never, and that is a shame, because the list of people who already bought from you is the cheapest marketing you own. One good email a month keeps you the first call when they need you again, and it fills slow weeks better than any ad.
+
+That is what I do for businesses here in {city}. I write the newsletter, send it, and show you what it earned. You give me ten minutes of what is new each month and I handle the rest. Plans start at $195 a month and you own the list, always.
+
+Worth a quick ten minute call this week?
+
+Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
+    key: "newsletter_followup",
+    label: "📬 Newsletter follow up",
+    subject: "One email a month for {business}",
+    body: `Hi {name},
+
+Just floating this back up in case it got buried.
+
+If you have customer emails sitting in a point of sale system, a booking app, or an old spreadsheet, they are worth real money and most businesses never send them anything. One good newsletter a month is usually the highest return marketing a local business can do.
+
+Happy to make this easy. I will write a sample issue for {business} for free so you can see exactly what your customers would get. If you like it, plans start at $195 a month and I handle everything. If not, you keep the sample and we part friends.
+
+Want me to put one together?
+
+Thanks,
+{fromName}
+Copper Bay Tech`,
+  },
+  {
     key: "winery_demo",
     label: "🍷 Winery demo",
     subject: "I built {business} a new website",

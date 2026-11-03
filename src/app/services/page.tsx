@@ -3,7 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { rangeLabel } from "@/config/pricing";
-import { Globe, Server, ShieldCheck, MapPin, User, Receipt, CalendarOff, ArrowRight } from "lucide-react";
+import { Globe, Server, ShieldCheck, Mail, MapPin, User, Receipt, CalendarOff, ArrowRight } from "lucide-react";
 import { BOOKING_URL } from "@/config/site";
 import { RevealOnScroll, SpotlightCard, MagneticCTA } from "@/components/motion";
 
@@ -71,6 +71,21 @@ const services = [
     ],
     range: rangeLabel("cybersecurity"),
     cta: "See cybersecurity",
+  },
+  {
+    slug: "email-marketing",
+    Icon: Mail,
+    title: "Email Marketing & Newsletters",
+    tagline: "Your customer list, finally working for you.",
+    desc: "Done-for-you email newsletters and automations. We write, design, and send a newsletter your customers actually read — then show you what it earned in a plain-English monthly report. You own the list and the account, always.",
+    bullets: [
+      "We write it — 10 minutes of your input per month",
+      "Welcome, review-request & win-back automations",
+      "Deliverability setup (SPF, DKIM, DMARC) included",
+      "Flat monthly fee, month-to-month, you own the list",
+    ],
+    range: rangeLabel("email"),
+    cta: "See email marketing",
   },
 ];
 
